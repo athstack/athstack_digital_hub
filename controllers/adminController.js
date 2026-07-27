@@ -92,43 +92,55 @@ exports.updateUserRole = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { role } = req.body;
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (status, data) => isAjax ? res.status(status).json(data) : res.redirect('/admin/users');
 
     if (isNaN(userId)) {
+      if (isAjax) return respond(400, { success: false, message: 'Invalid user ID.' });
       req.flash('error', 'Invalid user ID.');
-      return res.redirect('/admin/users');
+      return respond(400, {});
     }
 
     const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
     if (!validRoles.includes(role)) {
+      if (isAjax) return respond(400, { success: false, message: 'Invalid role.' });
       req.flash('error', 'Invalid role.');
-      return res.redirect('/admin/users');
+      return respond(400, {});
     }
 
     if (userId === Number(req.session.userId)) {
+      if (isAjax) return respond(403, { success: false, message: 'You cannot change your own role.' });
       req.flash('error', 'You cannot change your own role.');
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (isAjax) return respond(403, { success: false, message: 'Only super administrators can assign the super admin role.' });
       req.flash('error', 'Only super administrators can assign the super admin role.');
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     if (role === 'admin' && req.session.userRole !== 'super_admin') {
+      if (isAjax) return respond(403, { success: false, message: 'Only super administrators can assign the admin role.' });
       req.flash('error', 'Only super administrators can assign the admin role.');
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     const targetUser = await UserModel.findById(userId);
     if (!targetUser) {
+      if (isAjax) return respond(404, { success: false, message: 'User not found.' });
       req.flash('error', 'User not found.');
-      return res.redirect('/admin/users');
+      return respond(404, {});
     }
 
     await UserModel.updateRole(userId, role);
+    if (isAjax) return respond(200, { success: true, message: 'Role updated.' });
     req.flash('success', 'User role updated.');
-    res.redirect('/admin/users');
+    respond(200, {});
   } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(500).json({ success: false, message: 'Server error.' });
+    }
     next(err);
   }
 };
@@ -137,33 +149,43 @@ exports.updateUserStatus = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { status } = req.body;
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/users');
 
     if (isNaN(userId)) {
+      if (isAjax) return respond(400, { success: false, message: 'Invalid user ID.' });
       req.flash('error', 'Invalid user ID.');
-      return res.redirect('/admin/users');
+      return respond(400, {});
     }
 
     const validStatuses = ['active', 'inactive', 'suspended'];
     if (!validStatuses.includes(status)) {
+      if (isAjax) return respond(400, { success: false, message: 'Invalid status.' });
       req.flash('error', 'Invalid status.');
-      return res.redirect('/admin/users');
+      return respond(400, {});
     }
 
     if (userId === Number(req.session.userId)) {
+      if (isAjax) return respond(403, { success: false, message: 'You cannot change your own status.' });
       req.flash('error', 'You cannot change your own status.');
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     const targetUser = await UserModel.findById(userId);
     if (!targetUser) {
+      if (isAjax) return respond(404, { success: false, message: 'User not found.' });
       req.flash('error', 'User not found.');
-      return res.redirect('/admin/users');
+      return respond(404, {});
     }
 
     await UserModel.updateStatus(userId, status);
+    if (isAjax) return respond(200, { success: true, message: 'Status updated.' });
     req.flash('success', 'User status updated.');
-    res.redirect('/admin/users');
+    respond(200, {});
   } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(500).json({ success: false, message: 'Server error.' });
+    }
     next(err);
   }
 };

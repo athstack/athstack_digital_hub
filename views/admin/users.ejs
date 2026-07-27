@@ -1,5 +1,15 @@
 <%- include('../partials/header') %>
 
+<style>
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast-msg{padding:10px 20px;border-radius:6px;color:#fff;font-size:14px;opacity:0;transform:translateX(30px);animation:toastIn .3s forwards}
+.toast-msg.success{background:#198754}
+.toast-msg.error{background:#dc3545}
+@keyframes toastIn{to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(30px)}}
+</style>
+<div class="toast-container" id="toastContainer"></div>
+
 <section class="py-5">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -61,25 +71,19 @@
                                     </td>
                                     <td class="text-muted"><%= u.email %></td>
                                     <td>
-                                        <form method="POST" action="/admin/users/<%= u.id %>/role" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:120px;" onchange="this.form.submit()">
-                                                <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>>Customer</option>
-                                                <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>>Technician</option>
-                                                <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                                                <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
-                                            </select>
-                                        </form>
+                                        <select class="form-select form-select-sm bg-dark text-white border-secondary role-select" style="width:120px;" data-user-id="<%= u.id %>" data-original="<%= u.role %>">
+                                            <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>>Customer</option>
+                                            <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>>Technician</option>
+                                            <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                            <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
+                                        </select>
                                     </td>
                                     <td>
-                                        <form method="POST" action="/admin/users/<%= u.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:110px;" onchange="this.form.submit()">
-                                                <option value="active" <%= u.status === 'active' ? 'selected' : '' %>>Active</option>
-                                                <option value="inactive" <%= u.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
-                                                <option value="suspended" <%= u.status === 'suspended' ? 'selected' : '' %>>Suspended</option>
-                                            </select>
-                                        </form>
+                                        <select class="form-select form-select-sm bg-dark text-white border-secondary status-select" style="width:110px;" data-user-id="<%= u.id %>" data-original="<%= u.status %>">
+                                            <option value="active" <%= u.status === 'active' ? 'selected' : '' %>>Active</option>
+                                            <option value="inactive" <%= u.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                                            <option value="suspended" <%= u.status === 'suspended' ? 'selected' : '' %>>Suspended</option>
+                                        </select>
                                     </td>
                                     <td class="text-muted"><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : '' %></td>
                                     <td><span class="badge bg-secondary"><%= u.role %></span></td>
@@ -119,5 +123,57 @@
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    const CSRF = '<%= csrfToken %>';
+
+    function showToast(msg, type) {
+        var c = document.getElementById('toastContainer');
+        var t = document.createElement('div');
+        t.className = 'toast-msg ' + type;
+        t.textContent = msg;
+        c.appendChild(t);
+        setTimeout(function() { t.style.animation = 'toastOut .3s forwards'; setTimeout(function() { t.remove(); }, 300); }, 2500);
+    }
+
+    function sendUpdate(url, field, value, select) {
+        var orig = select.getAttribute('data-original');
+        var body = {};
+        body[field] = value;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+            body: JSON.stringify(body)
+        })
+        .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+        .then(function(res) {
+            if (res.ok && res.data.success) {
+                select.setAttribute('data-original', value);
+                showToast(res.data.message, 'success');
+            } else {
+                select.value = orig;
+                showToast(res.data.message || 'Update failed', 'error');
+            }
+        })
+        .catch(function() {
+            select.value = orig;
+            showToast('Network error', 'error');
+        });
+    }
+
+    document.querySelectorAll('.role-select').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+            sendUpdate('/admin/users/' + this.dataset.userId + '/role', 'role', this.value, this);
+        });
+    });
+
+    document.querySelectorAll('.status-select').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+            sendUpdate('/admin/users/' + this.dataset.userId + '/status', 'status', this.value, this);
+        });
+    });
+})();
+</script>
 
 <%- include('../partials/footer') %>
