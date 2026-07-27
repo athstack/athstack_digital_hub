@@ -1,7 +1,7 @@
 ﻿USE athstack_digital_hub;
 
 INSERT INTO users (id, first_name, last_name, email, phone, password, role, status) VALUES
-(1, 'Athanas', 'Kayombo', 'versionversion1964@gmail.com', '+255782303971', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'admin', 'active'),
+(1, 'Athanas', 'Kayombo', 'versionversion1964@gmail.com', '+255782303971', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'super_admin', 'active'),
 (2, 'James', 'Mwangi', 'tech1@athstack.com', '+255712345678', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'technician', 'active'),
 (3, 'Sarah', 'Kimani', 'tech2@athstack.com', '+255723456789', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'technician', 'active'),
 (4, 'John', 'Doe', 'customer@athstack.com', '+255734567890', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'customer', 'active'),
