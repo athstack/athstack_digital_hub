@@ -1,11 +1,11 @@
 ﻿USE athstack_digital_hub;
 
 INSERT INTO users (id, first_name, last_name, email, phone, password, role, status) VALUES
-(1, 'Athanas', 'Kayombo', 'admin@athstack.com', '+255782303971', '$2a$10$rjFneKO7j6Afz.qeyKcUx.OECv5KvyQ1hH53FFnDv.D1jxHV/JLwi', 'admin', 'active'),
-(2, 'James', 'Mwangi', 'tech1@athstack.com', '+255712345678', '$2a$10$rjFneKO7j6Afz.qeyKcUx.OECv5KvyQ1hH53FFnDv.D1jxHV/JLwi', 'technician', 'active'),
-(3, 'Sarah', 'Kimani', 'tech2@athstack.com', '+255723456789', '$2a$10$rjFneKO7j6Afz.qeyKcUx.OECv5KvyQ1hH53FFnDv.D1jxHV/JLwi', 'technician', 'active'),
-(4, 'John', 'Doe', 'customer@athstack.com', '+255734567890', '$2a$10$rjFneKO7j6Afz.qeyKcUx.OECv5KvyQ1hH53FFnDv.D1jxHV/JLwi', 'customer', 'active'),
-(5, 'Grace', 'Otieno', 'customer2@athstack.com', '+255745678901', '$2a$10$rjFneKO7j6Afz.qeyKcUx.OECv5KvyQ1hH53FFnDv.D1jxHV/JLwi', 'customer', 'active');
+(1, 'Athanas', 'Kayombo', 'versionversion1964@gmail.com', '+255782303971', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'admin', 'active'),
+(2, 'James', 'Mwangi', 'tech1@athstack.com', '+255712345678', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'technician', 'active'),
+(3, 'Sarah', 'Kimani', 'tech2@athstack.com', '+255723456789', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'technician', 'active'),
+(4, 'John', 'Doe', 'customer@athstack.com', '+255734567890', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'customer', 'active'),
+(5, 'Grace', 'Otieno', 'customer2@athstack.com', '+255745678901', '$2a$10$9E4FOXKj6O2RhxilFSCmseHcvR3n1CBGVSTqe3l5Gosq3QMUErgOG', 'customer', 'active');
 
 INSERT INTO product_categories (id, name, slug, description, icon, sort_order) VALUES
 (1, 'USB Flash Drives', 'usb-flash-drives', 'High-speed portable storage devices', 'fa-usb', 1),
