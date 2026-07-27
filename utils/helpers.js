@@ -87,12 +87,26 @@ function getStatusBadgeClass(status) {
     draft: 'bg-secondary',
     published: 'bg-success',
     open: 'bg-info text-dark',
-    in_progress: 'bg-primary',
+    in_repair: 'bg-primary',
+    assigned: 'bg-info text-dark',
+    diagnosing: 'bg-info text-dark',
+    awaiting_parts: 'bg-warning text-dark',
     resolved: 'bg-success',
     closed: 'bg-secondary',
     paid: 'bg-success',
     unpaid: 'bg-warning text-dark',
-    failed: 'bg-danger'
+    failed: 'bg-danger',
+    confirmed: 'bg-info text-dark',
+    out_of_stock: 'bg-danger',
+    suspended: 'bg-danger',
+    archived: 'bg-secondary',
+    enrolling: 'bg-info text-dark',
+    dropped: 'bg-secondary',
+    hidden: 'bg-secondary',
+    flagged: 'bg-danger',
+    replied: 'bg-success',
+    read: 'bg-success',
+    unread: 'bg-warning text-dark'
   };
   return map[(status || '').toLowerCase()] || 'bg-secondary';
 }

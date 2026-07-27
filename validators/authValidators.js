@@ -22,7 +22,14 @@ const registerValidator = [
   body('phone')
     .optional({ values: 'falsy' })
     .trim()
-    .matches(/^(\+?234|0)[789][01]\d{8}$/).withMessage('Please provide a valid Nigerian phone number'),
+    .matches(/^[\d\s\-\(\)\+]{7,20}$/).withMessage('Please provide a valid phone number')
+    .custom((value) => {
+      const digits = value.replace(/[\s\-\(\)\+]/g, '');
+      if (digits.length < 7 || digits.length > 15) {
+        throw new Error('Phone number must be between 7 and 15 digits');
+      }
+      return true;
+    }),
 
   body('password')
     .notEmpty().withMessage('Password is required')

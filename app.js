@@ -11,7 +11,7 @@ const flash = require('connect-flash');
 
 const { generateToken } = require('./middleware/csrf');
 const { errorHandler } = require('./middleware/errorHandler');
-const { attachUser } = require('./middleware/auth');
+const { attachUser, refreshSessionRole } = require('./middleware/auth');
 
 const app = express();
 
@@ -78,6 +78,14 @@ const authLimiter = rateLimit({
   legacyHeaders: false
 });
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: 'Too many login attempts. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
@@ -87,6 +95,7 @@ const globalLimiter = rateLimit({
 });
 
 app.use('/auth', authLimiter);
+app.use('/auth/login', loginLimiter);
 app.use(globalLimiter);
 
 // ---------------------------------------------------------------------------
@@ -114,8 +123,13 @@ app.set('views', path.join(__dirname, 'views'));
 // ---------------------------------------------------------------------------
 // Session
 // ---------------------------------------------------------------------------
+if (!process.env.SESSION_SECRET) {
+  console.error('FATAL: SESSION_SECRET environment variable is not set. Refusing to start without a secure session secret.');
+  process.exit(1);
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'athstack_fallback_secret_change_me',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -135,6 +149,7 @@ app.use(flash());
 // Global template variables + CSRF + user attachment
 // ---------------------------------------------------------------------------
 app.use(attachUser);
+app.use(refreshSessionRole);
 app.use(generateToken);
 
 app.use((req, res, next) => {

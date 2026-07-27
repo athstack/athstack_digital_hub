@@ -17,7 +17,7 @@ CREATE TABLE `users` (
     `country` VARCHAR(2) DEFAULT NULL,
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('customer','technician','admin','super_admin') NOT NULL DEFAULT 'customer',
-    `status` ENUM('active','suspended','pending') NOT NULL DEFAULT 'active',
+    `status` ENUM('active','inactive','suspended','pending') NOT NULL DEFAULT 'active',
     `avatar` VARCHAR(500) DEFAULT NULL,
     `bio` TEXT DEFAULT NULL,
     `specialization` VARCHAR(255) DEFAULT NULL,

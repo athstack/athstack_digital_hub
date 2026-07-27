@@ -48,6 +48,6 @@ router.post('/forgot',
   authController.postForgot
 );
 
-router.get('/logout', authController.logout);
+router.post('/logout', validateCsrf, authController.logout);
 
 module.exports = router;

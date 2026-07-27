@@ -26,7 +26,11 @@ exports.postLogin = async (req, res, next) => {
     }
 
     const user = await UserModel.findByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    const dummyHash = '$2a$10$abcdefghijklmnopqrstuuabcdefghijklmnopqrstuuab';
+    const hashToCheck = user ? user.password : dummyHash;
+    const passwordMatch = await bcrypt.compare(password, hashToCheck);
+
+    if (!user || !passwordMatch) {
       return res.render('auth/login', {
         title: 'Access Authorization - Athstack',
         error: 'Invalid email or password.'
@@ -40,21 +44,27 @@ exports.postLogin = async (req, res, next) => {
       });
     }
 
-    req.session.userId = user.id;
-    req.session.userName = `${user.first_name} ${user.last_name}`;
-    req.session.userEmail = user.email;
-    req.session.userRole = user.role;
-
     const returnTo = req.session.returnTo;
-    delete req.session.returnTo;
+    req.session.regenerate((err) => {
+      if (err) return next(err);
 
-    if (['admin', 'super_admin'].includes(user.role)) {
-      return res.redirect(returnTo || '/admin');
-    }
-    if (user.role === 'technician') {
-      return res.redirect(returnTo || '/technician');
-    }
-    res.redirect(returnTo || '/dashboard');
+      req.session.userId = user.id;
+      req.session.userName = `${user.first_name} ${user.last_name}`;
+      req.session.userEmail = user.email;
+      req.session.userRole = user.role;
+
+      req.session.save((saveErr) => {
+        if (saveErr) return next(saveErr);
+
+        if (['admin', 'super_admin'].includes(user.role)) {
+          return res.redirect(returnTo || '/admin');
+        }
+        if (user.role === 'technician') {
+          return res.redirect(returnTo || '/technician');
+        }
+        res.redirect(returnTo || '/dashboard');
+      });
+    });
   } catch (err) {
     next(err);
   }
@@ -113,13 +123,23 @@ exports.postRegister = async (req, res, next) => {
     });
 
     const newUser = await UserModel.findByEmail(email);
-    req.session.userId = newUser.id;
-    req.session.userName = `${first_name} ${last_name}`;
-    req.session.userEmail = email;
-    req.session.userRole = 'customer';
 
-    req.flash('success', 'Account created successfully. Welcome to Athstack Digital Hub!');
-    res.redirect('/dashboard');
+    const returnTo = req.session.returnTo;
+    req.session.regenerate((err) => {
+      if (err) return next(err);
+
+      req.session.userId = newUser.id;
+      req.session.userName = `${first_name} ${last_name}`;
+      req.session.userEmail = email;
+      req.session.userRole = 'customer';
+
+      req.session.save((saveErr) => {
+        if (saveErr) return next(saveErr);
+
+        req.flash('success', 'Account created successfully. Welcome to Athstack Digital Hub!');
+        res.redirect(returnTo || '/dashboard');
+      });
+    });
   } catch (err) {
     next(err);
   }

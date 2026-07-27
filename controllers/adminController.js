@@ -93,14 +93,35 @@ exports.updateUserRole = async (req, res, next) => {
     const userId = parseInt(req.params.id);
     const { role } = req.body;
 
+    if (isNaN(userId)) {
+      req.flash('error', 'Invalid user ID.');
+      return res.redirect('/admin/users');
+    }
+
     const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
     if (!validRoles.includes(role)) {
       req.flash('error', 'Invalid role.');
       return res.redirect('/admin/users');
     }
 
-    if (userId === req.session.userId) {
+    if (userId === Number(req.session.userId)) {
       req.flash('error', 'You cannot change your own role.');
+      return res.redirect('/admin/users');
+    }
+
+    if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'Only super administrators can assign the super admin role.');
+      return res.redirect('/admin/users');
+    }
+
+    if (role === 'admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'Only super administrators can assign the admin role.');
+      return res.redirect('/admin/users');
+    }
+
+    const targetUser = await UserModel.findById(userId);
+    if (!targetUser) {
+      req.flash('error', 'User not found.');
       return res.redirect('/admin/users');
     }
 
@@ -117,14 +138,25 @@ exports.updateUserStatus = async (req, res, next) => {
     const userId = parseInt(req.params.id);
     const { status } = req.body;
 
+    if (isNaN(userId)) {
+      req.flash('error', 'Invalid user ID.');
+      return res.redirect('/admin/users');
+    }
+
     const validStatuses = ['active', 'inactive', 'suspended'];
     if (!validStatuses.includes(status)) {
       req.flash('error', 'Invalid status.');
       return res.redirect('/admin/users');
     }
 
-    if (userId === req.session.userId) {
+    if (userId === Number(req.session.userId)) {
       req.flash('error', 'You cannot change your own status.');
+      return res.redirect('/admin/users');
+    }
+
+    const targetUser = await UserModel.findById(userId);
+    if (!targetUser) {
+      req.flash('error', 'User not found.');
       return res.redirect('/admin/users');
     }
 
@@ -201,7 +233,7 @@ exports.assignTechnician = async (req, res, next) => {
 
     await pool.execute(
       'UPDATE repair_requests SET technician_id = ?, status = ? WHERE id = ?',
-      [parseInt(technician_id), 'in_progress', repairId]
+      [parseInt(technician_id), 'in_repair', repairId]
     );
 
     req.flash('success', 'Technician assigned to repair request.');
@@ -237,7 +269,7 @@ exports.updateOrderStatus = async (req, res, next) => {
     const orderId = parseInt(req.params.id);
     const { status } = req.body;
 
-    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
       req.flash('error', 'Invalid status.');
       return res.redirect('/admin/orders');

@@ -29,8 +29,11 @@
             <i class="fa-solid fa-user-pen me-2"></i> Profile
         </a>
         <hr class="border-secondary opacity-25 my-2">
-        <a class="nav-link rounded text-muted" href="/auth/logout">
-            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-        </a>
+        <form method="POST" action="/auth/logout" class="d-inline w-100">
+            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+            <button type="submit" class="nav-link rounded text-muted w-100 text-start border-0 bg-transparent">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+            </button>
+        </form>
     </nav>
 </div>

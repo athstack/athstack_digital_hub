@@ -128,35 +128,28 @@ exports.checkout = async (req, res, next) => {
     }
 
     let totalAmount = 0;
-    const orderItems = products.map(product => {
+    const items = products.map(product => {
       const quantity = cart[product.id] || 1;
       const itemTotal = product.price * quantity;
       totalAmount += itemTotal;
-      return { product_id: product.id, quantity, price: product.price, name: product.name };
+      return {
+        product_id: product.id,
+        product_name: product.name,
+        product_image: product.main_image || null,
+        quantity,
+        unit_price: product.price,
+        total_price: itemTotal
+      };
     });
 
-    const [orderResult] = await pool.execute(
-      'INSERT INTO orders (user_id, total_amount, order_status, created_at) VALUES (?, ?, ?, NOW())',
-      [req.session.userId, totalAmount, 'pending']
-    );
-
-    const orderId = orderResult.insertId;
-
-    for (const item of orderItems) {
-      await pool.execute(
-        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
-        [orderId, item.product_id, item.quantity, item.price]
-      );
-
-      await pool.execute(
-        'UPDATE products SET stock_quantity = GREATEST(stock_quantity - ?, 0) WHERE id = ?',
-        [item.quantity, item.product_id]
-      );
-    }
+    const order = await OrderModel.create(req.session.userId, {
+      total_amount: totalAmount,
+      items
+    });
 
     req.session.cart = {};
 
-    req.flash('success', `Order #${orderId} placed successfully!`);
+    req.flash('success', `Order #${order.id} placed successfully!`);
     res.redirect('/dashboard/orders');
   } catch (err) {
     next(err);

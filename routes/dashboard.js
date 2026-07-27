@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const customerController = require('../controllers/customerController');
-const { isAuthenticated } = require('../middleware/auth');
+const { isCustomer } = require('../middleware/auth');
 const { validateCsrf } = require('../middleware/csrf');
 const { uploadProfileImage, handleUploadError } = require('../middleware/upload');
 
-router.use(isAuthenticated);
+router.use(isCustomer);
 
 router.get('/', customerController.getDashboard);
 router.get('/orders', customerController.getOrders);

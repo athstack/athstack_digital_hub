@@ -1,6 +1,7 @@
 /**
  * Authentication and authorization middleware
  */
+const { queryOne } = require('../config/db');
 
 /**
  * Attaches user to req if session exists (non-blocking)
@@ -20,6 +21,43 @@ function attachUser(req, res, next) {
     req.user = null;
   }
   next();
+}
+
+/**
+ * Re-validates session role against the database.
+ * If the user's role has changed (promoted/demoted), the session is updated immediately.
+ * Also blocks users whose account has been suspended.
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+async function refreshSessionRole(req, res, next) {
+  if (!req.session || !req.session.userId) {
+    return next();
+  }
+  try {
+    const user = await queryOne('SELECT role, status FROM users WHERE id = ?', [req.session.userId]);
+    if (!user) {
+      req.session.destroy(() => {
+        res.redirect('/auth/login');
+      });
+      return;
+    }
+    if (user.status !== 'active') {
+      req.session.destroy(() => {
+        req.flash('error', 'Your account has been suspended.');
+        res.redirect('/auth/login');
+      });
+      return;
+    }
+    if (req.session.userRole !== user.role) {
+      req.session.userRole = user.role;
+      if (req.user) req.user.role = user.role;
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
 
 /**
@@ -136,6 +174,7 @@ function isGuest(req, res, next) {
 
 module.exports = {
   attachUser,
+  refreshSessionRole,
   isAuthenticated,
   isCustomer,
   isTechnician,
