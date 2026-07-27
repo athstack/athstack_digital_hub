@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<div class="container py-5">
+    <h2 class="text-white mb-4">Edit User: <%= user.first_name + ' ' + user.last_name %></h2>
+    
+    <div class="bg-dark p-4 rounded text-white">
+        <form action="/user/updateProfile" method="POST">
+            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+            <input type="hidden" name="id" value="<%= user.id %>">
+            
+            <div class="mb-3">
+                <label>First Name</label>
+                <input type="text" name="first_name" class="form-control" value="<%= user.first_name %>">
+            </div>
+            
+            <div class="mb-3">
+                <label>Last Name</label>
+                <input type="text" name="last_name" class="form-control" value="<%= user.last_name %>">
+            </div>
+            
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control" value="<%= user.email %>">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/admin/users" class="btn btn-secondary">Back to Directory</a>
+        </form>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

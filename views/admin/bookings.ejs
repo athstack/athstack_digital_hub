@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a href="/admin" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    <h1>Maintenance Queue</h1>
+    
+    <% if (!bookings || bookings.length === 0) { %>
+        <div class="card bg-dark border-secondary text-center p-5 mt-4">
+            <div class="card-body">
+                <i class="fa-solid fa-clipboard-list fa-3x text-secondary mb-3"></i>
+                <h3 class="text-white">Maintenance Queue Clear</h3>
+                <p class="text-muted">No active maintenance tasks are currently registered in this session view.</p>
+            </div>
+        </div>
+    <% } else { %>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Client Identity</th>
+                    <th>Subsystem Node</th>
+                    <th>Target Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% bookings.forEach(function(booking) { %>
+                    <tr>
+                        <td><%= booking.id %></td>
+                        <td><%= booking.customer_name %></td>
+                        <td><%= booking.device_details %></td>
+                        <td><%= booking.appointment_date %></td>
+                        <td>
+                            <span class="badge <%= booking.status === 'pending' ? 'bg-warning' : 'bg-success' %>">
+                                <%= booking.status %>
+                            </span>
+                        </td>
+                        <td>
+                            <form action="/admin/updateBookingStatus" method="POST" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <input type="hidden" name="id" value="<%= booking.id %>">
+                                
+                                <% if (booking.status === 'pending') { %>
+                                    <button type="submit" name="status" value="approved" class="btn btn-sm btn-primary">Approve</button>
+                                <% } %>
+                                
+                                <button type="submit" name="status" value="completed" class="btn btn-sm btn-success">Complete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>

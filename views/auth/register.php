@@ -1,0 +1,67 @@
+<div class="container py-5 my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger bg-dark border-danger text-danger small mb-4" role="alert">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i><?= htmlspecialchars($error); ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="glass-card p-4 p-md-5 border border-secondary">
+                <div class="text-center mb-4">
+                    <span class="text-primary fw-bold text-uppercase tracking-widest small">Infrastructure Join Portal</span>
+                    <h3 class="fw-bold text-white mt-1">Create Account Node</h3>
+                    <p class="text-muted small">Register your metrics to access e-commerce shipping trackers and procurement tools.</p>
+                </div>
+
+                <form action="<?= URLROOT; ?>/auth/register" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label text-muted small">First Name</label>
+                            <input type="text" name="first_name" class="form-control bg-dark border-secondary text-white" required placeholder="John">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label text-muted small">Last Name</label>
+                            <input type="text" name="last_name" class="form-control bg-dark border-secondary text-white" required placeholder="Doe">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Email Connection Address</label>
+                        <input type="email" name="email" class="form-control bg-dark border-secondary text-white" required placeholder="johndoe@athstack.com">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Contact Phone Line</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fa-solid fa-phone"></i></span>
+                            <input type="tel" name="phone" class="form-control bg-dark border-secondary text-white" required placeholder="0782303971">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <label class="form-label text-muted small">Security Password</label>
+                            <input type="password" name="password" class="form-control bg-dark border-secondary text-white" required placeholder="••••••••" minlength="8">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label text-muted small">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control bg-dark border-secondary text-white" required placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-premium-primary w-100 rounded-pill py-2 mb-3">
+                        <i class="fa-solid fa-user-plus me-2"></i>Initialize Account Profile
+                    </button>
+                    
+                    <div class="text-center">
+                        <span class="text-muted small">Already mapped to the system? </span>
+                        <a href="<?= URLROOT; ?>/auth/login" class="text-primary small text-decoration-none fw-bold">Sign In Instead</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-dark: #0B0F19;
+    --bg-card: rgba(20, 27, 45, 0.65);
+    --primary-blue: #2563EB;
+    --primary-blue-hover: #1D4ED8;
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --text-main: #F3F4F6;
+    --text-muted: #9CA3AF;
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-stack);
+    overflow-x: hidden;
+}
+
+/* Glassmorphism Premium Utility Framework Cards */
+.glass-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(37, 99, 235, 0.4);
+}
+
+/* Premium Sticky Navigation */
+.navbar-custom {
+    background: rgba(11, 15, 25, 0.8) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-glass);
+    transition: all 0.3s ease;
+}
+
+/* Apple-style Custom Button Elements */
+.btn-premium-primary {
+    background-color: var(--primary-blue);
+    color: white;
+    font-weight: 500;
+    border-radius: 30px;
+    padding: 10px 26px;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-premium-primary:hover {
+    background-color: var(--primary-blue-hover);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+    color: white;
+}
+
+.btn-premium-outline {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    padding: 10px 26px;
+    transition: all 0.3s ease;
+}
+
+.btn-premium-outline:hover {
+    background: white;
+    color: var(--bg-dark);
+}
+
+/* Dynamic Live Search Global Dropdown styling context */
+.search-results-tray {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #141B2D;
+    border: 1px solid var(--border-glass);
+    border-radius: 8px;
+    z-index: 1050;
+    max-height: 350px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-decoration: none;
+    color: var(--text-main);
+    transition: background 0.2s ease;
+}
+
+.search-suggestion-item:hover {
+    background: rgba(37, 99, 235, 0.15);
+    color: white;
+}
+
+/* Floating Elements Layout */
+.whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    color: white;
+}

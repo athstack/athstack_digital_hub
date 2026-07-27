@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="/shop" class="text-muted text-decoration-none small">
+                <i class="fa-solid fa-arrow-left me-2"></i>Back to Hardware Inventory
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-md-6">
+            <div class="glass-card p-5 text-center border border-secondary bg-dark-smooth">
+                <% if (product.main_image) { %>
+                    <img src="/uploads/products/<%= product.main_image %>" alt="<%= product.name %>" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
+                <% } else { %>
+                    <i class="fa-solid fa-microchip text-primary display-1 py-5 opacity-50"></i>
+                <% } %>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2"><%= product.category_name || 'Component' %></span>
+            <h1 class="fw-bold text-white mb-2"><%= product.name || 'Product Asset' %></h1>
+            
+            <div class="fs-3 fw-bold text-success mb-4">
+                $<%= parseFloat(product.price || 0).toFixed(2) %>
+            </div>
+            
+            <p class="text-muted mb-4"><%= product.description || 'No resource breakdown provided.' %></p>
+            
+            <form action="/cart/add" method="POST" class="mt-4">
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <input type="hidden" name="product_id" value="<%= product.id || 0 %>">
+                
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="input-group styling-quantity" style="width: 130px;">
+                        <input type="number" name="quantity" class="form-control bg-dark border-secondary text-white text-center" value="1" min="1">
+                    </div>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill px-4 flex-grow-1 py-2">
+                        <i class="fa-solid fa-cart-plus me-2"></i>Stage to Procurement Cart
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

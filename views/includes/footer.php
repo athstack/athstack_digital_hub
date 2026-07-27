@@ -1,0 +1,33 @@
+<footer class="border-top rgba(255,255,255,0.08) bg-black pt-5 pb-3 mt-5">
+    <div class="container text-center text-md-start text-muted small">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <h6 class="text-white fw-bold mb-3">ATHSTACK DIGITAL HUB</h6>
+                <p>Premium dark theme tech provisioning framework, system maintenance pipelines, and modern corporate training protocols.</p>
+            </div>
+            <div class="col-md-3 offset-md-1">
+                <h6 class="text-white fw-bold mb-3">Support Desks</h6>
+                <p><i class="fa-solid fa-envelope text-primary me-2"></i> info@athstack.com</p>
+                <p><i class="fa-solid fa-phone text-primary me-2"></i> +255 26 220033</p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-white fw-bold mb-3">Operating Hours</h6>
+                <p>Monday - Friday: 08:00 AM - 06:00 PM</p>
+                <p>Saturday: 09:00 AM - 02:00 PM</p>
+            </div>
+        </div>
+        <hr class="mt-4 border-secondary opacity-25">
+        <p class="text-center mb-0 text-muted">&copy; <?= date('Y'); ?> Athstack Digital Hub. All engineering rights reserved.</p>
+    </div>
+</footer>
+
+<!-- WhatsApp Float Widget -->
+<a href="https://wa.me/25526220033" class="whatsapp-float" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- JavaScript Frameworks and Logic Engine Hook -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= URLROOT; ?>/assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+node_modules/
+.env
+logs/
+*.log
+.DS_Store
+Thumbs.db
+uploads/products/*
+uploads/receipts/*
+uploads/services/*
+!uploads/products/.gitkeep
+!uploads/receipts/.gitkeep
+!uploads/services/.gitkeep
+!uploads/products/index.html
+!uploads/receipts/index.html
+!uploads/services/index.html
