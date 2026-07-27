@@ -39,11 +39,37 @@
                                 </div>
                             </div>
                             <div class="col-12">
+                                <label class="form-label">Country *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
+                                    <select name="country" id="countrySelect" class="form-select" required>
+                                        <option value="">Select your country</option>
+                                        <option value="NG" data-code="+234" data-placeholder="801 234 5678">Nigeria</option>
+                                        <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX">Tanzania</option>
+                                        <option value="KE" data-code="+254" data-placeholder="7XX XXX XXX">Kenya</option>
+                                        <option value="UG" data-code="+256" data-placeholder="7XX XXX XXX">Uganda</option>
+                                        <option value="ZA" data-code="+27" data-placeholder="8X XXX XXXX">South Africa</option>
+                                        <option value="GH" data-code="+233" data-placeholder="2X XXX XXXX">Ghana</option>
+                                        <option value="EG" data-code="+20" data-placeholder="1X XXX XXXX">Egypt</option>
+                                        <option value="RW" data-code="+250" data-placeholder="7XX XXX XXX">Rwanda</option>
+                                        <option value="ET" data-code="+251" data-placeholder="9XX XXX XXXX">Ethiopia</option>
+                                        <option value="CD" data-code="+243" data-placeholder="8X XXX XXXX">DR Congo</option>
+                                        <option value="CM" data-code="+237" data-placeholder="6XX XXX XXX">Cameroon</option>
+                                        <option value="SN" data-code="+221" data-placeholder="7X XXX XX XX">Senegal</option>
+                                        <option value="US" data-code="+1" data-placeholder="(XXX) XXX-XXXX">United States</option>
+                                        <option value="GB" data-code="+44" data-placeholder="7XXX XXXXXX">United Kingdom</option>
+                                        <option value="IN" data-code="+91" data-placeholder="XXXXX XXXXX">India</option>
+                                        <option value="CN" data-code="+86" data-placeholder="1XX XXXX XXXX">China</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
                                 <label class="form-label">Phone Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
-                                    <input type="tel" name="phone" class="form-control" placeholder="+255 7XX XXX XXX">
+                                    <span class="input-group-text" id="phoneCode">+255</span>
+                                    <input type="tel" name="phone" id="phoneInput" class="form-control" placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number">
                                 </div>
+                                <div class="form-text text-muted small">Enter your phone number without the country code</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Password *</label>
@@ -69,3 +95,24 @@
 </section>
 
 <%- include('../partials/footer') %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('countrySelect');
+    const phoneCode = document.getElementById('phoneCode');
+    const phoneInput = document.getElementById('phoneInput');
+
+    countrySelect.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        if (selected.value) {
+            const code = selected.getAttribute('data-code');
+            const placeholder = selected.getAttribute('data-placeholder');
+            phoneCode.textContent = code;
+            phoneInput.placeholder = placeholder;
+        } else {
+            phoneCode.textContent = '+255';
+            phoneInput.placeholder = '7XX XXX XXX';
+        }
+    });
+});
+</script>

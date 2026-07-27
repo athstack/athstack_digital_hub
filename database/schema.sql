@@ -14,6 +14,7 @@ CREATE TABLE `users` (
     `last_name` VARCHAR(100) NOT NULL,
     `email` VARCHAR(255) NOT NULL UNIQUE,
     `phone` VARCHAR(20) DEFAULT NULL,
+    `country` VARCHAR(2) DEFAULT NULL,
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('customer','technician','admin','super_admin') NOT NULL DEFAULT 'customer',
     `status` ENUM('active','suspended','pending') NOT NULL DEFAULT 'active',

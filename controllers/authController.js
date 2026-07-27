@@ -1,6 +1,12 @@
 const bcrypt = require('bcryptjs');
 const UserModel = require('../models/UserModel');
 
+const COUNTRY_DIAL_CODES = {
+  NG: '+234', TZ: '+255', KE: '+254', UG: '+256', ZA: '+27',
+  GH: '+233', EG: '+20', RW: '+250', ET: '+251', CD: '+243',
+  CM: '+237', SN: '+221', US: '+1', GB: '+44', IN: '+91', CN: '+86'
+};
+
 exports.getLogin = (req, res) => {
   res.render('auth/login', {
     title: 'Access Authorization - Athstack',
@@ -63,9 +69,9 @@ exports.getRegister = (req, res) => {
 
 exports.postRegister = async (req, res, next) => {
   try {
-    const { first_name, last_name, email, phone, password, confirm_password } = req.body;
+    const { first_name, last_name, email, phone, country, password, confirm_password } = req.body;
 
-    if (!first_name || !last_name || !email || !password) {
+    if (!first_name || !last_name || !email || !password || !country) {
       return res.render('auth/register', {
         title: 'Initialize Profile Node - Athstack',
         error: 'All required fields must be filled out.'
@@ -95,11 +101,13 @@ exports.postRegister = async (req, res, next) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
+    const fullPhone = phone ? `${COUNTRY_DIAL_CODES[country] || ''}${phone.replace(/[\s\-\(\)]/g, '')}` : null;
     await UserModel.create({
       first_name,
       last_name,
       email,
-      phone: phone || null,
+      phone: fullPhone,
+      country,
       password: hashed,
       role: 'customer'
     });

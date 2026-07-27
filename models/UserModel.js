@@ -9,18 +9,18 @@ class UserModel {
     return queryOne('SELECT * FROM users WHERE id = ?', [id]);
   }
 
-  async create({ first_name, last_name, email, phone, password, role = 'customer' }) {
+  async create({ first_name, last_name, email, phone, country, password, role = 'customer' }) {
     const result = await query(
-      'INSERT INTO users (first_name, last_name, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?)',
-      [first_name, last_name, email, phone, password, role]
+      'INSERT INTO users (first_name, last_name, email, phone, country, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [first_name, last_name, email, phone, country || null, password, role]
     );
-    return { id: result.insertId, first_name, last_name, email, phone, role };
+    return { id: result.insertId, first_name, last_name, email, phone, country, role };
   }
 
-  async updateProfile(id, { first_name, last_name, email, phone, avatar }) {
+  async updateProfile(id, { first_name, last_name, email, phone, country, avatar }) {
     await query(
-      'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, avatar = ? WHERE id = ?',
-      [first_name, last_name, email, phone, avatar, id]
+      'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, country = ?, avatar = ? WHERE id = ?',
+      [first_name, last_name, email, phone, country || null, avatar, id]
     );
     return this.findById(id);
   }
@@ -62,7 +62,7 @@ class UserModel {
     const offset = (page - 1) * limit;
 
     const rows = await query(
-      `SELECT id, first_name, last_name, email, phone, role, status, avatar, bio, specialization, created_at, updated_at FROM users ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      `SELECT id, first_name, last_name, email, phone, country, role, status, avatar, bio, specialization, created_at, updated_at FROM users ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
       [...params, limit, offset]
     );
 
