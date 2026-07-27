@@ -109,36 +109,12 @@ exports.createProduct = async (req, res, next) => {
       slug,
       description: description || '',
       price: parseFloat(price),
+      discount_price: discount_price ? parseFloat(discount_price) : null,
       stock_quantity: parseInt(stock_quantity) || 0,
       main_image: mainImage,
-      technician_id: req.session.userId
+      technician_id: req.session.userId,
+      sku: sku || null
     });
-
-    if (sku) {
-      const [lastProduct] = await pool.execute(
-        'SELECT id FROM products WHERE slug = ? LIMIT 1',
-        [slug]
-      );
-      if (lastProduct.length > 0) {
-        await pool.execute(
-          'UPDATE products SET sku = ? WHERE id = ?',
-          [sku, lastProduct[0].id]
-        );
-      }
-    }
-
-    if (discount_price) {
-      const [lastProduct] = await pool.execute(
-        'SELECT id FROM products WHERE slug = ? LIMIT 1',
-        [slug]
-      );
-      if (lastProduct.length > 0) {
-        await pool.execute(
-          'UPDATE products SET discount_price = ? WHERE id = ?',
-          [parseFloat(discount_price), lastProduct[0].id]
-        );
-      }
-    }
 
     req.flash('success', 'Product created successfully.');
     res.redirect('/technician/products');
@@ -198,19 +174,11 @@ exports.updateProduct = async (req, res, next) => {
       name: name || product.name,
       description: description || '',
       price: parseFloat(price) || product.price,
+      discount_price: discount_price !== undefined ? (discount_price ? parseFloat(discount_price) : null) : product.discount_price,
       stock_quantity: parseInt(stock_quantity) || 0,
-      main_image: mainImage
+      main_image: mainImage,
+      sku: sku !== undefined ? (sku || null) : product.sku
     });
-
-    if (sku !== undefined) {
-      await pool.execute('UPDATE products SET sku = ? WHERE id = ?', [sku, productId]);
-    }
-    if (discount_price !== undefined) {
-      await pool.execute(
-        'UPDATE products SET discount_price = ? WHERE id = ?',
-        [discount_price ? parseFloat(discount_price) : null, productId]
-      );
-    }
 
     req.flash('success', 'Product updated successfully.');
     res.redirect('/technician/products');

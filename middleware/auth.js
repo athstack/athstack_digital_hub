@@ -127,9 +127,9 @@ function isGuest(req, res, next) {
       return res.redirect('/admin');
     }
     if (role === 'technician') {
-      return res.redirect('/user');
+      return res.redirect('/technician');
     }
-    return res.redirect('/user');
+    return res.redirect('/dashboard');
   }
   next();
 }

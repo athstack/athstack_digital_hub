@@ -4,12 +4,12 @@ logs/
 *.log
 .DS_Store
 Thumbs.db
-uploads/products/*
-uploads/receipts/*
-uploads/services/*
-!uploads/products/.gitkeep
-!uploads/receipts/.gitkeep
-!uploads/services/.gitkeep
-!uploads/products/index.html
-!uploads/receipts/index.html
-!uploads/services/index.html
+
+# Uploaded files (user content)
+public/uploads/products/*
+public/uploads/receipts/*
+public/uploads/services/*
+public/uploads/profiles/*
+public/uploads/courses/*
+!public/uploads/**/.gitkeep
+!public/uploads/**/index.html

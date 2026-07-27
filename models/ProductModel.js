@@ -102,7 +102,7 @@ class ProductModel {
   }
 
   async create(data) {
-    const fields = ['name', 'slug', 'description', 'price', 'discount_price', 'stock_quantity', 'main_image', 'status', 'featured'];
+    const fields = ['name', 'slug', 'description', 'price', 'discount_price', 'stock_quantity', 'main_image', 'status', 'featured', 'sku'];
     const cols = [];
     const vals = [];
     const params = [];
@@ -125,7 +125,7 @@ class ProductModel {
   }
 
   async update(id, data) {
-    const fields = ['name', 'slug', 'description', 'price', 'discount_price', 'stock_quantity', 'main_image', 'status', 'featured', 'technician_id', 'category_id'];
+    const fields = ['name', 'slug', 'description', 'price', 'discount_price', 'stock_quantity', 'main_image', 'status', 'featured', 'technician_id', 'category_id', 'sku'];
     const sets = [];
     const params = [];
 
