@@ -57,8 +57,8 @@ INSERT INTO products (technician_id, category_id, name, slug, description, price
 INSERT INTO settings (setting_key, setting_value, setting_group) VALUES
 ('site_name', 'Athstack Digital Hub', 'general'),
 ('contact_email', 'info@athstack.com', 'general'),
-('contact_phone', '+255 26 220033', 'general'),
-('whatsapp_number', '25526220033', 'general'),
+('contact_phone', '+255 782 303 971', 'general'),
+('whatsapp_number', '255782303971', 'general'),
 ('business_hours', 'Mon-Fri: 08:00 AM - 06:00 PM | Sat: 09:00 AM - 02:00 PM', 'general'),
 ('currency', 'USD', 'payment'),
 ('currency_symbol', '$', 'payment');
