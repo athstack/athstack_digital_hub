@@ -1,0 +1,30 @@
+<div class="glass-card no-lift p-3 mb-4">
+    <div class="d-flex align-items-center mb-3 px-2">
+        <div class="rounded-circle bg-info d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+            <i class="fa-solid fa-microchip text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h6 class="mb-0 text-white"><%= user ? user.name : 'Technician' %></h6>
+            <small class="text-muted">Technician Panel</small>
+        </div>
+    </div>
+    <hr class="border-secondary opacity-25 my-2">
+    <nav class="nav flex-column gap-1">
+        <a class="nav-link rounded<%= currentPath === '/technician' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician">
+            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+        </a>
+        <a class="nav-link rounded<%= currentPath.startsWith('/technician/products') ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/products">
+            <i class="fa-solid fa-box-open me-2"></i> My Products
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/technician/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/repairs">
+            <i class="fa-solid fa-wrench me-2"></i> Repairs
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/technician/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/orders">
+            <i class="fa-solid fa-receipt me-2"></i> Orders
+        </a>
+        <hr class="border-secondary opacity-25 my-2">
+        <a class="nav-link rounded text-muted" href="/auth/logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+        </a>
+    </nav>
+</div>

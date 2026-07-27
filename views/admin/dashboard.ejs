@@ -1,118 +1,132 @@
 <%- include('../partials/header') %>
 
-<div class="container-fluid py-5 px-md-5">
-    <div class="glass-card p-4 mb-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div>
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Root Operations Core</span>
-            <h1 class="fw-bold text-white mt-1 mb-0">Athstack Command Deck</h1>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-premium-outline btn-sm" onclick="location.reload();"><i class="fa-solid fa-arrows-rotate me-2"></i>Sync Telemetry</button>
-            <a href="/auth/logout" class="btn btn-danger btn-sm rounded-pill px-3">Log Out</a>
-        </div>
-    </div>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
 
-    <div class="row g-4 mb-5">
-        <div class="col-xl-3 col-md-6">
-            <div class="glass-card p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-medium uppercase">Settled Gross Income</span>
-                    <div class="text-success fs-4"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
-                </div>
-                <h2 class="text-white fw-bold mb-1">$<%= parseFloat(metrics.revenue).toFixed(2) %></h2>
-                <span class="text-muted small"><span class="text-success"><i class="fa-solid fa-arrow-trend-up me-1"></i>Live</span> billing metrics state</span>
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
             </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="glass-card p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-medium uppercase">Pending Procurement Orders</span>
-                    <div class="text-warning fs-4"><i class="fa-solid fa-boxes-packing"></i></div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Admin Control Matrix</h2>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-dollar-sign fa-2x text-success mb-2"></i>
+                            <h4 class="text-white fw-bold mb-0"><%= formatCurrency(metrics.revenue) %></h4>
+                            <p class="text-muted small mb-0">Revenue</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.total_clients %></h3>
+                            <p class="text-muted small mb-0">Customers</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-box-open fa-2x text-info mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.total_products %></h3>
+                            <p class="text-muted small mb-0">Products</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-wrench fa-2x text-warning mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.pending_bookings %></h3>
+                            <p class="text-muted small mb-0">Pending Repairs</p>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-white fw-bold mb-1"><%= metrics.pending_orders %></h2>
-                <span class="text-muted small">Awaiting inventory packaging allocation</span>
-            </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="glass-card p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-medium uppercase">Pending Hardware Tickets</span>
-                    <div class="text-primary fs-4"><i class="fa-solid fa-bolt-lightning"></i></div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-muted">Total Orders</small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.total_orders %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-muted">Pending Orders</small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.pending_orders %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-muted">Unread Messages</small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.unread_messages %></h5>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-white fw-bold mb-1"><%= metrics.pending_bookings %></h2>
-                <span class="text-muted small">Open diagnostic bench requests</span>
-            </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="glass-card p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-medium uppercase">Registered Users Node</span>
-                    <div class="text-info fs-4"><i class="fa-solid fa-users-gear"></i></div>
-                </div>
-                <h2 class="text-white fw-bold mb-1"><%= metrics.total_clients %></h2>
-                <span class="text-muted small">Active customer account profiles</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-lg-3">
-            <div class="glass-card p-4 mb-4">
-                <h6 class="text-white fw-bold mb-4 px-2">Operational Controls</h6>
-                <div class="list-group list-group-flush bg-transparent admin-management-links">
-                    <a href="/admin/products" class="list-group-item bg-transparent text-white border-0 py-2"><i class="fa-solid fa-tag text-primary me-3"></i>Manage Inventory Items</a>
-                    <a href="/admin/bookings" class="list-group-item bg-transparent text-white border-0 py-2"><i class="fa-solid fa-screwdriver-wrench text-primary me-3"></i>Maintenance Queue</a>
-                    <a href="/admin/training" class="list-group-item bg-transparent text-white border-0 py-2"><i class="fa-solid fa-scroll text-primary me-3"></i>Training Academy Modules</a>
-                    <a href="/admin/users" class="list-group-item bg-transparent text-white border-0 py-2"><i class="fa-solid fa-user-gear text-primary me-3"></i>User Directories</a>
-                    <a href="/admin/inbox" class="list-group-item bg-transparent text-white border-0 py-2"><i class="fa-solid fa-envelope text-primary me-3"></i>Manage Contact Messages</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-9">
-            <div class="glass-card p-4 h-100">
-                <h5 class="fw-bold text-white mb-4"><i class="fa-solid fa-clipboard-list text-primary me-3"></i>Recent Service Bench Registrations</h5>
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle mb-0 small text-muted">
-                        <thead class="table-light text-dark fw-bold">
-                            <tr>
-                                <th>Ticket</th>
-                                <th>Client Identity Details</th>
-                                <th>Assigned Subsystem Node</th>
-                                <th>Target Date Window</th>
-                                <th>Action Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (!recentBookings || recentBookings.length === 0) { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-4">No active maintenance tasks registered inside this session view.</td>
-                                </tr>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="glass-card p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-wrench me-2 text-primary"></i>Recent Repairs</h5>
+                                <a href="/admin/repairs" class="btn btn-premium-outline btn-sm rounded-pill">View All</a>
+                            </div>
+                            <% if (recentBookings && recentBookings.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-sm align-middle mb-0">
+                                    <thead><tr><th>Ref</th><th>Customer</th><th>Status</th></tr></thead>
+                                    <tbody>
+                                        <% recentBookings.forEach(b => { %>
+                                        <tr>
+                                            <td class="text-white"><%= b.reference_number || 'N/A' %></td>
+                                            <td class="text-muted"><%= b.customer_name %></td>
+                                            <td><span class="badge <%= b.status === 'completed' ? 'bg-success' : (b.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary') %>"><%= b.status %></span></td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
                             <% } else { %>
-                                <% recentBookings.forEach(function(bk) { %>
-                                    <tr>
-                                        <td class="text-white fw-bold">#ATH-TK-<%= bk.id %></td>
-                                        <td>
-                                            <div class="fw-bold text-white"><%= bk.customer_name %></div>
-                                            <small><%= bk.customer_phone %></small>
-                                        </td>
-                                        <td class="text-white"><%= bk.service_title %></td>
-                                        <td><%= new Date(bk.appointment_date).toISOString().slice(0, 16).replace('T', ' ') %></td>
-                                        <td>
-                                            <span class="badge bg-warning text-dark px-2 py-1 rounded-pill"><%= bk.status.charAt(0).toUpperCase() + bk.status.slice(1) %></span>
-                                        </td>
-                                    </tr>
-                                <% }); %>
+                            <p class="text-muted text-center mb-0">No recent repairs.</p>
                             <% } %>
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="glass-card p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-box-shopping me-2 text-info"></i>Recent Orders</h5>
+                                <a href="/admin/orders" class="btn btn-premium-outline btn-sm rounded-pill">View All</a>
+                            </div>
+                            <% if (recentOrders && recentOrders.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-sm align-middle mb-0">
+                                    <thead><tr><th>Order</th><th>Customer</th><th>Amount</th></tr></thead>
+                                    <tbody>
+                                        <% recentOrders.forEach(o => { %>
+                                        <tr>
+                                            <td class="text-white">#<%= o.id %></td>
+                                            <td class="text-muted"><%= o.first_name %> <%= o.last_name %></td>
+                                            <td class="text-primary fw-bold"><%= formatCurrency(o.total_amount) %></td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } else { %>
+                            <p class="text-muted text-center mb-0">No recent orders.</p>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

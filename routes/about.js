@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const aboutController = require('../controllers/aboutController');
 
-router.get('/', (req, res) => {
-  res.render('about/index', { title: 'About Us - Athstack Digital Hub' });
-});
+router.get('/', aboutController.getAbout);
 
 module.exports = router;

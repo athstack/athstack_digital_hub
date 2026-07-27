@@ -1,0 +1,42 @@
+<div class="glass-card no-lift p-3 mb-4">
+    <div class="d-flex align-items-center mb-3 px-2">
+        <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+            <i class="fa-solid fa-shield-halved text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h6 class="mb-0 text-white"><%= user ? user.name : 'Admin' %></h6>
+            <small class="text-muted">Admin Panel</small>
+        </div>
+    </div>
+    <hr class="border-secondary opacity-25 my-2">
+    <nav class="nav flex-column gap-1">
+        <a class="nav-link rounded<%= currentPath === '/admin' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin">
+            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/users' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/users">
+            <i class="fa-solid fa-users me-2"></i> Users
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/products' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/products">
+            <i class="fa-solid fa-box-open me-2"></i> Products
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/repairs">
+            <i class="fa-solid fa-wrench me-2"></i> Repairs
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/orders">
+            <i class="fa-solid fa-receipt me-2"></i> Orders
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/training">
+            <i class="fa-solid fa-graduation-cap me-2"></i> Training
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/inbox' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/inbox">
+            <i class="fa-solid fa-envelope me-2"></i> Inbox
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/settings' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/settings">
+            <i class="fa-solid fa-gear me-2"></i> Settings
+        </a>
+        <hr class="border-secondary opacity-25 my-2">
+        <a class="nav-link rounded text-muted" href="/auth/logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+        </a>
+    </nav>
+</div>

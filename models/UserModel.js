@@ -1,55 +1,113 @@
-const pool = require('../config/db');
+const { query, queryOne } = require('../config/db');
 
 class UserModel {
   async findByEmail(email) {
-    const [rows] = await pool.execute('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
-    return rows.length > 0 ? rows[0] : null;
+    return queryOne('SELECT * FROM users WHERE email = ?', [email]);
   }
 
-  async register(data) {
-    const [result] = await pool.execute(
-      'INSERT INTO users (first_name, last_name, email, phone, password, role, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [data.first_name, data.last_name, data.email, data.phone, data.password, data.role || 'customer', data.status || 'active']
+  async findById(id) {
+    return queryOne('SELECT * FROM users WHERE id = ?', [id]);
+  }
+
+  async create({ first_name, last_name, email, phone, password, role = 'customer' }) {
+    const result = await query(
+      'INSERT INTO users (first_name, last_name, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?)',
+      [first_name, last_name, email, phone, password, role]
     );
-    return result.affectedRows > 0;
+    return { id: result.insertId, first_name, last_name, email, phone, role };
   }
 
-  async getTotalUsers() {
-    const [rows] = await pool.execute('SELECT COUNT(*) as count FROM users');
-    return rows[0].count;
+  async updateProfile(id, { first_name, last_name, email, phone, avatar }) {
+    await query(
+      'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, avatar = ? WHERE id = ?',
+      [first_name, last_name, email, phone, avatar, id]
+    );
+    return this.findById(id);
   }
 
-  async getAllUsers() {
-    const [rows] = await pool.execute('SELECT id, first_name, last_name, email, phone, role, status FROM users ORDER BY id DESC');
-    return rows;
-  }
-
-  async getById(id) {
-    const [rows] = await pool.execute('SELECT * FROM users WHERE id = ? LIMIT 1', [id]);
-    return rows.length > 0 ? rows[0] : null;
+  async updatePassword(id, hashedPassword) {
+    await query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id]);
+    return true;
   }
 
   async updateRole(id, role) {
-    const [result] = await pool.execute('UPDATE users SET role = ? WHERE id = ?', [role, id]);
-    return result.affectedRows > 0;
+    await query('UPDATE users SET role = ? WHERE id = ?', [role, id]);
+    return this.findById(id);
   }
 
-  async updateDetails(data) {
-    const [result] = await pool.execute(
-      'UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?',
-      [data.first_name, data.last_name, data.email, data.id]
-    );
-    return result.affectedRows > 0;
+  async updateStatus(id, status) {
+    await query('UPDATE users SET status = ? WHERE id = ?', [status, id]);
+    return this.findById(id);
   }
 
-  async getRegisteredCourses(userId) {
-    const [rows] = await pool.execute(
-      `SELECT tc.* FROM training_courses tc
-       JOIN course_registrations cr ON tc.id = cr.course_id
-       WHERE cr.user_id = ?`,
-      [userId]
+  async getAll({ role, status, search, page = 1, limit = 20 } = {}) {
+    const conditions = [];
+    const params = [];
+
+    if (role) {
+      conditions.push('role = ?');
+      params.push(role);
+    }
+    if (status) {
+      conditions.push('status = ?');
+      params.push(status);
+    }
+    if (search) {
+      conditions.push('(first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)');
+      const term = `%${search}%`;
+      params.push(term, term, term);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const offset = (page - 1) * limit;
+
+    const rows = await query(
+      `SELECT id, first_name, last_name, email, phone, role, status, avatar, bio, specialization, created_at, updated_at FROM users ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      [...params, limit, offset]
     );
-    return rows;
+
+    const countRow = await queryOne(
+      `SELECT COUNT(*) AS total FROM users ${where}`,
+      params
+    );
+
+    return { users: rows, total: countRow.total, page, limit };
+  }
+
+  async countAll({ role, status } = {}) {
+    const conditions = [];
+    const params = [];
+
+    if (role) {
+      conditions.push('role = ?');
+      params.push(role);
+    }
+    if (status) {
+      conditions.push('status = ?');
+      params.push(status);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const row = await queryOne(`SELECT COUNT(*) AS total FROM users ${where}`, params);
+    return row.total;
+  }
+
+  async getTechnicians() {
+    return query(
+      "SELECT id, first_name, last_name, email, avatar, bio, specialization FROM users WHERE role = 'technician' AND status = 'active'"
+    );
+  }
+
+  async searchByTerm(term) {
+    const like = `%${term}%`;
+    return query(
+      `SELECT id, first_name, last_name, email, phone, role, status, avatar
+       FROM users
+       WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ?
+       ORDER BY first_name ASC
+       LIMIT 20`,
+      [like, like, like]
+    );
   }
 }
 

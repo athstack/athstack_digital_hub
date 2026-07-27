@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-user-pen me-2 text-primary"></i>Your Profile</h2>
+
+                <div class="glass-card no-lift p-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="text-center mb-4">
+                                <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
+                                    <% if (profile && profile.avatar) { %>
+                                        <img src="/uploads/<%= profile.avatar %>" alt="Avatar" class="rounded-circle" style="width:80px;height:80px;object-fit:cover;">
+                                    <% } else { %>
+                                        <i class="fa-solid fa-user fa-2x text-white"></i>
+                                    <% } %>
+                                </div>
+                                <h4 class="text-white fw-bold"><%= profile ? profile.first_name : '' %> <%= profile ? profile.last_name : '' %></h4>
+                                <p class="text-muted"><%= profile ? profile.email : '' %></p>
+                            </div>
+
+                            <form method="POST" action="/dashboard/profile" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" name="first_name" class="form-control" value="<%= profile ? profile.first_name : '' %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" name="last_name" class="form-control" value="<%= profile ? profile.last_name : '' %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address *</label>
+                                        <input type="email" name="email" class="form-control" value="<%= profile ? profile.email : '' %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" name="phone" class="form-control" value="<%= profile ? (profile.phone || '') : '' %>">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Profile Picture</label>
+                                        <input type="file" name="avatar" class="form-control" accept="image/*">
+                                        <small class="text-muted">Leave empty to keep current avatar</small>
+                                    </div>
+                                    <div class="col-12 text-center mt-3">
+                                        <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -9,7 +9,55 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  charset: 'utf8mb4'
+  charset: 'utf8mb4',
+  timezone: '+00:00',
+  dateStrings: true
 });
 
+/**
+ * Test database connection
+ * @returns {Promise<void>}
+ */
+async function testConnection() {
+  try {
+    const connection = await pool.getConnection();
+    console.log('Database connected successfully');
+    connection.release();
+  } catch (err) {
+    console.error('Database connection failed:', err.message);
+    process.exit(1);
+  }
+}
+
+/**
+ * Execute a query with optional parameters
+ * @param {string} sql - SQL query string
+ * @param {Array} params - Query parameters
+ * @returns {Promise<Array>} Query results
+ */
+async function query(sql, params = []) {
+  try {
+    const [results] = await pool.execute(sql, params);
+    return results;
+  } catch (err) {
+    console.error('Query error:', err.message);
+    throw err;
+  }
+}
+
+/**
+ * Get a single row from a query
+ * @param {string} sql - SQL query string
+ * @param {Array} params - Query parameters
+ * @returns {Promise<Object|undefined>} Single row or undefined
+ */
+async function queryOne(sql, params = []) {
+  const rows = await query(sql, params);
+  return rows[0];
+}
+
 module.exports = pool;
+module.exports.pool = pool;
+module.exports.query = query;
+module.exports.queryOne = queryOne;
+module.exports.testConnection = testConnection;

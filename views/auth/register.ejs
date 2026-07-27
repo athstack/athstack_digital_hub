@@ -1,71 +1,71 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5 my-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <% if (error) { %>
-                <div class="alert alert-danger bg-dark border-danger text-danger small mb-4" role="alert">
-                    <i class="fa-solid fa-circle-exclamation me-2"></i><%= error %>
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="glass-card no-lift p-5">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                            <i class="fa-solid fa-user-plus fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">Initialize Profile Node</h3>
+                        <p class="text-muted small">Create your Athstack Digital Hub account</p>
+                    </div>
+
+                    <% if (error) { %>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= error %></div>
+                    <% } %>
+                    <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= flashError %></div>
+                    <% } %>
+
+                    <form method="POST" action="/auth/register">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name *</label>
+                                <input type="text" name="first_name" class="form-control" required placeholder="First name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name *</label>
+                                <input type="text" name="last_name" class="form-control" required placeholder="Last name">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Email Address *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                    <input type="email" name="email" class="form-control" required placeholder="your@email.com">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                                    <input type="tel" name="phone" class="form-control" placeholder="+255 7XX XXX XXX">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Password *</label>
+                                <input type="password" name="password" class="form-control" required placeholder="Min 8 characters" minlength="8">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm Password *</label>
+                                <input type="password" name="confirm_password" class="form-control" required placeholder="Re-enter password">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Create Account</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p class="text-muted small mb-0">Already have an account? <a href="/auth/login" class="text-primary">Sign in</a></p>
+                    </div>
                 </div>
-            <% } %>
-
-            <div class="glass-card p-4 p-md-5">
-                <div class="text-center mb-4">
-                    <span class="text-primary fw-bold text-uppercase tracking-widest small">Infrastructure Join Portal</span>
-                    <h3 class="fw-bold text-white mt-1">Create Account Node</h3>
-                    <p class="text-muted small">Register your metrics to access e-commerce shipping trackers and procurement tools.</p>
-                </div>
-
-                <form action="/auth/register" method="POST">
-                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-
-                    <div class="row g-3 mb-3">
-                        <div class="col-sm-6">
-                            <label class="form-label text-muted small">First Name</label>
-                            <input type="text" name="first_name" class="form-control" required placeholder="John">
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label text-muted small">Last Name</label>
-                            <input type="text" name="last_name" class="form-control" required placeholder="Doe">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Email Connection Address</label>
-                        <input type="email" name="email" class="form-control" required placeholder="johndoe@athstack.com">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Contact Phone Line</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
-                            <input type="tel" name="phone" class="form-control" required placeholder="0782303971">
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mb-4">
-                        <div class="col-sm-6">
-                            <label class="form-label text-muted small">Security Password</label>
-                            <input type="password" name="password" class="form-control" required placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" minlength="8">
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label text-muted small">Confirm Password</label>
-                            <input type="password" name="confirm_password" class="form-control" required placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-premium-primary w-100 rounded-pill py-2 mb-3">
-                        <i class="fa-solid fa-user-plus me-2"></i>Initialize Account Profile
-                    </button>
-                    
-                    <div class="text-center">
-                        <span class="text-muted small">Already mapped to the system? </span>
-                        <a href="/auth/login" class="text-primary small text-decoration-none fw-bold">Sign In Instead</a>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-heart me-2 text-danger"></i>Your Wishlist</h2>
+
+                <% if (wishlist && wishlist.length > 0) { %>
+                <div class="row g-4">
+                    <% wishlist.forEach(item => { %>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3">
+                            <h6 class="text-white fw-bold"><%= item.name %></h6>
+                            <span class="text-primary fw-bold">&#8358;<%= Number(item.price).toLocaleString() %></span>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-heart fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">Wishlist is Empty</h4>
+                    <p class="text-muted">Save products you love by clicking the heart icon. Your wishlist will appear here.</p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

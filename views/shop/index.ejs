@@ -1,73 +1,127 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-md-8">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Hardware Procurement Grid</span>
-            <h1 class="fw-bold text-white mt-1">Premium Tech & Accessories Store</h1>
-            <p class="text-muted">Equip your digital workspace with high-performance peripherals, chargers, and smart tech devices curated for professionals.</p>
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-primary fw-bold text-uppercase tracking-widest small">Tech Hardware Store</span>
+            <h1 class="text-white fw-bold mt-2">Premium Products</h1>
+            <p class="text-muted">Explore our curated collection of enterprise-grade hardware and accessories.</p>
         </div>
-    </div>
 
-    <div class="row g-4">
-        <% if (products.length === 0) { %>
-            <div class="col-12 py-5 text-center text-muted">
-                <i class="fa-solid fa-basket-shopping d-block fs-1 mb-3 text-secondary"></i>
-                <p class="fs-5 mb-0">Our digital catalog is currently updating. Check back shortly!</p>
-            </div>
-        <% } else { %>
-            <% products.forEach(function(product) { %>
-                <div class="col-md-6 col-lg-4">
-                    <div class="glass-card h-100 d-flex flex-column justify-content-between p-3">
-                        <div>
-                            <div class="bg-dark rounded-3 mb-3 position-relative" style="height: 220px; overflow: hidden;">
-                                <img src="/uploads/products/<%= product.main_image %>" 
-                                     class="img-fluid" 
-                                     alt="<%= product.name %>" 
-                                     style="object-fit: cover; height: 100%; width: 100%;">
-                                <div class="position-absolute top-50 start-50 translate-middle w-100 p-3 text-center">
-                                    <span class="badge bg-secondary mb-1 rounded-pill small px-3">
-                                        <%= product.category_name || 'Accessory' %>
-                                    </span>
-                                    <h5 class="text-white fw-bold mb-0 mt-1"><%= product.name %></h5>
-                                </div>
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <div class="glass-card no-lift p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-filter me-2 text-primary"></i>Filters</h6>
+                    <form method="GET" action="/shop">
+                        <div class="mb-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="search" class="form-control" placeholder="Search products..." value="<%= searchQuery || '' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
+                                <option value="<%= cat.slug %>" <%= activeCategory === cat.slug ? 'selected' : '' %>><%= cat.name %></option>
+                                <% }) } %>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Min Price</label>
+                                <input type="number" name="min_price" class="form-control" placeholder="₦0" value="<%= minPrice || '' %>">
                             </div>
-                            
-                            <div class="mb-3">
-                                <small class="text-muted" style="font-size: 0.85rem;">
-                                    <%= product.description.length > 30 ? product.description.substring(0, 30) + '...' : product.description %>
-                                </small>
+                            <div class="col-6">
+                                <label class="form-label">Max Price</label>
+                                <input type="number" name="max_price" class="form-control" placeholder="₦999999" value="<%= maxPrice || '' %>">
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> Apply Filters</button>
+                        <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2">Clear All</a>
+                    </form>
+                </div>
+            </div>
 
-                        <div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div>
-                                    <% if (product.discount_price) { %>
-                                        <span class="text-muted text-decoration-line-through small me-2">$<%= parseFloat(product.price).toFixed(2) %></span>
-                                        <span class="text-white fw-bold fs-5">$<%= parseFloat(product.discount_price).toFixed(2) %></span>
-                                    <% } else { %>
-                                        <span class="text-white fw-bold fs-5">$<%= parseFloat(product.price).toFixed(2) %></span>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= flashSuccess %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= flashError %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
+
+                <% if (typeof products !== 'undefined' && products && products.length > 0) { %>
+                <div class="row g-4">
+                    <% products.forEach(product => { %>
+                    <div class="col-md-4">
+                        <a href="/shop/<%= product.slug %>" class="text-decoration-none">
+                            <div class="glass-card p-3 h-100">
+                                <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:180px;overflow:hidden;">
+                                    <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:170px;object-fit:contain;">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="text-white fw-bold mb-0 text-truncate"><%= product.name %></h6>
+                                    <% if (product.discount_price && product.discount_price < product.price) { %>
+                                        <span class="badge bg-danger ms-2 flex-shrink-0">-<%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%</span>
                                     <% } %>
                                 </div>
-                                <div class="text-warning small">
-                                    <i class="fa-solid fa-star"></i> <span class="text-white"><%= parseFloat(product.rating || 0).toFixed(2) %></span>
+                                <p class="text-muted small mb-2"><%= product.category_name || 'General' %></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <% if (product.discount_price && product.discount_price < product.price) { %>
+                                            <span class="text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
+                                            <small class="text-muted text-decoration-line-through ms-1">&#8358;<%= Number(product.price).toLocaleString() %></small>
+                                        <% } else { %>
+                                            <span class="text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                                        <% } %>
+                                    </div>
+                                    <form method="POST" action="/cart/add" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                        <input type="hidden" name="product_id" value="<%= product.id %>">
+                                        <button type="submit" class="btn btn-premium-primary btn-sm rounded-pill" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                                    </form>
                                 </div>
                             </div>
-
-                            <form action="/cart/add" method="POST">
-                                <input type="hidden" name="product_id" value="<%= product.id %>">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <button type="submit" class="btn btn-premium-primary w-100 btn-sm rounded-pill py-2">
-                                    <i class="fa-solid fa-cart-plus me-2"></i>Provision Asset
-                                </button>
-                            </form>
-                        </div>
+                        </a>
                     </div>
+                    <% }) %>
                 </div>
-            <% }); %>
-        <% } %>
+
+                <% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                            <a class="page-link bg-dark border-secondary text-muted" href="/shop?page=<%= pagination.page - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo; Previous</a>
+                        </li>
+                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                        <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
+                            <a class="page-link <%= i === pagination.page ? 'bg-primary border-primary' : 'bg-dark border-secondary' %>" href="/shop?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a>
+                        </li>
+                        <% } %>
+                        <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                            <a class="page-link bg-dark border-secondary text-muted" href="/shop?page=<%= pagination.page + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">Next &raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+                <% } %>
+
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-box-open fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Products Found</h4>
+                    <p class="text-muted">No products match your current filters. Try adjusting your search criteria.</p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill">View All Products</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

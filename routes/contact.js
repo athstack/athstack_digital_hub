@@ -1,31 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const ContactModel = require('../models/ContactModel');
+const { body, validationResult } = require('express-validator');
+const contactController = require('../controllers/contactController');
 const { validateCsrf } = require('../middleware/csrf');
+const { contactValidator } = require('../validators/contactValidator');
 
-router.get('/', (req, res) => {
-  const status = req.query.status || null;
-  res.render('contact/index', { title: 'Contact Us - Athstack Digital Hub', status });
-});
+router.get('/', contactController.getContact);
 
-router.post('/send', validateCsrf, async (req, res) => {
-  try {
-    const data = {
-      name: (req.body.name || '').trim(),
-      email: (req.body.email || '').trim(),
-      message: (req.body.message || '').trim()
-    };
-
-    if (!data.name || !data.email || !data.message) {
-      return res.redirect('/contact?status=error');
+router.post('/send',
+  validateCsrf,
+  contactValidator,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      req.flash('error', errors.array()[0].msg);
+      return res.redirect('/contact');
     }
-
-    await ContactModel.addMessage(data);
-    res.redirect('/contact?status=success');
-  } catch (err) {
-    console.error(err);
-    res.redirect('/contact?status=error');
-  }
-});
+    next();
+  },
+  contactController.sendMessage
+);
 
 module.exports = router;

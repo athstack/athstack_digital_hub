@@ -1,50 +1,132 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="/shop" class="text-muted text-decoration-none small">
-                <i class="fa-solid fa-arrow-left me-2"></i>Back to Hardware Inventory
-            </a>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= flashSuccess %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= flashError %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
 
-    <div class="row g-5">
-        <div class="col-md-6">
-            <div class="glass-card p-5 text-center bg-dark-smooth">
-                <% if (product.main_image) { %>
-                    <img src="/uploads/products/<%= product.main_image %>" alt="<%= product.name %>" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
-                <% } else { %>
-                    <i class="fa-solid fa-microchip text-primary display-1 py-5 opacity-50"></i>
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="/shop" class="text-muted text-decoration-none">Shop</a></li>
+                <li class="breadcrumb-item active text-primary"><%= product.name %></li>
+            </ol>
+        </nav>
+
+        <% if (product) { %>
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="glass-card no-lift p-3">
+                    <div class="rounded bg-dark d-flex align-items-center justify-content-center" style="height:400px;overflow:hidden;">
+                        <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:380px;object-fit:contain;">
+                    </div>
+                </div>
+                <% if (gallery && gallery.length > 0) { %>
+                <div class="row g-2 mt-2">
+                    <% gallery.forEach(img => { %>
+                    <div class="col-3">
+                        <div class="glass-card no-lift p-1">
+                            <img src="/uploads/<%= img.image_path %>" alt="Gallery" class="img-fluid rounded" style="height:80px;width:100%;object-fit:cover;">
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+                <% } %>
+            </div>
+
+            <div class="col-lg-6">
+                <span class="text-muted small"><%= product.category_name || 'General' %></span>
+                <h1 class="text-white fw-bold mt-2 mb-3"><%= product.name %></h1>
+
+                <div class="d-flex align-items-center mb-3">
+                    <% if (product.rating) { %>
+                    <div class="text-warning me-2">
+                        <% for (let i = 1; i <= 5; i++) { %>
+                            <i class="fa-<%= i <= Math.round(product.rating) ? 'solid' : 'regular' %> fa-star"></i>
+                        <% } %>
+                    </div>
+                    <small class="text-muted">(<%= product.rating %> / 5)</small>
+                    <% } %>
+                    <% if (product.total_sales) { %>
+                    <small class="text-muted ms-3"><i class="fa-solid fa-fire me-1"></i><%= product.total_sales %> sold</small>
+                    <% } %>
+                </div>
+
+                <div class="mb-4">
+                    <% if (product.discount_price && product.discount_price < product.price) { %>
+                        <span class="display-6 text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
+                        <span class="text-muted text-decoration-line-through fs-5 ms-2">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                        <span class="badge bg-danger ms-2">Save &#8358;<%= Number(product.price - product.discount_price).toLocaleString() %></span>
+                    <% } else { %>
+                        <span class="display-6 text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                    <% } %>
+                </div>
+
+                <div class="mb-4">
+                    <% if (product.stock_quantity > 0) { %>
+                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i> In Stock (<%= product.stock_quantity %> available)</span>
+                    <% } else { %>
+                        <span class="badge bg-danger"><i class="fa-solid fa-times me-1"></i> Out of Stock</span>
+                    <% } %>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-white fw-bold">Description</h6>
+                    <p class="text-muted"><%= product.description || 'No description available.' %></p>
+                </div>
+
+                <% if (product.sku) { %>
+                <div class="mb-3">
+                    <small class="text-muted">SKU: <span class="text-secondary"><%= product.sku %></span></small>
+                </div>
+                <% } %>
+
+                <% if (product.stock_quantity > 0) { %>
+                <form method="POST" action="/cart/add" class="d-flex align-items-center gap-3 mb-4">
+                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <div class="input-group" style="width:140px;">
+                        <span class="input-group-text"><i class="fa-solid fa-cubes"></i></span>
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="<%= product.stock_quantity %>">
+                    </div>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-cart-plus me-2"></i>Add to Cart</button>
+                </form>
+                <% } %>
+
+                <% if (product.technician_first_name) { %>
+                <div class="glass-card no-lift p-3 mt-4">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
+                            <i class="fa-solid fa-user text-white"></i>
+                        </div>
+                        <div class="ms-3">
+                            <small class="text-muted">Listed by</small>
+                            <h6 class="text-white mb-0"><%= product.technician_first_name %> <%= product.technician_last_name %></h6>
+                        </div>
+                    </div>
+                </div>
                 <% } %>
             </div>
         </div>
-        
-        <div class="col-md-6">
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2"><%= product.category_name || 'Component' %></span>
-            <h1 class="fw-bold text-white mb-2"><%= product.name || 'Product Asset' %></h1>
-            
-            <div class="fs-3 fw-bold text-success mb-4">
-                $<%= parseFloat(product.price || 0).toFixed(2) %>
-            </div>
-            
-            <p class="text-muted mb-4"><%= product.description || 'No resource breakdown provided.' %></p>
-            
-            <form action="/cart/add" method="POST" class="mt-4">
-                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <input type="hidden" name="product_id" value="<%= product.id || 0 %>">
-                
-                <div class="d-flex gap-3 align-items-center">
-                    <div class="input-group styling-quantity" style="width: 130px;">
-                        <input type="number" name="quantity" class="form-control text-center" value="1" min="1">
-                    </div>
-                    <button type="submit" class="btn btn-premium-primary rounded-pill px-4 flex-grow-1 py-2">
-                        <i class="fa-solid fa-cart-plus me-2"></i>Stage to Procurement Cart
-                    </button>
-                </div>
-            </form>
+        <% } else { %>
+        <div class="empty-state">
+            <i class="fa-solid fa-exclamation-triangle fa-4x mb-3"></i>
+            <h4 class="text-white fw-bold">Product Not Found</h4>
+            <p class="text-muted">The product you're looking for doesn't exist or has been removed.</p>
+            <a href="/shop" class="btn btn-premium-primary rounded-pill">Back to Shop</a>
         </div>
+        <% } %>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

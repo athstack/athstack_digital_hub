@@ -1,18 +1,186 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5 text-center my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Welcome to Athstack Digital Hub</span>
-            <h1 class="display-4 text-white fw-bold mt-2 mb-4">Advanced Engineering & Hardware Solutions</h1>
-            <p class="lead text-muted mb-5">Your unified pipeline for premium tech hardware procurement, enterprise device diagnostics, and elite technical systems instruction.</p>
-            
-            <div class="d-flex justify-content-center gap-3">
-                <a href="/shop" class="btn btn-premium-primary btn-lg rounded-pill px-4">Explore Shop</a>
-                <a href="/maintenance" class="btn btn-premium-outline btn-lg rounded-pill px-4">Book Diagnostic</a>
+<section class="py-5 text-center my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span class="text-primary fw-bold text-uppercase tracking-widest small">Welcome to Athstack Digital Hub</span>
+                <h1 class="display-4 text-white fw-bold mt-2 mb-4">Advanced Engineering & Hardware Solutions</h1>
+                <p class="lead text-muted mb-5">Your unified pipeline for premium tech hardware procurement, enterprise device diagnostics, and elite technical systems instruction.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/shop" class="btn btn-premium-primary btn-lg rounded-pill px-4"><i class="fa-solid fa-bag-shopping me-2"></i>Explore Shop</a>
+                    <a href="/maintenance" class="btn btn-premium-outline btn-lg rounded-pill px-4"><i class="fa-solid fa-wrench me-2"></i>Book Diagnostic</a>
+                    <a href="/training" class="btn btn-premium-outline btn-lg rounded-pill px-4"><i class="fa-solid fa-graduation-cap me-2"></i>Training Academy</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 text-center mb-5">
+            <div class="col-6 col-md-3">
+                <div class="glass-card p-4">
+                    <i class="fa-solid fa-users fa-2x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold"><%= stats.customers %>+</h3>
+                    <p class="text-muted small mb-0">Active Clients</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="glass-card p-4">
+                    <i class="fa-solid fa-box-open fa-2x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold"><%= stats.products %>+</h3>
+                    <p class="text-muted small mb-0">Tech Products</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="glass-card p-4">
+                    <i class="fa-solid fa-graduation-cap fa-2x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold"><%= stats.courses %>+</h3>
+                    <p class="text-muted small mb-0">Training Courses</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="glass-card p-4">
+                    <i class="fa-solid fa-check-circle fa-2x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold"><%= stats.repairs %>+</h3>
+                    <p class="text-muted small mb-0">Repairs Completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-primary fw-bold text-uppercase tracking-widest small">Our Services</span>
+            <h2 class="text-white fw-bold mt-2">End-to-End Tech Solutions</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                        <i class="fa-solid fa-bag-shopping fa-2x text-primary"></i>
+                    </div>
+                    <h5 class="text-white fw-bold">Tech Shop</h5>
+                    <p class="text-muted">Premium hardware, accessories, and enterprise equipment curated for performance.</p>
+                    <a href="/shop" class="btn btn-premium-outline btn-sm rounded-pill">Browse Products</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+                    <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                        <i class="fa-solid fa-wrench fa-2x text-info"></i>
+                    </div>
+                    <h5 class="text-white fw-bold">Maintenance & Repair</h5>
+                    <p class="text-muted">Expert device diagnostics, system repair, and enterprise IT maintenance pipelines.</p>
+                    <a href="/maintenance" class="btn btn-premium-outline btn-sm rounded-pill">Book Repair</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center h-100">
+                    <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                        <i class="fa-solid fa-graduation-cap fa-2x text-success"></i>
+                    </div>
+                    <h5 class="text-white fw-bold">Training Academy</h5>
+                    <p class="text-muted">Professional engineering courses and technical certification programs.</p>
+                    <a href="/training" class="btn btn-premium-outline btn-sm rounded-pill">Explore Courses</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<% if (featured && featured.length > 0) { %>
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-primary fw-bold text-uppercase tracking-widest small">Featured Products</span>
+                <h2 class="text-white fw-bold mt-1 mb-0">Premium Tech Hardware</h2>
+            </div>
+            <a href="/shop" class="btn btn-premium-outline rounded-pill">View All <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            <% featured.forEach(product => { %>
+            <div class="col-md-4 col-lg-2">
+                <a href="/shop/<%= product.slug %>" class="text-decoration-none">
+                    <div class="glass-card p-3 h-100">
+                        <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:140px;overflow:hidden;">
+                            <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:130px;object-fit:contain;">
+                        </div>
+                        <h6 class="text-white fw-bold text-truncate mb-1"><%= product.name %></h6>
+                        <p class="text-muted small mb-2"><%= product.category_name || 'General' %></p>
+                        <div>
+                            <% if (product.discount_price && product.discount_price < product.price) { %>
+                                <span class="text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
+                                <small class="text-muted text-decoration-line-through ms-1">&#8358;<%= Number(product.price).toLocaleString() %></small>
+                            <% } else { %>
+                                <span class="text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                            <% } %>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<% if (recentCourses && recentCourses.length > 0) { %>
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-primary fw-bold text-uppercase tracking-widest small">Training Academy</span>
+                <h2 class="text-white fw-bold mt-1 mb-0">Latest Courses</h2>
+            </div>
+            <a href="/training" class="btn btn-premium-outline rounded-pill">View All <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="row g-4">
+            <% recentCourses.forEach(course => { %>
+            <div class="col-md-4">
+                <a href="/training/<%= course.slug %>" class="text-decoration-none">
+                    <div class="glass-card p-4 h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary me-2"><%= course.level || 'Beginner' %></span>
+                            <% if (course.duration) { %>
+                                <small class="text-muted"><i class="fa-regular fa-clock me-1"></i><%= course.duration %></small>
+                            <% } %>
+                        </div>
+                        <h5 class="text-white fw-bold mb-2"><%= course.title %></h5>
+                        <p class="text-muted small mb-3"><%= course.description ? course.description.substring(0, 120) + '...' : '' %></p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <% if (course.price > 0) { %>
+                                <span class="text-primary fw-bold">&#8358;<%= Number(course.price).toLocaleString() %></span>
+                            <% } else { %>
+                                <span class="text-success fw-bold">Free</span>
+                            <% } %>
+                            <span class="text-muted small"><i class="fa-solid fa-user-tie me-1"></i><%= course.instructor_first_name || 'Athstack' %> <%= course.instructor_last_name || '' %></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="glass-card p-5 text-center">
+            <h2 class="text-white fw-bold mb-3">Ready to Get Started?</h2>
+            <p class="text-muted mb-4">Join the Athstack Digital Hub and access premium tech products, expert repairs, and professional training.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/auth/register" class="btn btn-premium-primary btn-lg rounded-pill px-4">Create Account</a>
+                <a href="/contact" class="btn btn-premium-outline btn-lg rounded-pill px-4">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <%- include('../partials/footer') %>

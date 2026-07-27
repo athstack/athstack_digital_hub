@@ -1,57 +1,123 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5">
-    <div class="mb-4">
-        <a href="/admin" class="btn btn-outline-secondary btn-sm">
-            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
-    <h2 class="text-white mb-4">User Directories</h2>
-    
-    <div class="table-responsive">
-        <table class="table table-dark table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-users me-2 text-primary"></i>User Directories</h2>
+
+                <div class="glass-card no-lift p-4 mb-4">
+                    <form method="GET" action="/admin/users" class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label">Search</label>
+                            <input type="text" name="search" class="form-control" placeholder="Name or email..." value="<%= searchQuery || '' %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Role</label>
+                            <select name="role" class="form-select">
+                                <option value="">All Roles</option>
+                                <option value="customer" <%= currentRole === 'customer' ? 'selected' : '' %>>Customer</option>
+                                <option value="technician" <%= currentRole === 'technician' ? 'selected' : '' %>>Technician</option>
+                                <option value="admin" <%= currentRole === 'admin' ? 'selected' : '' %>>Admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> Filter</button>
+                        </div>
+                    </form>
+                </div>
+
                 <% if (users && users.length > 0) { %>
-                    <% users.forEach(function(user) { %>
-                    <tr>
-                        <td>#<%= user.id %></td>
-                        <td><%= user.first_name + ' ' + user.last_name %></td>
-                        <td><%= user.email %></td>
-                        <td><%= user.phone %></td>
-                        <td>
-                            <form action="/user/updateRole" method="POST">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <input type="hidden" name="id" value="<%= user.id %>">
-                                <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="customer" <%= user.role === 'customer' ? 'selected' : '' %>>Customer</option>
-                                    <option value="seller" <%= user.role === 'seller' ? 'selected' : '' %>>Seller</option>
-                                    <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                                </select>
-                            </form>
-                        </td>
-                        <td>
-                            <a href="/user/edit/<%= user.id %>" class="btn btn-sm btn-outline-primary">Profile</a>
-                        </td>
-                    </tr>
-                    <% }); %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="6" class="text-center text-muted">No users found in directory.</td>
-                    </tr>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <% users.forEach(u => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
+                                                <% if (u.avatar) { %>
+                                                    <img src="/uploads/<%= u.avatar %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;">
+                                                <% } else { %>
+                                                    <i class="fa-solid fa-user text-white small"></i>
+                                                <% } %>
+                                            </div>
+                                            <span class="text-white fw-bold"><%= u.first_name %> <%= u.last_name %></span>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted"><%= u.email %></td>
+                                    <td>
+                                        <form method="POST" action="/admin/users/<%= u.id %>/role" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:120px;" onchange="this.form.submit()">
+                                                <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>>Customer</option>
+                                                <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>>Technician</option>
+                                                <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                                <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/admin/users/<%= u.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:110px;" onchange="this.form.submit()">
+                                                <option value="active" <%= u.status === 'active' ? 'selected' : '' %>>Active</option>
+                                                <option value="inactive" <%= u.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                                                <option value="suspended" <%= u.status === 'suspended' ? 'selected' : '' %>>Suspended</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="text-muted"><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : '' %></td>
+                                    <td><span class="badge bg-secondary"><%= u.role %></span></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <% if (pagination && pagination.totalPages > 1) { %>
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                            <a class="page-link bg-dark border-secondary text-muted" href="/admin/users?page=<%= pagination.page - 1 %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo;</a>
+                        </li>
+                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                        <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
+                            <a class="page-link <%= i === pagination.page ? 'bg-primary border-primary' : 'bg-dark border-secondary' %>" href="/admin/users?page=<%= i %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a>
+                        </li>
+                        <% } %>
+                        <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                            <a class="page-link bg-dark border-secondary text-muted" href="/admin/users?page=<%= pagination.page + 1 %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
                 <% } %>
-            </tbody>
-        </table>
+
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-users fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Users Found</h4>
+                    <p class="text-muted">No users match your current filters.</p>
+                </div>
+                <% } %>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

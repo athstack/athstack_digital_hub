@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/techSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-receipt me-2 text-info"></i>Product Orders</h2>
+
+                <% if (orders && orders.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order => { %>
+                                <tr>
+                                    <td class="text-white fw-bold">#<%= order.id %></td>
+                                    <td class="text-muted"><%= order.first_name %> <%= order.last_name %></td>
+                                    <td class="text-muted"><%= formatDate(order.created_at) %></td>
+                                    <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount) %></td>
+                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= order.status || order.order_status %></span></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-receipt fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Orders Yet</h4>
+                    <p class="text-muted">No orders have been placed for your products yet.</p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

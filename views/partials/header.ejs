@@ -20,12 +20,12 @@
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link px-3" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="/shop">Shop</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="/maintenance">Maintenance</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="/training">Training</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="/about">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/' ? ' active' : '' %>" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop">Shop</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance">Maintenance</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training">Training</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/about' ? ' active' : '' %>" href="/about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact">Contact</a></li>
             </ul>
             <div class="d-flex align-items-center gap-3">
                 <div class="position-relative d-none d-md-block">
@@ -37,7 +37,7 @@
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" id="cartIndicatorCount"><%= cartCount %></span>
                 </a>
                 <% if (user) { %>
-                    <a href="<%= user.role === 'admin' || user.role === 'super_admin' ? '/admin' : '/user' %>" class="btn btn-premium-primary btn-sm"><%= user.name %></a>
+                    <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn btn-premium-primary btn-sm"><i class="fa-solid fa-user-gear me-1"></i> <%= user.name %></a>
                 <% } else { %>
                     <a href="/auth/login" class="btn btn-premium-primary btn-sm">Login</a>
                 <% } %>

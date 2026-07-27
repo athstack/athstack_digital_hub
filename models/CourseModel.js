@@ -1,55 +1,194 @@
-const pool = require('../config/db');
+const { query, queryOne, pool } = require('../config/db');
 
 class CourseModel {
-  async getAll() {
-    const [rows] = await pool.execute('SELECT * FROM training_courses ORDER BY id DESC');
-    return rows;
-  }
-
   async getActive() {
-    const [rows] = await pool.execute("SELECT * FROM training_courses WHERE status = 'active' ORDER BY id ASC");
-    return rows;
-  }
-
-  async getById(id) {
-    const [rows] = await pool.execute('SELECT * FROM training_courses WHERE id = ? LIMIT 1', [id]);
-    return rows.length > 0 ? rows[0] : null;
-  }
-
-  async add(data) {
-    const [result] = await pool.execute(
-      `INSERT INTO training_courses (title, slug, description, duration, status, level, price, instructor, image_path)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [data.title, data.slug, data.description, data.duration, data.status, data.level, data.price, data.instructor, data.image_path]
+    return query(
+      `SELECT tc.*, u.first_name AS instructor_first_name, u.last_name AS instructor_last_name, u.avatar AS instructor_avatar
+       FROM training_courses tc
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       WHERE tc.status = 'active'
+       ORDER BY tc.created_at DESC`
     );
-    return result.affectedRows > 0;
   }
 
-  async update(data, id) {
-    const [result] = await pool.execute(
-      `UPDATE training_courses SET title = ?, description = ?, duration = ?, status = ?, level = ?, price = ? WHERE id = ?`,
-      [data.title, data.description, data.duration, data.status, data.level, data.price, id]
+  async getAll() {
+    return query(
+      `SELECT tc.*, u.first_name AS instructor_first_name, u.last_name AS instructor_last_name,
+              (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = tc.id) AS enrollment_count
+       FROM training_courses tc
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       ORDER BY tc.created_at DESC`
     );
-    return result.affectedRows > 0;
+  }
+
+  async findBySlug(slug) {
+    return queryOne(
+      `SELECT tc.*, u.first_name AS instructor_first_name, u.last_name AS instructor_last_name,
+              u.bio AS instructor_bio, u.avatar AS instructor_avatar,
+              (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = tc.id) AS enrollment_count
+       FROM training_courses tc
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       WHERE tc.slug = ?`,
+      [slug]
+    );
+  }
+
+  async findById(id) {
+    return queryOne(
+      `SELECT tc.*, u.first_name AS instructor_first_name, u.last_name AS instructor_last_name,
+              (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = tc.id) AS enrollment_count
+       FROM training_courses tc
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       WHERE tc.id = ?`,
+      [id]
+    );
+  }
+
+  async create(data) {
+    const result = await query(
+      `INSERT INTO training_courses (instructor_id, title, slug, description, duration, level, price, image_path, status, max_enrollments)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        data.instructor_id || null, data.title, data.slug,
+        data.description || null, data.duration || null,
+        data.level || 'Beginner', data.price,
+        data.image_path || null, data.status || 'draft',
+        data.max_enrollments || 0
+      ]
+    );
+    return this.findById(result.insertId);
+  }
+
+  async update(id, data) {
+    const fields = ['instructor_id', 'title', 'slug', 'description', 'duration', 'level', 'price', 'image_path', 'status', 'max_enrollments'];
+    const sets = [];
+    const params = [];
+
+    for (const f of fields) {
+      if (data[f] !== undefined) {
+        sets.push(`${f} = ?`);
+        params.push(data[f]);
+      }
+    }
+
+    if (sets.length === 0) return this.findById(id);
+
+    params.push(id);
+    await query(`UPDATE training_courses SET ${sets.join(', ')} WHERE id = ?`, params);
+    return this.findById(id);
   }
 
   async delete(id) {
-    const [result] = await pool.execute('DELETE FROM training_courses WHERE id = ?', [id]);
-    return result.affectedRows > 0;
+    await query('DELETE FROM training_courses WHERE id = ?', [id]);
+    return true;
   }
 
-  async enrollUser(userId, courseId) {
-    const [check] = await pool.execute(
-      'SELECT COUNT(*) as count FROM course_registrations WHERE user_id = ? AND course_id = ?',
-      [userId, courseId]
-    );
-    if (check[0].count > 0) return true;
+  async enroll(userId, courseId) {
+    const connection = await pool.getConnection();
+    try {
+      await connection.beginTransaction();
 
-    const [result] = await pool.execute(
-      `INSERT INTO course_registrations (user_id, course_id, payment_status) VALUES (?, ?, 'unpaid')`,
+      const course = (await connection.execute(
+        'SELECT * FROM training_courses WHERE id = ?',
+        [courseId]
+      ))[0][0];
+
+      if (!course) {
+        await connection.rollback();
+        throw new Error('Course not found');
+      }
+
+      if (course.max_enrollments > 0) {
+        const countRow = (await connection.execute(
+          'SELECT COUNT(*) AS total FROM enrollments WHERE course_id = ?',
+          [courseId]
+        ))[0][0];
+
+        if (countRow.total >= course.max_enrollments) {
+          await connection.rollback();
+          throw new Error('Course is full');
+        }
+      }
+
+      const existing = (await connection.execute(
+        'SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?',
+        [userId, courseId]
+      ))[0][0];
+
+      if (existing) {
+        await connection.rollback();
+        throw new Error('Already enrolled');
+      }
+
+      await connection.execute(
+        'INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)',
+        [userId, courseId]
+      );
+
+      await connection.commit();
+
+      return this.isEnrolled(userId, courseId);
+    } catch (err) {
+      await connection.rollback();
+      throw err;
+    } finally {
+      connection.release();
+    }
+  }
+
+  async isEnrolled(userId, courseId) {
+    return queryOne(
+      'SELECT * FROM enrollments WHERE user_id = ? AND course_id = ?',
       [userId, courseId]
     );
-    return result.affectedRows > 0;
+  }
+
+  async getEnrollments(userId) {
+    return query(
+      `SELECT e.*, tc.title AS course_title, tc.slug AS course_slug, tc.image_path AS course_image,
+              tc.duration AS course_duration, tc.level AS course_level,
+              u.first_name AS instructor_first_name, u.last_name AS instructor_last_name
+       FROM enrollments e
+       INNER JOIN training_courses tc ON e.course_id = tc.id
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       WHERE e.user_id = ?
+       ORDER BY e.enrolled_at DESC`,
+      [userId]
+    );
+  }
+
+  async countEnrollments(courseId) {
+    const row = await queryOne(
+      'SELECT COUNT(*) AS total FROM enrollments WHERE course_id = ?',
+      [courseId]
+    );
+    return row.total;
+  }
+
+  async getByInstructor(instructorId) {
+    return query(
+      `SELECT tc.*,
+              (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = tc.id) AS enrollment_count
+       FROM training_courses tc
+       WHERE tc.instructor_id = ?
+       ORDER BY tc.created_at DESC`,
+      [instructorId]
+    );
+  }
+
+  async updateProgress(enrollmentId, progress) {
+    const sets = ['progress = ?'];
+    const params = [progress];
+
+    if (progress >= 100) {
+      sets.push('enrollment_status = ?');
+      params.push('completed');
+      sets.push('completed_at = NOW()');
+    }
+
+    params.push(enrollmentId);
+    await query(`UPDATE enrollments SET ${sets.join(', ')} WHERE id = ?`, params);
+    return queryOne('SELECT * FROM enrollments WHERE id = ?', [enrollmentId]);
   }
 }
 

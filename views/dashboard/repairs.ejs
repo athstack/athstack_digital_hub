@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-wrench me-2 text-info"></i>Repair History</h2>
+
+                <% if (bookings && bookings.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Service</th>
+                                    <th>Device</th>
+                                    <th>Appointment</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% bookings.forEach(booking => { %>
+                                <tr>
+                                    <td class="text-white fw-bold"><%= booking.reference_number || 'N/A' %></td>
+                                    <td class="text-muted"><%= booking.service_title || 'General Repair' %></td>
+                                    <td class="text-muted"><%= booking.device_type || '' %> <%= booking.device_brand || '' %></td>
+                                    <td class="text-muted"><%= formatDate(booking.appointment_date) %></td>
+                                    <td><span class="badge <%= getStatusBadgeClass(booking.status) %>"><%= booking.status %></span></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-wrench fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Repair Requests</h4>
+                    <p class="text-muted">You haven't submitted any repair requests. Book a diagnostic to get started.</p>
+                    <a href="/maintenance" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-calendar-check me-2"></i>Book a Repair</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

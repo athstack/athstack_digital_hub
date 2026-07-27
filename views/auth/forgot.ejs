@@ -1,27 +1,47 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5 my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="glass-card p-4 p-md-5 text-center">
-                <div class="text-primary fs-1 mb-3">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <h3 class="fw-bold text-white mb-2">Credential Reset Request</h3>
-                <p class="text-muted small mb-4">Input your indexed profile email below. If verified inside our record database, an automated reset dispatch link will trace to your account inbox.</p>
-                
-                <form action="/auth/forgot" method="POST">
-                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                    <div class="mb-4 text-start">
-                        <label class="form-label text-muted small">Profile Account Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="name@domain.com" required>
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="glass-card no-lift p-5">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                            <i class="fa-solid fa-key fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">Credential Reset</h3>
+                        <p class="text-muted small">Enter your email to receive a password reset link</p>
                     </div>
-                    <button type="submit" class="btn btn-premium-primary w-100 rounded-pill py-2 mb-3">Dispatch Reset Sequence</button>
-                    <a href="/auth/login" class="text-muted small text-decoration-none d-block"><i class="fa-solid fa-chevron-left me-2"></i>Return to Portal Entry</a>
-                </form>
+
+                    <% if (typeof flashInfo !== 'undefined' && flashInfo && flashInfo.length > 0) { %>
+                    <div class="alert alert-info"><i class="fa-solid fa-info-circle me-2"></i><%= flashInfo %></div>
+                    <% } %>
+                    <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                    <div class="alert alert-success"><i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %></div>
+                    <% } %>
+                    <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= flashError %></div>
+                    <% } %>
+
+                    <form method="POST" action="/auth/forgot">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="mb-4">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" required placeholder="your@email.com">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-paper-plane me-2"></i>Send Reset Link</button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-0">Remember your password? <a href="/auth/login" class="text-primary">Sign in</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

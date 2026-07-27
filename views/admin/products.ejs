@@ -1,68 +1,67 @@
 <%- include('../partials/header') %>
 
-<div class="container-fluid py-5 px-md-5">
-    <div class="glass-card p-4 mb-5">
-        <h1 class="fw-bold text-white">Inventory Management</h1>
-        <p class="text-muted">Manage your digital hub product catalog below.</p>
-        <a href="/admin" class="btn btn-primary btn-sm">Back to Dashboard</a>
-    </div>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
 
-    <div class="glass-card p-4 mb-5">
-        <h4 class="text-white mb-3">Add New Product</h4>
-        <form method="POST" action="/admin/products" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-            <input type="hidden" name="add_product" value="1">
-            <div class="row g-3">
-                <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Product Name" required></div>
-                <div class="col-md-2"><input type="number" name="category_id" class="form-control" placeholder="Category ID" required></div>
-                <div class="col-md-3"><input type="text" name="description" class="form-control" placeholder="Description" required></div>
-                <div class="col-md-2"><input type="number" name="price" class="form-control" placeholder="Price" step="0.01" required></div>
-                <div class="col-md-2"><input type="number" name="stock_quantity" class="form-control" placeholder="Qty" required></div>
-                <div class="col-md-12">
-                    <label class="text-white small">Product Main Image</label>
-                    <input type="file" name="product_image" class="form-control" accept="image/*" required>
-                </div>
-                <div class="col-12"><button type="submit" class="btn btn-primary">Add Product</button></div>
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
             </div>
-        </form>
-    </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-box-open me-2 text-primary"></i>Manage Inventory</h2>
 
-    <div class="glass-card p-4">
-        <h4 class="text-white mb-3">Inventory Stock Registry</h4>
-        <div class="table-responsive">
-            <table class="table table-dark table-hover">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (products && products.length > 0) { %>
-                        <% products.forEach(function(product) { %>
-                        <tr>
-                            <td><img src="/uploads/products/<%= product.main_image %>" width="50"></td>
-                            <td><%= product.name %></td>
-                            <td>$<%= parseFloat(product.price).toFixed(2) %></td>
-                            <td><%= product.stock_quantity %></td>
-                            <td>
-                                <a href="/admin/editProduct/<%= product.id %>" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="/admin/deleteProduct/<%= product.id %>" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                        <% }); %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">No inventory items mapped at this time.</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+                <% if (products && products.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <% products.forEach(product => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
+                                                <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="" class="img-fluid" style="max-height:38px;object-fit:contain;">
+                                            </div>
+                                            <span class="text-white fw-bold"><%= product.name %></span>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted"><%= product.category_name || 'N/A' %></td>
+                                    <td class="text-primary fw-bold"><%= formatCurrency(product.price) %></td>
+                                    <td class="text-muted"><%= product.stock_quantity %></td>
+                                    <td><span class="badge <%= product.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= product.status %></span></td>
+                                    <td>
+                                        <form method="POST" action="/admin/products/<%= product.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn <%= product.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> btn-sm rounded-pill" title="<%= product.status === 'active' ? 'Deactivate' : 'Activate' %>">
+                                                <i class="fa-solid fa-<%= product.status === 'active' ? 'ban' : 'check' %>"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-box-open fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Products</h4>
+                    <p class="text-muted">No products have been listed yet.</p>
+                </div>
+                <% } %>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

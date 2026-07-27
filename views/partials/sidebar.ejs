@@ -1,0 +1,36 @@
+<div class="glass-card no-lift p-3 mb-4">
+    <div class="d-flex align-items-center mb-3 px-2">
+        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+            <i class="fa-solid fa-user text-white"></i>
+        </div>
+        <div class="ms-3">
+            <h6 class="mb-0 text-white"><%= user ? user.name : 'User' %></h6>
+            <small class="text-muted">Customer Account</small>
+        </div>
+    </div>
+    <hr class="border-secondary opacity-25 my-2">
+    <nav class="nav flex-column gap-1">
+        <a class="nav-link rounded<%= currentPath === '/dashboard' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard">
+            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/orders">
+            <i class="fa-solid fa-box-shopping me-2"></i> My Orders
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/repairs">
+            <i class="fa-solid fa-wrench me-2"></i> My Repairs
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/training">
+            <i class="fa-solid fa-graduation-cap me-2"></i> My Courses
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/wishlist' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/wishlist">
+            <i class="fa-solid fa-heart me-2"></i> Wishlist
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/profile' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/profile">
+            <i class="fa-solid fa-user-pen me-2"></i> Profile
+        </a>
+        <hr class="border-secondary opacity-25 my-2">
+        <a class="nav-link rounded text-muted" href="/auth/logout">
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+        </a>
+    </nav>
+</div>

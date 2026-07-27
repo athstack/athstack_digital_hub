@@ -1,24 +1,116 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Procurement Pipeline</span>
-            <h1 class="fw-bold text-white mt-1">Staged Assets Cart</h1>
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-primary fw-bold text-uppercase tracking-widest small">Shopping Cart</span>
+            <h1 class="text-white fw-bold mt-2">Your Cart</h1>
         </div>
-    </div>
 
-    <div class="glass-card p-4 text-center py-5">
-        <% if (!cart || Object.keys(cart).length === 0) { %>
-            <div class="py-4 text-muted">
-                <i class="fa-solid fa-cart-flatbed d-block fs-1 mb-3 text-secondary"></i>
-                <p class="fs-5 mb-3">Your staging matrix is currently empty.</p>
-                <a href="/shop" class="btn btn-premium-primary btn-sm rounded-pill px-4">Browse Hardware Store</a>
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= flashSuccess %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= flashError %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+        <% if (cartItems && cartItems.length > 0) { %>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th style="width:160px;">Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cartItems.forEach((item, index) => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded bg-dark me-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;overflow:hidden;flex-shrink:0;">
+                                                <img src="/uploads/<%= item.main_image || 'default.jpg' %>" alt="<%= item.name %>" class="img-fluid" style="max-height:60px;object-fit:contain;">
+                                            </div>
+                                            <div>
+                                                <a href="/shop/<%= item.slug %>" class="text-white fw-bold text-decoration-none"><%= item.name %></a>
+                                                <% if (item.category_name) { %>
+                                                    <br><small class="text-muted"><%= item.category_name %></small>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-primary fw-bold">&#8358;<%= Number(item.price).toLocaleString() %></td>
+                                    <td>
+                                        <form method="POST" action="/cart/update" class="d-flex align-items-center">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="product_id" value="<%= item.id %>">
+                                            <div class="input-group" style="width:120px;">
+                                                <button type="submit" name="quantity" value="<%= item.quantity - 1 %>" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-minus"></i></button>
+                                                <span class="form-control text-center bg-dark text-white border-secondary"><%= item.quantity %></span>
+                                                <button type="submit" name="quantity" value="<%= item.quantity + 1 %>" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-plus"></i></button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td class="text-primary fw-bold">&#8358;<%= Number(item.subtotal).toLocaleString() %></td>
+                                    <td>
+                                        <form method="POST" action="/cart/remove/<%= index %>">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card no-lift p-4 sticky-top" style="top:100px;">
+                    <h5 class="text-white fw-bold mb-4">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal (<%= cartItems.length %> items)</span>
+                        <span class="text-white fw-bold">&#8358;<%= Number(cartTotal).toLocaleString() %></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Shipping</span>
+                        <span class="text-success">Calculated at checkout</span>
+                    </div>
+                    <hr class="border-secondary opacity-25">
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-white fw-bold fs-5">Total</span>
+                        <span class="text-primary fw-bold fs-5">&#8358;<%= Number(cartTotal).toLocaleString() %></span>
+                    </div>
+                    <form method="POST" action="/cart/checkout">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-2"><i class="fa-solid fa-lock me-2"></i>Proceed to Checkout</button>
+                    </form>
+                    <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Continue Shopping</a>
+                </div>
+            </div>
+        </div>
         <% } else { %>
-            <p class="text-white">Active assets detected in staging session.</p>
+        <div class="empty-state">
+            <i class="fa-solid fa-cart-shopping fa-4x mb-3"></i>
+            <h4 class="text-white fw-bold">Your Cart is Empty</h4>
+            <p class="text-muted">Looks like you haven't added any products yet. Browse our shop to find premium tech hardware.</p>
+            <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+        </div>
         <% } %>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

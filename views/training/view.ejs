@@ -1,33 +1,121 @@
 <%- include('../partials/header') %>
 
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="/training" class="text-muted text-decoration-none small">
-                <i class="fa-solid fa-arrow-left me-2"></i>Back to Academy Tracks
-            </a>
-            <h1 class="fw-bold text-white mt-3"><%= course.title || 'Course Details' %></h1>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= flashSuccess %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= flashError %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="glass-card p-4 mb-4">
-                <h3 class="text-white h5 fw-bold mb-3">Syllabus Overview</h3>
-                <p class="text-muted"><%= course.description || '' %></p>
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="/training" class="text-muted text-decoration-none">Training</a></li>
+                <li class="breadcrumb-item active text-primary"><%= course.title %></li>
+            </ol>
+        </nav>
+
+        <% if (course) { %>
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <div class="glass-card no-lift p-4 mb-4">
+                    <div class="rounded bg-dark mb-4 d-flex align-items-center justify-content-center" style="height:360px;overflow:hidden;">
+                        <img src="/uploads/<%= course.image_path || 'default.jpg' %>" alt="<%= course.title %>" class="img-fluid" style="max-height:340px;object-fit:contain;">
+                    </div>
+                    <h1 class="text-white fw-bold mb-3"><%= course.title %></h1>
+                    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                        <span class="badge bg-primary"><%= course.level || 'Beginner' %></span>
+                        <% if (course.duration) { %>
+                            <span class="text-muted"><i class="fa-regular fa-clock me-1"></i><%= course.duration %></span>
+                        <% } %>
+                        <span class="text-muted"><i class="fa-solid fa-users me-1"></i><%= course.enrollment_count || 0 %> enrolled</span>
+                    </div>
+                    <h5 class="text-white fw-bold mb-3">About This Course</h5>
+                    <p class="text-muted lead"><%= course.description || 'Course description coming soon.' %></p>
+                </div>
+
+                <% if (course.instructor_first_name) { %>
+                <div class="glass-card no-lift p-4">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-tie me-2 text-primary"></i>Instructor</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+                            <% if (course.instructor_avatar) { %>
+                                <img src="/uploads/<%= course.instructor_avatar %>" alt="Instructor" class="rounded-circle" style="width:56px;height:56px;object-fit:cover;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user text-white"></i>
+                            <% } %>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-white mb-0"><%= course.instructor_first_name %> <%= course.instructor_last_name %></h6>
+                            <% if (course.instructor_bio) { %>
+                                <small class="text-muted"><%= course.instructor_bio.substring(0, 120) %></small>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card no-lift p-4 sticky-top" style="top:100px;">
+                    <div class="text-center mb-4">
+                        <% if (course.price > 0) { %>
+                            <span class="display-5 text-primary fw-bold">&#8358;<%= Number(course.price).toLocaleString() %></span>
+                        <% } else { %>
+                            <span class="display-5 text-success fw-bold">Free</span>
+                        <% } %>
+                    </div>
+
+                    <% if (isEnrolled) { %>
+                        <div class="text-center mb-4">
+                            <span class="badge bg-success p-2"><i class="fa-solid fa-check-circle me-1"></i> Enrolled</span>
+                        </div>
+                        <a href="/dashboard/training" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-play me-2"></i>Go to Course</a>
+                    <% } else { %>
+                        <form method="POST" action="/training/enroll/<%= course.id %>">
+                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                            <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-rocket me-2"></i>Enroll Now</button>
+                        </form>
+                    <% } %>
+
+                    <hr class="border-secondary opacity-25 my-3">
+
+                    <h6 class="text-white fw-bold mb-3">Course Details</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                            <span class="text-muted"><i class="fa-solid fa-signal me-2"></i>Level</span>
+                            <span class="text-white"><%= course.level || 'Beginner' %></span>
+                        </li>
+                        <% if (course.duration) { %>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                            <span class="text-muted"><i class="fa-regular fa-clock me-2"></i>Duration</span>
+                            <span class="text-white"><%= course.duration %></span>
+                        </li>
+                        <% } %>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                            <span class="text-muted"><i class="fa-solid fa-users me-2"></i>Enrolled</span>
+                            <span class="text-white"><%= course.enrollment_count || 0 %> students</span>
+                        </li>
+                        <% if (course.instructor_first_name) { %>
+                        <li class="d-flex justify-content-between py-2">
+                            <span class="text-muted"><i class="fa-solid fa-user-tie me-2"></i>Instructor</span>
+                            <span class="text-white"><%= course.instructor_first_name %></span>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="glass-card p-4">
-                <h3 class="text-white h5 fw-bold mb-3">Program Metrics</h3>
-                <ul class="list-unstyled text-muted small">
-                    <li class="mb-2"><i class="fa-solid fa-calendar me-2 text-primary"></i>Duration: <%= course.duration || '0' %></li>
-                    <li class="mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Tuition: $<%= parseFloat(course.price || 0).toFixed(2) %></li>
-                </ul>
-                <button class="btn btn-premium-primary w-100 rounded-pill">Enroll in Node</button>
-            </div>
-        </div>
+        <% } %>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

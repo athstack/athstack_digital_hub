@@ -1,43 +1,91 @@
 <%- include('../partials/header') %>
 
-<div class="container-fluid py-5 px-md-5">
-    <div class="glass-card p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-white fw-bold m-0">
-                <i class="fa-solid fa-envelope text-primary me-3"></i><%= title %>
-            </h2>
-            <a href="/admin" class="btn btn-sm btn-outline-primary">Back to Dashboard</a>
-        </div>
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
 
-        <div class="table-responsive">
-            <table class="table table-dark table-hover align-middle mb-0">
-                <thead class="table-light text-dark fw-bold">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Message</th>
-                        <th>Received</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (messages && messages.length > 0) { %>
-                        <% messages.forEach(function(msg) { %>
-                        <tr>
-                            <td class="text-white fw-bold"><%= msg.name %></td>
-                            <td><%= msg.email %></td>
-                            <td class="text-info fw-medium text-wrap" style="max-width: 400px; word-wrap: break-word;">
-                                <%= msg.message %>
-                            </td>
-                            <td class="small text-muted"><%= new Date(msg.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td>
-                        </tr>
-                        <% }); %>
-                    <% } else { %>
-                        <tr><td colspan="4" class="text-center py-4">No messages found.</td></tr>
-                    <% } %>
-                </tbody>
-            </table>
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-envelope me-2 text-primary"></i>Contact Inbox</h2>
+
+                <% if (messages && messages.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th>From</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr>
+                            </thead>
+                            <tbody>
+                                <% messages.forEach(msg => { %>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <span class="text-white fw-bold"><%= msg.name %></span><br>
+                                            <small class="text-muted"><%= msg.email %></small>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted"><%= msg.subject || 'No Subject' %></td>
+                                    <td class="text-muted"><%= formatDate(msg.created_at) %></td>
+                                    <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? 'New' : (msg.status === 'replied' ? 'Replied' : 'Read') %></span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-premium-outline btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#msgModal<%= msg.id %>" title="View">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <% if (msg.status === 'unread') { %>
+                                            <form method="POST" action="/admin/inbox/<%= msg.id %>/read" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn btn-outline-success btn-sm rounded-pill" title="Mark Read"><i class="fa-solid fa-check"></i></button>
+                                            </form>
+                                            <% } %>
+                                        </div>
+
+                                        <div class="modal fade" id="msgModal<%= msg.id %>" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+                                                    <div class="modal-header border-secondary">
+                                                        <h5 class="text-white fw-bold">Message from <%= msg.name %></h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="text-muted mb-1"><strong>Email:</strong> <%= msg.email %></p>
+                                                        <% if (msg.phone) { %><p class="text-muted mb-1"><strong>Phone:</strong> <%= msg.phone %></p><% } %>
+                                                        <p class="text-muted mb-1"><strong>Subject:</strong> <%= msg.subject || 'N/A' %></p>
+                                                        <p class="text-muted mb-1"><strong>Date:</strong> <%= formatDate(msg.created_at) %></p>
+                                                        <hr class="border-secondary opacity-25">
+                                                        <p class="text-white"><%= msg.message %></p>
+                                                    </div>
+                                                    <div class="modal-footer border-secondary">
+                                                        <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-envelope fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">Inbox Empty</h4>
+                    <p class="text-muted">No contact messages have been received yet.</p>
+                </div>
+                <% } %>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 <%- include('../partials/footer') %>

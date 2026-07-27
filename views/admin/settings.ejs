@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-gear me-2 text-primary"></i>System Settings</h2>
+
+                <div class="glass-card no-lift p-5">
+                    <form method="POST" action="/admin/settings">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Site Name</label>
+                                <input type="text" name="site_name" class="form-control" value="Athstack Digital Hub" placeholder="Site name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Site URL</label>
+                                <input type="url" name="site_url" class="form-control" value="https://athstack.com" placeholder="https://example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Email</label>
+                                <input type="email" name="contact_email" class="form-control" value="info@athstack.com" placeholder="admin@example.com">
+                            </div>
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i>Save Settings</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card no-lift p-4 mt-4">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i>System Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                                <span class="text-muted">Application</span>
+                                <span class="text-white">Athstack Digital Hub</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                                <span class="text-muted">Version</span>
+                                <span class="text-white">1.0.0</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                                <span class="text-muted">Environment</span>
+                                <span class="text-white"><%= process.env.NODE_ENV || 'development' %></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                                <span class="text-muted">Node.js</span>
+                                <span class="text-white"><%= process.version %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
