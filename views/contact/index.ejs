@@ -2,8 +2,10 @@
 
 <div class="container py-5">
     <% if (status === 'success') { %>
-        <div class="alert alert-success glass-card mb-4 border border-success text-white">
-            Message sent successfully! Our engineering team will get back to you shortly.
+        <div class="glass-card p-4 mb-4">
+            <div class="alert alert-success mb-0">
+                Message sent successfully! Our engineering team will get back to you shortly.
+            </div>
         </div>
     <% } %>
 
@@ -17,37 +19,37 @@
 
     <div class="row g-5">
         <div class="col-lg-7">
-            <div class="glass-card p-4 border border-secondary">
+            <div class="glass-card p-4">
                 <form action="/contact/send" method="POST">
                     <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                     <div class="mb-3">
-                        <label class="text-white small mb-1">Full Name</label>
-                        <input type="text" class="form-control bg-dark text-white border-secondary" name="name" required>
+                        <label class="form-label small">Full Name</label>
+                        <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label class="text-white small mb-1">Email Address</label>
-                        <input type="email" class="form-control bg-dark text-white border-secondary" name="email" required>
+                        <label class="form-label small">Email Address</label>
+                        <input type="email" class="form-control" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label class="text-white small mb-1">Message</label>
-                        <textarea class="form-control bg-dark text-white border-secondary" name="message" rows="5" required></textarea>
+                        <label class="form-label small">Message</label>
+                        <textarea class="form-control" name="message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Send Message</button>
+                    <button type="submit" class="btn btn-premium-primary w-100 rounded-pill">Send Message</button>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-5">
-            <div class="glass-card p-4 border border-secondary mb-4">
+            <div class="glass-card p-4 mb-4">
                 <h5 class="text-white mb-3">Support Desks</h5>
-                <p class="text-secondary small"><i class="fa-solid fa-envelope me-2"></i> info@athstack.com</p>
-                <p class="text-secondary small"><i class="fa-solid fa-phone me-2"></i> +255 782 303 971</p>
+                <p class="text-muted small"><i class="fa-solid fa-envelope me-2"></i> info@athstack.com</p>
+                <p class="text-muted small"><i class="fa-solid fa-phone me-2"></i> +255 782 303 971</p>
             </div>
             
-            <div class="glass-card p-4 border border-secondary">
+            <div class="glass-card p-4">
                 <h5 class="text-white mb-3">Operating Hours</h5>
-                <p class="text-secondary small m-0">Mon - Fri: 08:00 AM - 06:00 PM</p>
-                <p class="text-secondary small m-0">Sat: 09:00 AM - 02:00 PM</p>
+                <p class="text-muted small m-0">Mon - Fri: 08:00 AM - 06:00 PM</p>
+                <p class="text-muted small m-0">Sat: 09:00 AM - 02:00 PM</p>
             </div>
         </div>
     </div>

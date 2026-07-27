@@ -3,7 +3,7 @@
 <div class="container py-5 my-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="glass-card p-4 p-md-5 border border-secondary text-center">
+            <div class="glass-card p-4 p-md-5 text-center">
                 <div class="text-primary fs-1 mb-3">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
@@ -14,7 +14,7 @@
                     <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                     <div class="mb-4 text-start">
                         <label class="form-label text-muted small">Profile Account Email</label>
-                        <input type="email" name="email" class="form-control bg-dark border-secondary text-white" placeholder="name@domain.com" required>
+                        <input type="email" name="email" class="form-control" placeholder="name@domain.com" required>
                     </div>
                     <button type="submit" class="btn btn-premium-primary w-100 rounded-pill py-2 mb-3">Dispatch Reset Sequence</button>
                     <a href="/auth/login" class="text-muted small text-decoration-none d-block"><i class="fa-solid fa-chevron-left me-2"></i>Return to Portal Entry</a>

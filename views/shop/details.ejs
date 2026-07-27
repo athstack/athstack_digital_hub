@@ -11,7 +11,7 @@
 
     <div class="row g-5">
         <div class="col-md-6">
-            <div class="glass-card p-5 text-center border border-secondary bg-dark-smooth">
+            <div class="glass-card p-5 text-center bg-dark-smooth">
                 <% if (product.main_image) { %>
                     <img src="/uploads/products/<%= product.main_image %>" alt="<%= product.name %>" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
                 <% } else { %>
@@ -36,7 +36,7 @@
                 
                 <div class="d-flex gap-3 align-items-center">
                     <div class="input-group styling-quantity" style="width: 130px;">
-                        <input type="number" name="quantity" class="form-control bg-dark border-secondary text-white text-center" value="1" min="1">
+                        <input type="number" name="quantity" class="form-control text-center" value="1" min="1">
                     </div>
                     <button type="submit" class="btn btn-premium-primary rounded-pill px-4 flex-grow-1 py-2">
                         <i class="fa-solid fa-cart-plus me-2"></i>Stage to Procurement Cart

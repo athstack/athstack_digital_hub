@@ -32,7 +32,7 @@
                             <form action="/user/updateRole" method="POST">
                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                 <input type="hidden" name="id" value="<%= user.id %>">
-                                <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary" onchange="this.form.submit()">
+                                <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="customer" <%= user.role === 'customer' ? 'selected' : '' %>>Customer</option>
                                     <option value="seller" <%= user.role === 'seller' ? 'selected' : '' %>>Seller</option>
                                     <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>

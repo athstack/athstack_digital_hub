@@ -59,30 +59,30 @@
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="glass-card p-5">
+            <div class="glass-card no-lift p-5">
                 <h3 class="fw-bold text-white mb-4 text-center">Schedule Diagnostics & Maintenance</h3>
                 <form id="appointmentSchedulingForm">
                     <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label text-muted small">Full Name</label>
-                            <input type="text" name="name" class="form-control bg-dark border-secondary text-white" required>
+                            <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-muted small">Email Address</label>
-                            <input type="email" name="email" class="form-control bg-dark border-secondary text-white" required>
+                            <input type="email" name="email" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-muted small">Contact Phone Number</label>
-                            <input type="tel" name="phone" class="form-control bg-dark border-secondary text-white" required>
+                            <input type="tel" name="phone" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-muted small">Target Appointment Frame</label>
-                            <input type="datetime-local" name="appointment_date" class="form-control bg-dark border-secondary text-white" required>
+                            <input type="datetime-local" name="appointment_date" class="form-control" required>
                         </div>
                         <div class="col-12">
                             <label class="form-label text-muted small">Select Requested Support Category Service Node</label>
-                            <select name="service_id" class="form-select bg-dark border-secondary text-white" required>
+                            <select name="service_id" class="form-select" required>
                                 <option value="" selected disabled>Choose operational service...</option>
                                 
                                 <optgroup label="Computer Systems Architecture">
@@ -104,7 +104,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label text-muted small">Provide Device Specifics & Structural Failure Fault Context</label>
-                            <textarea name="device_details" rows="4" class="form-control bg-dark border-secondary text-white" placeholder="Include serial matrix codes, system error indicators, or peripheral logs..."></textarea>
+                            <textarea name="device_details" rows="4" class="form-control" placeholder="Include serial matrix codes, system error indicators, or peripheral logs..."></textarea>
                         </div>
                         <div class="col-12 text-center mt-4">
                             <button type="submit" class="btn btn-premium-primary px-5">File Infrastructure Ticket</button>

@@ -16,7 +16,7 @@
         <div class="col-lg-3">
             <div class="glass-card p-4 sticky-md-top" style="top: 90px; z-index: 10;">
                 <div class="text-center mb-4">
-                    <div class="bg-dark border border-secondary text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px;">
+                    <div class="bg-dark text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px;">
                         <i class="fa-solid fa-user-shield fs-3"></i>
                     </div>
                     <h6 class="text-white fw-bold mb-1"><%= user ? user.email : 'user@athstack.com' %></h6>
@@ -131,7 +131,7 @@
                             <% } else { %>
                                 <% courses.forEach(function(course) { %>
                                     <div class="col-md-6">
-                                        <div class="p-3 rounded-3 bg-dark border border-secondary d-flex align-items-center justify-content-between">
+                                        <div class="p-3 rounded-3 bg-dark d-flex align-items-center justify-content-between">
                                             <div>
                                                 <h6 class="text-white fw-bold mb-1"><%= course.title %></h6>
                                                 <small class="text-muted d-block"><i class="fa-regular fa-clock me-2 text-primary"></i><%= course.duration %></small>
