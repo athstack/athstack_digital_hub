@@ -1,5 +1,5 @@
 const ServiceModel = require('../models/ServiceModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 exports.getMaintenance = async (req, res, next) => {
   try {

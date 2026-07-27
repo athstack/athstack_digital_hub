@@ -1,5 +1,5 @@
 const CourseModel = require('../models/CourseModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 exports.getCourses = async (req, res, next) => {
   try {

@@ -1,6 +1,6 @@
 const ProductModel = require('../models/ProductModel');
 const OrderModel = require('../models/OrderModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 exports.getCart = async (req, res, next) => {
   try {

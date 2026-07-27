@@ -2,7 +2,7 @@ const UserModel = require('../models/UserModel');
 const OrderModel = require('../models/OrderModel');
 const RepairModel = require('../models/RepairModel');
 const CourseModel = require('../models/CourseModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 const { formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
 
 exports.getDashboard = async (req, res, next) => {

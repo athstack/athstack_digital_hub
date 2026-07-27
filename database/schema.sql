@@ -3,8 +3,6 @@
 -- MySQL 8+ | InnoDB | utf8mb4_unicode_ci
 -- ================================================================
 
-DROP DATABASE IF EXISTS `athstack_digital_hub`;
-CREATE DATABASE `athstack_digital_hub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `athstack_digital_hub`;
 
 -- ================================================================

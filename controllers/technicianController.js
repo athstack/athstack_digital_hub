@@ -3,7 +3,7 @@ const RepairModel = require('../models/RepairModel');
 const UserModel = require('../models/UserModel');
 const CategoryModel = require('../models/CategoryModel');
 const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 exports.getDashboard = async (req, res, next) => {
   try {

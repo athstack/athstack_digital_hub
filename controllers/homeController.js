@@ -1,6 +1,6 @@
 const ProductModel = require('../models/ProductModel');
 const CourseModel = require('../models/CourseModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 exports.getHome = async (req, res, next) => {
   try {

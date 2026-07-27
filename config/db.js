@@ -56,8 +56,4 @@ async function queryOne(sql, params = []) {
   return rows[0];
 }
 
-module.exports = pool;
-module.exports.pool = pool;
-module.exports.query = query;
-module.exports.queryOne = queryOne;
-module.exports.testConnection = testConnection;
+module.exports = { pool, query, queryOne, testConnection };
