@@ -1,6 +1,6 @@
 const ProductModel = require('../models/ProductModel');
 const CategoryModel = require('../models/CategoryModel');
-const { paginate } = require('../utils/helpers');
+const { paginate, formatCurrency } = require('../utils/helpers');
 
 exports.getShop = async (req, res, next) => {
   try {
@@ -30,7 +30,8 @@ exports.getShop = async (req, res, next) => {
       searchQuery: search,
       pagination: { page: result.page, totalPages, total: result.total, hasNext: result.page < totalPages, hasPrev: result.page > 1 },
       minPrice: req.query.min_price || '',
-      maxPrice: req.query.max_price || ''
+      maxPrice: req.query.max_price || '',
+      formatCurrency
     });
   } catch (err) {
     next(err);
@@ -49,7 +50,8 @@ exports.getProduct = async (req, res, next) => {
     res.render('shop/details', {
       title: `${product.name} - Athstack`,
       product,
-      gallery
+      gallery,
+      formatCurrency
     });
   } catch (err) {
     next(err);

@@ -15,7 +15,7 @@
                     <div class="col-md-4">
                         <div class="glass-card p-3">
                             <h6 class="text-white fw-bold"><%= item.name %></h6>
-                            <span class="text-primary fw-bold">&#8358;<%= Number(item.price).toLocaleString() %></span>
+                             <span class="text-primary fw-bold"><%= formatCurrency(item.price) %></span>
                         </div>
                     </div>
                     <% }) %>

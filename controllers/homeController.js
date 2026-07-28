@@ -1,6 +1,7 @@
 const ProductModel = require('../models/ProductModel');
 const CourseModel = require('../models/CourseModel');
 const { pool } = require('../config/db');
+const { formatCurrency } = require('../utils/helpers');
 
 exports.getHome = async (req, res, next) => {
   try {
@@ -34,7 +35,8 @@ exports.getHome = async (req, res, next) => {
       title: 'Home - Athstack Digital Hub',
       featured,
       recentCourses,
-      stats
+      stats,
+      formatCurrency
     });
   } catch (err) {
     next(err);

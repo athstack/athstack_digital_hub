@@ -5,7 +5,7 @@ const adminController = require('../controllers/adminController');
 const { isAdmin } = require('../middleware/auth');
 const { validateCsrf } = require('../middleware/csrf');
 const { createProductValidator } = require('../validators/productValidators');
-const { uploadProductImages, handleUploadError } = require('../middleware/upload');
+const { uploadProductImages, withUpload } = require('../middleware/upload');
 
 router.use(isAdmin);
 
@@ -27,8 +27,7 @@ router.post('/orders/:id/status', validateCsrf, adminController.updateOrderStatu
 router.get('/training', adminController.getCourses);
 router.post('/training/add',
   validateCsrf,
-  uploadProductImages.single('course_image'),
-  handleUploadError,
+  withUpload(uploadProductImages.single('course_image')),
   adminController.createCourse
 );
 router.post('/training/edit/:id', validateCsrf, adminController.updateCourse);

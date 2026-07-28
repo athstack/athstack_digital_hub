@@ -60,12 +60,13 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
-                                                <% if (u.avatar) { %>
-                                                    <img src="/uploads/<%= u.avatar %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;">
-                                                <% } else { %>
-                                                    <i class="fa-solid fa-user text-white small"></i>
-                                                <% } %>
-                                            </div>
+                                                 <% if (u.avatar) { %>
+                                                     <img src="/uploads/profiles/<%= u.avatar %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                                     <i class="fa-solid fa-user text-white small" style="display:none;"></i>
+                                                 <% } else { %>
+                                                     <i class="fa-solid fa-user text-white small"></i>
+                                                 <% } %>
+                                             </div>
                                             <span class="text-white fw-bold"><%= u.first_name %> <%= u.last_name %></span>
                                         </div>
                                     </td>

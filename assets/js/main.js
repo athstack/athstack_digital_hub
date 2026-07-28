@@ -22,7 +22,7 @@ function initLiveSearchEngine() {
         }
 
         debounceTimeoutToken = setTimeout(() => {
-            fetch(`/shop/apiSearch?term=${encodeURIComponent(criteria)}`)
+            fetch(`/api/search?term=${encodeURIComponent(criteria)}`)
                 .then(res => {
                     if (!res.ok) throw new Error("Network latency verification failure.");
                     return res.json();
@@ -36,8 +36,8 @@ function initLiveSearchEngine() {
 
                     data.forEach(item => {
                         const template = `
-                            <a href="/shop/details/${item.slug}" class="search-suggestion-item">
-                                <img src="/uploads/products/${item.main_image}" alt="${item.name}" style="width:40px; height:40px; object-fit:cover; margin-right:12px; border-radius:4px;">
+                            <a href="/shop/${item.slug}" class="search-suggestion-item">
+                                <img src="${item.main_image ? '/uploads/products/' + item.main_image : '/uploads/products/product-placeholder.svg'}" alt="${item.name}" style="width:40px; height:40px; object-fit:cover; margin-right:12px; border-radius:4px;" onerror="this.onerror=null;this.src='/uploads/products/product-placeholder.svg';">
                                 <div>
                                     <div class="fw-bold small text-white">${item.name}</div>
                                     <div class="text-primary small fw-medium">$${parseFloat(item.price).toFixed(2)}</div>

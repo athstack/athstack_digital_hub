@@ -28,7 +28,7 @@
             <div class="col-lg-6">
                 <div class="glass-card no-lift p-3">
                     <div class="rounded bg-dark d-flex align-items-center justify-content-center" style="height:400px;overflow:hidden;">
-                        <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:380px;object-fit:contain;">
+                        <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:380px;object-fit:contain;' }) %>
                     </div>
                 </div>
                 <% if (gallery && gallery.length > 0) { %>
@@ -36,7 +36,7 @@
                     <% gallery.forEach(img => { %>
                     <div class="col-3">
                         <div class="glass-card no-lift p-1">
-                            <img src="/uploads/<%= img.image_path %>" alt="Gallery" class="img-fluid rounded" style="height:80px;width:100%;object-fit:cover;">
+                            <%- include('../partials/productImage', { src: img.image_path ? '/uploads/products/' + img.image_path : '', alt: 'Gallery', style: 'height:80px;width:100%;object-fit:cover;', className: 'img-fluid rounded' }) %>
                         </div>
                     </div>
                     <% }) %>
@@ -64,11 +64,11 @@
 
                 <div class="mb-4">
                     <% if (product.discount_price && product.discount_price < product.price) { %>
-                        <span class="display-6 text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
-                        <span class="text-muted text-decoration-line-through fs-5 ms-2">&#8358;<%= Number(product.price).toLocaleString() %></span>
-                        <span class="badge bg-danger ms-2">Save &#8358;<%= Number(product.price - product.discount_price).toLocaleString() %></span>
+                        <span class="display-6 text-primary fw-bold"><%= formatCurrency(product.discount_price) %></span>
+                        <span class="text-muted text-decoration-line-through fs-5 ms-2"><%= formatCurrency(product.price) %></span>
+                        <span class="badge bg-danger ms-2">Save <%= formatCurrency(product.price - product.discount_price) %></span>
                     <% } else { %>
-                        <span class="display-6 text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                        <span class="display-6 text-primary fw-bold"><%= formatCurrency(product.price) %></span>
                     <% } %>
                 </div>
 

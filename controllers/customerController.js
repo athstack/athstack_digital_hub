@@ -27,7 +27,8 @@ exports.getDashboard = async (req, res, next) => {
       totalSpent: formatCurrency(totalSpent),
       orderCount: orders.total || orders.length,
       bookingCount: bookings.length,
-      courseCount: enrollments.length
+      courseCount: enrollments.length,
+      formatCurrency
     });
   } catch (err) {
     next(err);
@@ -136,7 +137,8 @@ exports.getWishlist = async (req, res, next) => {
   try {
     res.render('dashboard/wishlist', {
       title: 'Your Wishlist - Athstack',
-      wishlist: []
+      wishlist: [],
+      formatCurrency
     });
   } catch (err) {
     next(err);

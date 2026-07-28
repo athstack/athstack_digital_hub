@@ -1,6 +1,7 @@
 const ProductModel = require('../models/ProductModel');
 const RepairModel = require('../models/RepairModel');
 const UserModel = require('../models/UserModel');
+const OrderModel = require('../models/OrderModel');
 const CategoryModel = require('../models/CategoryModel');
 const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
 const { pool } = require('../config/db');
@@ -91,7 +92,7 @@ exports.createProduct = async (req, res, next) => {
       return res.redirect('/technician/products/add');
     }
 
-    let mainImage = 'default.jpg';
+    let mainImage = '';
     if (req.file) {
       mainImage = req.file.filename;
     }
@@ -113,6 +114,8 @@ exports.createProduct = async (req, res, next) => {
       stock_quantity: parseInt(stock_quantity) || 0,
       main_image: mainImage,
       technician_id: req.session.userId,
+      status: 'active',
+      featured: 0,
       sku: sku || null
     });
 

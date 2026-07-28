@@ -43,11 +43,12 @@ function initLiveSearch() {
 
           data.forEach(item => {
             const price = item.discount_price && parseFloat(item.discount_price) < parseFloat(item.price)
-              ? '<span class="text-primary fw-bold">&#8358;' + Number(item.discount_price).toLocaleString() + '</span> <small class="text-muted text-decoration-line-through">&#8358;' + Number(item.price).toLocaleString() + '</small>'
-              : '<span class="text-primary fw-bold">&#8358;' + Number(item.price).toLocaleString() + '</span>';
+              ? '<span class="text-primary fw-bold">$' + Number(item.discount_price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span> <small class="text-muted text-decoration-line-through">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</small>'
+              : '<span class="text-primary fw-bold">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span>';
 
+            const imgSrc = item.main_image ? '/uploads/products/' + item.main_image : '/uploads/products/product-placeholder.svg';
             const html = '<a href="/shop/' + item.slug + '" class="search-suggestion-item">' +
-              '<img src="/uploads/' + (item.main_image || 'default.jpg') + '" alt="' + escapeHtml(item.name) + '" style="width:40px;height:40px;object-fit:cover;margin-right:12px;border-radius:4px;">' +
+              '<img src="' + imgSrc + '" alt="' + escapeHtml(item.name) + '" style="width:40px;height:40px;object-fit:cover;margin-right:12px;border-radius:4px;" onerror="this.onerror=null;this.src=\'/uploads/products/product-placeholder.svg\';">' +
               '<div>' +
               '<div class="fw-bold small text-white">' + escapeHtml(item.name) + '</div>' +
               '<div class="small">' + price + '</div>' +

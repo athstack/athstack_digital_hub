@@ -82,11 +82,28 @@ function handleUploadError(err, req, res, next) {
   next(err);
 }
 
+/**
+ * Wrap a multer upload middleware to catch errors inline
+ * @param {Function} uploadMiddleware - multer upload middleware (e.g. upload.single('field'))
+ * @returns {Function} Express middleware
+ */
+function withUpload(uploadMiddleware) {
+  return (req, res, next) => {
+    uploadMiddleware(req, res, (err) => {
+      if (err) {
+        return handleUploadError(err, req, res, next);
+      }
+      next();
+    });
+  };
+}
+
 module.exports = {
   uploadProductImages,
   uploadServiceImages,
   uploadProfileImage,
   handleUploadError,
+  withUpload,
   ALLOWED_EXTENSIONS,
   MAX_FILE_SIZE
 };

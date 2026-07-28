@@ -29,11 +29,11 @@
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label">Min Price</label>
-                                <input type="number" name="min_price" class="form-control" placeholder="₦0" value="<%= minPrice || '' %>">
+                                <input type="number" name="min_price" class="form-control" placeholder="$0" value="<%= minPrice || '' %>">
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Max Price</label>
-                                <input type="number" name="max_price" class="form-control" placeholder="₦999999" value="<%= maxPrice || '' %>">
+                                <input type="number" name="max_price" class="form-control" placeholder="$999999" value="<%= maxPrice || '' %>">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> Apply Filters</button>
@@ -63,7 +63,7 @@
                         <a href="/shop/<%= product.slug %>" class="text-decoration-none">
                             <div class="glass-card p-3 h-100">
                                 <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:180px;overflow:hidden;">
-                                    <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:170px;object-fit:contain;">
+                                    <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:170px;object-fit:contain;' }) %>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h6 class="text-white fw-bold mb-0 text-truncate"><%= product.name %></h6>
@@ -74,11 +74,11 @@
                                 <p class="text-muted small mb-2"><%= product.category_name || 'General' %></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <% if (product.discount_price && product.discount_price < product.price) { %>
-                                            <span class="text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
-                                            <small class="text-muted text-decoration-line-through ms-1">&#8358;<%= Number(product.price).toLocaleString() %></small>
+                                         <% if (product.discount_price && product.discount_price < product.price) { %>
+                                            <span class="text-primary fw-bold"><%= formatCurrency(product.discount_price) %></span>
+                                            <small class="text-muted text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
                                         <% } else { %>
-                                            <span class="text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                                            <span class="text-primary fw-bold"><%= formatCurrency(product.price) %></span>
                                         <% } %>
                                     </div>
                                     <form method="POST" action="/cart/add" class="d-inline">

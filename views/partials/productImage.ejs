@@ -1,0 +1,8 @@
+<%
+  var _src = typeof src !== 'undefined' ? src : '';
+  var _alt = typeof alt !== 'undefined' ? alt : '';
+  var _style = typeof style !== 'undefined' ? style : 'max-height:100%;object-fit:contain;';
+  var _class = typeof className !== 'undefined' ? className : 'img-fluid';
+  var _placeholder = '/uploads/products/product-placeholder.svg';
+  var _onerror = "this.onerror=null;this.src='" + _placeholder + "';";
+%><img src="<%= _src || _placeholder %>" alt="<%= _alt %>" class="<%= _class %>" style="<%= _style %>" onerror="<%= _onerror %>">

@@ -32,7 +32,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
-                                                <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="" class="img-fluid" style="max-height:38px;object-fit:contain;">
+                                                 <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:38px;object-fit:contain;' }) %>
                                             </div>
                                             <span class="text-white fw-bold"><%= product.name %></span>
                                         </div>

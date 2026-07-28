@@ -14,13 +14,13 @@ function generateSlug(text) {
 }
 
 /**
- * Format a number as Nigerian Naira currency
+ * Format a number as USD currency
  * @param {number} amount
  * @returns {string}
  */
 function formatCurrency(amount) {
-  if (amount === null || amount === undefined) return '₦0.00';
-  return '₦' + Number(amount).toLocaleString('en-NG', {
+  if (amount === null || amount === undefined) return '$0.00';
+  return '$' + Number(amount).toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });

@@ -1,5 +1,6 @@
 const ServiceModel = require('../models/ServiceModel');
 const { pool } = require('../config/db');
+const { formatCurrency } = require('../utils/helpers');
 
 exports.getMaintenance = async (req, res, next) => {
   try {
@@ -11,7 +12,8 @@ exports.getMaintenance = async (req, res, next) => {
       title: 'Enterprise IT Maintenance & Device Repair - Athstack',
       computerServices,
       phoneServices,
-      services
+      services,
+      formatCurrency
     });
   } catch (err) {
     next(err);

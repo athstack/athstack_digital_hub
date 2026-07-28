@@ -38,7 +38,7 @@
                                     <i class="<%= service.icon_class || 'fa-solid fa-tools' %> text-primary mb-2"></i>
                                     <h6 class="text-white fw-bold mb-1"><%= service.title %></h6>
                                     <p class="text-muted small mb-2"><%= service.description || 'Professional service' %></p>
-                                    <span class="text-primary fw-bold small">&#8358;<%= Number(service.base_price || 0).toLocaleString() %></span>
+                                     <span class="text-primary fw-bold small"><%= formatCurrency(service.base_price || 0) %></span>
                                 </div>
                             </div>
                             <% }) %>
@@ -67,7 +67,7 @@
                                     <i class="<%= service.icon_class || 'fa-solid fa-tools' %> text-info mb-2"></i>
                                     <h6 class="text-white fw-bold mb-1"><%= service.title %></h6>
                                     <p class="text-muted small mb-2"><%= service.description || 'Professional service' %></p>
-                                    <span class="text-primary fw-bold small">&#8358;<%= Number(service.base_price || 0).toLocaleString() %></span>
+                                     <span class="text-primary fw-bold small"><%= formatCurrency(service.base_price || 0) %></span>
                                 </div>
                             </div>
                             <% }) %>
@@ -110,7 +110,7 @@
                                     <option value="">Select a service...</option>
                                     <% if (services && services.length > 0) { %>
                                         <% services.forEach(svc => { %>
-                                        <option value="<%= svc.id %>"><%= svc.title %> (&#8358;<%= Number(svc.base_price || 0).toLocaleString() %>)</option>
+                                         <option value="<%= svc.id %>"><%= svc.title %> (<%= formatCurrency(svc.base_price || 0) %>)</option>
                                         <% }) %>
                                     <% } %>
                                 </select>

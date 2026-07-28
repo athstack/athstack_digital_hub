@@ -16,7 +16,7 @@
                         <div class="glass-card p-4 h-100">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="rounded bg-dark me-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;overflow:hidden;flex-shrink:0;">
-                                    <img src="/uploads/<%= course.course_image || 'default.jpg' %>" alt="<%= course.course_title || course.title %>" class="img-fluid" style="max-height:60px;object-fit:contain;">
+                                     <%- include('../partials/productImage', { src: course.course_image ? '/uploads/courses/' + course.course_image : '', alt: course.course_title || course.title, style: 'max-height:60px;object-fit:contain;' }) %>
                                 </div>
                                 <div>
                                     <h6 class="text-white fw-bold mb-0"><%= course.course_title || course.title %></h6>

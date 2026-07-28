@@ -338,7 +338,7 @@ exports.createCourse = async (req, res, next) => {
       status: 'draft',
       level: level || 'Beginner',
       price: parseFloat(price) || 0,
-      image_path: req.file ? req.file.filename : 'default.jpg'
+      image_path: req.file ? req.file.filename : ''
     });
 
     req.flash('success', 'Course created successfully.');

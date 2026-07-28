@@ -51,7 +51,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Price (₦)</label>
+                                            <label class="form-label">Price ($)</label>
                                             <input type="number" name="price" class="form-control" min="0" step="0.01" value="0">
                                         </div>
                                         <div class="col-12">
@@ -82,7 +82,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
-                                                <img src="/uploads/<%= mod.image_path || 'default.jpg' %>" alt="" class="img-fluid" style="max-height:38px;object-fit:contain;">
+                                                 <%- include('../partials/productImage', { src: mod.image_path ? '/uploads/courses/' + mod.image_path : '', alt: mod.title, style: 'max-height:38px;object-fit:contain;' }) %>
                                             </div>
                                             <div>
                                                 <span class="text-white fw-bold"><%= mod.title %></span>

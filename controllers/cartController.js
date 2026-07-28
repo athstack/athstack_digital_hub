@@ -1,6 +1,7 @@
 const ProductModel = require('../models/ProductModel');
 const OrderModel = require('../models/OrderModel');
 const { pool } = require('../config/db');
+const { formatCurrency } = require('../utils/helpers');
 
 exports.getCart = async (req, res, next) => {
   try {
@@ -29,7 +30,8 @@ exports.getCart = async (req, res, next) => {
       title: 'Your Shopping Cart - Athstack',
       cart: req.session.cart || {},
       cartItems,
-      cartTotal
+      cartTotal,
+      formatCurrency
     });
   } catch (err) {
     next(err);

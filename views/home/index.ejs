@@ -108,17 +108,17 @@
             <div class="col-md-4 col-lg-2">
                 <a href="/shop/<%= product.slug %>" class="text-decoration-none">
                     <div class="glass-card p-3 h-100">
-                        <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:140px;overflow:hidden;">
-                            <img src="/uploads/<%= product.main_image || 'default.jpg' %>" alt="<%= product.name %>" class="img-fluid" style="max-height:130px;object-fit:contain;">
+                            <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:140px;overflow:hidden;">
+                            <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:130px;object-fit:contain;' }) %>
                         </div>
                         <h6 class="text-white fw-bold text-truncate mb-1"><%= product.name %></h6>
                         <p class="text-muted small mb-2"><%= product.category_name || 'General' %></p>
                         <div>
                             <% if (product.discount_price && product.discount_price < product.price) { %>
-                                <span class="text-primary fw-bold">&#8358;<%= Number(product.discount_price).toLocaleString() %></span>
-                                <small class="text-muted text-decoration-line-through ms-1">&#8358;<%= Number(product.price).toLocaleString() %></small>
+                                <span class="text-primary fw-bold"><%= formatCurrency(product.discount_price) %></span>
+                                <small class="text-muted text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
                             <% } else { %>
-                                <span class="text-primary fw-bold">&#8358;<%= Number(product.price).toLocaleString() %></span>
+                                <span class="text-primary fw-bold"><%= formatCurrency(product.price) %></span>
                             <% } %>
                         </div>
                     </div>
@@ -155,7 +155,7 @@
                         <p class="text-muted small mb-3"><%= course.description ? course.description.substring(0, 120) + '...' : '' %></p>
                         <div class="d-flex justify-content-between align-items-center">
                             <% if (course.price > 0) { %>
-                                <span class="text-primary fw-bold">&#8358;<%= Number(course.price).toLocaleString() %></span>
+                                <span class="text-primary fw-bold"><%= formatCurrency(course.price) %></span>
                             <% } else { %>
                                 <span class="text-success fw-bold">Free</span>
                             <% } %>

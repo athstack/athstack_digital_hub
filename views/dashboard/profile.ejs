@@ -22,7 +22,7 @@
                             <div class="text-center mb-4">
                                 <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
                                     <% if (profile && profile.avatar) { %>
-                                        <img src="/uploads/<%= profile.avatar %>" alt="Avatar" class="rounded-circle" style="width:80px;height:80px;object-fit:cover;">
+                                         <img src="/uploads/profiles/<%= profile.avatar %>" alt="Avatar" class="rounded-circle" style="width:80px;height:80px;object-fit:cover;" onerror="this.onerror=null;this.src='/uploads/products/product-placeholder.svg';this.style.borderRadius='50%';">
                                     <% } else { %>
                                         <i class="fa-solid fa-user fa-2x text-white"></i>
                                     <% } %>

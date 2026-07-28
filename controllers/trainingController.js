@@ -1,12 +1,14 @@
 const CourseModel = require('../models/CourseModel');
 const { pool } = require('../config/db');
+const { formatCurrency } = require('../utils/helpers');
 
 exports.getCourses = async (req, res, next) => {
   try {
     const courses = await CourseModel.getActive();
     res.render('training/index', {
       title: 'Professional Engineering Academy - Athstack',
-      courses
+      courses,
+      formatCurrency
     });
   } catch (err) {
     next(err);
@@ -31,7 +33,8 @@ exports.getCourse = async (req, res, next) => {
     res.render('training/view', {
       title: `${course.title} - Athstack`,
       course,
-      isEnrolled
+      isEnrolled,
+      formatCurrency
     });
   } catch (err) {
     next(err);

@@ -63,7 +63,7 @@
                                 <tr>
                                     <td class="text-white fw-bold">#<%= order.id %></td>
                                     <td class="text-muted"><%= order.created_at ? new Date(order.created_at).toLocaleDateString() : '' %></td>
-                                    <td class="text-primary fw-bold">&#8358;<%= Number(order.total_amount || 0).toLocaleString() %></td>
+                                     <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount || 0) %></td>
                                     <td><span class="badge bg-<%= order.order_status === 'delivered' ? 'success' : (order.order_status === 'pending' ? 'warning' : 'secondary') %>"><%= order.order_status %></span></td>
                                 </tr>
                                 <% }) %>
