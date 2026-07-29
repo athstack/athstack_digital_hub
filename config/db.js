@@ -2,18 +2,23 @@ const mysql = require('mysql2/promise');
 
 const isServerless = process.env.VERCEL === '1';
 
+const sslConfig = process.env.DB_SSL === 'true'
+  ? { rejectUnauthorized: true }
+  : undefined;
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'athstack_digital_hub',
-  port: process.env.DB_PORT || 3306,
+  port: parseInt(process.env.DB_PORT, 10) || 3306,
   waitForConnections: true,
   connectionLimit: isServerless ? 3 : 10,
   queueLimit: 0,
   charset: 'utf8mb4',
   timezone: '+00:00',
   dateStrings: true,
+  ssl: sslConfig,
   enableKeepAlive: !isServerless,
   keepAliveInitialDelay: 0
 });
