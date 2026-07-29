@@ -9,9 +9,12 @@ const hpp = require('hpp');
 const path = require('path');
 const flash = require('connect-flash');
 
+const isVercel = process.env.VERCEL === '1';
+
 const { generateToken } = require('./middleware/csrf');
 const { errorHandler } = require('./middleware/errorHandler');
 const { attachUser, refreshSessionRole } = require('./middleware/auth');
+const { formatDisplayName } = require('./helpers/displayName');
 
 const app = express();
 
@@ -78,14 +81,6 @@ const authLimiter = rateLimit({
   legacyHeaders: false
 });
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { success: false, message: 'Too many login attempts. Please try again in 15 minutes.' },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
@@ -95,7 +90,6 @@ const globalLimiter = rateLimit({
 });
 
 app.use('/auth', authLimiter);
-app.use('/auth/login', loginLimiter);
 app.use(globalLimiter);
 
 // ---------------------------------------------------------------------------
@@ -128,10 +122,18 @@ if (!process.env.SESSION_SECRET) {
   process.exit(1);
 }
 
+let sessionStore;
+if (isVercel) {
+  const MySQLStore = require('express-mysql-session')(session);
+  const { pool } = require('./config/db');
+  sessionStore = new MySQLStore({}, pool);
+}
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: sessionStore,
   cookie: {
     maxAge: 1000 * 60 * 60 * 2, // 2 hours
     httpOnly: true,
@@ -156,6 +158,8 @@ app.use((req, res, next) => {
   res.locals.flashSuccess = req.flash('success');
   res.locals.flashError = req.flash('error');
   res.locals.flashInfo = req.flash('info');
+  res.locals.userStatus = (req.session && req.session.userId) ? (req.session.userStatus || 'active') : null;
+  res.locals.formatDisplayName = formatDisplayName;
   next();
 });
 
@@ -170,6 +174,7 @@ app.use('/maintenance', require('./routes/maintenance'));
 app.use('/training', require('./routes/training'));
 app.use('/auth', require('./routes/auth'));
 app.use('/cart', require('./routes/cart'));
+app.use('/reviews', require('./routes/reviews'));
 app.use('/admin', require('./routes/admin'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/technician', require('./routes/technician'));
