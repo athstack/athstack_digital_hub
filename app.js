@@ -21,6 +21,8 @@ const app = express();
 // ---------------------------------------------------------------------------
 // Security
 // ---------------------------------------------------------------------------
+if (isVercel) app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
