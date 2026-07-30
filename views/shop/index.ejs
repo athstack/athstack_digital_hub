@@ -18,7 +18,7 @@
                     <form method="GET" action="/shop">
                         <div class="mb-3">
                             <label class="form-label text-white-50 small text-uppercase tracking-widest">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search products..." value="<%= searchQuery || '' %>">
+                            <input type="text" name="search" class="form-control sidebar-search" placeholder="Search products..." value="<%= searchQuery || '' %>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-white-50 small text-uppercase tracking-widest">Category</label>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-2"></i>Apply Filters</button>
-                        <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2">Clear All</a>
+                        <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2">Clear All</a><% } %>
                     </form>
                 </div>
             </div>
@@ -61,9 +61,9 @@
                 <% } %>
 
                 <% if (typeof products !== 'undefined' && products && products.length > 0) { %>
-                <div class="row g-4">
+                <div class="product-grid">
                     <% products.forEach(product => { %>
-                    <div class="col-md-4">
+                    <div class="product-grid-item">
                         <a href="/shop/<%= product.slug %>" class="text-decoration-none">
                             <div class="glass-card p-0 h-100 product-card shop-product-card d-flex flex-column overflow-hidden">
                                 <div class="overflow-hidden product-img-wrapper rounded-top-3" style="height:180px;background:var(--bg-elevated);">
