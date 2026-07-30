@@ -565,17 +565,22 @@ exports.updateProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
   try {
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/products');
+
     const productId = parseInt(req.params.id);
     const product = await ProductModel.findById(productId);
 
     if (!product) {
+      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
       req.flash('error', 'Product not found.');
-      return res.redirect('/admin/products');
+      return respond(404, {});
     }
 
     await ProductModel.delete(productId);
+    if (isAjax) return respond(200, { success: true, message: 'Product deleted.' });
     req.flash('success', 'Product deleted.');
-    res.redirect('/admin/products');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
