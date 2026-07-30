@@ -98,9 +98,21 @@ body {
     font-size: var(--font-base);
     font-weight: var(--weight-regular);
     line-height: var(--leading-body);
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    width: 100%;
+}
+.page-wrapper > .navbar-custom { flex-shrink: 0; }
+.page-wrapper > footer {
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 .text-secondary { color: var(--text-secondary) !important; }
@@ -1258,6 +1270,7 @@ footer .copyright {
     text-decoration: none;
     cursor: pointer;
 }
+.back-to-top.visible { display: flex; }
 .back-to-top:hover {
     background: var(--primary-gradient);
     color: #fff;

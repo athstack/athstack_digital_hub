@@ -546,8 +546,16 @@
   }
 
   function closeLightbox() {
-    LIGHTBOX.classList.remove('active');
+    try { LIGHTBOX.classList.remove('active'); } catch (e) {}
     document.body.style.overflow = '';
+  }
+
+  function resetBodyOverflow() {
+    document.body.style.overflow = '';
+  }
+
+  if (LIGHTBOX) {
+    LIGHTBOX.addEventListener('beforeunload', resetBodyOverflow);
   }
 
   function goToPrev() {
