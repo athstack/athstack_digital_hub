@@ -826,13 +826,17 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     overflow: hidden;
     height: 200px;
 }
+.rounded-top-3 {
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+}
 .product-img-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     transition: transform 0.4s ease;
 }
-.product-card:hover .product-img-wrapper img { transform: scale(1.05); }
+.product-card:hover .product-img-wrapper img { transform: scale(1.08); }
 
 .product-grid {
     display: grid;
