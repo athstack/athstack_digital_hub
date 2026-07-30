@@ -67,7 +67,7 @@
                         <a href="/shop/<%= product.slug %>" class="text-decoration-none">
                             <div class="glass-card p-0 h-100 product-card shop-product-card d-flex flex-column overflow-hidden">
                                 <div class="product-img-wrapper rounded-t-xl" style="height:192px;">
-                                    <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'width:100%;height:100%;object-fit:contain;', className: '' }) %>
+                                    <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'width:100%;height:100%;object-fit:cover;', className: '' }) %>
                                 </div>
                                 <div class="d-flex flex-column p-3" style="flex:1;">
                                     <div class="d-flex justify-content-between align-items-start gap-2">
