@@ -28,7 +28,7 @@
                             </thead>
                             <tbody>
                                 <% products.forEach(product => { %>
-                                <tr>
+                                <tr data-product-id="<%= product.id %>">
                                     <td class="col-product">
                                         <div class="d-flex align-items-center gap-3">
                                             <div class="col-thumb">
@@ -53,10 +53,13 @@
                                     <td class="col-actions">
                                         <div class="d-flex gap-2 align-items-center">
                                             <a href="/technician/products/edit/<%= product.id %>" class="btn-product-action btn-product-action-edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                            <form method="POST" action="/technician/products/delete/<%= product.id %>" class="d-inline" data-confirm="Are you sure?">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-product-action btn-product-action-delete" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                            <button type="button"
+                                                class="btn-product-action btn-product-action-delete btn-delete-product"
+                                                data-id="<%= product.id %>"
+                                                data-name="<%= product.name %>"
+                                                title="Delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -78,14 +81,63 @@
     </div>
 </section>
 
-<script>
-document.querySelectorAll('.status-toggle').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        var id = this.dataset.id;
-        var el = this;
-        el.disabled = true;
+<div id="deleteModal" class="modal-overlay" style="display:none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Delete Product</h5>
+                <button type="button" class="modal-close" id="deleteModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Are you sure you want to delete <strong class="text-white" id="deleteProductName"></strong>?</p>
+                <p class="text-muted small mt-2 mb-0">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline" id="deleteModalCancel">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteModalConfirm"><i class="fa-solid fa-trash me-1"></i>Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        fetch('/technician/products/' + id + '/status', {
+<script>
+(function() {
+    var modal = document.getElementById('deleteModal');
+    var productNameEl = document.getElementById('deleteProductName');
+    var confirmBtn = document.getElementById('deleteModalConfirm');
+    var cancelBtn = document.getElementById('deleteModalCancel');
+    var closeBtn = document.getElementById('deleteModalClose');
+    var currentId = null;
+
+    function showModal(name, id) {
+        productNameEl.textContent = name;
+        currentId = id;
+        modal.style.display = 'flex';
+    }
+
+    function hideModal() {
+        modal.style.display = 'none';
+        currentId = null;
+    }
+
+    cancelBtn.addEventListener('click', hideModal);
+    closeBtn.addEventListener('click', hideModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) hideModal();
+    });
+
+    document.querySelectorAll('.btn-delete-product').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showModal(this.dataset.name, this.dataset.id);
+        });
+    });
+
+    confirmBtn.addEventListener('click', function() {
+        if (!currentId) return;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>Deleting...';
+
+        fetch('/technician/products/delete/' + currentId, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -95,19 +147,54 @@ document.querySelectorAll('.status-toggle').forEach(function(btn) {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data.success) {
-                el.dataset.status = data.status;
-                el.title = data.status === 'active' ? 'Click to deactivate' : 'Click to activate';
-                el.className = 'btn btn-sm rounded-pill status-toggle ' + (data.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary');
-                el.querySelector('i').className = 'fa-solid fa-' + (data.status === 'active' ? 'toggle-on' : 'toggle-off');
-                el.querySelector('.status-label').textContent = data.status;
+                var row = document.querySelector('tr[data-product-id="' + currentId + '"]');
+                if (row) {
+                    row.style.transition = 'opacity 0.3s ease';
+                    row.style.opacity = '0';
+                    setTimeout(function() { row.remove(); }, 300);
+                }
+                hideModal();
             } else {
-                alert(data.message || 'Failed to update status.');
+                alert(data.message || 'Failed to delete product.');
             }
         })
         .catch(function() { alert('Network error. Please try again.'); })
-        .finally(function() { el.disabled = false; });
+        .finally(function() {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fa-solid fa-trash me-1"></i>Delete';
+        });
     });
-});
+
+    document.querySelectorAll('.status-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = this.dataset.id;
+            var el = this;
+            el.disabled = true;
+
+            fetch('/technician/products/' + id + '/status', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': '<%= csrfToken %>'
+                }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    el.dataset.status = data.status;
+                    el.title = data.status === 'active' ? 'Click to deactivate' : 'Click to activate';
+                    el.className = 'btn btn-sm rounded-pill status-toggle ' + (data.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary');
+                    el.querySelector('i').className = 'fa-solid fa-' + (data.status === 'active' ? 'toggle-on' : 'toggle-off');
+                    el.querySelector('.status-label').textContent = data.status;
+                } else {
+                    alert(data.message || 'Failed to update status.');
+                }
+            })
+            .catch(function() { alert('Network error. Please try again.'); })
+            .finally(function() { el.disabled = false; });
+        });
+    });
+})();
 </script>
 
 <%- include('../partials/footer') %>

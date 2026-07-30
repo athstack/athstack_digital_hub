@@ -2,12 +2,16 @@ const mysql = require('mysql2/promise');
 
 const isServerless = process.env.VERCEL === '1';
 
-const sslConfig = process.env.DB_SSL === 'true'
+const enableSsl = (process.env.DB_SSL || '').trim() === 'true';
+
+const sslConfig = enableSsl
   ? { rejectUnauthorized: true }
   : undefined;
 
+const host = process.env.DB_HOST || 'localhost';
+
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'athstack_digital_hub',
