@@ -41,18 +41,18 @@ INSERT INTO training_courses (id, instructor_id, title, slug, description, durat
 (4, 3, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', 'Network security, ethical hacking, and vulnerability assessment.', '6 weeks', 'Beginner', 249.00, 'active');
 
 INSERT INTO products (technician_id, category_id, name, slug, description, price, discount_price, stock_quantity, main_image, rating, total_sales, status, featured, sku) VALUES
-(2, 1, 'Kingston DataTraveler 128GB', 'kingston-datatraveler-128gb', 'High-speed USB 3.2 flash drive with 128GB capacity.', 25.99, 19.99, 50, 'usb-kingston.jpg', 4.70, 120, 'active', 1, 'USB-KDT-128'),
-(2, 2, 'Anker Nano II 65W Charger', 'anker-nano-ii-65w', 'Compact GaN USB-C charger with 65W power delivery.', 49.99, 39.99, 30, 'charger-anker.jpg', 4.85, 89, 'active', 1, 'CHG-ANK-65W'),
-(2, 12, 'Logitech MX Master 3S', 'logitech-mx-master-3s', 'Ergonomic wireless mouse with 8K DPI precision tracking.', 99.99, NULL, 25, 'mouse-mxmaster.jpg', 4.95, 67, 'active', 1, 'MOUSE-LOG-MX3S'),
-(2, 13, 'Samsung T7 Portable SSD 1TB', 'samsung-t7-ssd-1tb', 'Ultra-fast portable SSD with read speeds up to 1050 MB/s.', 109.99, 89.99, 20, 'ssd-samsung-t7.jpg', 4.90, 45, 'active', 0, 'SSD-SAM-T7-1TB'),
-(3, 3, 'Samsung Galaxy Buds2 Pro', 'samsung-galaxy-buds2-pro', 'True wireless earbuds with active noise cancellation.', 149.99, 129.99, 35, 'earbuds-galaxy.jpg', 4.75, 78, 'active', 1, 'EAR-SAM-BUDS2P'),
-(3, 5, 'Apple Watch SE 2nd Gen', 'apple-watch-se-2nd-gen', 'Smartwatch with health tracking and GPS.', 249.99, 229.99, 15, 'watch-apple-se.jpg', 4.80, 56, 'active', 1, 'WATCH-APL-SE2'),
-(3, 9, 'Anker PowerCore 20000mAh', 'anker-powercore-20000', 'High-capacity portable power bank with dual USB ports.', 39.99, 34.99, 40, 'powerbank-anker.jpg', 4.65, 92, 'active', 0, 'PWR-ANK-20K'),
-(2, 15, 'TP-Link Archer AX73 Router', 'tp-link-archer-ax73', 'WiFi 6 dual-band router with speeds up to 5400 Mbps.', 139.99, 119.99, 12, 'router-tplink.jpg', 4.70, 34, 'active', 0, 'NET-TPL-AX73'),
-(3, 11, 'JBL Flip 6 Speaker', 'jbl-flip-6', 'Portable Bluetooth speaker with IP67 waterproof rating.', 79.99, NULL, 28, 'speaker-jbl.jpg', 4.80, 103, 'active', 0, 'SPK-JBL-FL6'),
-(2, 4, 'Sony WH-1000XM5 Headphones', 'sony-wh1000xm5', 'Industry-leading noise canceling headphones with 30-hour battery.', 299.99, 279.99, 18, 'headphones-sony.jpg', 4.92, 41, 'active', 1, 'HPH-SNY-XM5'),
-(3, 8, 'SanDisk Extreme 256GB microSD', 'sandisk-extreme-256gb', 'V30 A2 microSD card with up to 160 MB/s read speed.', 32.99, 27.99, 60, 'sdcard-sandisk.jpg', 4.75, 88, 'active', 0, 'SD-SDK-256'),
-(2, 10, 'Anker USB-C to USB-C Cable 6ft', 'anker-usbc-cable-6ft', 'Braided nylon USB-C cable supporting 100W charging.', 14.99, NULL, 100, 'cable-anker.jpg', 4.60, 156, 'active', 0, 'CBL-ANK-USBC6');
+(2, 1, 'Kingston DataTraveler 128GB', 'kingston-datatraveler-128gb', 'High-speed USB 3.2 flash drive with 128GB capacity.', 25.99, 19.99, 50, 'usb-kingston.svg', 4.70, 120, 'active', 1, 'USB-KDT-128'),
+(2, 2, 'Anker Nano II 65W Charger', 'anker-nano-ii-65w', 'Compact GaN USB-C charger with 65W power delivery.', 49.99, 39.99, 30, 'charger-anker.svg', 4.85, 89, 'active', 1, 'CHG-ANK-65W'),
+(2, 12, 'Logitech MX Master 3S', 'logitech-mx-master-3s', 'Ergonomic wireless mouse with 8K DPI precision tracking.', 99.99, NULL, 25, 'mouse-mxmaster.svg', 4.95, 67, 'active', 1, 'MOUSE-LOG-MX3S'),
+(2, 13, 'Samsung T7 Portable SSD 1TB', 'samsung-t7-ssd-1tb', 'Ultra-fast portable SSD with read speeds up to 1050 MB/s.', 109.99, 89.99, 20, 'ssd-samsung-t7.svg', 4.90, 45, 'active', 0, 'SSD-SAM-T7-1TB'),
+(3, 3, 'Samsung Galaxy Buds2 Pro', 'samsung-galaxy-buds2-pro', 'True wireless earbuds with active noise cancellation.', 149.99, 129.99, 35, 'earbuds-galaxy.svg', 4.75, 78, 'active', 1, 'EAR-SAM-BUDS2P'),
+(3, 5, 'Apple Watch SE 2nd Gen', 'apple-watch-se-2nd-gen', 'Smartwatch with health tracking and GPS.', 249.99, 229.99, 15, 'watch-apple-se.svg', 4.80, 56, 'active', 1, 'WATCH-APL-SE2'),
+(3, 9, 'Anker PowerCore 20000mAh', 'anker-powercore-20000', 'High-capacity portable power bank with dual USB ports.', 39.99, 34.99, 40, 'powerbank-anker.svg', 4.65, 92, 'active', 0, 'PWR-ANK-20K'),
+(2, 15, 'TP-Link Archer AX73 Router', 'tp-link-archer-ax73', 'WiFi 6 dual-band router with speeds up to 5400 Mbps.', 139.99, 119.99, 12, 'router-tplink.svg', 4.70, 34, 'active', 0, 'NET-TPL-AX73'),
+(3, 11, 'JBL Flip 6 Speaker', 'jbl-flip-6', 'Portable Bluetooth speaker with IP67 waterproof rating.', 79.99, NULL, 28, 'speaker-jbl.svg', 4.80, 103, 'active', 0, 'SPK-JBL-FL6'),
+(2, 4, 'Sony WH-1000XM5 Headphones', 'sony-wh1000xm5', 'Industry-leading noise canceling headphones with 30-hour battery.', 299.99, 279.99, 18, 'headphones-sony.svg', 4.92, 41, 'active', 1, 'HPH-SNY-XM5'),
+(3, 8, 'SanDisk Extreme 256GB microSD', 'sandisk-extreme-256gb', 'V30 A2 microSD card with up to 160 MB/s read speed.', 32.99, 27.99, 60, 'sdcard-sandisk.svg', 4.75, 88, 'active', 0, 'SD-SDK-256'),
+(2, 10, 'Anker USB-C to USB-C Cable 6ft', 'anker-usbc-cable-6ft', 'Braided nylon USB-C cable supporting 100W charging.', 14.99, NULL, 100, 'cable-anker.svg', 4.60, 156, 'active', 0, 'CBL-ANK-USBC6');
 
 INSERT INTO settings (setting_key, setting_value, setting_group) VALUES
 ('site_name', 'TechBridge Digital Hub', 'general'),
