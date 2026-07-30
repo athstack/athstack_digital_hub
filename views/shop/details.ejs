@@ -554,9 +554,7 @@
     document.body.style.overflow = '';
   }
 
-  if (LIGHTBOX) {
-    LIGHTBOX.addEventListener('beforeunload', resetBodyOverflow);
-  }
+  window.addEventListener('beforeunload', resetBodyOverflow);
 
   function goToPrev() {
     if (currentIndex > 0) {

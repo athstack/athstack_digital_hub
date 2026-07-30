@@ -8,7 +8,7 @@ const { validateCsrf } = require('../middleware/csrf');
 router.get('/', cartController.getCart);
 router.post('/add', validateCsrf, isActive, cartController.addItem);
 router.post('/update', validateCsrf, isActive, cartController.updateItem);
-router.post('/remove/:index', validateCsrf, isActive, cartController.removeItem);
+router.post('/remove/:productId', validateCsrf, isActive, cartController.removeItem);
 router.post('/checkout', isAuthenticated, isActive, validateCsrf, cartController.checkout);
 
 module.exports = router;

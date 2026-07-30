@@ -90,16 +90,15 @@ exports.updateItem = (req, res, next) => {
 
 exports.removeItem = (req, res, next) => {
   try {
-    const index = parseInt(req.params.index);
+    const productId = parseInt(req.params.productId);
     const cart = req.session.cart || {};
-    const keys = Object.keys(cart);
 
-    if (index < 0 || index >= keys.length) {
+    if (!productId || !cart[productId]) {
       req.flash('error', 'Item not found in cart.');
       return res.redirect('/cart');
     }
 
-    delete cart[keys[index]];
+    delete cart[productId];
     req.session.cart = cart;
 
     req.flash('success', 'Item removed from cart.');
@@ -131,19 +130,24 @@ exports.checkout = async (req, res, next) => {
     }
 
     let totalAmount = 0;
-    const items = products.map(product => {
+    const items = [];
+    for (const product of products) {
       const quantity = cart[product.id] || 1;
+      if (quantity > product.stock_quantity) {
+        req.flash('error', `Insufficient stock for "${product.name}". Only ${product.stock_quantity} available.`);
+        return res.redirect('/cart');
+      }
       const itemTotal = product.price * quantity;
       totalAmount += itemTotal;
-      return {
+      items.push({
         product_id: product.id,
         product_name: product.name,
         product_image: product.main_image || null,
         quantity,
         unit_price: product.price,
         total_price: itemTotal
-      };
-    });
+      });
+    }
 
     const order = await OrderModel.create(req.session.userId, {
       total_amount: totalAmount,

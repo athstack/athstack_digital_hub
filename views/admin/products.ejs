@@ -150,7 +150,7 @@
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'X-CSRF-Token': '<%= csrfToken %>'
+                'X-CSRF-Token': <%- JSON.stringify(csrfToken) %>
             }
         })
         .then(function(r) { return r.json(); })
@@ -184,7 +184,7 @@
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'X-CSRF-Token': '<%= csrfToken %>'
+                'X-CSRF-Token': <%- JSON.stringify(csrfToken) %>
                 }
             })
             .then(function(r) { return r.json(); })

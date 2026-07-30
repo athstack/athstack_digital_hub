@@ -1763,7 +1763,25 @@ input:-webkit-autofill:active {
     .service-card:hover { transform: none; }
     .stat-card:hover { transform: none; }
 
-    .whatsapp-float {
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 10000;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0 0 var(--radius-sm) 0;
+    transition: top 0.2s ease;
+}
+.skip-link:focus {
+    top: 0;
+    color: #fff;
+}
+
+.whatsapp-float {
         bottom: 20px;
         right: 20px;
         width: 48px;

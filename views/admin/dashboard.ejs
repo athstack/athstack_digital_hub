@@ -20,6 +20,7 @@
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Admin Control Matrix</h2>
                 </div>
 
+                <% if (typeof metrics === 'undefined' || !metrics) { metrics = { revenue: 0, total_clients: 0, total_products: 0, pending_bookings: 0, total_orders: 0, pending_orders: 0, unread_messages: 0, pending_reviews: 0, recent_orders: [], recent_bookings: [] }; } %>
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">

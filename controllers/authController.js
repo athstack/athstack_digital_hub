@@ -13,6 +13,8 @@ exports.getLogin = (req, res) => {
   let error = null;
   if (req.query.error === 'rate_limited') {
     error = 'Too many login attempts. Please try again in 15 minutes.';
+  } else if (req.query.error === 'suspended') {
+    error = 'Your account has been suspended. Please contact support.';
   }
   res.render('auth/login', {
     title: 'Access Authorization - TechBridge Digital Hub',
@@ -33,7 +35,7 @@ exports.postLogin = async (req, res, next) => {
     }
 
     const user = await UserModel.findByEmail(email);
-    const dummyHash = '$2a$10$abcdefghijklmnopqrstuuabcdefghijklmnopqrstuuab';
+    const dummyHash = '$2a$10$D.Ztv3fKT0aal8T2XYTJmOX8GLGrB466v79v0b.IlXqANqJ9oV2IK';
     const hashToCheck = user ? user.password : dummyHash;
     const passwordMatch = await bcrypt.compare(password, hashToCheck);
 

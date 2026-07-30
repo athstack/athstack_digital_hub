@@ -28,7 +28,7 @@
                                 <tr>
                                     <td class="text-white fw-bold"><%= repair.reference_number || 'N/A' %></td>
                                     <td class="text-muted"><%= repair.service_title || 'General' %></td>
-                                    <td class="text-muted"><%= repair.customer_name %></td>
+                                    <td class="text-muted"><%= repair.customer_name || 'Unknown' %></td>
                                     <td class="text-muted"><%= repair.device_type || '' %> <%= repair.device_brand || '' %></td>
                                     <td class="text-muted"><%= formatDate(repair.appointment_date) %></td>
                                     <td><span class="badge <%= getStatusBadgeClass(repair.status) %>"><%= repair.status %></span></td>

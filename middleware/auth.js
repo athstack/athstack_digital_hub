@@ -48,8 +48,7 @@ async function refreshSessionRole(req, res, next) {
     }
     if (user.status === 'suspended') {
       req.session.destroy(() => {
-        req.flash('error', 'Your account has been suspended. Please contact support.');
-        res.redirect('/auth/login');
+        res.redirect('/auth/login?error=suspended');
       });
       return;
     }
@@ -199,8 +198,7 @@ function isActive(req, res, next) {
     }
     if (status === 'suspended') {
       req.session.destroy(() => {
-        req.flash('error', 'Your account has been suspended. Please contact support.');
-        res.redirect('/auth/login');
+        res.redirect('/auth/login?error=suspended');
       });
       return;
     }

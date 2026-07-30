@@ -44,26 +44,6 @@
                                         </form>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="editService<%= service.id %>" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-                                            <form method="POST" action="/admin/services/edit/<%= service.id %>">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Edit Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
-                                                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>>Computer</option><option value="phone" <%= service.category==='phone'?'selected':'' %>>Phone</option></select></div>
-                                                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
-                                                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
-                                                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
-                                                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>>Active</option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>>Inactive</option></select></div>
-                                                </div>
-                                                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Save Changes</button></div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                                 <% }) %>
                             </tbody>
                         </table>
@@ -80,6 +60,28 @@
         </div>
     </div>
 </section>
+
+<% if (typeof services !== 'undefined' && services && services.length > 0) { services.forEach(function(service) { %>
+<div class="modal fade" id="editService<%= service.id %>" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+            <form method="POST" action="/admin/services/edit/<%= service.id %>">
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Edit Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
+                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>>Computer</option><option value="phone" <%= service.category==='phone'?'selected':'' %>>Phone</option></select></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
+                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
+                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
+                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>>Active</option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>>Inactive</option></select></div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Save Changes</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<% }) } %>
 
 <div class="modal fade" id="addServiceModal" tabindex="-1">
     <div class="modal-dialog">

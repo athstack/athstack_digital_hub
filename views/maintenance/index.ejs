@@ -118,7 +118,7 @@
                         <input type="hidden" name="selected_services" id="selectedServicesInput" value="">
                         <% if (user) { %>
                         <input type="hidden" id="userFullName" value="<%= user.first_name + ' ' + user.last_name %>">
-                        <input type="hidden" id="userEmail" value="<%= user.email %>">
+                        <input type="hidden" id="userEmailHidden" value="<%= user.email %>">
                         <input type="hidden" id="userPhone" value="<%= user.phone || '' %>">
                         <input type="hidden" id="userCountry" value="<%= user.country || '' %>">
                         <% } %>

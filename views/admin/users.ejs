@@ -150,7 +150,7 @@
 
 <script>
 (function() {
-    const CSRF = '<%= csrfToken %>';
+    const CSRF = <%- JSON.stringify(csrfToken) %>;
 
     function showToast(msg, type) {
         var c = document.getElementById('toastContainer');

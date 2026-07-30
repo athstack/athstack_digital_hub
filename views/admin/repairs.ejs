@@ -37,7 +37,7 @@
                                     <td class="text-white-50"><%= formatDate(repair.appointment_date) %></td>
                                     <td><span class="badge <%= getStatusBadgeClass(repair.status) %>"><%= repair.status %></span></td>
                                     <td>
-                                        <% if (repair.technician_first_name && !isSuperAdmin) { %>
+                                        <% if (repair.technician_first_name && typeof isSuperAdmin !== 'undefined' && !isSuperAdmin) { %>
                                         <span class="text-success small"><i class="fa-solid fa-check-circle me-1"></i>Assigned</span>
                                         <% } else { %>
                                         <button type="button" class="btn btn-premium-outline btn-sm rounded-pill assign-trigger" data-bs-toggle="modal" data-bs-target="#assignTechnicianModal" data-repair-id="<%= repair.id %>" data-reference="<%= repair.reference_number %>">

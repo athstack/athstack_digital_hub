@@ -45,7 +45,7 @@
                                 <select name="role" class="form-select" required>
                                     <option value="customer" <%= editing && user && user.role === 'customer' ? 'selected' : '' %>>Customer</option>
                                     <option value="technician" <%= editing && user && user.role === 'technician' ? 'selected' : '' %>>Technician</option>
-                                    <% if (isSuperAdmin) { %>
+                                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                     <option value="admin" <%= editing && user && user.role === 'admin' ? 'selected' : '' %>>Admin</option>
                                     <option value="super_admin" <%= editing && user && user.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
                                     <% } %>

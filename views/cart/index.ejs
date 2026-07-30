@@ -65,7 +65,7 @@
                                     </td>
                                      <td class="text-primary fw-bold fs-5"><%= formatCurrency(item.subtotal) %></td>
                                     <td>
-                                        <form method="POST" action="/cart/remove/<%= index %>">
+                                        <form method="POST" action="/cart/remove/<%= item.id %>">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Remove"><i class="fa-solid fa-trash"></i></button>
                                         </form>

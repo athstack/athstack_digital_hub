@@ -19,9 +19,11 @@ exports.getDashboard = async (req, res, next) => {
     );
 
     const [assignedRepairs] = await pool.execute(
-      `SELECT rr.*, s.title AS service_title
+      `SELECT rr.*, s.title AS service_title,
+              CONCAT(u.first_name, ' ', u.last_name) AS customer_name
        FROM repair_requests rr
        LEFT JOIN services s ON rr.service_id = s.id
+       LEFT JOIN users u ON rr.user_id = u.id
        WHERE rr.technician_id = ?
        ORDER BY rr.created_at DESC`,
       [techId]
@@ -279,9 +281,12 @@ exports.toggleProductStatus = async (req, res, next) => {
 exports.getRepairs = async (req, res, next) => {
   try {
     const [repairs] = await pool.execute(
-      `SELECT rr.*, s.title AS service_title
+      `SELECT rr.*, s.title AS service_title,
+              CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+              u.email AS customer_email
        FROM repair_requests rr
        LEFT JOIN services s ON rr.service_id = s.id
+       LEFT JOIN users u ON rr.user_id = u.id
        WHERE rr.technician_id = ?
        ORDER BY rr.created_at DESC`,
       [req.session.userId]
