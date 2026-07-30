@@ -833,6 +833,15 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     transition: transform 0.4s ease;
 }
 .product-card:hover .product-img-wrapper img { transform: scale(1.05); }
+
+.shop-product-card {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.shop-product-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 0 24px var(--primary-glow), var(--shadow-lg);
+}
 .product-card-body { padding: 1rem; }
 .product-category { font-size: var(--font-xs); color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
 .product-card-body .product-category { color: var(--text-secondary); }

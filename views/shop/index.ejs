@@ -65,31 +65,33 @@
                     <% products.forEach(product => { %>
                     <div class="col-md-4">
                         <a href="/shop/<%= product.slug %>" class="text-decoration-none">
-                            <div class="glass-card p-3 h-100 product-card">
-                                <div class="rounded-3 mb-3 overflow-hidden product-img-wrapper" style="height:170px;">
+                            <div class="glass-card p-0 h-100 product-card shop-product-card d-flex flex-column overflow-hidden">
+                                <div class="overflow-hidden product-img-wrapper rounded-top-3" style="height:180px;background:var(--bg-elevated);">
                                     <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'width:100%;height:100%;object-fit:contain;' }) %>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                                    <h6 class="text-white fw-bold mb-0 product-title"><%= product.name %></h6>
-                                    <% if (product.discount_price && product.discount_price < product.price) { %>
-                                        <span class="badge bg-danger flex-shrink-0">-<%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%</span>
-                                    <% } %>
-                                </div>
-                                <p class="text-white-50 small mb-2"><%= product.category_name || 'General' %></p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                         <% if (product.discount_price && product.discount_price < product.price) { %>
-                                            <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.discount_price) %></span>
-                                            <small class="text-white-50 text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
-                                        <% } else { %>
-                                            <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.price) %></span>
+                                <div class="d-flex flex-column p-3" style="flex:1;">
+                                    <div class="d-flex justify-content-between align-items-start gap-2">
+                                        <h6 class="text-white fw-bold mb-0 product-title"><%= product.name %></h6>
+                                        <% if (product.discount_price && product.discount_price < product.price) { %>
+                                            <span class="badge bg-danger flex-shrink-0">-<%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%</span>
                                         <% } %>
                                     </div>
-                                    <form method="POST" action="/cart/add" class="d-inline">
-                                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                        <input type="hidden" name="product_id" value="<%= product.id %>">
-                                        <button type="submit" class="btn btn-premium-primary btn-sm rounded-pill" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
-                                    </form>
+                                    <p class="text-white-50 small mt-1 mb-0"><%= product.category_name || 'General' %></p>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                                        <div>
+                                             <% if (product.discount_price && product.discount_price < product.price) { %>
+                                                <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.discount_price) %></span>
+                                                <small class="text-white-50 text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
+                                            <% } else { %>
+                                                <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.price) %></span>
+                                            <% } %>
+                                        </div>
+                                        <form method="POST" action="/cart/add" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="product_id" value="<%= product.id %>">
+                                            <button type="submit" class="btn btn-premium-primary btn-sm rounded-pill" title="Add to Cart"><i class="fa-solid fa-cart-plus"></i></button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </a>
