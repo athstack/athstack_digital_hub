@@ -1447,15 +1447,35 @@ input:-webkit-autofill:active {
 
 @media (max-width: 991.98px) {
     .navbar-brand { padding: 0; }
-    .nav-links-center { gap: 0; padding: 0.5rem 0; }
-    .navbar-custom .nav-link { padding: 0.6rem 0; }
+    .nav-links-center { gap: 0; padding: 0; }
+    .navbar-custom .nav-link { padding: 0.45rem 0; font-size: 0.8rem; }
     .navbar-custom .nav-link-animated::after { left: 0; right: 0; }
     .navbar-actions {
         margin-left: 0;
-        padding-top: 0.75rem;
+        padding: 0.75rem 1rem 0;
         border-top: 1px solid var(--border-glass);
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem !important;
     }
-    .navbar-icons { gap: 0.5rem; }
+    .navbar-icons { gap: 0.75rem; }
+    .navbar-icons .navbar-icon-link,
+    .navbar-icons .btn-nav-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+    .navbar-icons .navbar-icon-link:hover,
+    .navbar-icons .btn-nav-profile:hover {
+        color: var(--text-main);
+        background: var(--primary-subtle);
+    }
+    .navbar-icons .btn-nav-profile span { display: inline !important; font-size: 0.8rem; }
+    .navbar-icons .cart-badge { position: static; display: inline-flex; margin-left: 2px; }
 }
 
 @media (max-width: 768px) {

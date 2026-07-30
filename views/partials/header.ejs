@@ -25,8 +25,8 @@
             <img src="/images/techbridge-icon.png" alt="TechBridge Digital Hub — Home" class="d-sm-none logo-icon" style="height:40px;">
             <span class="text-white fw-bold" style="font-size:clamp(0.9rem,3.5vw,1.2rem);letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#athstackNav" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#athstackNav" aria-label="Toggle navigation" id="navToggler">
+            <i class="fa-solid fa-bars fs-5" id="navTogglerIcon"></i>
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
             <ul class="navbar-nav mx-auto nav-links-center gap-1">
@@ -97,6 +97,16 @@ function fetchUnreadMessageCount() {
 if (document.getElementById('msgUnreadBadge')) {
     fetchUnreadMessageCount();
     setInterval(fetchUnreadMessageCount, 30000);
+}
+var navCollapse = document.getElementById('athstackNav');
+var togglerIcon = document.getElementById('navTogglerIcon');
+if (navCollapse && togglerIcon) {
+    navCollapse.addEventListener('show.bs.collapse', function () {
+        togglerIcon.className = 'fa-solid fa-times fs-5';
+    });
+    navCollapse.addEventListener('hide.bs.collapse', function () {
+        togglerIcon.className = 'fa-solid fa-bars fs-5';
+    });
 }
 </script>
 <% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
