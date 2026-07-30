@@ -818,11 +818,14 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     background: var(--bg-card-hover);
 }
 .product-card-image { background: var(--bg-elevated); }
+.h-48 { height: 12rem; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
 .product-img-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     background: #1a1f3a;
 }
 .rounded-t-xl {
