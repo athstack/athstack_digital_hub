@@ -230,6 +230,7 @@
                     </div>
                 </div>
                 <div class="subject-line" id="msgSubject">—</div>
+                <div class="label" style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Message Content</div>
                 <div class="message-box" id="msgBody">—</div>
                 <div id="replyDisplay" class="hidden" style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,102,255,0.06);border:1px solid rgba(0,102,255,0.12);border-radius:10px;">
                     <div style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Your Reply</div>
@@ -246,7 +247,7 @@
                         <input type="text" class="form-control" id="replySubject">
                     </div>
                     <div class="mb-2">
-                        <label>Message</label>
+                        <label>Your Reply</label>
                         <textarea class="form-control" id="replyText" placeholder="Type your reply…"></textarea>
                     </div>
                     <div id="replyStatus" class="mb-2 hidden"></div>
@@ -256,17 +257,17 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer d-flex justify-content-between align-items-center">
+            <div class="modal-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <span class="text-muted small" id="msgMeta"></span>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-danger rounded-pill" id="msgDeleteBtn">
-                        <i class="fa-solid fa-trash-can me-1"></i>Delete
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="msgDeleteBtn" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <button type="button" class="btn btn-premium-primary rounded-pill" id="msgReplyBtn" style="display:none;">
+                    <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgReplyBtn" style="display:none;">
                         <i class="fa-solid fa-reply me-1"></i>Reply
                     </button>
-                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-premium-primary rounded-pill" id="msgMarkReadBtn" style="display:none;">
+                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgMarkReadBtn" style="display:none;">
                         <i class="fa-solid fa-check me-1"></i>Mark as Read
                     </button>
                 </div>
