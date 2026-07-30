@@ -25,9 +25,9 @@
                     <div class="col-md-4">
                         <div class="glass-card p-3 h-100 product-card d-flex flex-column">
                             <a href="/shop/<%= item.slug %>" class="text-decoration-none">
-                                <div class="rounded bg-dark overflow-hidden mb-3" style="height:160px;">
+                                <div class="rounded overflow-hidden mb-3 product-img-wrapper" style="height:160px;">
                                     <% if (item.main_image) { %>
-                                    <img src="<%= imageUrl(item.main_image, 'products') %>" alt="<%= item.name %>" style="width:100%;height:100%;object-fit:cover;">
+                                    <img src="<%= imageUrl(item.main_image, 'products') %>" alt="<%= item.name %>" style="width:100%;height:100%;object-fit:contain;">
                                     <% } else { %>
                                     <div class="d-flex align-items-center justify-content-center h-100"><i class="fa-solid fa-image fa-3x text-white-50"></i></div>
                                     <% } %>
