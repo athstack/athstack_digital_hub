@@ -53,6 +53,7 @@
                             <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="Notifications">
                                 <i class="fa-solid fa-bell fs-5"></i>
                                 <span class="notif-badge d-none" id="notifBadge">0</span>
+                                <span class="notif-badge d-none" id="msgUnreadBadge" style="top:16px;right:-8px;background:#ef4444;">0</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0 shadow-lg" style="width:380px;max-height:460px;overflow-y:auto;border-radius:14px;background:#0a0e21;border:1px solid rgba(255,255,255,0.06);box-shadow:0 20px 60px rgba(0,0,0,0.6);">
                                 <div class="d-flex justify-content-between align-items-center px-3 py-3 dropdown-header-bar rounded-top" style="background:linear-gradient(135deg,#0d1b2a,#1b2838);border-bottom:1px solid rgba(255,255,255,0.06);">
@@ -80,6 +81,24 @@
     </div>
 </nav>
 
+<script>
+function fetchUnreadMessageCount() {
+    var badge = document.getElementById('msgUnreadBadge');
+    if (!badge) return;
+    fetch('/api/messages/unread-count').then(function(r) { return r.json(); }).then(function(data) {
+        if (data.count > 0) {
+            badge.textContent = data.count;
+            badge.classList.remove('d-none');
+        } else {
+            badge.classList.add('d-none');
+        }
+    }).catch(function() {});
+}
+if (document.getElementById('msgUnreadBadge')) {
+    fetchUnreadMessageCount();
+    setInterval(fetchUnreadMessageCount, 30000);
+}
+</script>
 <% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
 <div class="bg-warning bg-opacity-10 border-bottom border-warning border-2 py-2">
     <div class="container text-center">

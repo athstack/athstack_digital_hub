@@ -30,14 +30,21 @@
                 </div>
 
                 <% if (messages && messages.length > 0) { %>
-                <div class="glass-card p-0">
+                <div class="glass-card p-0" id="messagesContainer">
                     <% messages.forEach(function(msg, idx) { %>
-                    <div class="p-3 px-4" style="border-bottom:1px solid rgba(255,255,255,0.05);<%= idx === 0 ? 'border-radius:12px 12px 0 0;' : '' %>">
+                    <%
+                        var hasUnreadReply = msg.reply_text && !msg.is_read_by_customer;
+                    %>
+                    <div class="p-3 px-4 message-card<%= hasUnreadReply ? ' unread-reply' : '' %>" style="border-bottom:1px solid rgba(255,255,255,0.05);<%= idx === 0 ? 'border-radius:12px 12px 0 0;' : '' %>">
                         <div class="d-flex justify-content-between align-items-start gap-3">
                             <div class="flex-grow-1" style="min-width:0;">
                                 <div class="d-flex align-items-center gap-2 mb-1">
+                                    <% if (hasUnreadReply) { %>
+                                    <span class="badge bg-danger" style="font-size:0.65rem;animation:pulse 2s ease-in-out infinite;">NEW REPLY</span>
+                                    <% } else { %>
                                     <span class="badge <%= msg.status === 'unread' ? 'bg-primary' : (msg.status === 'replied' ? 'bg-success' : 'bg-secondary') %>" style="font-size:0.65rem;"><%= msg.status === 'unread' ? 'New' : (msg.status === 'replied' ? 'Replied' : 'Read') %></span>
-                                    <h6 class="text-white fw-semibold mb-0" style="font-size:0.9rem;"><%= msg.subject || 'No Subject' %></h6>
+                                    <% } %>
+                                    <h6 class="mb-0" style="font-size:0.9rem;<%= hasUnreadReply ? 'font-weight:700;color:#fff;' : 'font-weight:600;color:rgba(255,255,255,0.85);' %>"><%= msg.subject || 'No Subject' %></h6>
                                 </div>
                                 <p class="small mb-1" style="line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,0.78);"><%= msg.message %></p>
                                 <div class="msg-meta" data-created="<%= msg.created_at %>" data-replied="<%= msg.replied_at || '' %>" style="font-size:0.7rem;color:rgba(255,255,255,0.3);">
@@ -59,7 +66,8 @@
                                 data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
                                 data-replied-by="<%= (msg.replied_first_name ? msg.replied_first_name + ' ' + msg.replied_last_name : 'Admin') %>"
                                 data-replied-at="<%= msg.replied_at || '' %>"
-                                data-status="<%= msg.status %>">View</button>
+                                data-status="<%= msg.status %>"
+                                data-is-read-by-customer="<%= msg.is_read_by_customer ? '1' : '0' %>">View</button>
                         </div>
                     </div>
                     <% }) %>
@@ -140,6 +148,12 @@
         if (ts) el.textContent = relTime(ts);
     });
 
+    function refreshUnreadCount() {
+        if (typeof fetchUnreadMessageCount === 'function') {
+            fetchUnreadMessageCount();
+        }
+    }
+
     var modal = document.getElementById('messageModal');
     if (!modal) return;
     var emailEl = document.getElementById('msgEmail');
@@ -165,6 +179,7 @@
 
     document.querySelectorAll('.view-msg').forEach(function(btn) {
         btn.addEventListener('click', function() {
+            var id = this.getAttribute('data-id');
             var email = this.getAttribute('data-email');
             var phone = this.getAttribute('data-phone');
             var subject = this.getAttribute('data-subject');
@@ -172,6 +187,7 @@
             var replyTextVal = this.getAttribute('data-reply');
             var repliedByName = this.getAttribute('data-replied-by');
             var repliedAt = this.getAttribute('data-replied-at');
+            var isReadByCustomer = this.getAttribute('data-is-read-by-customer');
             emailEl.textContent = email;
             phoneEl.textContent = phone || '\u2014';
             subjectEl.textContent = subject;
@@ -188,6 +204,33 @@
             }
             if (!modalInstance) modalInstance = ensureModal(modal);
             if (modalInstance) modalInstance.show();
+
+            if (replyTextVal && isReadByCustomer !== '1') {
+                fetch('/api/messages/' + id + '/read', { method: 'POST' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.success) {
+                            var card = btn.closest('.message-card');
+                            if (card) {
+                                card.classList.remove('unread-reply');
+                                var badge = card.querySelector('.badge');
+                                if (badge) {
+                                    badge.className = 'badge bg-success';
+                                    badge.style.animation = '';
+                                    badge.textContent = 'Replied';
+                                }
+                                var title = card.querySelector('h6');
+                                if (title) {
+                                    title.style.fontWeight = '600';
+                                    title.style.color = 'rgba(255,255,255,0.85)';
+                                }
+                            }
+                            btn.setAttribute('data-is-read-by-customer', '1');
+                            refreshUnreadCount();
+                        }
+                    })
+                    .catch(function() {});
+            }
         });
     });
 })();

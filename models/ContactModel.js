@@ -51,6 +51,19 @@ class ContactModel {
     return { messages: rows, total: countRow.total, page, limit };
   }
 
+  async getUnreadRepliesCountByUser(userId) {
+    const row = await queryOne(
+      'SELECT COUNT(*) AS total FROM contact_messages WHERE user_id = ? AND reply_text IS NOT NULL AND is_read_by_customer = 0',
+      [userId]
+    );
+    return row.total;
+  }
+
+  async markAsReadByCustomer(id) {
+    await query('UPDATE contact_messages SET is_read_by_customer = 1 WHERE id = ?', [id]);
+    return true;
+  }
+
   async getById(id) {
     return queryOne(
       `SELECT cm.*, u.first_name AS replied_first_name, u.last_name AS replied_last_name
@@ -63,7 +76,7 @@ class ContactModel {
 
   async addReply(id, replyText, repliedBy) {
     await query(
-      "UPDATE contact_messages SET reply_text = ?, replied_at = NOW(), replied_by = ?, status = 'replied' WHERE id = ?",
+      "UPDATE contact_messages SET reply_text = ?, replied_at = NOW(), replied_by = ?, status = 'replied', is_read_by_customer = 0 WHERE id = ?",
       [replyText, repliedBy, id]
     );
     return this.getById(id);

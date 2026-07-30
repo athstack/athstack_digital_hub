@@ -33,4 +33,26 @@ router.post('/notifications/read', async (req, res) => {
   }
 });
 
+const ContactModel = require('../models/ContactModel');
+
+router.get('/messages/unread-count', async (req, res) => {
+  try {
+    if (!req.session.userId) return res.json({ count: 0 });
+    const count = await ContactModel.getUnreadRepliesCountByUser(req.session.userId);
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ count: 0 });
+  }
+});
+
+router.post('/messages/:id/read', async (req, res) => {
+  try {
+    if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+    await ContactModel.markAsReadByCustomer(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

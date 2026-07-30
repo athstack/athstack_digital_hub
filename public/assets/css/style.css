@@ -1524,6 +1524,15 @@ input[type="date"]:not(:focus):placeholder-shown {
     color: transparent;
 }
 
+/* Unread message card */
+.message-card.unread-reply {
+    border-left: 3px solid var(--primary) !important;
+    background: rgba(0,102,255,0.04);
+}
+.message-card.unread-reply:hover {
+    background: rgba(0,102,255,0.08);
+}
+
 /* Custom dark modal */
 .modal-overlay {
     position: fixed;

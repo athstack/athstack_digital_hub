@@ -69,4 +69,20 @@ async function queryOne(sql, params = []) {
   return rows[0];
 }
 
+async function runMigrations() {
+  try {
+    const [rows] = await pool.query(
+      "SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'contact_messages' AND COLUMN_NAME = 'is_read_by_customer'"
+    );
+    if (rows[0].cnt === 0) {
+      await pool.query("ALTER TABLE contact_messages ADD COLUMN is_read_by_customer TINYINT(1) NOT NULL DEFAULT 0 AFTER reply_text");
+      console.log('Migration: added is_read_by_customer column');
+    }
+  } catch (err) {
+    console.error('Migration check failed:', err.message);
+  }
+}
+
+runMigrations();
+
 module.exports = { pool, query, queryOne, testConnection };
