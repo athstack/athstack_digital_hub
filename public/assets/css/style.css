@@ -822,11 +822,10 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-elevated);
     overflow: hidden;
-    height: 200px;
+    background: #1a1f3a;
 }
-.rounded-top-3 {
+.rounded-t-xl {
     border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
 }
