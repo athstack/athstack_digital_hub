@@ -77,6 +77,7 @@ async function runMigrations() {
     if (rows[0].cnt === 0) {
       await pool.query("ALTER TABLE contact_messages ADD COLUMN is_read_by_customer TINYINT(1) NOT NULL DEFAULT 0 AFTER reply_text");
       console.log('Migration: added is_read_by_customer column');
+    }
     try {
       const [jpgRows] = await pool.query("SELECT COUNT(*) AS cnt FROM products WHERE main_image LIKE '%.jpg'");
       if (jpgRows[0].cnt > 0) {
