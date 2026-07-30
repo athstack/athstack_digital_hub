@@ -216,7 +216,12 @@
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center justify-content-between">
                 <h5 class="modal-title" id="msgModalTitle">Message from —</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-danger rounded-pill" id="msgDeleteHeaderBtn" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="contact-grid" id="msgContactGrid">
@@ -260,16 +265,10 @@
             <div class="modal-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <span class="text-muted small" id="msgMeta"></span>
                 <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="msgDeleteBtn" title="Delete">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
                     <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgReplyBtn" style="display:none;">
                         <i class="fa-solid fa-reply me-1"></i>Reply
                     </button>
                     <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgMarkReadBtn" style="display:none;">
-                        <i class="fa-solid fa-check me-1"></i>Mark as Read
-                    </button>
                 </div>
             </div>
         </div>
@@ -286,8 +285,7 @@
     var subjectEl = document.getElementById('msgSubject');
     var bodyEl = document.getElementById('msgBody');
     var metaEl = document.getElementById('msgMeta');
-    var markBtn = document.getElementById('msgMarkReadBtn');
-    var deleteBtn = document.getElementById('msgDeleteBtn');
+    var deleteBtn = document.getElementById('msgDeleteHeaderBtn');
     var replyBtn = document.getElementById('msgReplyBtn');
 
     var currentId = null;
@@ -319,6 +317,17 @@
     var replyBody = document.getElementById('replyBody');
     var replyMeta = document.getElementById('replyMeta');
 
+    function updateRowBadge(id, text, className) {
+        var row = document.querySelector('tr[data-msg-id="' + id + '"]');
+        if (row) {
+            var badge = row.querySelector('.badge');
+            if (badge) {
+                badge.className = 'badge ' + className;
+                badge.textContent = text;
+            }
+        }
+    }
+
     function openModal(id, name, email, phone, subject, message, status, csrf, replyTextVal, repliedByName, repliedAt) {
         currentId = id;
         currentCsrf = csrf;
@@ -347,27 +356,31 @@
             replyDisplay.classList.add('hidden');
         }
 
-        if (status === 'unread') {
-            markBtn.style.display = 'inline-flex';
-            markBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i>Mark as Read';
-            markBtn.className = 'btn btn-premium-primary rounded-pill';
-            markBtn.disabled = false;
-        } else {
-            markBtn.style.display = 'inline-flex';
-            markBtn.innerHTML = '<i class="fa-solid fa-check-circle me-1"></i>Read';
-            markBtn.className = 'btn btn-outline-success rounded-pill';
-            markBtn.disabled = true;
-        }
-
         if (!modalInstance) {
             modalInstance = ensureModal(modal);
         }
         if (modalInstance) modalInstance.show();
+
+        if (status === 'unread') {
+            fetch('/admin/inbox/' + id + '/read', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'csrf_token=' + encodeURIComponent(csrf)
+            }).then(function(r) { return r.json(); }).then(function(data) {
+                if (data.success) {
+                    updateRowBadge(id, 'Read', 'bg-secondary');
+                }
+            }).catch(function() {});
+        }
     }
 
     replyBtn.addEventListener('click', function() {
         replyTo.value = currentEmail;
-        replySubject.value = 'Re: ' + (currentSubject && currentSubject !== 'No Subject' ? currentSubject : 'Contact Inquiry');
+        var subj = currentSubject;
+        if (!subj || subj === 'No Subject' || subj.toLowerCase() === 'product') {
+            subj = 'General Inquiry';
+        }
+        replySubject.value = 'Re: ' + subj;
         replyText.value = '';
         replyStatus.classList.add('hidden');
         replyStatus.className = 'mb-2 hidden';
@@ -406,14 +419,7 @@
                 setTimeout(function() {
                     modalInstance.hide();
                 }, 1200);
-                var row = document.querySelector('tr[data-msg-id="' + currentId + '"]');
-                if (row) {
-                    var badge = row.querySelector('.badge');
-                    if (badge) {
-                        badge.className = 'badge bg-secondary';
-                        badge.textContent = 'Replied';
-                    }
-                }
+                updateRowBadge(currentId, 'Replied', 'bg-secondary');
             } else {
                 replyStatus.textContent = data.message || 'Failed to send reply.';
                 replyStatus.className = 'mb-2 error';
@@ -428,23 +434,6 @@
             replySendBtn.disabled = false;
             replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
         });
-    });
-
-    markBtn.addEventListener('click', function() {
-        if (!currentId || !currentCsrf) return;
-        markBtn.disabled = true;
-        markBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Marking…';
-
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/admin/inbox/' + currentId + '/read';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'csrf_token';
-        input.value = currentCsrf;
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
     });
 
     var deleteConfirmModal = null;
@@ -504,6 +493,7 @@
         currentEmail = '';
         currentSubject = '';
         replyForm.classList.add('hidden');
+        replyDisplay.classList.add('hidden');
         replyStatus.className = 'mb-2 hidden';
         replySendBtn.disabled = false;
         replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
