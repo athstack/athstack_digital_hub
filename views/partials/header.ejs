@@ -25,8 +25,8 @@
             <img src="/images/techbridge-icon.png" alt="TechBridge Digital Hub — Home" class="d-sm-none logo-icon" style="height:40px;">
             <span class="text-white fw-bold" style="font-size:clamp(0.9rem,3.5vw,1.2rem);letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#athstackNav" aria-label="Toggle navigation" id="navToggler">
-            <i class="fa-solid fa-bars fs-5" id="navTogglerIcon"></i>
+        <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+            <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
             <ul class="navbar-nav mx-auto nav-links-center gap-1">
@@ -81,6 +81,108 @@
     </div>
 </nav>
 
+<!-- Mobile Drawer Overlay -->
+<div class="mobile-drawer-overlay" id="mobileDrawerOverlay" aria-hidden="true"></div>
+
+<!-- Mobile Drawer -->
+<div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+    <div class="mobile-drawer-inner">
+        <div class="mobile-drawer-header">
+            <a href="/" class="mobile-drawer-logo">
+                <img src="/images/techbridge-icon.png" alt="TechBridge" class="mobile-drawer-logo-img">
+                <span class="mobile-drawer-brand">Tech<span class="mobile-drawer-brand-accent">Bridge</span></span>
+            </a>
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Close navigation menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="mobile-drawer-search">
+            <i class="fa-solid fa-search mobile-drawer-search-icon"></i>
+            <input type="text" class="mobile-drawer-search-input" id="mobileSearchInput" placeholder="Search products..." autocomplete="off">
+        </div>
+
+        <nav class="mobile-drawer-nav" aria-label="Mobile navigation links">
+            <a href="/" class="mobile-nav-item<%= currentPath === '/' ? ' active' : '' %>" data-nav-delay="0">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-house"></i></span>
+                <span class="mobile-nav-label">Home</span>
+            </a>
+            <a href="/shop" class="mobile-nav-item<%= currentPath.startsWith('/shop') ? ' active' : '' %>" data-nav-delay="1">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-store"></i></span>
+                <span class="mobile-nav-label">Shop</span>
+            </a>
+            <a href="/maintenance" class="mobile-nav-item<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" data-nav-delay="2">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-wrench"></i></span>
+                <span class="mobile-nav-label">Maintenance</span>
+            </a>
+            <a href="/training" class="mobile-nav-item<%= currentPath.startsWith('/training') ? ' active' : '' %>" data-nav-delay="3">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                <span class="mobile-nav-label">Training</span>
+            </a>
+            <a href="/about" class="mobile-nav-item<%= currentPath === '/about' ? ' active' : '' %>" data-nav-delay="4">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-circle-info"></i></span>
+                <span class="mobile-nav-label">About Us</span>
+            </a>
+            <a href="/contact" class="mobile-nav-item<%= currentPath === '/contact' ? ' active' : '' %>" data-nav-delay="5">
+                <span class="mobile-nav-icon"><i class="fa-solid fa-envelope"></i></span>
+                <span class="mobile-nav-label">Contact</span>
+            </a>
+        </nav>
+
+        <div class="mobile-drawer-divider"></div>
+
+        <div class="mobile-drawer-actions">
+            <a href="/cart" class="mobile-action-btn" aria-label="Shopping Cart">
+                <span class="mobile-action-btn-icon">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="mobile-action-badge" id="mobileCartBadge"><%= cartCount %></span>
+                </span>
+                <span class="mobile-action-btn-label">Cart</span>
+            </a>
+            <% if (user) { %>
+            <a href="/dashboard/wishlist" class="mobile-action-btn" aria-label="Wishlist">
+                <span class="mobile-action-btn-icon"><i class="fa-solid fa-heart"></i></span>
+                <span class="mobile-action-btn-label">Wishlist</span>
+            </a>
+            <a href="/dashboard/orders" class="mobile-action-btn" aria-label="Orders">
+                <span class="mobile-action-btn-icon"><i class="fa-solid fa-box"></i></span>
+                <span class="mobile-action-btn-label">Orders</span>
+            </a>
+            <% } %>
+            <a href="<%= user ? (['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard')) : '/auth/login' %>" class="mobile-action-btn" aria-label="<%= user ? 'Dashboard' : 'Sign In' %>">
+                <span class="mobile-action-btn-icon"><i class="fa-solid <%= user ? 'fa-user-gear' : 'fa-arrow-right-to-bracket' %>"></i></span>
+                <span class="mobile-action-btn-label"><%= user ? 'Dashboard' : 'Sign In' %></span>
+            </a>
+        </div>
+
+        <div class="mobile-drawer-divider"></div>
+
+        <div class="mobile-drawer-user">
+            <% if (user) { %>
+            <div class="mobile-user-card">
+                <div class="mobile-user-avatar">
+                    <% if (user.avatar) { %>
+                    <img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="<%= formatDisplayName(user.firstName, user.lastName) %>">
+                    <% } else { %>
+                    <i class="fa-solid fa-user"></i>
+                    <% } %>
+                </div>
+                <div class="mobile-user-info">
+                    <span class="mobile-user-name"><%= formatDisplayName(user.firstName, user.lastName) %></span>
+                    <span class="mobile-user-email"><%= user.email %></span>
+                </div>
+                <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="mobile-user-profile-btn">View Profile</a>
+            </div>
+            <% } else { %>
+            <div class="mobile-user-auth">
+                <a href="/auth/login" class="mobile-user-btn mobile-user-btn-primary">Sign In</a>
+                <a href="/auth/register" class="mobile-user-btn mobile-user-btn-secondary">Create Account</a>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
 <script>
 function fetchUnreadMessageCount() {
     var badge = document.getElementById('msgUnreadBadge');
@@ -97,16 +199,6 @@ function fetchUnreadMessageCount() {
 if (document.getElementById('msgUnreadBadge')) {
     fetchUnreadMessageCount();
     setInterval(fetchUnreadMessageCount, 30000);
-}
-var navCollapse = document.getElementById('athstackNav');
-var togglerIcon = document.getElementById('navTogglerIcon');
-if (navCollapse && togglerIcon) {
-    navCollapse.addEventListener('show.bs.collapse', function () {
-        togglerIcon.className = 'fa-solid fa-times fs-5';
-    });
-    navCollapse.addEventListener('hide.bs.collapse', function () {
-        togglerIcon.className = 'fa-solid fa-bars fs-5';
-    });
 }
 </script>
 <% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
