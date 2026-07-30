@@ -324,18 +324,38 @@ function escapeHtml(text) {
 // Scroll-triggered animations using IntersectionObserver
 // ---------------------------------------------------------------------------
 function initScrollAnimations() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('aos-visible');
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '-50px'
+  var elements = document.querySelectorAll('[data-aos]');
+
+  // Mark all elements as hidden initially (unless already visible)
+  elements.forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    var winHeight = window.innerHeight || document.documentElement.clientHeight;
+    // If element is already on screen, show immediately
+    if (rect.top < winHeight && rect.bottom > 0) {
+      el.classList.remove('aos-hidden');
+    } else {
+      el.classList.add('aos-hidden');
+    }
   });
 
-  document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
+  // Use IntersectionObserver for scroll-triggered reveal
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove('aos-hidden');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.05,
+      rootMargin: '0px 0px -50px 0px'
+    });
+    elements.forEach(function(el) { observer.observe(el); });
+  } else {
+    // Fallback for browsers without IntersectionObserver: show all
+    elements.forEach(function(el) { el.classList.remove('aos-hidden'); });
+  }
 }
 
 // ---------------------------------------------------------------------------
