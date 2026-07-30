@@ -1,6 +1,7 @@
 <%
   var p = product || {};
-  var imgSrc = p.main_image ? imageUrl(p.main_image, 'products') : '/uploads/products/no-image.svg';
+  var _imageUrl = typeof imageUrl === 'function' ? imageUrl : function(path, folder) { return path ? '/uploads/' + folder + '/' + path : ''; };
+  var imgSrc = p.main_image ? _imageUrl(p.main_image, 'products') : '/uploads/products/no-image.svg';
   var imgAlt = p.name || 'Product image';
   var discountPct = (p.discount_price && p.price && p.discount_price < p.price) ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
   var hasDiscount = discountPct > 0;
@@ -16,12 +17,10 @@
   <a href="/shop/<%= p.slug %>" class="product-card-link" aria-label="View <%= p.name %>">
     <div class="product-card-inner">
       <div class="product-card-image-wrapper">
-        <div class="product-card-skeleton"></div>
         <img class="product-card-img" src="<%= imgSrc %>"
              alt="<%= imgAlt %>"
              loading="lazy"
-             onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';"
-             onload="this.classList.add('loaded')">
+             onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';">
         <div class="product-card-labels">
           <% if (hasDiscount) { %><span class="product-label product-label-discount">-<%= discountPct %>%</span><% } %>
           <% if (isFeatured) { %><span class="product-label product-label-featured">Featured</span><% } %>
