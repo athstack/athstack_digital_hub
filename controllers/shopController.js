@@ -3,7 +3,7 @@ const CategoryModel = require('../models/CategoryModel');
 const WishlistModel = require('../models/WishlistModel');
 const ReviewModel = require('../models/ReviewModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { paginate, formatCurrency } = require('../utils/helpers');
+const { paginate, formatCurrency, calculateDiscount } = require('../utils/helpers');
 
 exports.getShop = async (req, res, next) => {
   try {
@@ -58,6 +58,11 @@ exports.getProduct = async (req, res, next) => {
     const reviewData = await ReviewModel.getByProduct(product.id, 1, 10);
     const ratingInfo = await ReviewModel.getAverageRating(product.id);
 
+    const relatedProducts = await ProductModel.getRelated(product.id, product.category_id, 8);
+
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + (product.stock_quantity > 0 ? 3 : 7));
+
     res.render('shop/details', {
       title: `${product.name} - TechBridge Digital Hub`,
       product,
@@ -66,7 +71,10 @@ exports.getProduct = async (req, res, next) => {
       reviews: reviewData.reviews,
       reviewCount: reviewData.total,
       avgRating: ratingInfo.average,
-      formatCurrency
+      relatedProducts,
+      deliveryDate,
+      formatCurrency,
+      calculateDiscount
     });
   } catch (err) {
     next(err);
