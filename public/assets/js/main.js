@@ -4,8 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initAutoAlertDismiss();
   initFormValidation();
   initImagePreview();
+  initFileUpload();
   initConfirmDialogs();
   initQuantityButtons();
+  initScrollAnimations();
+  initBackToTop();
+  initNavbarScroll();
 });
 
 // ---------------------------------------------------------------------------
@@ -46,8 +50,10 @@ function initLiveSearch() {
               ? '<span class="text-primary fw-bold">$' + Number(item.discount_price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span> <small class="text-muted text-decoration-line-through">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</small>'
               : '<span class="text-primary fw-bold">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span>';
 
+            // TODO: Replace with imageUrl() helper when available client-side
             const imgSrc = item.main_image ? '/uploads/products/' + item.main_image : '/uploads/products/product-placeholder.svg';
             const html = '<a href="/shop/' + item.slug + '" class="search-suggestion-item">' +
+              // TODO: Replace onerror placeholder path with imageUrl() helper when available
               '<img src="' + imgSrc + '" alt="' + escapeHtml(item.name) + '" style="width:40px;height:40px;object-fit:cover;margin-right:12px;border-radius:4px;" onerror="this.onerror=null;this.src=\'/uploads/products/product-placeholder.svg\';">' +
               '<div>' +
               '<div class="fw-bold small text-white">' + escapeHtml(item.name) + '</div>' +
@@ -165,10 +171,11 @@ function initFormValidation() {
 }
 
 // ---------------------------------------------------------------------------
-// Image preview for file inputs
+// Image preview for file inputs (legacy — only for bare inputs)
 // ---------------------------------------------------------------------------
 function initImagePreview() {
   document.querySelectorAll('input[type="file"][accept*="image"]').forEach(input => {
+    if (input.closest('.file-upload-wrapper')) return;
     input.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -191,15 +198,86 @@ function initImagePreview() {
 }
 
 // ---------------------------------------------------------------------------
+// Styled File Upload (custom fileUpload partial)
+// ---------------------------------------------------------------------------
+function initFileUpload() {
+  document.querySelectorAll('.file-upload-wrapper').forEach(wrapper => {
+    const input = wrapper.querySelector('.file-upload-input');
+    const zone = wrapper.querySelector('.file-upload-zone');
+    const preview = wrapper.querySelector('.file-upload-preview');
+    const previewImg = preview?.querySelector('img');
+    const filenameEl = wrapper.querySelector('.file-upload-filename');
+    const filesizeEl = wrapper.querySelector('.file-upload-filesize');
+    const removeBtn = wrapper.querySelector('.file-upload-remove');
+    const currentEl = wrapper.querySelector('.file-upload-current');
+
+    if (!input || !preview) return;
+
+    // File selected → show preview
+    input.addEventListener('change', () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      showPreview(file);
+    });
+
+    // Remove button → reset input
+    removeBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      resetUpload();
+    });
+
+    function showPreview(file) {
+      if (previewImg) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { previewImg.src = ev.target.result; };
+        reader.readAsDataURL(file);
+      }
+      if (filenameEl) filenameEl.textContent = file.name;
+      if (filesizeEl) filesizeEl.textContent = formatFileSize(file.size);
+
+      zone?.classList.add('d-none');
+      preview?.classList.remove('d-none');
+      if (currentEl) currentEl.classList.add('d-none');
+    }
+
+    function resetUpload() {
+      input.value = '';
+      if (previewImg) previewImg.src = '';
+      if (filenameEl) filenameEl.textContent = 'No file selected';
+      if (filesizeEl) filesizeEl.textContent = '';
+
+      zone?.classList.remove('d-none');
+      preview?.classList.add('d-none');
+      if (currentEl) currentEl.classList.remove('d-none');
+    }
+  });
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Confirm dialogs for destructive actions
 // ---------------------------------------------------------------------------
 function initConfirmDialogs() {
   document.querySelectorAll('[data-confirm]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      if (!confirm(el.dataset.confirm || 'Are you sure?')) {
-        e.preventDefault();
-      }
-    });
+    if (el.tagName === 'FORM') {
+      el.addEventListener('submit', (e) => {
+        if (!confirm(el.dataset.confirm || 'Are you sure?')) {
+          e.preventDefault();
+        }
+      });
+    } else {
+      el.addEventListener('click', (e) => {
+        if (!confirm(el.dataset.confirm || 'Are you sure?')) {
+          e.preventDefault();
+        }
+      });
+    }
   });
 }
 
@@ -237,4 +315,59 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(text));
   return div.innerHTML;
+}
+
+// ---------------------------------------------------------------------------
+// Scroll-triggered animations using IntersectionObserver
+// ---------------------------------------------------------------------------
+function initScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('aos-visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '-50px'
+  });
+
+  document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
+}
+
+// ---------------------------------------------------------------------------
+// Back to top button
+// ---------------------------------------------------------------------------
+function initBackToTop() {
+  const btn = document.querySelector('.back-to-top');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Navbar scroll effect
+// ---------------------------------------------------------------------------
+function initNavbarScroll() {
+  const navbar = document.querySelector('.navbar-custom');
+  if (!navbar) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
 }

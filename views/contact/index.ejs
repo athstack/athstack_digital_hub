@@ -1,51 +1,80 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Get In Touch</span>
-            <h1 class="text-white fw-bold mt-2">Contact Us</h1>
-            <p class="text-muted">Have a question or need a quote? Reach out and our team will respond promptly.</p>
+            <span class="section-badge"><i class="fa-solid fa-envelope me-2"></i>Get In Touch</span>
+            <h1 class="display-4 text-white fw-bold mt-3">Contact Us</h1>
+            <p class="text-white-50 fs-5">Have a question or need a quote? Reach out and our team will respond promptly.</p>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= flashSuccess %>
+        <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+        <% if (typeof flashInfo !== 'undefined' && flashInfo && flashInfo.length > 0) { %>
+        <div class="alert alert-info alert-dismissible fade show rounded-pill" role="alert" style="background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.2);color:#93c5fd;">
+            <i class="fa-solid fa-circle-info me-2"></i><%= flashInfo %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
         <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= flashError %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
 
         <div class="row g-5">
             <div class="col-lg-7">
-                <div class="glass-card no-lift p-5">
-                    <h4 class="text-white fw-bold mb-4"><i class="fa-solid fa-paper-plane me-2 text-primary"></i>Send a Message</h4>
+                <div class="glass-card p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fa-solid fa-paper-plane text-primary fa-2x me-3"></i>
+                        <h4 class="text-white fw-bold mb-0">Send a Message</h4>
+                    </div>
                     <form method="POST" action="/contact/send">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label">Full Name *</label>
-                                <input type="text" name="name" class="form-control" required placeholder="Your full name">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Full Name <span class="text-primary">*</span></label>
+                                <input type="text" name="name" class="form-control" required placeholder="Version John" value="<%= user ? user.name || (user.firstName + ' ' + user.lastName) : '' %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email Address *</label>
-                                <input type="email" name="email" class="form-control" required placeholder="your@email.com">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Email Address <span class="text-primary">*</span></label>
+                                <input type="email" name="email" class="form-control" required placeholder="your@email.com" value="<%= user ? user.email : '' %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" name="phone" class="form-control" placeholder="+255 7XX XXX XXX">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Country Code</label>
+                                <select name="country_code" class="form-select" <%= user ? 'style="opacity:0.7;"' : '' %>>
+                                    <option value="+255" <%= userPhoneCode === '+255' ? 'selected' : '' %>>Tanzania (+255)</option>
+                                    <option value="+254" <%= userPhoneCode === '+254' ? 'selected' : '' %>>Kenya (+254)</option>
+                                    <option value="+256" <%= userPhoneCode === '+256' ? 'selected' : '' %>>Uganda (+256)</option>
+                                    <option value="+250" <%= userPhoneCode === '+250' ? 'selected' : '' %>>Rwanda (+250)</option>
+                                    <option value="+257" <%= userPhoneCode === '+257' ? 'selected' : '' %>>Burundi (+257)</option>
+                                    <option value="+27" <%= userPhoneCode === '+27' ? 'selected' : '' %>>South Africa (+27)</option>
+                                    <option value="+1" <%= userPhoneCode === '+1' ? 'selected' : '' %>>USA/Canada (+1)</option>
+                                    <option value="+44" <%= userPhoneCode === '+44' ? 'selected' : '' %>>UK (+44)</option>
+                                    <option value="+49" <%= userPhoneCode === '+49' ? 'selected' : '' %>>Germany (+49)</option>
+                                    <option value="+33" <%= userPhoneCode === '+33' ? 'selected' : '' %>>France (+33)</option>
+                                    <option value="+61" <%= userPhoneCode === '+61' ? 'selected' : '' %>>Australia (+61)</option>
+                                    <option value="+86" <%= userPhoneCode === '+86' ? 'selected' : '' %>>China (+86)</option>
+                                    <option value="+91" <%= userPhoneCode === '+91' ? 'selected' : '' %>>India (+91)</option>
+                                    <option value="+971" <%= userPhoneCode === '+971' ? 'selected' : '' %>>UAE (+971)</option>
+                                    <option value="+234" <%= userPhoneCode === '+234' ? 'selected' : '' %>>Nigeria (+234)</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Subject</label>
-                                <input type="text" name="subject" class="form-control" placeholder="How can we help?">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control" placeholder="7XX XXX XXX" value="<%= userPhoneNumber %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Subject <span class="text-primary">*</span></label>
+                                <input type="text" name="subject" class="form-control" required placeholder="How can we help?">
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Message *</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Message <span class="text-primary">*</span></label>
                                 <textarea name="message" class="form-control" rows="5" required placeholder="Write your message here..."></textarea>
                             </div>
                             <div class="col-12">
@@ -57,46 +86,53 @@
             </div>
 
             <div class="col-lg-5">
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h5 class="text-white fw-bold mb-4"><i class="fa-solid fa-address-card me-2 text-primary"></i>Contact Information</h5>
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-location-dot text-primary me-3"></i>
-                            <span class="text-muted">Office Address</span>
-                        </div>
-                        <p class="text-white ms-4 mb-0">Arusha, Tanzania</p>
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fa-solid fa-address-card text-primary fa-2x me-3"></i>
+                        <h5 class="text-white fw-bold mb-0">Contact Information</h5>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-phone text-primary me-3"></i>
-                            <span class="text-muted">Phone</span>
+                            <i class="fa-solid fa-location-dot text-primary me-3 fs-5"></i>
+                            <span class="text-white-50 small text-uppercase tracking-widest">Office Address</span>
                         </div>
-                        <p class="text-white ms-4 mb-0">+255 782 303 971</p>
+                        <p class="text-white ms-4 ps-1 mb-0 fs-5">Mbeya, Tanzania</p>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-envelope text-primary me-3"></i>
-                            <span class="text-muted">Email</span>
+                            <i class="fa-solid fa-phone text-primary me-3 fs-5"></i>
+                            <span class="text-white-50 small text-uppercase tracking-widest">Phone</span>
                         </div>
-                        <p class="text-white ms-4 mb-0">info@athstack.com</p>
+                        <p class="text-white ms-4 ps-1 mb-0 fs-5">+255 782 303 971</p>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-clock text-primary me-3"></i>
-                            <span class="text-muted">Business Hours</span>
+                            <i class="fa-solid fa-envelope text-primary me-3 fs-5"></i>
+                            <span class="text-white-50 small text-uppercase tracking-widest">Email</span>
                         </div>
-                        <p class="text-white ms-4 mb-0">Mon - Fri: 08:00 AM - 06:00 PM</p>
-                        <p class="text-white ms-4 mb-0">Sat: 09:00 AM - 02:00 PM</p>
+                        <p class="text-white ms-4 ps-1 mb-0 fs-5">info@athstack.com</p>
+                    </div>
+                    <div class="mb-0">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-clock text-primary me-3 fs-5"></i>
+                            <span class="text-white-50 small text-uppercase tracking-widest">Business Hours</span>
+                        </div>
+                        <p class="text-white ms-4 ps-1 mb-0">Mon - Fri: 08:00 AM - 06:00 PM</p>
+                        <p class="text-white ms-4 ps-1 mb-0">Sat: 09:00 AM - 02:00 PM</p>
                     </div>
                 </div>
 
-                <div class="glass-card no-lift p-4">
-                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-share-nodes me-2 text-primary"></i>Follow Us</h5>
+                <div class="glass-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-share-nodes text-primary fa-2x me-3"></i>
+                        <h5 class="text-white fw-bold mb-0">Follow Us</h5>
+                    </div>
+                    <p class="text-white-50 small mb-3">Stay connected on social media for the latest updates.</p>
                     <div class="d-flex gap-3">
-                        <a href="#" class="btn btn-premium-outline rounded-pill btn-sm"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="btn btn-premium-outline rounded-pill btn-sm"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="btn btn-premium-outline rounded-pill btn-sm"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="btn btn-premium-outline rounded-pill btn-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="btn btn-premium-outline rounded-pill" style="width:48px;height:48px;" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-premium-outline rounded-pill" style="width:48px;height:48px;" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="btn btn-premium-outline rounded-pill" style="width:48px;height:48px;" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="btn btn-premium-outline rounded-pill" style="width:48px;height:48px;" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
                     </div>
                 </div>
             </div>

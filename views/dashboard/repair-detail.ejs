@@ -1,0 +1,124 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard" class="text-white-50 text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/dashboard/repairs" class="text-white-50 text-decoration-none">Repairs</a></li>
+                <li class="breadcrumb-item active text-primary"><%= repair.reference_number %></li>
+            </ol>
+        </nav>
+
+        <% if (repair) { %>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Detail</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-wrench me-2 text-info"></i>Repair <%= repair.reference_number %></h2>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-white fw-bold mb-0">Repair Timeline</h5>
+                        <span class="badge <%= getStatusBadgeClass(repair.status) %> fs-6"><%= repair.status.replace('_', ' ') %></span>
+                    </div>
+
+                    <% if (repair.updates && repair.updates.length > 0) { %>
+                    <div class="timeline">
+                        <% repair.updates.forEach((update, idx) => { %>
+                        <div class="d-flex mb-4">
+                            <div class="me-3">
+                                <div class="rounded-circle bg-<%= idx === 0 ? 'primary' : 'secondary' %> d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                                    <i class="fa-solid fa-<%= update.status === 'completed' ? 'check' : (update.status === 'cancelled' ? 'xmark' : 'rotate') %> text-white small"></i>
+                                </div>
+                                <% if (idx < repair.updates.length - 1) { %>
+                                <div class="vr d-block mx-auto mt-1" style="height:30px;"></div>
+                                <% } %>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="text-white fw-bold mb-0"><%= update.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) %></h6>
+                                    <small class="text-white-50"><%= update.created_at ? new Date(update.created_at).toLocaleString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '' %></small>
+                                </div>
+                                <% if (update.notes) { %>
+                                <p class="text-white-50 mt-1 mb-0"><%= update.notes %></p>
+                                <% } %>
+                                <% if (update.updater_first_name) { %>
+                                <small class="text-white-50"><i class="fa-solid fa-user me-1"></i><%= formatDisplayName(update.updater_first_name, update.updater_last_name) %></small>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="fa-solid fa-clock-rotate-left fa-2x text-white-50 mb-2"></i>
+                        <p class="text-white-50 mb-0">No updates yet. Check back later.</p>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="glass-card p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i>Repair Details</h6>
+                    <div class="mb-2"><small class="text-white-50">Service:</small><br><span class="text-white"><%= repair.service_title || 'General Repair' %></span></div>
+                    <div class="mb-2"><small class="text-white-50">Device:</small><br><span class="text-white"><%= repair.device_type || 'N/A' %> <%= repair.device_brand || '' %> <%= repair.device_model || '' %></span></div>
+                    <div class="mb-2"><small class="text-white-50">Serial:</small><br><span class="text-white"><%= repair.device_serial || 'N/A' %></span></div>
+                    <div class="mb-2"><small class="text-white-50">Appointment:</small><br><span class="text-white"><%= formatDate(repair.appointment_date) %></span></div>
+                    <% if (repair.estimated_cost) { %>
+                    <div class="mb-2"><small class="text-white-50">Estimated Cost:</small><br><span class="text-white"><%= formatCurrency(repair.estimated_cost) %></span></div>
+                    <% } %>
+                    <% if (repair.actual_cost) { %>
+                    <div class="mb-2"><small class="text-white-50">Actual Cost:</small><br><span class="text-white"><%= formatCurrency(repair.actual_cost) %></span></div>
+                    <% } %>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-comment me-2 text-primary"></i>Issue Description</h6>
+                    <p class="text-white-50 mb-0"><%= repair.issue_description || 'No description provided.' %></p>
+                </div>
+
+                <% if (repair.diagnostic_notes) { %>
+                <div class="glass-card p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-stethoscope me-2 text-primary"></i>Diagnostic Notes</h6>
+                    <p class="text-white-50 mb-0"><%= repair.diagnostic_notes %></p>
+                </div>
+                <% } %>
+
+                <% if (repair.technician_first_name) { %>
+                <div class="glass-card p-4">
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-gear me-2 text-primary"></i>Technician</h6>
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
+                            <% if (repair.technician_avatar) { %>
+                            <img src="<%= imageUrl(repair.technician_avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                            <% } else { %>
+                            <i class="fa-solid fa-user text-white"></i>
+                            <% } %>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-0"><%= formatDisplayName(repair.technician_first_name, repair.technician_last_name) %></h6>
+                            <small class="text-white-50"><%= repair.technician_email || '' %></small>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+            <i class="fa-solid fa-exclamation-triangle fa-4x mb-3"></i>
+            <h4 class="text-white fw-bold">Repair Not Found</h4>
+            <a href="/dashboard/repairs" class="btn btn-premium-primary rounded-pill">Back to Repairs</a>
+        </div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

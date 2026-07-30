@@ -5,6 +5,10 @@ class ServiceModel {
     return query("SELECT * FROM services WHERE status = 'active' ORDER BY category ASC, title ASC");
   }
 
+  async getAllAdmin() {
+    return query("SELECT * FROM services ORDER BY category ASC, title ASC");
+  }
+
   async getByCategory(category) {
     return query(
       'SELECT * FROM services WHERE category = ? AND status = ? ORDER BY title ASC',

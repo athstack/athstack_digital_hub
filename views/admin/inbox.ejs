@@ -1,6 +1,123 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<style>
+#messageModal .modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    overflow: hidden;
+}
+#messageModal .modal-header {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 1.25rem 1.5rem;
+}
+#messageModal .modal-body {
+    padding: 1.5rem;
+}
+#messageModal .modal-footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 1rem 1.5rem;
+}
+#messageModal .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+#messageModal .contact-item {}
+#messageModal .contact-item .label {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
+}
+#messageModal .contact-item .value {
+    font-size: var(--font-sm);
+    color: var(--text-main);
+    font-weight: 500;
+    word-break: break-all;
+}
+#messageModal .subject-line {
+    font-size: var(--font-lg);
+    font-weight: var(--weight-bold);
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#messageModal .message-box {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    min-height: 120px;
+    max-height: 320px;
+    overflow-y: auto;
+    color: var(--text-secondary);
+    font-size: var(--font-base);
+    line-height: var(--leading-body);
+    white-space: pre-wrap;
+}
+#messageModal .modal-title {
+    font-size: var(--font-lg);
+    font-weight: var(--weight-bold);
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+#messageModal .reply-form {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+#messageModal .reply-form.hidden { display: none; }
+#messageModal .reply-form label {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+}
+#messageModal .reply-form .form-control,
+#messageModal .reply-form .form-control-plaintext {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: var(--font-sm);
+    padding: 0.6rem 0.9rem;
+}
+#messageModal .reply-form .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    outline: none;
+}
+#messageModal .reply-form textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+#messageModal .reply-form .form-control-plaintext {
+    opacity: 0.6;
+    cursor: default;
+}
+#replyStatus {
+    font-size: var(--font-xs);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+}
+#replyStatus.success { background: rgba(34,197,94,0.12); color: #22c55e; }
+#replyStatus.error { background: rgba(239,68,68,0.12); color: #ef4444; }
+</style>
+
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
         <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -14,61 +131,47 @@
                 <%- include('../partials/adminSidebar') %>
             </div>
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-envelope me-2 text-primary"></i>Contact Inbox</h2>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Inbox</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope me-2 text-primary"></i>Contact Inbox</h2>
+                </div>
 
                 <% if (messages && messages.length > 0) { %>
-                <div class="glass-card no-lift p-4">
+                <div class="glass-card p-4">
                     <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
+                        <table class="table table-dark align-middle mb-0 premium-table" id="inboxTable">
                             <thead>
                                 <tr><th>From</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr>
                             </thead>
                             <tbody>
                                 <% messages.forEach(msg => { %>
-                                <tr>
+                                <tr data-msg-id="<%= msg.id %>">
                                     <td>
                                         <div>
                                             <span class="text-white fw-bold"><%= msg.name %></span><br>
-                                            <small class="text-muted"><%= msg.email %></small>
+                                            <small class="text-white-50"><%= msg.email %></small>
                                         </div>
                                     </td>
-                                    <td class="text-muted"><%= msg.subject || 'No Subject' %></td>
-                                    <td class="text-muted"><%= formatDate(msg.created_at) %></td>
+                                    <td class="text-white-50"><%= msg.subject || 'No Subject' %></td>
+                                    <td class="text-white-50"><%= formatDate(msg.created_at) %></td>
                                     <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? 'New' : (msg.status === 'replied' ? 'Replied' : 'Read') %></span></td>
                                     <td>
-                                        <div class="d-flex gap-1">
-                                            <button type="button" class="btn btn-premium-outline btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#msgModal<%= msg.id %>" title="View">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </button>
-                                            <% if (msg.status === 'unread') { %>
-                                            <form method="POST" action="/admin/inbox/<%= msg.id %>/read" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn btn-outline-success btn-sm rounded-pill" title="Mark Read"><i class="fa-solid fa-check"></i></button>
-                                            </form>
-                                            <% } %>
-                                        </div>
-
-                                        <div class="modal fade" id="msgModal<%= msg.id %>" tabindex="-1">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-                                                    <div class="modal-header border-secondary">
-                                                        <h5 class="text-white fw-bold">Message from <%= msg.name %></h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p class="text-muted mb-1"><strong>Email:</strong> <%= msg.email %></p>
-                                                        <% if (msg.phone) { %><p class="text-muted mb-1"><strong>Phone:</strong> <%= msg.phone %></p><% } %>
-                                                        <p class="text-muted mb-1"><strong>Subject:</strong> <%= msg.subject || 'N/A' %></p>
-                                                        <p class="text-muted mb-1"><strong>Date:</strong> <%= formatDate(msg.created_at) %></p>
-                                                        <hr class="border-secondary opacity-25">
-                                                        <p class="text-white"><%= msg.message %></p>
-                                                    </div>
-                                                    <div class="modal-footer border-secondary">
-                                                        <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <button type="button"
+                                            class="btn btn-premium-outline btn-sm rounded-pill view-msg"
+                                            title="View"
+                                            data-id="<%= msg.id %>"
+                                            data-name="<%= msg.name %>"
+                                            data-email="<%= msg.email %>"
+                                            data-phone="<%= msg.phone || '' %>"
+                                            data-subject="<%= (msg.subject || 'No Subject').replace(/"/g, '&quot;') %>"
+                                            data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                            data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                            data-replied-by="<%= msg.replied_first_name ? (msg.replied_first_name + ' ' + msg.replied_last_name) : '' %>"
+                                            data-replied-at="<%= msg.replied_at || '' %>"
+                                            data-status="<%= msg.status %>"
+                                            data-csrf="<%= csrfToken %>">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -80,12 +183,331 @@
                 <div class="empty-state">
                     <i class="fa-solid fa-envelope fa-4x mb-3"></i>
                     <h4 class="text-white fw-bold">Inbox Empty</h4>
-                    <p class="text-muted">No contact messages have been received yet.</p>
+                    <p class="text-white-50">No contact messages have been received yet.</p>
                 </div>
                 <% } %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:16px;">
+            <div class="modal-body text-center p-4">
+                <div class="mb-3" style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                    <i class="fa-solid fa-trash-can" style="color:#ef4444;font-size:1.25rem;"></i>
+                </div>
+                <h6 class="text-white fw-bold mb-2" style="font-size:1.05rem;">Delete Message</h6>
+                <p class="mb-4" style="color:var(--text-muted);font-size:var(--font-sm);line-height:1.5;">Are you sure? This action cannot be undone.</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal" style="min-width:80px;">Cancel</button>
+                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="confirmDeleteBtn" style="min-width:80px;"><i class="fa-solid fa-trash-can me-1"></i>Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Single Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center justify-content-between">
+                <h5 class="modal-title" id="msgModalTitle">Message from —</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-grid" id="msgContactGrid">
+                    <div class="contact-item">
+                        <div class="label">Email</div>
+                        <div class="value" id="msgEmail">—</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="label">Phone</div>
+                        <div class="value" id="msgPhone">—</div>
+                    </div>
+                </div>
+                <div class="subject-line" id="msgSubject">—</div>
+                <div class="message-box" id="msgBody">—</div>
+                <div id="replyDisplay" class="hidden" style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,102,255,0.06);border:1px solid rgba(0,102,255,0.12);border-radius:10px;">
+                    <div style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Your Reply</div>
+                    <div id="replyBody" style="color:var(--text-secondary);font-size:var(--font-base);line-height:var(--leading-body);white-space:pre-wrap;"></div>
+                    <div id="replyMeta" style="color:rgba(255,255,255,0.3);font-size:0.7rem;margin-top:0.5rem;"></div>
+                </div>
+                <div class="reply-form hidden" id="replyForm">
+                    <div class="mb-2">
+                        <label>To</label>
+                        <input type="text" class="form-control-plaintext" id="replyTo" readonly>
+                    </div>
+                    <div class="mb-2">
+                        <label>Subject</label>
+                        <input type="text" class="form-control" id="replySubject">
+                    </div>
+                    <div class="mb-2">
+                        <label>Message</label>
+                        <textarea class="form-control" id="replyText" placeholder="Type your reply…"></textarea>
+                    </div>
+                    <div id="replyStatus" class="mb-2 hidden"></div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-premium-outline rounded-pill" id="replyCancelBtn">Cancel</button>
+                        <button type="button" class="btn btn-sm btn-premium-primary rounded-pill" id="replySendBtn"><i class="fa-solid fa-paper-plane me-1"></i>Send Reply</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+                <span class="text-muted small" id="msgMeta"></span>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-danger rounded-pill" id="msgDeleteBtn">
+                        <i class="fa-solid fa-trash-can me-1"></i>Delete
+                    </button>
+                    <button type="button" class="btn btn-premium-primary rounded-pill" id="msgReplyBtn" style="display:none;">
+                        <i class="fa-solid fa-reply me-1"></i>Reply
+                    </button>
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-premium-primary rounded-pill" id="msgMarkReadBtn" style="display:none;">
+                        <i class="fa-solid fa-check me-1"></i>Mark as Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var modal = document.getElementById('messageModal');
+    if (!modal) return;
+    var title = document.getElementById('msgModalTitle');
+    var emailEl = document.getElementById('msgEmail');
+    var phoneEl = document.getElementById('msgPhone');
+    var subjectEl = document.getElementById('msgSubject');
+    var bodyEl = document.getElementById('msgBody');
+    var metaEl = document.getElementById('msgMeta');
+    var markBtn = document.getElementById('msgMarkReadBtn');
+    var deleteBtn = document.getElementById('msgDeleteBtn');
+    var replyBtn = document.getElementById('msgReplyBtn');
+
+    var currentId = null;
+    var currentCsrf = null;
+    var currentEmail = '';
+    var currentSubject = '';
+    var modalInstance = null;
+
+    function ensureModal(el) {
+        if (typeof bootstrap !== 'undefined') return new bootstrap.Modal(el);
+        var check = setInterval(function() {
+            if (typeof bootstrap !== 'undefined') {
+                clearInterval(check);
+                modalInstance = new bootstrap.Modal(el);
+                modalInstance.show();
+            }
+        }, 50);
+        return null;
+    }
+
+    var replyForm = document.getElementById('replyForm');
+    var replyTo = document.getElementById('replyTo');
+    var replySubject = document.getElementById('replySubject');
+    var replyText = document.getElementById('replyText');
+    var replyStatus = document.getElementById('replyStatus');
+    var replyCancelBtn = document.getElementById('replyCancelBtn');
+    var replySendBtn = document.getElementById('replySendBtn');
+    var replyDisplay = document.getElementById('replyDisplay');
+    var replyBody = document.getElementById('replyBody');
+    var replyMeta = document.getElementById('replyMeta');
+
+    function openModal(id, name, email, phone, subject, message, status, csrf, replyTextVal, repliedByName, repliedAt) {
+        currentId = id;
+        currentCsrf = csrf;
+        currentEmail = email;
+        currentSubject = subject;
+        title.textContent = 'Message from ' + name;
+        emailEl.textContent = email;
+        phoneEl.textContent = phone || '—';
+        subjectEl.textContent = subject;
+        bodyEl.textContent = message;
+        metaEl.textContent = '';
+        replyForm.classList.add('hidden');
+        replyStatus.classList.add('hidden');
+        replyStatus.className = 'mb-2 hidden';
+        replyBtn.style.display = 'inline-flex';
+
+        if (replyTextVal) {
+            replyBody.textContent = replyTextVal;
+            var metaParts = [];
+            if (repliedByName) metaParts.push('By ' + repliedByName);
+            if (repliedAt) metaParts.push(new Date(repliedAt).toLocaleString());
+            replyMeta.textContent = metaParts.join(' — ');
+            replyDisplay.classList.remove('hidden');
+            replyBtn.style.display = 'none';
+        } else {
+            replyDisplay.classList.add('hidden');
+        }
+
+        if (status === 'unread') {
+            markBtn.style.display = 'inline-flex';
+            markBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i>Mark as Read';
+            markBtn.className = 'btn btn-premium-primary rounded-pill';
+            markBtn.disabled = false;
+        } else {
+            markBtn.style.display = 'inline-flex';
+            markBtn.innerHTML = '<i class="fa-solid fa-check-circle me-1"></i>Read';
+            markBtn.className = 'btn btn-outline-success rounded-pill';
+            markBtn.disabled = true;
+        }
+
+        if (!modalInstance) {
+            modalInstance = ensureModal(modal);
+        }
+        if (modalInstance) modalInstance.show();
+    }
+
+    replyBtn.addEventListener('click', function() {
+        replyTo.value = currentEmail;
+        replySubject.value = 'Re: ' + (currentSubject && currentSubject !== 'No Subject' ? currentSubject : 'Contact Inquiry');
+        replyText.value = '';
+        replyStatus.classList.add('hidden');
+        replyStatus.className = 'mb-2 hidden';
+        replySendBtn.disabled = false;
+        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+        replyForm.classList.remove('hidden');
+    });
+
+    replyCancelBtn.addEventListener('click', function() {
+        replyForm.classList.add('hidden');
+    });
+
+    replySendBtn.addEventListener('click', function() {
+        var text = replyText.value.trim();
+        if (!text) { replyText.focus(); return; }
+        replySendBtn.disabled = true;
+        replySendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending…';
+        replyStatus.className = 'mb-2 hidden';
+
+        var params = new URLSearchParams();
+        params.append('csrf_token', currentCsrf);
+        params.append('to', currentEmail);
+        params.append('subject', replySubject.value);
+        params.append('reply_text', text);
+
+        fetch('/admin/inbox/' + currentId + '/reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.success) {
+                replyStatus.textContent = 'Reply sent successfully.';
+                replyStatus.className = 'mb-2 success';
+                replyStatus.classList.remove('hidden');
+                replySendBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i>Sent';
+                setTimeout(function() {
+                    modalInstance.hide();
+                }, 1200);
+                var row = document.querySelector('tr[data-msg-id="' + currentId + '"]');
+                if (row) {
+                    var badge = row.querySelector('.badge');
+                    if (badge) {
+                        badge.className = 'badge bg-secondary';
+                        badge.textContent = 'Replied';
+                    }
+                }
+            } else {
+                replyStatus.textContent = data.message || 'Failed to send reply.';
+                replyStatus.className = 'mb-2 error';
+                replyStatus.classList.remove('hidden');
+                replySendBtn.disabled = false;
+                replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+            }
+        }).catch(function() {
+            replyStatus.textContent = 'Network error. Please try again.';
+            replyStatus.className = 'mb-2 error';
+            replyStatus.classList.remove('hidden');
+            replySendBtn.disabled = false;
+            replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+        });
+    });
+
+    markBtn.addEventListener('click', function() {
+        if (!currentId || !currentCsrf) return;
+        markBtn.disabled = true;
+        markBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Marking…';
+
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/inbox/' + currentId + '/read';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'csrf_token';
+        input.value = currentCsrf;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    });
+
+    var deleteConfirmModal = null;
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    var pendingDeleteId = null;
+    var pendingDeleteCsrf = null;
+
+    deleteBtn.addEventListener('click', function() {
+        if (!currentId || !currentCsrf) return;
+        pendingDeleteId = currentId;
+        pendingDeleteCsrf = currentCsrf;
+        if (!deleteConfirmModal) {
+            deleteConfirmModal = ensureModal(document.getElementById('deleteConfirmModal'));
+        }
+        if (modalInstance) modalInstance.hide();
+        if (deleteConfirmModal) deleteConfirmModal.show();
+    });
+
+    confirmDeleteBtn.addEventListener('click', function() {
+        if (!pendingDeleteId || !pendingDeleteCsrf) return;
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Deleting…';
+
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/inbox/' + pendingDeleteId + '/delete';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'csrf_token';
+        input.value = pendingDeleteCsrf;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    });
+
+    document.querySelectorAll('.view-msg').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            var id = this.getAttribute('data-id');
+            var name = this.getAttribute('data-name');
+            var email = this.getAttribute('data-email');
+            var phone = this.getAttribute('data-phone');
+            var subject = this.getAttribute('data-subject');
+            var message = this.getAttribute('data-message');
+            var replyTextVal = this.getAttribute('data-reply');
+            var repliedByName = this.getAttribute('data-replied-by');
+            var repliedAt = this.getAttribute('data-replied-at');
+            var status = this.getAttribute('data-status');
+            var csrf = this.getAttribute('data-csrf');
+            openModal(id, name, email, phone, subject, message, status, csrf, replyTextVal, repliedByName, repliedAt);
+        });
+    });
+
+    modal.addEventListener('hidden.bs.modal', function() {
+        currentId = null;
+        currentCsrf = null;
+        currentEmail = '';
+        currentSubject = '';
+        replyForm.classList.add('hidden');
+        replyStatus.className = 'mb-2 hidden';
+        replySendBtn.disabled = false;
+        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+    });
+})();
+</script>
 
 <%- include('../partials/footer') %>

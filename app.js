@@ -162,6 +162,12 @@ app.use((req, res, next) => {
   res.locals.flashInfo = req.flash('info');
   res.locals.userStatus = (req.session && req.session.userId) ? (req.session.userStatus || 'active') : null;
   res.locals.formatDisplayName = formatDisplayName;
+  res.locals.imageUrl = function(path, folder) {
+    if (!path) return `/uploads/${folder}/product-placeholder.svg`;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    if (path.startsWith('/')) return path;
+    return `/uploads/${folder}/${path}`;
+  };
   next();
 });
 

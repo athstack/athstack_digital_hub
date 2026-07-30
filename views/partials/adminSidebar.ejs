@@ -1,43 +1,64 @@
-<div class="glass-card no-lift p-3 mb-4">
+<div class="glass-card p-3 mb-4">
     <div class="d-flex align-items-center mb-3 px-2">
-        <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
-            <i class="fa-solid fa-shield-halved text-white"></i>
+        <a href="/" class="gap-1" style="background:transparent;padding:0;border:none;line-height:1;display:flex;align-items:center;text-decoration:none;flex-shrink:0;">
+            <img src="/images/techbridge-logo.png" alt="TechBridge" style="height:36px;width:auto;object-fit:contain;">
+            <span class="text-white fw-bold d-none d-lg-inline" style="font-size:1.1rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+        </a>
+        <div class="ms-auto">
+            <div class="rounded-circle d-flex align-items-center justify-content-center<% if (!user || !user.avatar) { %> bg-danger<% } %>" style="width:40px;height:40px;overflow:hidden;">
+                <% if (user && user.avatar) { %>
+                    <img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" style="width:100%;height:100%;object-fit:cover;">
+                <% } else { %>
+                    <i class="fa-solid fa-shield-halved text-white"></i>
+                <% } %>
+            </div>
         </div>
-        <div class="ms-3">
-            <h6 class="mb-0 text-white"><%= user ? user.name : 'Admin' %></h6>
-            <small class="text-muted">Admin Panel</small>
+    </div>
+    <div class="d-flex align-items-center px-2 mb-2">
+        <div>
+            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'Admin' %></h6>
+            <small class="text-white-50" style="font-size:11px;">Admin Panel</small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
-        <a class="nav-link rounded<%= currentPath === '/admin' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin">
+        <a class="nav-link rounded<%= currentPath === '/admin' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin">
             <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/users' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/users">
+        <a class="nav-link rounded<%= currentPath === '/admin/users' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/users">
             <i class="fa-solid fa-users me-2"></i> Users
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/products' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/products">
+        <a class="nav-link rounded<%= currentPath === '/admin/products' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/products">
             <i class="fa-solid fa-box-open me-2"></i> Products
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/repairs">
+        <a class="nav-link rounded<%= currentPath === '/admin/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/repairs">
             <i class="fa-solid fa-wrench me-2"></i> Repairs
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/orders">
+        <a class="nav-link rounded<%= currentPath === '/admin/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/orders">
             <i class="fa-solid fa-receipt me-2"></i> Orders
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/training">
+        <a class="nav-link rounded<%= currentPath === '/admin/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/training">
             <i class="fa-solid fa-graduation-cap me-2"></i> Training
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/inbox' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/inbox">
+        <a class="nav-link rounded<%= currentPath === '/admin/services' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/services">
+            <i class="fa-solid fa-screwdriver-wrench me-2"></i> Services
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/reviews' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/reviews">
+            <i class="fa-solid fa-star me-2"></i> Reviews
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/analytics' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/analytics">
+            <i class="fa-solid fa-chart-bar me-2"></i> Analytics
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/inbox' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/inbox">
             <i class="fa-solid fa-envelope me-2"></i> Inbox
         </a>
-        <a class="nav-link rounded<%= currentPath === '/admin/settings' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/admin/settings">
+        <a class="nav-link rounded<%= currentPath === '/admin/settings' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/settings">
             <i class="fa-solid fa-gear me-2"></i> Settings
         </a>
         <hr class="border-secondary opacity-25 my-2">
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-            <button type="submit" class="nav-link rounded text-muted w-100 text-start border-0 bg-transparent">
+            <button type="submit" class="nav-link rounded text-white-50 w-100 text-start border-0 bg-transparent">
                 <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
             </button>
         </form>

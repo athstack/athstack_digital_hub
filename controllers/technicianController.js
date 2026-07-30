@@ -2,9 +2,12 @@ const ProductModel = require('../models/ProductModel');
 const RepairModel = require('../models/RepairModel');
 const UserModel = require('../models/UserModel');
 const OrderModel = require('../models/OrderModel');
+const NotificationModel = require('../models/NotificationModel');
 const CategoryModel = require('../models/CategoryModel');
+const ProductImageModel = require('../models/ProductImageModel');
 const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
 const { pool } = require('../config/db');
+const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -47,7 +50,7 @@ exports.getDashboard = async (req, res, next) => {
     };
 
     res.render('technician/dashboard', {
-      title: 'Technician Dashboard - Athstack',
+      title: 'Technician Dashboard - TechBridge Digital Hub',
       metrics,
       recentRepairs: assignedRepairs.slice(0, 5)
     });
@@ -61,7 +64,7 @@ exports.getProducts = async (req, res, next) => {
     const result = await ProductModel.getByTechnician(req.session.userId);
 
     res.render('technician/products', {
-      title: 'My Products - Athstack',
+      title: 'My Products - TechBridge Digital Hub',
       products: result.products,
       formatCurrency
     });
@@ -74,7 +77,7 @@ exports.getAddProduct = async (req, res, next) => {
   try {
     const categories = await CategoryModel.getAll();
     res.render('technician/products-add', {
-      title: 'Add Product - Athstack',
+      title: 'Add Product - TechBridge Digital Hub',
       categories,
       product: null
     });
@@ -92,10 +95,8 @@ exports.createProduct = async (req, res, next) => {
       return res.redirect('/technician/products/add');
     }
 
-    let mainImage = '';
-    if (req.file) {
-      mainImage = req.file.filename;
-    }
+    const mainImageFile = req.files && req.files['product_image'] && req.files['product_image'][0];
+    const mainImage = mainImageFile ? await processUploadedFile(mainImageFile, 'products') : '';
 
     const baseSlug = generateSlug(name);
     let slug = baseSlug;
@@ -119,6 +120,14 @@ exports.createProduct = async (req, res, next) => {
       sku: sku || null
     });
 
+    const created = await ProductModel.findBySlug(slug);
+    if (created && req.files && req.files['gallery_images']) {
+      const galleryPaths = await processUploadedFiles(req.files['gallery_images'], 'products');
+      if (galleryPaths.length > 0) {
+        await ProductImageModel.addMultiple(created.id, galleryPaths);
+      }
+    }
+
     req.flash('success', 'Product created successfully.');
     res.redirect('/technician/products');
   } catch (err) {
@@ -140,10 +149,12 @@ exports.getEditProduct = async (req, res, next) => {
     }
 
     const categories = await CategoryModel.getAll();
+    const gallery = await ProductImageModel.getByProduct(product.id);
     res.render('technician/products-edit', {
-      title: 'Edit Product - Athstack',
+      title: 'Edit Product - TechBridge Digital Hub',
       product,
-      categories
+      categories,
+      gallery
     });
   } catch (err) {
     next(err);
@@ -168,8 +179,9 @@ exports.updateProduct = async (req, res, next) => {
     const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
 
     let mainImage = req.body.existing_image || product.main_image;
-    if (req.file) {
-      mainImage = req.file.filename;
+    const mainImageFile = req.files && req.files['product_image'] && req.files['product_image'][0];
+    if (mainImageFile) {
+      mainImage = await processUploadedFile(mainImageFile, 'products');
     }
 
     await ProductModel.update(productId, {
@@ -182,6 +194,12 @@ exports.updateProduct = async (req, res, next) => {
       main_image: mainImage,
       sku: sku !== undefined ? (sku || null) : product.sku
     });
+
+    if (req.files && req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
+      const galleryPaths = await processUploadedFiles(req.files['gallery_images'], 'products');
+      await ProductImageModel.deleteByProduct(productId);
+      await ProductImageModel.addMultiple(productId, galleryPaths);
+    }
 
     req.flash('success', 'Product updated successfully.');
     res.redirect('/technician/products');
@@ -213,6 +231,45 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
+exports.toggleProductStatus = async (req, res, next) => {
+  try {
+    const productId = parseInt(req.params.id);
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/technician/products');
+
+    if (isNaN(productId)) {
+      if (isAjax) return respond(400, { success: false, message: 'Invalid product ID.' });
+      req.flash('error', 'Invalid product ID.');
+      return respond(400, {});
+    }
+
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
+      req.flash('error', 'Product not found.');
+      return respond(404, {});
+    }
+
+    if (product.technician_id !== req.session.userId) {
+      if (isAjax) return respond(403, { success: false, message: 'You can only modify your own products.' });
+      req.flash('error', 'You can only modify your own products.');
+      return respond(403, {});
+    }
+
+    const newStatus = product.status === 'active' ? 'inactive' : 'active';
+    await pool.execute('UPDATE products SET status = ? WHERE id = ?', [newStatus, productId]);
+
+    if (isAjax) return respond(200, { success: true, status: newStatus, message: `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.` });
+    req.flash('success', `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.`);
+    respond(302, {});
+  } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(500).json({ success: false, message: 'Server error.' });
+    }
+    next(err);
+  }
+};
+
 exports.getRepairs = async (req, res, next) => {
   try {
     const [repairs] = await pool.execute(
@@ -225,7 +282,7 @@ exports.getRepairs = async (req, res, next) => {
     );
 
     res.render('technician/repairs', {
-      title: 'Assigned Repairs - Athstack',
+      title: 'Assigned Repairs - TechBridge Digital Hub',
       repairs,
       formatDate,
       getStatusBadgeClass
@@ -258,6 +315,20 @@ exports.updateRepairStatus = async (req, res, next) => {
 
     await RepairModel.updateStatus(repairId, status, notes, req.session.userId);
 
+    const [repair] = await pool.execute(
+      'SELECT user_id, reference_number FROM repair_requests WHERE id = ?',
+      [repairId]
+    );
+    if (repair.length > 0 && repair[0].user_id) {
+      var statusLabel = status.replace(/_/g, ' ');
+      await NotificationModel.create(repair[0].user_id, {
+        title: 'Repair Status Updated',
+        message: 'Your repair ' + repair[0].reference_number + ' is now: ' + statusLabel + (notes ? '. Notes: ' + notes : ''),
+        type: 'repair',
+        link: '/dashboard/repairs'
+      });
+    }
+
     req.flash('success', 'Repair status updated.');
     res.redirect('/technician/repairs');
   } catch (err) {
@@ -270,7 +341,7 @@ exports.getOrders = async (req, res, next) => {
     const result = await OrderModel.getByTechnician(req.session.userId);
 
     res.render('technician/orders', {
-      title: 'Product Orders - Athstack',
+      title: 'Product Orders - TechBridge Digital Hub',
       orders: result.orders,
       formatDate,
       formatCurrency,

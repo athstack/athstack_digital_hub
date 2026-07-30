@@ -1,22 +1,22 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Professional Engineering Academy</span>
-            <h1 class="text-white fw-bold mt-2">Training & Certification</h1>
-            <p class="text-muted">Advance your career with expert-led technical courses and professional certification programs.</p>
+            <span class="section-badge"><i class="fa-solid fa-graduation-cap me-2"></i>Professional Engineering Academy</span>
+            <h1 class="display-4 text-white fw-bold mt-3">Training & Certification</h1>
+            <p class="text-white-50 fs-5">Advance your career with expert-led technical courses and professional certification programs.</p>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= flashSuccess %>
+        <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
         <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= flashError %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
@@ -26,25 +26,29 @@
             <% courses.forEach(course => { %>
             <div class="col-md-4">
                 <a href="/training/<%= course.slug %>" class="text-decoration-none">
-                    <div class="glass-card p-4 h-100">
-                        <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:180px;overflow:hidden;">
-                             <%- include('../partials/productImage', { src: course.image_path ? '/uploads/courses/' + course.image_path : '', alt: course.title, style: 'max-height:170px;object-fit:contain;' }) %>
+                    <div class="glass-card p-0 h-100 course-card overflow-hidden">
+                        <div class="rounded-top overflow-hidden" style="height:200px;">
+                             <%- include('../partials/productImage', { src: course.image_path ? imageUrl(course.image_path, 'courses') : '', alt: course.title, style: 'width:100%;height:100%;object-fit:cover;' }) %>
                         </div>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="badge bg-primary me-2"><%= course.level || 'Beginner' %></span>
-                            <% if (course.duration) { %>
-                                <small class="text-muted"><i class="fa-regular fa-clock me-1"></i><%= course.duration %></small>
-                            <% } %>
-                        </div>
-                        <h5 class="text-white fw-bold mb-2"><%= course.title %></h5>
-                        <p class="text-muted small mb-3"><%= course.description ? course.description.substring(0, 140) + '...' : '' %></p>
-                        <div class="d-flex justify-content-between align-items-center">
-                                 <% if (course.price > 0) { %>
-                                <span class="text-primary fw-bold fs-5"><%= formatCurrency(course.price) %></span>
-                            <% } else { %>
-                                <span class="text-success fw-bold fs-5">Free</span>
-                            <% } %>
-                            <span class="text-muted small"><i class="fa-solid fa-user-tie me-1"></i><%= course.instructor_first_name || 'Athstack' %> <%= course.instructor_last_name || '' %></span>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
+                                <span class="badge bg-primary fw-normal"><%= course.level || 'Beginner' %></span>
+                                <% if (course.duration) { %>
+                                    <small class="text-white-50"><i class="fa-regular fa-clock me-1"></i><%= course.duration %></small>
+                                <% } %>
+                            </div>
+                            <h5 class="text-white fw-bold mb-2 course-title"><%= course.title %></h5>
+                            <p class="text-white-50 small mb-3"><%= course.description ? course.description.substring(0, 140) + '...' : '' %></p>
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25">
+                                <div>
+                                    <% if (course.price > 0) { %>
+                                    <span class="text-primary fw-bold fs-5"><%= formatCurrency(course.price) %></span>
+                                <% } else { %>
+                                    <span class="text-success fw-bold fs-5"><i class="fa-solid fa-circle-check me-1"></i>Free</span>
+                                <% } %>
+                                </div>
+                                <span class="text-white-50 small"><i class="fa-solid fa-user-tie me-1"></i><%= formatDisplayName(course.instructor_first_name || 'TechBridge', course.instructor_last_name) %></span>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -53,9 +57,9 @@
         </div>
         <% } else { %>
         <div class="empty-state">
-            <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>
+            <i class="fa-solid fa-graduation-cap fa-4x mb-4"></i>
             <h4 class="text-white fw-bold">Courses Coming Soon</h4>
-            <p class="text-muted">We're preparing exciting new training programs. Check back shortly.</p>
+            <p class="text-white-50">We're preparing exciting new training programs. Check back shortly.</p>
         </div>
         <% } %>
     </div>

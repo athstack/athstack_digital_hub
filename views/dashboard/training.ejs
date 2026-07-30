@@ -1,13 +1,16 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/sidebar') %>
             </div>
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-graduation-cap me-2 text-success"></i>My Enrolled Courses</h2>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Learning</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-graduation-cap me-2 text-success"></i>My Enrolled Courses</h2>
+                </div>
 
                 <% if (courses && courses.length > 0) { %>
                 <div class="row g-4">
@@ -16,20 +19,20 @@
                         <div class="glass-card p-4 h-100">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="rounded bg-dark me-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;overflow:hidden;flex-shrink:0;">
-                                     <%- include('../partials/productImage', { src: course.course_image ? '/uploads/courses/' + course.course_image : '', alt: course.course_title || course.title, style: 'max-height:60px;object-fit:contain;' }) %>
+                                     <%- include('../partials/productImage', { src: course.course_image ? imageUrl(course.course_image, 'courses') : '', alt: course.course_title || course.title, style: 'max-height:60px;object-fit:contain;' }) %>
                                 </div>
                                 <div>
                                     <h6 class="text-white fw-bold mb-0"><%= course.course_title || course.title %></h6>
-                                    <small class="text-muted"><%= course.course_level || course.level || 'Beginner' %></small>
+                                    <small class="text-white-50"><%= course.course_level || course.level || 'Beginner' %></small>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <% if (course.course_duration || course.duration) { %>
-                                        <small class="text-muted"><i class="fa-regular fa-clock me-1"></i><%= course.course_duration || course.duration %></small>
+                                        <small class="text-white-50"><i class="fa-regular fa-clock me-1"></i><%= course.course_duration || course.duration %></small>
                                     <% } %>
                                     <% if (course.instructor_first_name) { %>
-                                        <br><small class="text-muted"><i class="fa-solid fa-user-tie me-1"></i><%= course.instructor_first_name %> <%= course.instructor_last_name %></small>
+                                        <br><small class="text-white-50"><i class="fa-solid fa-user-tie me-1"></i><%= formatDisplayName(course.instructor_first_name, course.instructor_last_name) %></small>
                                     <% } %>
                                 </div>
                                 <% if (course.course_slug || course.slug) { %>
@@ -44,7 +47,7 @@
                 <div class="empty-state">
                     <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>
                     <h4 class="text-white fw-bold">No Enrolled Courses</h4>
-                    <p class="text-muted">You haven't enrolled in any courses yet. Explore our training academy to get started.</p>
+                    <p class="text-white-50">You haven't enrolled in any courses yet. Explore our training academy to get started.</p>
                     <a href="/training" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-rocket me-2"></i>Explore Courses</a>
                 </div>
                 <% } %>

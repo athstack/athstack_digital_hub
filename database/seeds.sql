@@ -55,7 +55,7 @@ INSERT INTO products (technician_id, category_id, name, slug, description, price
 (2, 10, 'Anker USB-C to USB-C Cable 6ft', 'anker-usbc-cable-6ft', 'Braided nylon USB-C cable supporting 100W charging.', 14.99, NULL, 100, 'cable-anker.jpg', 4.60, 156, 'active', 0, 'CBL-ANK-USBC6');
 
 INSERT INTO settings (setting_key, setting_value, setting_group) VALUES
-('site_name', 'Athstack Digital Hub', 'general'),
+('site_name', 'TechBridge Digital Hub', 'general'),
 ('contact_email', 'info@athstack.com', 'general'),
 ('contact_phone', '+255 782 303 971', 'general'),
 ('whatsapp_number', '255782303971', 'general'),

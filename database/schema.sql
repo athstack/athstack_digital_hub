@@ -112,6 +112,7 @@ CREATE TABLE `repair_requests` (
     `customer_name` VARCHAR(255) NOT NULL,
     `customer_email` VARCHAR(255) NOT NULL,
     `customer_phone` VARCHAR(20) NOT NULL,
+    `customer_country` VARCHAR(2) DEFAULT NULL,
     `device_type` VARCHAR(100) NOT NULL,
     `device_brand` VARCHAR(100) DEFAULT NULL,
     `device_model` VARCHAR(100) DEFAULT NULL,
@@ -165,7 +166,7 @@ CREATE TABLE `orders` (
     `notes` TEXT DEFAULT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     INDEX `idx_orders_user` (`user_id`),
     INDEX `idx_orders_ref` (`order_reference`),
     INDEX `idx_orders_status` (`order_status`)
@@ -187,7 +188,7 @@ CREATE TABLE `order_items` (
     `status` ENUM('pending','processing','shipped','delivered','cancelled') NOT NULL DEFAULT 'pending',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE SET NULL,
     FOREIGN KEY (`technician_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
     INDEX `idx_oitems_order` (`order_id`),
     INDEX `idx_oitems_product` (`product_id`),
@@ -247,15 +248,19 @@ CREATE TABLE `reviews` (
     `rating` INT NOT NULL,
     `comment` TEXT DEFAULT NULL,
     `type` ENUM('product','technician','service') NOT NULL,
-    `status` ENUM('active','hidden','flagged') NOT NULL DEFAULT 'active',
+    `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    `approved_at` TIMESTAMP NULL DEFAULT NULL,
+    `approved_by` INT DEFAULT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`technician_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
     FOREIGN KEY (`repair_id`) REFERENCES `repair_requests`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
     INDEX `idx_reviews_product` (`product_id`),
     INDEX `idx_reviews_tech` (`technician_id`),
-    INDEX `idx_reviews_type` (`type`)
+    INDEX `idx_reviews_type` (`type`),
+    INDEX `idx_reviews_status` (`status`)
 ) ENGINE=InnoDB;
 
 -- ================================================================
@@ -280,13 +285,19 @@ CREATE TABLE `notifications` (
 -- ================================================================
 CREATE TABLE `contact_messages` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT DEFAULT NULL,
     `name` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `phone` VARCHAR(20) DEFAULT NULL,
     `subject` VARCHAR(255) DEFAULT NULL,
     `message` TEXT NOT NULL,
+    `reply_text` TEXT DEFAULT NULL,
+    `replied_at` TIMESTAMP NULL DEFAULT NULL,
+    `replied_by` INT DEFAULT NULL,
     `status` ENUM('unread','read','replied') NOT NULL DEFAULT 'unread',
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_id (user_id),
+    INDEX idx_replied_by (replied_by)
 ) ENGINE=InnoDB;
 
 -- ================================================================
@@ -311,4 +322,20 @@ CREATE TABLE `wishlists` (
     UNIQUE KEY `uniq_wishlist` (`user_id`, `product_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 17. PASSWORD RESET TOKENS
+-- ================================================================
+CREATE TABLE `password_reset_tokens` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `token` VARCHAR(64) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `used` TINYINT(1) DEFAULT 0,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniq_prt_token` (`token`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    INDEX `idx_prt_token` (`token`),
+    INDEX `idx_prt_user` (`user_id`)
 ) ENGINE=InnoDB;

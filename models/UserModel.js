@@ -40,6 +40,27 @@ class UserModel {
     return this.findById(id);
   }
 
+  async adminUpdate(id, { first_name, last_name, email, phone, role, status, password }) {
+    if (password) {
+      const bcrypt = require('bcryptjs');
+      const hashed = await bcrypt.hash(password, 10);
+      await query(
+        'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ?, status = ?, password = ? WHERE id = ?',
+        [first_name, last_name, email, phone || null, role, status, hashed, id]
+      );
+    } else {
+      await query(
+        'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ?, status = ? WHERE id = ?',
+        [first_name, last_name, email, phone || null, role, status, id]
+      );
+    }
+    return this.findById(id);
+  }
+
+  async delete(id) {
+    return query('DELETE FROM users WHERE id = ?', [id]);
+  }
+
   async getAll({ role, status, search, page = 1, limit = 20 } = {}) {
     const conditions = [];
     const params = [];
@@ -93,9 +114,15 @@ class UserModel {
   }
 
   async getTechnicians() {
-    return query(
-      "SELECT id, first_name, last_name, email, avatar, bio, specialization FROM users WHERE role = 'technician' AND status = 'active'"
+    let techs = await query(
+      "SELECT id, first_name, last_name, email, avatar, bio, specialization, role FROM users WHERE role = 'technician' AND status = 'active'"
     );
+    if (!techs || techs.length === 0) {
+      techs = await query(
+        "SELECT id, first_name, last_name, email, avatar, bio, specialization, role FROM users WHERE role = 'admin' AND status = 'active'"
+      );
+    }
+    return techs;
   }
 
   async searchByTerm(term) {

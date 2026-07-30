@@ -1,0 +1,52 @@
+<%
+  var upName = typeof name !== 'undefined' ? name : 'file';
+  var upAccept = typeof accept !== 'undefined' ? accept : 'image/*';
+  var upMultiple = typeof multiple !== 'undefined' ? multiple : false;
+  var upLabel = typeof label !== 'undefined' ? label : '';
+  var upHint = typeof hint !== 'undefined' ? hint : 'PNG, JPG, WEBP up to 5MB';
+  var upCurrent = typeof currentImage !== 'undefined' ? currentImage : null;
+  var upCurrentFolder = typeof currentFolder !== 'undefined' ? currentFolder : '';
+  var upRequired = typeof required !== 'undefined' ? required : false;
+  var upDisabled = typeof disabled !== 'undefined' ? disabled : false;
+%>
+<div class="file-upload-wrapper">
+  <% if (upLabel) { %><label class="form-label"><%= upLabel %></label><% } %>
+
+  <input type="file"
+         name="<%= upName %>"
+         id="fu-<%= upName %>"
+         class="file-upload-input"
+         accept="<%= upAccept %>"
+         <%= upMultiple ? 'multiple' : '' %>
+         <%= upRequired ? 'required' : '' %>
+         <%= upDisabled ? 'disabled' : '' %>>
+
+  <!-- Upload zone (visible when no file selected) -->
+  <label for="fu-<%= upName %>" class="file-upload-zone" id="fu-<%= upName %>-zone">
+    <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+    <span class="file-upload-text">Choose file or drag &amp; drop</span>
+    <span class="file-upload-hint"><%= upHint %></span>
+  </label>
+
+  <!-- Preview area (visible when file selected or current image exists) -->
+  <div class="file-upload-preview d-none" id="fu-<%= upName %>-preview">
+    <div class="file-upload-preview-image">
+      <img src="" alt="Preview" id="fu-<%= upName %>-img">
+    </div>
+    <div class="file-upload-preview-body">
+      <span class="file-upload-filename" id="fu-<%= upName %>-filename">No file selected</span>
+      <span class="file-upload-filesize" id="fu-<%= upName %>-filesize"></span>
+    </div>
+    <button type="button" class="file-upload-remove" id="fu-<%= upName %>-remove" title="Remove file">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <% if (upCurrent) { %>
+  <!-- Existing image indicator -->
+  <div class="file-upload-current">
+    <img src="<%= imageUrl(upCurrent, upCurrentFolder) %>" alt="Current">
+    <small>Current file</small>
+  </div>
+  <% } %>
+</div>

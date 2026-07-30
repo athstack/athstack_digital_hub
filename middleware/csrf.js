@@ -24,10 +24,14 @@ function generateToken(req, res, next) {
     id: req.session.userId,
     name: req.session.userName,
     email: req.session.userEmail,
-    role: req.session.userRole
+    role: req.session.userRole,
+    avatar: req.session.userAvatar || null,
+    firstName: req.session.userFirstName || '',
+    lastName: req.session.userLastName || ''
   } : null;
   res.locals.urlRoot = process.env.URLROOT || '';
-  res.locals.siteName = process.env.SITENAME || 'Athstack Digital Hub';
+  res.locals.siteName = process.env.SITENAME || 'TechBridge Digital Hub';
+  res.locals.userStatus = (req.session && req.session.userId) ? (req.session.userStatus || 'active') : null;
   res.locals.cartCount = req.session.cart ? Object.keys(req.session.cart).length : 0;
   res.locals.currentPath = req.path;
   next();

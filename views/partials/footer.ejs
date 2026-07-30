@@ -2,7 +2,11 @@
     <div class="container text-center text-md-start text-muted small">
         <div class="row g-4">
             <div class="col-md-5">
-                <h6 class="text-white fw-bold mb-3">ATHSTACK DIGITAL HUB</h6>
+                <div class="d-flex align-items-center gap-1 mb-2">
+                    <img src="/images/techbridge-logo.png" alt="TechBridge" class="mb-2" style="height:54px;width:auto;background:transparent;padding:0;border:none;">
+                    <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+                </div>
+                <p class="text-muted small mb-1" style="letter-spacing:0.3px;text-transform:uppercase;">by Athstack Technologies</p>
                 <p>Premium dark theme tech provisioning framework, system maintenance pipelines, and modern corporate training protocols.</p>
             </div>
             <div class="col-md-3 offset-md-1">
@@ -17,7 +21,7 @@
             </div>
         </div>
         <hr class="mt-4 border-secondary opacity-25">
-        <p class="text-center mb-0 text-muted">&copy; <%= new Date().getFullYear() %> Athstack Digital Hub. All engineering rights reserved.</p>
+        <p class="text-center mb-0 text-muted">&copy; <%= new Date().getFullYear() %> TechBridge Digital Hub. All engineering rights reserved.</p>
     </div>
 </footer>
 
@@ -25,7 +29,104 @@
     <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        onerror="this.remove();var f=document.createElement('script');f.src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js';document.body.appendChild(f);"></script>
 <script src="/assets/js/main.js"></script>
+<script>
+(function() {
+    const bell = document.getElementById('notifBell');
+    if (!bell) return;
+    const badge = document.getElementById('notifBadge');
+    const list = document.getElementById('notifList');
+    const markAllBtn = document.getElementById('markAllRead');
+
+    var notifsCache = [];
+
+    function esc(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str || ''));
+        return div.innerHTML;
+    }
+
+    async function loadNotifications() {
+        try {
+            const res = await fetch('/api/notifications');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (data.unread > 0) {
+                badge.textContent = data.unread;
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+            notifsCache = data.notifications || [];
+            if (notifsCache.length > 0) {
+                list.innerHTML = notifsCache.map(function(n) {
+                    var time = '';
+                    if (n.created_at) {
+                        var d = new Date(n.created_at);
+                        var now = new Date();
+                        var diff = (now - d) / 1000;
+                        if (diff < 60) time = 'just now';
+                        else if (diff < 3600) time = Math.floor(diff / 60) + 'm ago';
+                        else if (diff < 86400) time = Math.floor(diff / 3600) + 'h ago';
+                        else time = d.toLocaleDateString();
+                    }
+                    var unreadStyle = n.is_read ? '' : 'background:rgba(0,102,255,0.08);border-left:3px solid var(--bs-primary);';
+                    return '<a href="' + esc(n.link || '#') + '" class="dropdown-item px-3 py-2 text-decoration-none notif-item" style="white-space:normal;word-wrap:break-word;' + unreadStyle + 'background-color:transparent;color:inherit;">' +
+                        '<div style="font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.95);">' + esc(n.title) + '</div>' +
+                        '<div style="font-size:0.8rem;line-height:1.45;color:rgba(255,255,255,0.55);">' + esc(n.message) + '</div>' +
+                        (time ? '<div style="margin-top:4px;color:rgba(255,255,255,0.3);font-size:0.7rem;">' + time + '</div>' : '') +
+                        '</a>';
+                }).join('');
+            } else {
+                list.innerHTML = '<div class="text-center text-muted py-4">No notifications</div>';
+            }
+        } catch(e) {
+            list.innerHTML = '<div class="text-center text-muted py-4">Failed to load</div>';
+        }
+    }
+
+    window.markNotifRead = async function(id) {
+        try { await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); } catch(e) { console.warn('markNotifRead failed', e); }
+    };
+
+    list.addEventListener('click', function(e) {
+        var link = e.target.closest('a.notif-item');
+        if (!link) return;
+        var href = link.getAttribute('href');
+        if (!href || href === '#') {
+            e.preventDefault();
+            return;
+        }
+        e.preventDefault();
+        var idx = Array.prototype.indexOf.call(list.querySelectorAll('a.notif-item'), link);
+        if (idx !== -1 && notifsCache[idx] && notifsCache[idx].id) {
+            window.markNotifRead(notifsCache[idx].id);
+        }
+        var dropdown = document.getElementById('notifDropdown');
+        if (dropdown) {
+            var toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+            if (toggle) {
+                var inst = bootstrap.Dropdown.getInstance(toggle);
+                if (inst) inst.hide();
+            }
+        }
+        window.location.href = href;
+    });
+
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', async function() {
+            try {
+                await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+                loadNotifications();
+            } catch(e) { console.warn('markAllRead failed', e); }
+        });
+    }
+
+    loadNotifications();
+    setInterval(loadNotifications, 60000);
+})();
+</script>
 </body>
 </html>

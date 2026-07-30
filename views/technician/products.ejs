@@ -22,31 +22,42 @@
                 <% if (products && products.length > 0) { %>
                 <div class="glass-card no-lift p-4">
                     <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
+                        <table class="table table-dark align-middle mb-0 products-table">
                             <thead>
-                                <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+                                <tr><th class="col-product">Product</th><th class="col-category">Category</th><th class="col-price">Price</th><th class="col-stock">Stock</th><th>Status</th><th class="col-actions">Actions</th></tr>
                             </thead>
                             <tbody>
                                 <% products.forEach(product => { %>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
-                                                 <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:38px;object-fit:contain;' }) %>
+                                    <td class="col-product">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="col-thumb">
+                                                 <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'max-height:44px;max-width:44px;object-fit:contain;' }) %>
                                             </div>
-                                            <span class="text-white fw-bold"><%= product.name %></span>
+                                            <span class="text-white fw-bold col-product-name"><%= product.name %></span>
                                         </div>
                                     </td>
-                                    <td class="text-muted"><%= product.category_name || 'N/A' %></td>
-                                    <td class="text-primary fw-bold"><%= formatCurrency(product.price) %></td>
-                                    <td class="text-muted"><%= product.stock_quantity %></td>
-                                    <td><span class="badge <%= product.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= product.status %></span></td>
-                                    <td>
-                                        <a href="/technician/products/edit/<%= product.id %>" class="btn btn-premium-outline btn-sm rounded-pill me-1" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/technician/products/delete/<%= product.id %>" class="d-inline" onsubmit="return confirm('Are you sure?')">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                    <td class="col-category text-muted"><%= product.category_name || 'N/A' %></td>
+                                    <td class="col-price text-primary"><%= formatCurrency(product.price) %></td>
+                                    <td class="col-stock text-muted"><%= product.stock_quantity %></td>
+                                    <td class="col-status">
+                                        <button type="button"
+                                            class="btn btn-sm rounded-pill status-toggle <%= product.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary' %>"
+                                            data-id="<%= product.id %>"
+                                            data-status="<%= product.status %>"
+                                            title="<%= product.status === 'active' ? 'Click to deactivate' : 'Click to activate' %>">
+                                            <i class="fa-solid fa-<%= product.status === 'active' ? 'toggle-on' : 'toggle-off' %>"></i>
+                                            <span class="status-label"><%= product.status %></span>
+                                        </button>
+                                    </td>
+                                    <td class="col-actions">
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <a href="/technician/products/edit/<%= product.id %>" class="btn-product-action btn-product-action-edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                            <form method="POST" action="/technician/products/delete/<%= product.id %>" class="d-inline" data-confirm="Are you sure?">
+                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn-product-action btn-product-action-delete" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -58,7 +69,7 @@
                 <div class="empty-state">
                     <i class="fa-solid fa-box-open fa-4x mb-3"></i>
                     <h4 class="text-white fw-bold">No Products Yet</h4>
-                    <p class="text-muted">Start adding products to sell on the Athstack marketplace.</p>
+                    <p class="text-muted">Start adding products to sell on the TechBridge marketplace.</p>
                     <a href="/technician/products/add" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i>Add First Product</a>
                 </div>
                 <% } %>
@@ -66,5 +77,37 @@
         </div>
     </div>
 </section>
+
+<script>
+document.querySelectorAll('.status-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var id = this.dataset.id;
+        var el = this;
+        el.disabled = true;
+
+        fetch('/technician/products/' + id + '/status', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-Token': '<%= csrfToken %>'
+            }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                el.dataset.status = data.status;
+                el.title = data.status === 'active' ? 'Click to deactivate' : 'Click to activate';
+                el.className = 'btn btn-sm rounded-pill status-toggle ' + (data.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary');
+                el.querySelector('i').className = 'fa-solid fa-' + (data.status === 'active' ? 'toggle-on' : 'toggle-off');
+                el.querySelector('.status-label').textContent = data.status;
+            } else {
+                alert(data.message || 'Failed to update status.');
+            }
+        })
+        .catch(function() { alert('Network error. Please try again.'); })
+        .finally(function() { el.disabled = false; });
+    });
+});
+</script>
 
 <%- include('../partials/footer') %>

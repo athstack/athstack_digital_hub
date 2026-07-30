@@ -1,0 +1,196 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= flashSuccess %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= flashError %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="section-badge">Inbox</span>
+                        <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope me-2 text-primary"></i>My Messages</h2>
+                    </div>
+                    <a href="/contact" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-plus me-1"></i>New Message</a>
+                </div>
+
+                <% if (messages && messages.length > 0) { %>
+                <div class="glass-card p-0">
+                    <% messages.forEach(function(msg, idx) { %>
+                    <div class="p-3 px-4" style="border-bottom:1px solid rgba(255,255,255,0.05);<%= idx === 0 ? 'border-radius:12px 12px 0 0;' : '' %>">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div class="flex-grow-1" style="min-width:0;">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge <%= msg.status === 'unread' ? 'bg-primary' : (msg.status === 'replied' ? 'bg-success' : 'bg-secondary') %>" style="font-size:0.65rem;"><%= msg.status === 'unread' ? 'New' : (msg.status === 'replied' ? 'Replied' : 'Read') %></span>
+                                    <h6 class="text-white fw-semibold mb-0" style="font-size:0.9rem;"><%= msg.subject || 'No Subject' %></h6>
+                                </div>
+                                <p class="small mb-1" style="line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,0.78);"><%= msg.message %></p>
+                                <div class="msg-meta" data-created="<%= msg.created_at %>" data-replied="<%= msg.replied_at || '' %>" style="font-size:0.7rem;color:rgba(255,255,255,0.3);">
+                                    <% if (msg.reply_text) { %>
+                                    <span class="text-success"><i class="fa-solid fa-reply me-1"></i><span class="rel-time" data-ts="<%= new Date(msg.replied_at).getTime() %>"></span></span>
+                                    <% } else { %>
+                                    <span>Sent <span class="rel-time" data-ts="<%= new Date(msg.created_at).getTime() %>"></span></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill flex-shrink-0 view-msg"
+                                style="font-size:0.75rem;padding:0.25rem 0.75rem;"
+                                data-id="<%= msg.id %>"
+                                data-name="<%= msg.name.replace(/"/g, '&quot;') %>"
+                                data-email="<%= msg.email.replace(/"/g, '&quot;') %>"
+                                data-phone="<%= msg.phone || '' %>"
+                                data-subject="<%= (msg.subject || 'No Subject').replace(/"/g, '&quot;') %>"
+                                data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                data-replied-by="<%= (msg.replied_first_name ? msg.replied_first_name + ' ' + msg.replied_last_name : 'Admin') %>"
+                                data-replied-at="<%= msg.replied_at || '' %>"
+                                data-status="<%= msg.status %>">View</button>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+
+                <% if (total > limit) { %>
+                <nav class="mt-4">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        <% for (var p = 1; p <= Math.ceil(total / limit); p++) { %>
+                        <li class="page-item<%= p === page ? ' active' : '' %>">
+                            <a class="page-link" href="/dashboard/messages?page=<%= p %>" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);color:<%= p === page ? '#fff' : 'rgba(255,255,255,0.6)' %>;"><%= p %></a>
+                        </li>
+                        <% } %>
+                    </ul>
+                </nav>
+                <% } %>
+
+                <% } else { %>
+                <div class="glass-card p-5 text-center">
+                    <i class="fa-solid fa-envelope-open-text fa-3x mb-3" style="color:rgba(255,255,255,0.15);"></i>
+                    <h5 class="text-white fw-bold mb-2">No Messages</h5>
+                    <p class="text-white-50 small mb-4">You haven't sent any messages yet.</p>
+                    <a href="/contact" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-pen me-2"></i>Send a Message</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Message Detail Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;">
+            <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.06);padding:1.25rem 1.5rem;">
+                <h5 class="modal-title text-white fw-bold" id="msgModalTitle" style="font-size:1rem;">Message</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:1.5rem;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;">
+                    <div>
+                        <div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.2rem;">Email</div>
+                        <div id="msgEmail" style="color:var(--text-secondary);font-size:0.85rem;font-weight:500;word-break:break-all;">—</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.2rem;">Phone</div>
+                        <div id="msgPhone" style="color:var(--text-secondary);font-size:0.85rem;font-weight:500;">—</div>
+                    </div>
+                </div>
+                <div id="msgSubject" class="fw-semibold text-white mb-2" style="font-size:1.05rem;">—</div>
+                <div id="msgBody" style="background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.25rem;min-height:100px;color:var(--text-secondary);font-size:0.9rem;line-height:1.6;white-space:pre-wrap;">—</div>
+                <div id="replyDisplay" class="hidden" style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(0,102,255,0.06);border:1px solid rgba(0,102,255,0.12);border-radius:10px;">
+                    <div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Admin Reply</div>
+                    <div id="replyBody" style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6;white-space:pre-wrap;"></div>
+                    <div id="replyMeta" style="color:rgba(255,255,255,0.3);font-size:0.7rem;margin-top:0.5rem;"></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,0.06);padding:1rem 1.5rem;">
+                <span class="text-muted small" id="msgMeta"></span>
+                <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    function relTime(ts) {
+        var diff = (Date.now() - ts) / 1000;
+        if (diff < 60) return 'just now';
+        if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+        var d = new Date(ts);
+        return d.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+    }
+    document.querySelectorAll('.rel-time').forEach(function(el) {
+        var ts = parseInt(el.getAttribute('data-ts'));
+        if (ts) el.textContent = relTime(ts);
+    });
+
+    var modal = document.getElementById('messageModal');
+    if (!modal) return;
+    var emailEl = document.getElementById('msgEmail');
+    var phoneEl = document.getElementById('msgPhone');
+    var subjectEl = document.getElementById('msgSubject');
+    var bodyEl = document.getElementById('msgBody');
+    var replyDisplay = document.getElementById('replyDisplay');
+    var replyBody = document.getElementById('replyBody');
+    var replyMeta = document.getElementById('replyMeta');
+    var modalInstance = null;
+
+    function ensureModal(el) {
+        if (typeof bootstrap !== 'undefined') return new bootstrap.Modal(el);
+        var check = setInterval(function() {
+            if (typeof bootstrap !== 'undefined') {
+                clearInterval(check);
+                modalInstance = new bootstrap.Modal(el);
+                if (modalInstance) modalInstance.show();
+            }
+        }, 50);
+        return null;
+    }
+
+    document.querySelectorAll('.view-msg').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var email = this.getAttribute('data-email');
+            var phone = this.getAttribute('data-phone');
+            var subject = this.getAttribute('data-subject');
+            var message = this.getAttribute('data-message');
+            var replyTextVal = this.getAttribute('data-reply');
+            var repliedByName = this.getAttribute('data-replied-by');
+            var repliedAt = this.getAttribute('data-replied-at');
+            emailEl.textContent = email;
+            phoneEl.textContent = phone || '\u2014';
+            subjectEl.textContent = subject;
+            bodyEl.textContent = message;
+            if (replyTextVal) {
+                replyBody.textContent = replyTextVal;
+                var metaParts = [];
+                if (repliedByName) metaParts.push('By ' + repliedByName);
+                if (repliedAt) metaParts.push(new Date(repliedAt).toLocaleString());
+                replyMeta.textContent = metaParts.join(' \u2014 ');
+                replyDisplay.classList.remove('hidden');
+            } else {
+                replyDisplay.classList.add('hidden');
+            }
+            if (!modalInstance) modalInstance = ensureModal(modal);
+            if (modalInstance) modalInstance.show();
+        });
+    });
+})();
+</script>
+
+<%- include('../partials/footer') %>

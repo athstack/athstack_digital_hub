@@ -1,0 +1,104 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Services</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-screwdriver-wrench me-2 text-primary"></i>Manage Services</h2>
+                    <div class="ms-auto">
+                        <button class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fa-solid fa-plus me-2"></i>Add Service</button>
+                    </div>
+                </div>
+
+                <% if (services && services.length > 0) { %>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0 premium-table">
+                            <thead>
+                                <tr><th>Title</th><th>Category</th><th>Price</th><th>Status</th><th class="text-end">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                <% services.forEach(service => { %>
+                                <tr>
+                                    <td class="text-white fw-bold"><i class="fa-solid <%= service.icon_class || 'fa-tools' %> me-2 text-primary"></i><%= service.title %></td>
+                                    <td><span class="badge bg-secondary rounded-pill"><%= service.category %></span></td>
+                                    <td class="text-white">$<%= parseFloat(service.base_price).toFixed(2) %></td>
+                                    <td><span class="badge bg-<%= service.status === 'active' ? 'success' : 'secondary' %>"><%= service.status %></span></td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill me-1" data-bs-toggle="modal" data-bs-target="#editService<%= service.id %>"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <form method="POST" action="/admin/services/delete/<%= service.id %>" class="d-inline" data-confirm="Delete this service?">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <div class="modal fade" id="editService<%= service.id %>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+                                            <form method="POST" action="/admin/services/edit/<%= service.id %>">
+                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Edit Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
+                                                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>>Computer</option><option value="phone" <%= service.category==='phone'?'selected':'' %>>Phone</option></select></div>
+                                                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
+                                                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
+                                                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
+                                                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>>Active</option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>>Inactive</option></select></div>
+                                                </div>
+                                                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Save Changes</button></div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state glass-card p-5">
+                    <i class="fa-solid fa-screwdriver-wrench fa-3x mb-3"></i>
+                    <h5 class="text-white fw-bold">No Services</h5>
+                    <p class="text-white-50">Add repair services to get started.</p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="addServiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+            <form method="POST" action="/admin/services/add">
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Add Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer">Computer</option><option value="phone">Phone</option></select></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" required></div>
+                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="fa-tools"></div>
+                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                </div>
+                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Create Service</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

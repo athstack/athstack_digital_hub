@@ -1,7 +1,7 @@
 const { query, queryOne, pool } = require('../config/db');
 
 class OrderModel {
-  async create(userId, { total_amount, shipping_address, payment_method = 'cod', items = [] }) {
+  async create(userId, { total_amount, shipping_address = null, payment_method = 'cod', items = [] }) {
     const connection = await pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -83,7 +83,13 @@ class OrderModel {
   async getByUser(userId, page = 1, limit = 20) {
     const offset = (page - 1) * limit;
     const rows = await query(
-      'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?',
+      `SELECT o.*, COALESCE(SUM(oi.quantity), 0) AS total_items
+       FROM orders o
+       LEFT JOIN order_items oi ON o.id = oi.order_id
+       WHERE o.user_id = ?
+       GROUP BY o.id
+       ORDER BY o.created_at DESC
+       LIMIT ? OFFSET ?`,
       [userId, limit, offset]
     );
     const countRow = await queryOne('SELECT COUNT(*) AS total FROM orders WHERE user_id = ?', [userId]);

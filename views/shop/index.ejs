@@ -1,24 +1,27 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Tech Hardware Store</span>
-            <h1 class="text-white fw-bold mt-2">Premium Products</h1>
-            <p class="text-muted">Explore our curated collection of enterprise-grade hardware and accessories.</p>
+            <span class="section-badge"><i class="fa-solid fa-microchip me-2"></i>Tech Hardware Store</span>
+            <h1 class="display-4 text-white fw-bold mt-3">Premium Products</h1>
+            <p class="text-white-50 fs-5">Explore our curated collection of enterprise-grade hardware and accessories.</p>
         </div>
 
         <div class="row g-4">
             <div class="col-lg-3">
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-filter me-2 text-primary"></i>Filters</h6>
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-sliders me-2 text-primary"></i>
+                        <h6 class="text-white fw-bold mb-0">Filters</h6>
+                    </div>
                     <form method="GET" action="/shop">
                         <div class="mb-3">
-                            <label class="form-label">Search</label>
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Search</label>
                             <input type="text" name="search" class="form-control" placeholder="Search products..." value="<%= searchQuery || '' %>">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Category</label>
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Category</label>
                             <select name="category" class="form-select">
                                 <option value="">All Categories</option>
                                 <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
@@ -26,17 +29,18 @@
                                 <% }) } %>
                             </select>
                         </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="form-label">Min Price</label>
-                                <input type="number" name="min_price" class="form-control" placeholder="$0" value="<%= minPrice || '' %>">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Max Price</label>
-                                <input type="number" name="max_price" class="form-control" placeholder="$999999" value="<%= maxPrice || '' %>">
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Price Range</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" name="min_price" class="form-control" placeholder="$0" value="<%= minPrice || '' %>">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="max_price" class="form-control" placeholder="$9999" value="<%= maxPrice || '' %>">
+                                </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> Apply Filters</button>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-2"></i>Apply Filters</button>
                         <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2">Clear All</a>
                     </form>
                 </div>
@@ -44,14 +48,14 @@
 
             <div class="col-lg-9">
                 <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <%= flashSuccess %>
+                <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+                    <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <% } %>
                 <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <%= flashError %>
+                <div class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <% } %>
@@ -61,24 +65,24 @@
                     <% products.forEach(product => { %>
                     <div class="col-md-4">
                         <a href="/shop/<%= product.slug %>" class="text-decoration-none">
-                            <div class="glass-card p-3 h-100">
-                                <div class="rounded bg-dark mb-3 d-flex align-items-center justify-content-center" style="height:180px;overflow:hidden;">
-                                    <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:170px;object-fit:contain;' }) %>
+                            <div class="glass-card p-3 h-100 product-card">
+                                <div class="rounded-3 bg-dark mb-3 overflow-hidden" style="height:170px;">
+                                    <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'width:100%;height:100%;object-fit:cover;' }) %>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="text-white fw-bold mb-0 text-truncate"><%= product.name %></h6>
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <h6 class="text-white fw-bold mb-0 product-title"><%= product.name %></h6>
                                     <% if (product.discount_price && product.discount_price < product.price) { %>
-                                        <span class="badge bg-danger ms-2 flex-shrink-0">-<%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%</span>
+                                        <span class="badge bg-danger flex-shrink-0">-<%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>%</span>
                                     <% } %>
                                 </div>
-                                <p class="text-muted small mb-2"><%= product.category_name || 'General' %></p>
+                                <p class="text-white-50 small mb-2"><%= product.category_name || 'General' %></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                          <% if (product.discount_price && product.discount_price < product.price) { %>
-                                            <span class="text-primary fw-bold"><%= formatCurrency(product.discount_price) %></span>
-                                            <small class="text-muted text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
+                                            <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.discount_price) %></span>
+                                            <small class="text-white-50 text-decoration-line-through ms-1"><%= formatCurrency(product.price) %></small>
                                         <% } else { %>
-                                            <span class="text-primary fw-bold"><%= formatCurrency(product.price) %></span>
+                                            <span class="text-primary fw-bold fs-5"><%= formatCurrency(product.price) %></span>
                                         <% } %>
                                     </div>
                                     <form method="POST" action="/cart/add" class="d-inline">
@@ -94,18 +98,18 @@
                 </div>
 
                 <% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
-                <nav class="mt-4">
-                    <ul class="pagination justify-content-center">
+                <nav class="mt-5" aria-label="Product pagination">
+                    <ul class="pagination justify-content-center gap-1">
                         <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
-                            <a class="page-link bg-dark border-secondary text-muted" href="/shop?page=<%= pagination.page - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo; Previous</a>
+                            <a class="page-link rounded-pill" href="/shop?page=<%= pagination.page - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><i class="fa-solid fa-chevron-left"></i></a>
                         </li>
                         <% for (let i = 1; i <= pagination.totalPages; i++) { %>
                         <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
-                            <a class="page-link <%= i === pagination.page ? 'bg-primary border-primary' : 'bg-dark border-secondary' %>" href="/shop?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a>
+                            <a class="page-link rounded-pill" href="/shop?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a>
                         </li>
                         <% } %>
                         <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
-                            <a class="page-link bg-dark border-secondary text-muted" href="/shop?page=<%= pagination.page + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">Next &raquo;</a>
+                            <a class="page-link rounded-pill" href="/shop?page=<%= pagination.page + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><i class="fa-solid fa-chevron-right"></i></a>
                         </li>
                     </ul>
                 </nav>
@@ -113,10 +117,10 @@
 
                 <% } else { %>
                 <div class="empty-state">
-                    <i class="fa-solid fa-box-open fa-4x mb-3"></i>
+                    <i class="fa-solid fa-box-open fa-4x mb-4"></i>
                     <h4 class="text-white fw-bold">No Products Found</h4>
-                    <p class="text-muted">No products match your current filters. Try adjusting your search criteria.</p>
-                    <a href="/shop" class="btn btn-premium-primary rounded-pill">View All Products</a>
+                    <p class="text-white-50">No products match your current filters. Try adjusting your search criteria.</p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill px-5">View All Products</a>
                 </div>
                 <% } %>
             </div>

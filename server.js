@@ -9,7 +9,7 @@ async function start() {
   await testConnection();
 
   app.listen(PORT, () => {
-    console.log(`Athstack Digital Hub running at http://localhost:${PORT}`);
+    console.log(`TechBridge Digital Hub running at http://localhost:${PORT}`);
   });
 }
 

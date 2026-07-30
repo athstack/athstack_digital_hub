@@ -1,7 +1,7 @@
 const { query, queryOne } = require('../config/db');
 
 class ProductModel {
-  async getFiltered({ category, search, minPrice, maxPrice, sort, page = 1, limit = 20, technician_id, status, featured } = {}) {
+  async getFiltered({ category, search, minPrice, maxPrice, sort, page = 1, limit = 20, technician_id, status, featured, allStatuses } = {}) {
     const conditions = [];
     const params = [];
 
@@ -29,7 +29,7 @@ class ProductModel {
     if (status) {
       conditions.push('p.status = ?');
       params.push(status);
-    } else {
+    } else if (!allStatuses) {
       conditions.push("p.status = 'active'");
     }
     if (featured) {

@@ -1,5 +1,8 @@
 const ProductModel = require('../models/ProductModel');
 const CategoryModel = require('../models/CategoryModel');
+const WishlistModel = require('../models/WishlistModel');
+const ReviewModel = require('../models/ReviewModel');
+const ProductImageModel = require('../models/ProductImageModel');
 const { paginate, formatCurrency } = require('../utils/helpers');
 
 exports.getShop = async (req, res, next) => {
@@ -23,7 +26,7 @@ exports.getShop = async (req, res, next) => {
     const totalPages = Math.ceil(result.total / result.limit);
 
     res.render('shop/index', {
-      title: 'Shop Premium Accessories - Athstack',
+      title: 'Shop Premium Accessories - TechBridge Digital Hub',
       products: result.products,
       categories,
       activeCategory: category,
@@ -46,11 +49,23 @@ exports.getProduct = async (req, res, next) => {
       return res.redirect('/shop');
     }
 
-    const gallery = [];
+    const gallery = await ProductImageModel.getByProduct(product.id);
+    let isWishlisted = false;
+    if (req.session.userId) {
+      isWishlisted = await WishlistModel.isWishlisted(req.session.userId, product.id);
+    }
+
+    const reviewData = await ReviewModel.getByProduct(product.id, 1, 10);
+    const ratingInfo = await ReviewModel.getAverageRating(product.id);
+
     res.render('shop/details', {
-      title: `${product.name} - Athstack`,
+      title: `${product.name} - TechBridge Digital Hub`,
       product,
       gallery,
+      isWishlisted,
+      reviews: reviewData.reviews,
+      reviewCount: reviewData.total,
+      avgRating: ratingInfo.average,
       formatCurrency
     });
   } catch (err) {

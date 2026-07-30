@@ -5,8 +5,12 @@ const RepairModel = require('../models/RepairModel');
 const CategoryModel = require('../models/CategoryModel');
 const ContactModel = require('../models/ContactModel');
 const OrderModel = require('../models/OrderModel');
+const ServiceModel = require('../models/ServiceModel');
+const NotificationModel = require('../models/NotificationModel');
+const ProductImageModel = require('../models/ProductImageModel');
 const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
 const { pool } = require('../config/db');
+const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -28,6 +32,9 @@ exports.getDashboard = async (req, res, next) => {
     );
     const [unreadMessages] = await pool.execute(
       "SELECT COUNT(*) AS count FROM contact_messages WHERE status = 'unread'"
+    );
+    const [pendingReviews] = await pool.execute(
+      "SELECT COUNT(*) AS count FROM reviews WHERE status = 'pending'"
     );
 
     const [recentBookings] = await pool.execute(
@@ -52,11 +59,12 @@ exports.getDashboard = async (req, res, next) => {
       total_clients: totalClients,
       total_technicians: totalTechnicians,
       total_products: productCountRow[0].count,
-      unread_messages: unreadMessages[0].count
+      unread_messages: unreadMessages[0].count,
+      pending_reviews: pendingReviews[0].count
     };
 
     res.render('admin/dashboard', {
-      title: 'Admin Control Matrix - Athstack',
+      title: 'Admin Control Matrix - TechBridge Digital Hub',
       metrics,
       recentBookings,
       recentOrders,
@@ -77,7 +85,7 @@ exports.getUsers = async (req, res, next) => {
     const totalPages = Math.ceil(total / limit);
 
     res.render('admin/users', {
-      title: 'User Directories - Athstack',
+      title: 'User Directories - TechBridge Digital Hub',
       users,
       pagination: { page, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
       currentRole: role,
@@ -133,6 +141,12 @@ exports.updateUserRole = async (req, res, next) => {
       return respond(404, {});
     }
 
+    if (targetUser.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (isAjax) return respond(403, { success: false, message: 'You do not have permission to modify a Super Admin account.' });
+      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      return respond(403, {});
+    }
+
     await UserModel.updateRole(userId, role);
     if (isAjax) return respond(200, { success: true, message: 'Role updated.' });
     req.flash('success', 'User role updated.');
@@ -178,6 +192,12 @@ exports.updateUserStatus = async (req, res, next) => {
       return respond(404, {});
     }
 
+    if (targetUser.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (isAjax) return respond(403, { success: false, message: 'You do not have permission to modify a Super Admin account.' });
+      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      return respond(403, {});
+    }
+
     await UserModel.updateStatus(userId, status);
     if (isAjax) return respond(200, { success: true, message: 'Status updated.' });
     req.flash('success', 'User status updated.');
@@ -190,13 +210,196 @@ exports.updateUserStatus = async (req, res, next) => {
   }
 };
 
+exports.getCreateUser = (req, res) => {
+  res.render('admin/user-form', {
+    title: 'Create User - TechBridge Digital Hub',
+    user: null,
+    editing: false,
+    isAdmin: req.session.userRole === 'admin' || req.session.userRole === 'super_admin',
+    isSuperAdmin: req.session.userRole === 'super_admin'
+  });
+};
+
+exports.createUser = async (req, res, next) => {
+  try {
+    const { first_name, last_name, email, phone, role, status, password } = req.body;
+
+    if (!first_name || !last_name || !email || !password) {
+      req.flash('error', 'First name, last name, email, and password are required.');
+      return res.redirect('/admin/users/new');
+    }
+
+    const existing = await UserModel.findByEmail(email);
+    if (existing) {
+      req.flash('error', 'A user with that email already exists.');
+      return res.redirect('/admin/users/new');
+    }
+
+    const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
+    const validStatuses = ['active', 'inactive', 'suspended'];
+    const userRole = validRoles.includes(role) ? role : 'customer';
+    const userStatus = validStatuses.includes(status) ? status : 'active';
+
+    if (userRole === 'admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'Only super administrators can create admin accounts.');
+      return res.redirect('/admin/users/new');
+    }
+
+    if (userRole === 'super_admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'Only super administrators can create super admin accounts.');
+      return res.redirect('/admin/users/new');
+    }
+
+    await UserModel.create({
+      first_name, last_name, email, phone, password, role: userRole
+    });
+
+    if (userStatus !== 'active') {
+      const created = await UserModel.findByEmail(email);
+      if (created) await UserModel.updateStatus(created.id, userStatus);
+    }
+
+    req.flash('success', `User "${first_name} ${last_name}" created successfully.`);
+    res.redirect('/admin/users');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getEditUser = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const target = await UserModel.findById(userId);
+
+    if (!target) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+
+    if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'You do not have permission to edit a Super Admin account.');
+      return res.redirect('/admin/users');
+    }
+
+    res.render('admin/user-form', {
+      title: 'Edit User - TechBridge Digital Hub',
+      user: target,
+      editing: true,
+      isAdmin: req.session.userRole === 'admin' || req.session.userRole === 'super_admin',
+      isSuperAdmin: req.session.userRole === 'super_admin'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { first_name, last_name, email, phone, role, status, password } = req.body;
+
+    const target = await UserModel.findById(userId);
+    if (!target) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+
+    if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      return res.redirect('/admin/users');
+    }
+
+    if (userId === Number(req.session.userId) && role && role !== target.role) {
+      req.flash('error', 'You cannot change your own role.');
+      return res.redirect('/admin/users');
+    }
+
+    if (userId === Number(req.session.userId) && status && status !== target.status) {
+      req.flash('error', 'You cannot change your own status.');
+      return res.redirect('/admin/users');
+    }
+
+    if (role && !['customer', 'technician', 'admin', 'super_admin'].includes(role)) {
+      req.flash('error', 'Invalid role.');
+      return res.redirect('/admin/users');
+    }
+
+    if (status && !['active', 'inactive', 'suspended'].includes(status)) {
+      req.flash('error', 'Invalid status.');
+      return res.redirect('/admin/users');
+    }
+
+    if (role && role !== target.role) {
+      if (role === 'admin' && req.session.userRole !== 'super_admin') {
+        req.flash('error', 'Only super administrators can assign the admin role.');
+        return res.redirect('/admin/users');
+      }
+      if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
+        req.flash('error', 'Only super administrators can assign the super admin role.');
+        return res.redirect('/admin/users');
+      }
+    }
+
+    if (email !== target.email) {
+      const existing = await UserModel.findByEmail(email);
+      if (existing) {
+        req.flash('error', 'A user with that email already exists.');
+        return res.redirect('/admin/users/' + userId + '/edit');
+      }
+    }
+
+    await UserModel.adminUpdate(userId, {
+      first_name: first_name || target.first_name,
+      last_name: last_name || target.last_name,
+      email: email || target.email,
+      phone: phone || target.phone,
+      role: role || target.role,
+      status: status || target.status,
+      password: password || null
+    });
+
+    req.flash('success', 'User updated successfully.');
+    res.redirect('/admin/users');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    if (userId === Number(req.session.userId)) {
+      req.flash('error', 'You cannot delete your own account.');
+      return res.redirect('/admin/users');
+    }
+
+    const target = await UserModel.findById(userId);
+    if (!target) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+
+    if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      req.flash('error', 'You do not have permission to delete a Super Admin account.');
+      return res.redirect('/admin/users');
+    }
+
+    await UserModel.delete(userId);
+    req.flash('success', `User "${target.first_name} ${target.last_name}" deleted.`);
+    res.redirect('/admin/users');
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await ProductModel.getFiltered({});
+    const products = await ProductModel.getFiltered({ allStatuses: true });
     const categories = await CategoryModel.getAll();
 
     res.render('admin/products', {
-      title: 'Manage Inventory - Athstack',
+      title: 'Manage Inventory - TechBridge Digital Hub',
       products: products.products,
       categories,
       formatCurrency
@@ -210,16 +413,168 @@ exports.toggleProductStatus = async (req, res, next) => {
   try {
     const productId = parseInt(req.params.id);
     const product = await ProductModel.findById(productId);
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/products');
+
+    if (!product) {
+      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
+      req.flash('error', 'Product not found.');
+      return respond(404, {});
+    }
+
+    const newStatus = product.status === 'active' ? 'inactive' : 'active';
+    await pool.execute('UPDATE products SET status = ? WHERE id = ?', [newStatus, productId]);
+
+    if (isAjax) return respond(200, { success: true, status: newStatus, message: `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.` });
+    req.flash('success', `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.`);
+    respond(302, {});
+  } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(500).json({ success: false, message: 'Server error.' });
+    }
+    next(err);
+  }
+};
+
+exports.getAddProduct = async (req, res, next) => {
+  try {
+    const categories = await CategoryModel.getAll();
+    res.render('admin/product-form', {
+      title: 'Add Product - TechBridge Digital Hub',
+      product: null,
+      categories,
+      editing: false
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createProduct = async (req, res, next) => {
+  try {
+    const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
+
+    if (!name || !price || !category_id) {
+      req.flash('error', 'Product name, price, and category are required.');
+      return res.redirect('/admin/products/new');
+    }
+
+    const mainImageFile = req.files && req.files['product_image'] && req.files['product_image'][0];
+    const mainImage = mainImageFile ? await processUploadedFile(mainImageFile, 'products') : '';
+
+    const baseSlug = generateSlug(name);
+    let slug = baseSlug;
+    const existing = await ProductModel.findBySlug(baseSlug);
+    if (existing) {
+      slug = `${baseSlug}-${Date.now()}`;
+    }
+
+    await ProductModel.create({
+      category_id: parseInt(category_id),
+      name,
+      slug,
+      description: description || '',
+      price: parseFloat(price),
+      discount_price: discount_price ? parseFloat(discount_price) : null,
+      stock_quantity: parseInt(stock_quantity) || 0,
+      main_image: mainImage,
+      technician_id: req.session.userId,
+      status: 'active',
+      featured: 0,
+      sku: sku || null
+    });
+
+    const created = await ProductModel.findBySlug(slug);
+    if (created && req.files && req.files['gallery_images']) {
+      const galleryPaths = await processUploadedFiles(req.files['gallery_images'], 'products');
+      if (galleryPaths.length > 0) {
+        await ProductImageModel.addMultiple(created.id, galleryPaths);
+      }
+    }
+
+    req.flash('success', 'Product created successfully.');
+    res.redirect('/admin/products');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getEditProduct = async (req, res, next) => {
+  try {
+    const product = await ProductModel.findById(parseInt(req.params.id));
+    if (!product) {
+      req.flash('error', 'Product not found.');
+      return res.redirect('/admin/products');
+    }
+
+    const categories = await CategoryModel.getAll();
+    const gallery = await ProductImageModel.getByProduct(product.id);
+    res.render('admin/product-form', {
+      title: 'Edit Product - TechBridge Digital Hub',
+      product,
+      categories,
+      gallery,
+      editing: true
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateProduct = async (req, res, next) => {
+  try {
+    const productId = parseInt(req.params.id);
+    const product = await ProductModel.findById(productId);
 
     if (!product) {
       req.flash('error', 'Product not found.');
       return res.redirect('/admin/products');
     }
 
-    const newStatus = product.status === 'active' ? 'inactive' : 'active';
-    await pool.execute('UPDATE products SET status = ? WHERE id = ?', [newStatus, productId]);
+    const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
 
-    req.flash('success', `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.`);
+    let mainImage = req.body.existing_image || product.main_image;
+    const mainImageFile = req.files && req.files['product_image'] && req.files['product_image'][0];
+    if (mainImageFile) {
+      mainImage = await processUploadedFile(mainImageFile, 'products');
+    }
+
+    await ProductModel.update(productId, {
+      category_id: parseInt(category_id) || product.category_id,
+      name: name || product.name,
+      description: description || '',
+      price: parseFloat(price) || product.price,
+      discount_price: discount_price !== undefined ? (discount_price ? parseFloat(discount_price) : null) : product.discount_price,
+      stock_quantity: parseInt(stock_quantity) || 0,
+      main_image: mainImage,
+      sku: sku !== undefined ? (sku || null) : product.sku
+    });
+
+    if (req.files && req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
+      const galleryPaths = await processUploadedFiles(req.files['gallery_images'], 'products');
+      await ProductImageModel.deleteByProduct(productId);
+      await ProductImageModel.addMultiple(productId, galleryPaths);
+    }
+
+    req.flash('success', 'Product updated successfully.');
+    res.redirect('/admin/products');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    const productId = parseInt(req.params.id);
+    const product = await ProductModel.findById(productId);
+
+    if (!product) {
+      req.flash('error', 'Product not found.');
+      return res.redirect('/admin/products');
+    }
+
+    await ProductModel.delete(productId);
+    req.flash('success', 'Product deleted.');
     res.redirect('/admin/products');
   } catch (err) {
     next(err);
@@ -232,11 +587,12 @@ exports.getRepairs = async (req, res, next) => {
     const technicians = await UserModel.getTechnicians();
 
     res.render('admin/repairs', {
-      title: 'Repair Requests - Athstack',
+      title: 'Repair Requests - TechBridge Digital Hub',
       repairs: result.repairs,
       technicians,
       formatDate,
-      getStatusBadgeClass
+      getStatusBadgeClass,
+      isSuperAdmin: req.session.userRole === 'super_admin'
     });
   } catch (err) {
     next(err);
@@ -253,10 +609,49 @@ exports.assignTechnician = async (req, res, next) => {
       return res.redirect('/admin/repairs');
     }
 
+    const [existing] = await pool.execute(
+      'SELECT technician_id FROM repair_requests WHERE id = ?',
+      [repairId]
+    );
+    if (existing.length > 0 && existing[0].technician_id) {
+      if (req.session.userRole !== 'super_admin') {
+        req.flash('error', 'Only super admin can reassign a technician.');
+        return res.redirect('/admin/repairs');
+      }
+    }
+
     await pool.execute(
       'UPDATE repair_requests SET technician_id = ?, status = ? WHERE id = ?',
-      [parseInt(technician_id), 'in_repair', repairId]
+      [parseInt(technician_id), 'assigned', repairId]
     );
+
+    const [repair] = await pool.execute(
+      'SELECT user_id, reference_number FROM repair_requests WHERE id = ?',
+      [repairId]
+    );
+    const repairData = repair[0];
+
+    if (repairData && repairData.user_id) {
+      await NotificationModel.create(repairData.user_id, {
+        title: 'Repair Assigned',
+        message: 'Your repair request ' + repairData.reference_number + ' has been assigned to a technician.',
+        type: 'repair',
+        link: '/dashboard/repairs'
+      });
+    }
+
+    const [techUser] = await pool.execute(
+      'SELECT id FROM users WHERE id = ? AND status = ?',
+      [parseInt(technician_id), 'active']
+    );
+    if (techUser.length > 0) {
+      await NotificationModel.create(techUser[0].id, {
+        title: 'New Assignment',
+        message: 'You have been assigned to repair ' + repairData.reference_number + '.',
+        type: 'repair',
+        link: '/technician/repairs'
+      });
+    }
 
     req.flash('success', 'Technician assigned to repair request.');
     res.redirect('/admin/repairs');
@@ -275,7 +670,7 @@ exports.getOrders = async (req, res, next) => {
     );
 
     res.render('admin/orders', {
-      title: 'All Orders - Athstack',
+      title: 'All Orders - TechBridge Digital Hub',
       orders,
       formatDate,
       formatCurrency,
@@ -309,7 +704,7 @@ exports.getCourses = async (req, res, next) => {
   try {
     const modules = await CourseModel.getAll();
     res.render('admin/training', {
-      title: 'Training Academy Modules - Athstack',
+      title: 'Training Academy Modules - TechBridge Digital Hub',
       modules,
       formatDate,
       formatCurrency
@@ -330,6 +725,8 @@ exports.createCourse = async (req, res, next) => {
 
     const slug = generateSlug(title);
 
+    const courseImage = req.file ? await processUploadedFile(req.file, 'courses') : '';
+
     await CourseModel.create({
       title,
       slug,
@@ -338,7 +735,7 @@ exports.createCourse = async (req, res, next) => {
       status: 'draft',
       level: level || 'Beginner',
       price: parseFloat(price) || 0,
-      image_path: req.file ? req.file.filename : ''
+      image_path: courseImage
     });
 
     req.flash('success', 'Course created successfully.');
@@ -398,7 +795,7 @@ exports.getInbox = async (req, res, next) => {
   try {
     const { messages } = await ContactModel.getAll({});
     res.render('admin/inbox', {
-      title: 'Contact Inbox - Athstack',
+      title: 'Contact Inbox - TechBridge Digital Hub',
       messages,
       formatDate
     });
@@ -418,17 +815,451 @@ exports.markAsRead = async (req, res, next) => {
   }
 };
 
-exports.getSettings = (req, res) => {
-  res.render('admin/settings', {
-    title: 'System Settings - Athstack'
-  });
+exports.deleteMessage = async (req, res, next) => {
+  try {
+    const messageId = parseInt(req.params.id);
+    const ContactModel = require('../models/ContactModel');
+    await ContactModel.delete(messageId);
+    req.flash('success', 'Message deleted.');
+    res.redirect('/admin/inbox');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.replyToMessage = async (req, res, next) => {
+  try {
+    const messageId = parseInt(req.params.id);
+    const { to, subject, reply_text } = req.body;
+    const { sendReply } = require('../helpers/mail');
+    const ContactModel = require('../models/ContactModel');
+
+    if (!to || !reply_text) {
+      return res.status(400).json({ success: false, message: 'Recipient and reply text are required.' });
+    }
+
+    const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#0f172a;padding:24px 32px;border-radius:12px 12px 0 0;">
+        <h2 style="color:#fff;margin:0;font-size:20px;">TechBridge</h2>
+      </div>
+      <div style="background:#1e293b;padding:32px;color:#e2e8f0;font-size:15px;line-height:1.7;">
+        ${reply_text.replace(/\n/g, '<br>')}
+      </div>
+      <div style="background:#0f172a;padding:16px 32px;border-radius:0 0 12px 12px;text-align:center;">
+        <p style="color:#64748b;font-size:12px;margin:0;">TechBridge &mdash; Premium Tech Marketplace</p>
+      </div>
+    </div>`;
+
+    await sendReply({ to, subject: subject || 'Re: Contact Inquiry', text: reply_text, html });
+
+    await ContactModel.addReply(messageId, reply_text, req.session.userId);
+
+    return res.status(200).json({ success: true, message: 'Reply sent successfully.' });
+  } catch (err) {
+    console.error('Reply error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to send reply. Please try again.' });
+  }
+};
+
+exports.getSettings = async (req, res, next) => {
+  try {
+    const SettingModel = require('../models/SettingModel');
+    const settings = await SettingModel.getGroup('general');
+    res.render('admin/settings', {
+      title: 'System Settings - TechBridge Digital Hub',
+      settings
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.updateSettings = async (req, res, next) => {
   try {
-    const { site_name, site_url, contact_email } = req.body;
+    const SettingModel = require('../models/SettingModel');
+    const { site_name, site_url, contact_email, site_description } = req.body;
+    await SettingModel.setGroup({
+      site_name: site_name || '',
+      site_url: site_url || '',
+      contact_email: contact_email || '',
+      site_description: site_description || ''
+    });
     req.flash('success', 'Settings updated successfully.');
     res.redirect('/admin/settings');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getServices = async (req, res, next) => {
+  try {
+    const services = await ServiceModel.getAllAdmin();
+    res.render('admin/services', {
+      title: 'Manage Services - TechBridge Digital Hub',
+      services,
+      formatDate
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createService = async (req, res, next) => {
+  try {
+    const { title, category, description, base_price, icon_class, status } = req.body;
+    if (!title || !category || !base_price) {
+      req.flash('error', 'Title, category, and price are required.');
+      return res.redirect('/admin/services');
+    }
+    const slug = generateSlug(title);
+    await ServiceModel.create({
+      title, slug, category, description, base_price: parseFloat(base_price), icon_class: icon_class || 'fa-tools', status: status || 'active'
+    });
+    req.flash('success', 'Service created.');
+    res.redirect('/admin/services');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateService = async (req, res, next) => {
+  try {
+    const serviceId = parseInt(req.params.id);
+    const service = await ServiceModel.findById(serviceId);
+    if (!service) {
+      req.flash('error', 'Service not found.');
+      return res.redirect('/admin/services');
+    }
+    const { title, category, description, base_price, icon_class, status } = req.body;
+    await ServiceModel.update(serviceId, {
+      title: title || service.title,
+      slug: title ? generateSlug(title) : service.slug,
+      category: category || service.category,
+      description: description || service.description,
+      base_price: base_price ? parseFloat(base_price) : service.base_price,
+      icon_class: icon_class || service.icon_class,
+      status: status || service.status
+    });
+    req.flash('success', 'Service updated.');
+    res.redirect('/admin/services');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteService = async (req, res, next) => {
+  try {
+    const serviceId = parseInt(req.params.id);
+    await ServiceModel.delete(serviceId);
+    req.flash('success', 'Service deleted.');
+    res.redirect('/admin/services');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getReviews = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const status = req.query.status || null;
+    const page = parseInt(req.query.page) || 1;
+    const result = await ReviewModel.getAllAdmin({ status, page, limit: 20 });
+    const totalPages = Math.ceil(result.total / result.limit);
+    const pendingCount = (await ReviewModel.getAllAdmin({ status: 'pending', limit: 1000 })).total;
+
+    res.render('admin/reviews', {
+      title: 'Review Moderation - TechBridge Digital Hub',
+      reviews: result.reviews,
+      pagination: { page, totalPages, total: result.total, hasNext: page < totalPages, hasPrev: page > 1 },
+      currentStatus: status,
+      pendingCount,
+      formatDate,
+      formatCurrency
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.approveReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getById(reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    await ReviewModel.approve(reviewId, req.session.userId);
+
+    if (review.product_id) {
+      const avgData = await ReviewModel.getAverageRating(review.product_id);
+      await ProductModel.updateRating(review.product_id, avgData.average);
+    }
+
+    req.flash('success', 'Review approved.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.rejectReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getById(reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    await ReviewModel.reject(reviewId, req.session.userId);
+
+    if (review.product_id) {
+      const avgData = await ReviewModel.getAverageRating(review.product_id);
+      await ProductModel.updateRating(review.product_id, avgData.average);
+    }
+
+    req.flash('success', 'Review rejected.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getEditReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const Products = require('../models/ProductModel');
+    const review = await ReviewModel.getById(reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    const products = await Products.getFiltered({ allStatuses: true });
+
+    res.render('admin/review-form', {
+      title: 'Edit Review - TechBridge Digital Hub',
+      review,
+      products: products.products || [],
+      formatDate
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const UserModel = require('../models/UserModel');
+    const reviewId = parseInt(req.params.id);
+    const { user_id, product_id, rating, comment, type, status } = req.body;
+
+    const review = await ReviewModel.getById(reviewId);
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    if (!rating || rating < 1 || rating > 5) {
+      req.flash('error', 'Rating must be between 1 and 5.');
+      return res.redirect('/admin/reviews/' + reviewId + '/edit');
+    }
+
+    await ReviewModel.update(reviewId, {
+      rating: parseInt(rating),
+      comment: comment || null,
+      status: status || 'pending'
+    });
+
+    const targetProductId = parseInt(product_id) || review.product_id;
+    const avgData = await ReviewModel.getAverageRating(targetProductId);
+    await ProductModel.updateRating(targetProductId, avgData.average);
+
+    if (status === 'approved' && review.status !== 'approved') {
+      await ReviewModel.approve(reviewId, req.session.userId);
+    }
+
+    req.flash('success', 'Review updated.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const { user_id, product_id, rating, comment, type, status } = req.body;
+
+    if (!user_id || !product_id || !rating || rating < 1 || rating > 5) {
+      req.flash('error', 'User, product, and a rating between 1 and 5 are required.');
+      return res.redirect('/admin/reviews');
+    }
+
+    const created = await ReviewModel.create({
+      user_id: parseInt(user_id),
+      product_id: parseInt(product_id),
+      rating: parseInt(rating),
+      comment: comment || null,
+      type: type || 'product',
+      status: status || 'approved'
+    });
+
+    const avgData = await ReviewModel.getAverageRating(parseInt(product_id));
+    await ProductModel.updateRating(parseInt(product_id), avgData.average);
+
+    req.flash('success', 'Review created.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getById(reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    await ReviewModel.delete(reviewId);
+
+    if (review.product_id) {
+      const avgData = await ReviewModel.getAverageRating(review.product_id);
+      await ProductModel.updateRating(review.product_id, avgData.average);
+    }
+
+    req.flash('success', 'Review deleted.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAnalytics = async (req, res, next) => {
+  try {
+    const { range, start_date, end_date, category, search } = req.query;
+    const { pool } = require('../config/db');
+
+    var dateWhere = '';
+    var dateParams = [];
+    var now = new Date();
+
+    if (range === 'custom' && start_date && end_date) {
+      dateWhere = 'AND rr.created_at >= ? AND rr.created_at <= DATE_ADD(?, INTERVAL 1 DAY)';
+      dateParams = [start_date, end_date];
+    } else if (range === '30days') {
+      var d = new Date(now); d.setDate(d.getDate() - 30);
+      dateWhere = 'AND rr.created_at >= ?'; dateParams = [d.toISOString().slice(0, 19).replace('T', ' ')];
+    } else if (range === '90days') {
+      var d = new Date(now); d.setDate(d.getDate() - 90);
+      dateWhere = 'AND rr.created_at >= ?'; dateParams = [d.toISOString().slice(0, 19).replace('T', ' ')];
+    } else if (range === 'year') {
+      var d = new Date(now); d.setFullYear(d.getFullYear() - 1);
+      dateWhere = 'AND rr.created_at >= ?'; dateParams = [d.toISOString().slice(0, 19).replace('T', ' ')];
+    } else {
+      var d = new Date(now); d.setDate(d.getDate() - 7);
+      dateWhere = 'AND rr.created_at >= ?'; dateParams = [d.toISOString().slice(0, 19).replace('T', ' ')];
+    }
+
+    var catWhere = '';
+    var catParams = [];
+    if (category && category !== 'all') {
+      catWhere = 'AND s.category = ?';
+      catParams = [category];
+    }
+
+    var [repairStats] = await pool.execute(
+      `SELECT rr.status, COUNT(*) AS count FROM repair_requests rr
+       LEFT JOIN services s ON rr.service_id = s.id
+       WHERE 1=1 ${dateWhere} ${catWhere}
+       GROUP BY rr.status ORDER BY FIELD(rr.status,'pending','assigned','diagnosing','in_repair','awaiting_parts','completed','cancelled')`,
+      [...dateParams, ...catParams]
+    );
+    var totalRepairs = repairStats.reduce(function(s, r) { return s + r.count; }, 0);
+    var pendingRepairs = 0, inProgress = 0, completedRepairs = 0;
+    repairStats.forEach(function(r) {
+      if (r.status === 'pending' || r.status === 'assigned') pendingRepairs += r.count;
+      else if (r.status === 'diagnosing' || r.status === 'in_repair' || r.status === 'awaiting_parts') inProgress += r.count;
+      else if (r.status === 'completed') completedRepairs += r.count;
+    });
+
+    var [revRow] = await pool.execute(
+      `SELECT COALESCE(SUM(rr.actual_cost), 0) AS revenue FROM repair_requests rr
+       LEFT JOIN services s ON rr.service_id = s.id
+       WHERE rr.status = 'completed' ${dateWhere} ${catWhere}`,
+      [...dateParams, ...catParams]
+    );
+    var repairRevenue = parseFloat(revRow[0].revenue);
+
+    var [turnRow] = await pool.execute(
+      `SELECT AVG(TIMESTAMPDIFF(HOUR, rr.created_at, rr.updated_at)) AS avg_hours
+       FROM repair_requests rr LEFT JOIN services s ON rr.service_id = s.id
+       WHERE rr.status = 'completed' AND rr.updated_at IS NOT NULL ${dateWhere} ${catWhere}`,
+      [...dateParams, ...catParams]
+    );
+    var avgTurnaround = turnRow[0].avg_hours ? Math.round(turnRow[0].avg_hours) : null;
+
+    var svcWhere = '';
+    var svcParams = [];
+    if (search) {
+      svcWhere = 'AND s.title LIKE ?';
+      svcParams = ['%' + search + '%'];
+    }
+
+    var [serviceStats] = await pool.execute(
+      `SELECT s.id, s.title, s.category, s.base_price, s.icon_class,
+              COUNT(rr.id) AS total_bookings,
+              SUM(CASE WHEN rr.status = 'completed' THEN 1 ELSE 0 END) AS completed_count,
+              SUM(CASE WHEN rr.status IN ('pending','assigned') THEN 1 ELSE 0 END) AS pending_count,
+              COALESCE(SUM(rr.actual_cost), 0) AS total_revenue,
+              AVG(CASE WHEN rr.status = 'completed' AND rr.updated_at IS NOT NULL
+                THEN TIMESTAMPDIFF(HOUR, rr.created_at, rr.updated_at) END) AS avg_completion_hours
+       FROM services s
+       LEFT JOIN repair_requests rr ON rr.service_id = s.id
+       WHERE s.status = 'active' ${catWhere} ${svcWhere}
+       GROUP BY s.id, s.title, s.category, s.base_price, s.icon_class
+       ORDER BY total_bookings DESC`,
+      [...catParams, ...svcParams]
+    );
+
+    var topService = null;
+    if (serviceStats.length > 0) {
+      var sorted = serviceStats.slice().sort(function(a, b) { return b.total_bookings - a.total_bookings; });
+      topService = sorted[0];
+    }
+
+    res.render('admin/analytics', {
+      title: 'Analytics - TechBridge Digital Hub',
+      repairStats,
+      totalRepairs,
+      pendingRepairs,
+      inProgress,
+      completedRepairs,
+      repairRevenue,
+      avgTurnaround,
+      serviceStats,
+      topService,
+      formatCurrency,
+      range: range || '7days',
+      start_date: start_date || '',
+      end_date: end_date || '',
+      category: category || 'all',
+      search: search || ''
+    });
   } catch (err) {
     next(err);
   }

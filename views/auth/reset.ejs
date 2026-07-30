@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="glass-card no-lift p-5">
+                    <div class="text-center mb-4">
+                        <a href="/" class="gap-1" style="display:inline-flex;align-items:center;line-height:1;text-decoration:none;">
+                            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" style="height:52px;width:auto;">
+                            <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+                        </a>
+                        <h3 class="text-white fw-bold">Reset Password</h3>
+                        <p class="text-muted small">Enter your new password for <strong><%= email %></strong></p>
+                    </div>
+
+                    <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                    <div class="alert alert-success"><i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %></div>
+                    <% } %>
+                    <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %></div>
+                    <% } %>
+
+                    <form method="POST" action="/auth/reset/<%= token %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <input type="hidden" name="token" value="<%= token %>">
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" name="password" class="form-control" required minlength="8" placeholder="Min. 8 characters">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" name="confirm_password" class="form-control" required minlength="8" placeholder="Repeat password">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-check me-2"></i>Reset Password</button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-0"><a href="/auth/login" class="text-primary">Back to Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

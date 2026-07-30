@@ -53,13 +53,32 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">New Image (optional)</label>
-                                <input type="file" name="product_image" class="form-control" accept="image/*">
-                                <% if (product.main_image) { %>
-                                <div class="mt-2">
-                                     <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: 'Current', style: 'height:50px;', className: 'rounded' }) %>
-                                    <small class="text-muted ms-2">Current image</small>
+                                <%- include('../partials/fileUpload', {
+                                    name: 'product_image',
+                                    label: 'New Image (optional)',
+                                    hint: 'PNG, JPG, WEBP up to 5MB',
+                                    accept: 'image/*',
+                                    currentImage: product.main_image || null,
+                                    currentFolder: 'products'
+                                }) %>
+                            </div>
+                            <div class="col-12">
+                                <%- include('../partials/fileUpload', {
+                                    name: 'gallery_images',
+                                    label: 'Gallery Images (optional, max 8)',
+                                    hint: 'Select additional product images. Hold Ctrl/Cmd to select multiple.',
+                                    accept: 'image/*',
+                                    multiple: true
+                                }) %>
+                                <% if (typeof gallery !== 'undefined' && gallery && gallery.length > 0) { %>
+                                <div class="file-upload-gallery">
+                                    <% gallery.forEach(img => { %>
+                                    <div class="file-upload-gallery-item">
+                                        <img src="<%= imageUrl(img.image_path, 'products') %>" alt="Gallery">
+                                    </div>
+                                    <% }) %>
                                 </div>
+                                <small class="text-muted">Uploading new gallery images will replace existing ones.</small>
                                 <% } %>
                             </div>
                             <div class="col-12 text-center mt-3">

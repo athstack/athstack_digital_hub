@@ -6,18 +6,24 @@
             <div class="col-md-7 col-lg-6">
                 <div class="glass-card no-lift p-5">
                     <div class="text-center mb-4">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
-                            <i class="fa-solid fa-user-plus fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="text-white fw-bold">Initialize Profile Node</h3>
-                        <p class="text-muted small">Create your Athstack Digital Hub account</p>
+                        <a href="/" class="gap-1" style="display:inline-flex;align-items:center;line-height:1;text-decoration:none;">
+                            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" style="height:52px;width:auto;">
+                            <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+                        </a>
+                        <h3 class="text-white fw-bold">Create Account</h3>
+                        <p class="text-muted small">Join TechBridge Digital Hub today</p>
                     </div>
 
+                    <% if (typeof pendingMessage !== 'undefined' && pendingMessage) { %>
+                    <div class="alert alert-info" style="background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.2);color:#93c5fd;">
+                        <i class="fa-solid fa-pen me-2"></i>You have a pending message. Create an account to send it.
+                    </div>
+                    <% } %>
                     <% if (error) { %>
-                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= error %></div>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-triangle me-2"></i><%= error %></div>
                     <% } %>
                     <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= flashError %></div>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %></div>
                     <% } %>
 
                     <form method="POST" action="/auth/register" autocomplete="off">
@@ -25,24 +31,30 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">First Name *</label>
-                                <input type="text" name="first_name" class="form-control" required placeholder="First name">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                    <input type="text" name="first_name" class="form-control" required placeholder="First name" pattern="[A-Za-z\s'-]{2,50}" title="2-50 characters, letters only">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Last Name *</label>
-                                <input type="text" name="last_name" class="form-control" required placeholder="Last name">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                    <input type="text" name="last_name" class="form-control" required placeholder="Last name" pattern="[A-Za-z\s'-]{2,50}" title="2-50 characters, letters only">
+                                </div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Email Address *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                    <input type="email" name="email" class="form-control" required placeholder="your@email.com">
+                                    <input type="email" name="email" class="form-control" required placeholder="your@email.com" value="<%= typeof pendingMessage !== 'undefined' && pendingMessage ? pendingMessage.email : '' %>">
                                 </div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Country *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
-                                    <select name="country" id="countrySelect" class="form-select" required>
+                                    <select name="country" id="countrySelect" class="form-select" placeholder="Select your country" required>
                                         <option value="">Select your country</option>
                                         <option value="NG" data-code="+234" data-placeholder="801 234 5678">Nigeria</option>
                                         <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX">Tanzania</option>
@@ -66,18 +78,24 @@
                             <div class="col-12">
                                 <label class="form-label">Phone Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" id="phoneCode">+255</span>
-                                    <input type="tel" name="phone" id="phoneInput" class="form-control" placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number">
+                                    <input type="text" id="phoneCode" class="form-control" value="+255" readonly style="max-width:90px;text-align:center;font-weight:600;border-right:none;border-radius:var(--radius-md) 0 0 var(--radius-md);background:var(--bg-elevated) !important;color:var(--text-main) !important;">
+                                    <input type="tel" name="phone" id="phoneInput" class="form-control" placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
                                 </div>
                                 <div class="form-text text-muted small">Enter your phone number without the country code</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Password *</label>
-                                <input type="password" name="password" class="form-control" required placeholder="Min 8 characters" minlength="8" autocomplete="new-password">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                    <input type="password" name="password" id="regPassword" class="form-control" required placeholder="Min 8 characters" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Minimum 8 characters with at least one uppercase, one lowercase, and one number" autocomplete="new-password">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Confirm Password *</label>
-                                <input type="password" name="confirm_password" class="form-control" required placeholder="Re-enter password" autocomplete="new-password">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                    <input type="password" name="confirm_password" id="regConfirmPwd" class="form-control" required placeholder="Re-enter password" autocomplete="new-password">
+                                </div>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Create Account</button>
@@ -94,25 +112,62 @@
     </div>
 </section>
 
-<%- include('../partials/footer') %>
-
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/js/tom-select.complete.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const countrySelect = document.getElementById('countrySelect');
     const phoneCode = document.getElementById('phoneCode');
     const phoneInput = document.getElementById('phoneInput');
 
-    countrySelect.addEventListener('change', function() {
-        const selected = this.options[this.selectedIndex];
-        if (selected.value) {
-            const code = selected.getAttribute('data-code');
-            const placeholder = selected.getAttribute('data-placeholder');
-            phoneCode.textContent = code;
-            phoneInput.placeholder = placeholder;
-        } else {
-            phoneCode.textContent = '+255';
+    const countryMap = {};
+    countrySelect.querySelectorAll('option[value]').forEach(function(opt) {
+        if (opt.value) {
+            countryMap[opt.value] = {
+                code: opt.getAttribute('data-code') || '+255',
+                placeholder: opt.getAttribute('data-placeholder') || 'phone number'
+            };
+        }
+    });
+
+    const ts = new TomSelect(countrySelect, {
+        maxItems: 1,
+        searchField: ['text'],
+        sortField: [{field: 'text', direction: 'asc'}],
+        placeholder: 'Select your country',
+        allowEmptyOption: false,
+        onItemAdd: function(value) {
+            const info = countryMap[value];
+            if (info) {
+                phoneCode.value = info.code;
+                phoneInput.placeholder = info.placeholder;
+            }
+        },
+        onItemRemove: function() {
+            phoneCode.value = '+255';
             phoneInput.placeholder = '7XX XXX XXX';
         }
     });
+
+    const pwd = document.getElementById('regPassword');
+    const confirmPwd = document.getElementById('regConfirmPwd');
+    const form = confirmPwd ? confirmPwd.closest('form') : null;
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (pwd && confirmPwd && pwd.value !== confirmPwd.value) {
+                e.preventDefault();
+                confirmPwd.setCustomValidity('Passwords do not match');
+                confirmPwd.reportValidity();
+            } else if (confirmPwd) {
+                confirmPwd.setCustomValidity('');
+            }
+        });
+        confirmPwd.addEventListener('input', function() {
+            if (pwd && pwd.value === this.value) {
+                this.setCustomValidity('');
+            }
+        });
+    }
 });
 </script>
+
+<%- include('../partials/footer') %>

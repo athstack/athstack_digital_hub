@@ -1,11 +1,16 @@
 <div class="glass-card no-lift p-3 mb-4">
-    <div class="d-flex align-items-center mb-3 px-2">
-        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
-            <i class="fa-solid fa-user text-white"></i>
+    <!-- User info -->
+    <div class="d-flex align-items-center mb-3 pt-2 px-2">
+        <div class="rounded-circle d-flex align-items-center justify-content-center<% if (!user || !user.avatar) { %> bg-primary<% } %>" style="width:48px;height:48px;overflow:hidden;flex-shrink:0;">
+            <% if (user && user.avatar) { %>
+                <img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" style="width:100%;height:100%;object-fit:cover;">
+            <% } else { %>
+                <i class="fa-solid fa-user text-white"></i>
+            <% } %>
         </div>
         <div class="ms-3">
-            <h6 class="mb-0 text-white"><%= user ? user.name : 'User' %></h6>
-            <small class="text-muted">Customer Account</small>
+            <h6 class="mb-0 text-white"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'User' %></h6>
+            <small class="text-white-50">Customer Account</small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
@@ -14,7 +19,7 @@
             <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/orders">
-            <i class="fa-solid fa-box-shopping me-2"></i> My Orders
+            <i class="fa-solid fa-receipt me-2"></i> My Orders
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/repairs">
             <i class="fa-solid fa-wrench me-2"></i> My Repairs
@@ -24,6 +29,12 @@
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/wishlist' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/wishlist">
             <i class="fa-solid fa-heart me-2"></i> Wishlist
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/reviews' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/reviews">
+            <i class="fa-solid fa-star me-2"></i> My Reviews
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/dashboard/messages' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/messages">
+            <i class="fa-solid fa-envelope me-2"></i> My Messages
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/profile' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/profile">
             <i class="fa-solid fa-user-pen me-2"></i> Profile

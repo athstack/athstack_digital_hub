@@ -1,4 +1,5 @@
 const CourseModel = require('../models/CourseModel');
+const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
 const { formatCurrency } = require('../utils/helpers');
 
@@ -6,7 +7,7 @@ exports.getCourses = async (req, res, next) => {
   try {
     const courses = await CourseModel.getActive();
     res.render('training/index', {
-      title: 'Professional Engineering Academy - Athstack',
+      title: 'Professional Engineering Academy - TechBridge Digital Hub',
       courses,
       formatCurrency
     });
@@ -31,7 +32,7 @@ exports.getCourse = async (req, res, next) => {
     }
 
     res.render('training/view', {
-      title: `${course.title} - Athstack`,
+      title: `${course.title} - TechBridge Digital Hub`,
       course,
       isEnrolled,
       formatCurrency
@@ -62,6 +63,12 @@ exports.enrollInCourse = async (req, res, next) => {
 
     const enrolled = await CourseModel.enroll(req.session.userId, courseId);
     if (enrolled) {
+      await NotificationModel.create(req.session.userId, {
+        title: 'Course Enrollment',
+        message: `You have been enrolled in "${course.title}". Start learning now!`,
+        type: 'course',
+        link: '/dashboard/training'
+      });
       req.flash('success', `You have been enrolled in "${course.title}".`);
     } else {
       req.flash('error', 'Enrollment failed. Please try again.');

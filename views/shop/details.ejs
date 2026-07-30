@@ -1,24 +1,24 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= flashSuccess %>
+        <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
         <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= flashError %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
 
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item"><a href="/shop" class="text-muted text-decoration-none">Shop</a></li>
+            <ol class="breadcrumb bg-transparent p-0 m-0">
+                <li class="breadcrumb-item"><a href="/" class="text-white-50 text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="/shop" class="text-white-50 text-decoration-none">Shop</a></li>
                 <li class="breadcrumb-item active text-primary"><%= product.name %></li>
             </ol>
         </nav>
@@ -26,17 +26,17 @@
         <% if (product) { %>
         <div class="row g-5">
             <div class="col-lg-6">
-                <div class="glass-card no-lift p-3">
-                    <div class="rounded bg-dark d-flex align-items-center justify-content-center" style="height:400px;overflow:hidden;">
-                        <%- include('../partials/productImage', { src: product.main_image ? '/uploads/products/' + product.main_image : '', alt: product.name, style: 'max-height:380px;object-fit:contain;' }) %>
+                <div class="glass-card p-3">
+                    <div class="rounded-3 bg-dark d-flex align-items-center justify-content-center overflow-hidden" style="height:420px;">
+                        <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'max-height:400px;object-fit:contain;' }) %>
                     </div>
                 </div>
                 <% if (gallery && gallery.length > 0) { %>
-                <div class="row g-2 mt-2">
+                <div class="row g-2 mt-3">
                     <% gallery.forEach(img => { %>
                     <div class="col-3">
-                        <div class="glass-card no-lift p-1">
-                            <%- include('../partials/productImage', { src: img.image_path ? '/uploads/products/' + img.image_path : '', alt: 'Gallery', style: 'height:80px;width:100%;object-fit:cover;', className: 'img-fluid rounded' }) %>
+                        <div class="glass-card p-1 overflow-hidden rounded-3" style="height:90px;">
+                            <%- include('../partials/productImage', { src: img.image_path ? imageUrl(img.image_path, 'products') : '', alt: 'Gallery', style: 'height:100%;width:100%;object-fit:cover;', className: 'img-fluid rounded-2' }) %>
                         </div>
                     </div>
                     <% }) %>
@@ -45,88 +45,245 @@
             </div>
 
             <div class="col-lg-6">
-                <span class="text-muted small"><%= product.category_name || 'General' %></span>
-                <h1 class="text-white fw-bold mt-2 mb-3"><%= product.name %></h1>
+                <span class="section-badge"><%= product.category_name || 'General' %></span>
+                <h1 class="display-5 text-white fw-bold mt-3 mb-3"><%= product.name %></h1>
 
-                <div class="d-flex align-items-center mb-3">
-                    <% if (product.rating) { %>
-                    <div class="text-warning me-2">
+                <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+                    <% if (avgRating > 0) { %>
+                    <div class="text-warning">
+                        <% for (let i = 1; i <= 5; i++) { %>
+                            <i class="fa-<%= i <= Math.round(avgRating) ? 'solid' : 'regular' %> fa-star"></i>
+                        <% } %>
+                    </div>
+                    <small class="text-white-50">(<%= avgRating.toFixed(1) %> / 5 - <%= reviewCount %> reviews)</small>
+                    <% } else if (product.rating) { %>
+                    <div class="text-warning">
                         <% for (let i = 1; i <= 5; i++) { %>
                             <i class="fa-<%= i <= Math.round(product.rating) ? 'solid' : 'regular' %> fa-star"></i>
                         <% } %>
                     </div>
-                    <small class="text-muted">(<%= product.rating %> / 5)</small>
+                    <small class="text-white-50">(<%= product.rating %> / 5)</small>
                     <% } %>
                     <% if (product.total_sales) { %>
-                    <small class="text-muted ms-3"><i class="fa-solid fa-fire me-1"></i><%= product.total_sales %> sold</small>
+                    <small class="text-white-50 ms-2"><i class="fa-solid fa-fire text-primary me-1"></i><%= product.total_sales %> sold</small>
                     <% } %>
                 </div>
 
                 <div class="mb-4">
                     <% if (product.discount_price && product.discount_price < product.price) { %>
                         <span class="display-6 text-primary fw-bold"><%= formatCurrency(product.discount_price) %></span>
-                        <span class="text-muted text-decoration-line-through fs-5 ms-2"><%= formatCurrency(product.price) %></span>
-                        <span class="badge bg-danger ms-2">Save <%= formatCurrency(product.price - product.discount_price) %></span>
+                        <span class="text-white-50 text-decoration-line-through fs-5 ms-2"><%= formatCurrency(product.price) %></span>
+                        <span class="badge bg-danger ms-2 fs-6">Save <%= formatCurrency(product.price - product.discount_price) %></span>
                     <% } else { %>
                         <span class="display-6 text-primary fw-bold"><%= formatCurrency(product.price) %></span>
                     <% } %>
                 </div>
 
-                <div class="mb-4">
-                    <% if (product.stock_quantity > 0) { %>
-                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i> In Stock (<%= product.stock_quantity %> available)</span>
+                <div class="mb-4 d-flex gap-2">
+                    <% if (product.stock_quantity > 5) { %>
+                        <span class="badge bg-success fs-6"><i class="fa-solid fa-check me-1"></i> In Stock</span>
+                    <% } else if (product.stock_quantity > 0) { %>
+                        <span class="badge bg-warning text-dark fs-6"><i class="fa-solid fa-bolt me-1"></i> Only <%= product.stock_quantity %> left in stock!</span>
                     <% } else { %>
-                        <span class="badge bg-danger"><i class="fa-solid fa-times me-1"></i> Out of Stock</span>
+                        <span class="badge bg-danger fs-6"><i class="fa-solid fa-xmark me-1"></i> Out of Stock</span>
                     <% } %>
                 </div>
 
                 <div class="mb-4">
-                    <h6 class="text-white fw-bold">Description</h6>
-                    <p class="text-muted"><%= product.description || 'No description available.' %></p>
+                    <h6 class="text-white fw-bold mb-2">Description</h6>
+                    <p class="text-white-50"><%= product.description || 'No description available.' %></p>
                 </div>
 
                 <% if (product.sku) { %>
                 <div class="mb-3">
-                    <small class="text-muted">SKU: <span class="text-secondary"><%= product.sku %></span></small>
+                    <small class="text-white-50">SKU: <span class="text-secondary"><%= product.sku %></span></small>
                 </div>
                 <% } %>
 
-                <% if (product.stock_quantity > 0) { %>
-                <form method="POST" action="/cart/add" class="d-flex align-items-center gap-3 mb-4">
-                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                    <input type="hidden" name="product_id" value="<%= product.id %>">
-                    <div class="input-group" style="width:140px;">
-                        <span class="input-group-text"><i class="fa-solid fa-cubes"></i></span>
-                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="<%= product.stock_quantity %>">
-                    </div>
-                    <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-cart-plus me-2"></i>Add to Cart</button>
-                </form>
-                <% } %>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <% if (product.stock_quantity > 0) { %>
+                    <form method="POST" action="/cart/add" class="d-flex align-items-center gap-3 flex-grow-1">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <input type="hidden" name="product_id" value="<%= product.id %>">
+                        <div class="input-group" style="width:140px;">
+                            <span class="input-group-text border-0"><i class="fa-solid fa-cubes"></i></span>
+                            <input type="number" name="quantity" class="form-control" value="1" min="1" max="<%= product.stock_quantity %>">
+                        </div>
+                        <button type="submit" class="btn btn-premium-primary rounded-pill px-4 btn-lg"><i class="fa-solid fa-cart-plus me-2"></i>Add to Cart</button>
+                    </form>
+                    <% } %>
+                    <% if (user) { %>
+                    <form method="POST" action="/dashboard/wishlist/<%= isWishlisted ? 'remove' : 'add' %>" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <input type="hidden" name="product_id" value="<%= product.id %>">
+                        <button type="submit" class="btn btn-sm rounded-pill px-3 py-2 <%= isWishlisted ? 'btn-danger' : 'btn-outline-danger' %>" title="<%= isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist' %>">
+                            <i class="fa-solid fa-heart me-1"></i><%= isWishlisted ? 'Saved' : 'Save' %>
+                        </button>
+                    </form>
+                    <% } %>
+                </div>
 
-                <% if (product.technician_first_name) { %>
-                <div class="glass-card no-lift p-3 mt-4">
+                <div class="glass-card p-3">
                     <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
-                            <i class="fa-solid fa-user text-white"></i>
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width:48px;height:48px;">
+                            <i class="fa-solid fa-store text-white"></i>
                         </div>
                         <div class="ms-3">
-                            <small class="text-muted">Listed by</small>
-                            <h6 class="text-white mb-0"><%= product.technician_first_name %> <%= product.technician_last_name %></h6>
+                            <h6 class="text-white mb-1">Sold & Shipped by <span class="text-primary">TechBridge</span></h6>
+                            <small class="text-white-50">Trusted enterprise hardware provider</small>
                         </div>
                     </div>
                 </div>
-                <% } %>
             </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mt-5 pt-5 border-top border-secondary border-opacity-25">
+            <div class="d-flex align-items-center mb-4">
+                <i class="fa-solid fa-star text-warning me-2 fs-4"></i>
+                <h4 class="text-white fw-bold mb-0">Customer Reviews (<%= reviewCount %>)</h4>
+            </div>
+
+            <% if (user) { %>
+            <div class="glass-card p-4 mb-4">
+                <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-pen me-2 text-primary"></i>Write a Review</h6>
+                <form method="POST" action="/reviews/product/<%= product.id %>" id="reviewForm">
+                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small text-uppercase tracking-widest">Rating</label>
+                        <div class="review-stars" id="reviewStars" role="radiogroup" aria-label="Rating">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                            <button type="button" class="review-star" data-rating="<%= i %>" role="radio" aria-checked="false" aria-label="<%= i %> star<%= i > 1 ? 's' : '' %>">
+                                <i class="fa-solid fa-star"></i>
+                            </button>
+                            <% } %>
+                        </div>
+                        <small class="review-hint text-white-50" id="reviewHint"></small>
+                        <input type="hidden" name="rating" id="ratingValue" value="5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small text-uppercase tracking-widest">Comment <span class="text-white-50">(optional)</span></label>
+                        <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience with this product..."></textarea>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-paper-plane me-2"></i>Submit Review</button>
+                    </div>
+                </form>
+            </div>
+            <% } else { %>
+            <div class="glass-card p-4 mb-4 text-center">
+                <p class="text-white-50 mb-0"><a href="/auth/login" class="text-primary fw-bold">Login</a> to write a review and share your experience.</p>
+            </div>
+            <% } %>
+
+            <% if (reviews && reviews.length > 0) { %>
+            <div class="row g-3">
+                <% reviews.forEach(review => { %>
+                <div class="col-12">
+                    <div class="glass-card p-4 review-card">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width:42px;height:42px;">
+                                <% if (review.avatar) { %>
+                                <img src="<%= imageUrl(review.avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:42px;height:42px;object-fit:cover;">
+                                <% } else { %>
+                                <i class="fa-solid fa-user text-white"></i>
+                                <% } %>
+                            </div>
+                            <div>
+                                <h6 class="text-white mb-0"><%= formatDisplayName(review.first_name, review.last_name) %></h6>
+                                <small class="text-white-50"><%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %></small>
+                            </div>
+                            <div class="ms-auto review-stars">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                <span class="review-star<%= i <= review.rating ? ' active' : '' %>"><i class="fa-solid fa-star"></i></span>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% if (review.comment) { %>
+                        <p class="text-white-50 mb-0 ms-5 ps-3"><%= review.comment %></p>
+                        <% } %>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <% } else { %>
+            <div class="glass-card p-5 text-center">
+                <i class="fa-regular fa-comments fa-4x mb-3 text-white-50"></i>
+                <p class="text-white-50 mb-0 fs-5">No reviews yet. Be the first to review this product!</p>
+            </div>
+            <% } %>
         </div>
         <% } else { %>
         <div class="empty-state">
-            <i class="fa-solid fa-exclamation-triangle fa-4x mb-3"></i>
+            <i class="fa-solid fa-exclamation-triangle fa-4x mb-4"></i>
             <h4 class="text-white fw-bold">Product Not Found</h4>
-            <p class="text-muted">The product you're looking for doesn't exist or has been removed.</p>
-            <a href="/shop" class="btn btn-premium-primary rounded-pill">Back to Shop</a>
+            <p class="text-white-50">The product you're looking for doesn't exist or has been removed.</p>
+            <a href="/shop" class="btn btn-premium-primary rounded-pill px-5">Back to Shop</a>
         </div>
         <% } %>
     </div>
 </section>
+
+<script>
+(function() {
+    const container = document.getElementById('reviewStars');
+    if (!container) return;
+
+    const stars = Array.from(container.querySelectorAll('.review-star'));
+    const input = document.getElementById('ratingValue');
+    const form = document.getElementById('reviewForm');
+    const hint = document.getElementById('reviewHint');
+    let selected = 5;
+    let hovered = -1;
+
+    function render() {
+        stars.forEach((btn, i) => {
+            const active = hovered >= 0 ? i <= hovered : i < selected;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-checked', active ? 'true' : 'false');
+        });
+        input.value = selected;
+    }
+
+    stars.forEach((btn, i) => {
+        btn.addEventListener('mouseenter', () => {
+            hovered = i;
+            render();
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            hovered = -1;
+            render();
+        });
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            selected = i + 1;
+            render();
+        });
+
+        btn.addEventListener('focus', () => {
+            hovered = i;
+            render();
+        });
+
+        btn.addEventListener('blur', () => {
+            hovered = -1;
+            render();
+        });
+    });
+
+    form.addEventListener('submit', (e) => {
+        if (selected < 1 || selected > 5) {
+            e.preventDefault();
+            hint.textContent = 'Please select a rating between 1 and 5.';
+            return;
+        }
+        hint.textContent = '';
+    });
+
+    render();
+})();
+</script>
 
 <%- include('../partials/footer') %>

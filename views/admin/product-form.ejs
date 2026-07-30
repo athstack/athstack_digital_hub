@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pencil' : 'plus-circle' %> me-2 text-primary"></i>
+                    <%= editing ? 'Edit Product' : 'Add New Product' %>
+                </h2>
+
+                <div class="glass-card no-lift p-5">
+                    <form method="POST" action="<%= editing ? '/admin/products/edit/' + product.id : '/admin/products/new' %>" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <% if (editing && product) { %>
+                        <input type="hidden" name="existing_image" value="<%= product.main_image || '' %>">
+                        <% } %>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Product Name *</label>
+                                <input type="text" name="name" class="form-control" required placeholder="e.g. Dell XPS 15 Laptop" value="<%= editing && product ? product.name : '' %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">SKU</label>
+                                <input type="text" name="sku" class="form-control" placeholder="e.g. DELL-XPS-15" value="<%= editing && product ? (product.sku || '') : '' %>">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="4" placeholder="Product description..."><%= editing && product ? (product.description || '') : '' %></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Price ($) *</label>
+                                <input type="number" name="price" class="form-control" required min="0" step="0.01" placeholder="0.00" value="<%= editing && product ? product.price : '' %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Discount Price ($)</label>
+                                <input type="number" name="discount_price" class="form-control" min="0" step="0.01" placeholder="0.00" value="<%= editing && product ? (product.discount_price || '') : '' %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Stock Quantity</label>
+                                <input type="number" name="stock_quantity" class="form-control" min="0" value="<%= editing && product ? (product.stock_quantity || 0) : '0' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Category *</label>
+                                <select name="category_id" class="form-select" required>
+                                    <option value="">Select category...</option>
+                                    <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
+                                    <option value="<%= cat.id %>" <%= editing && product && product.category_id == cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                                    <% }) } %>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <%- include('../partials/fileUpload', {
+                                    name: 'product_image',
+                                    label: editing ? 'New Image (optional)' : 'Product Image',
+                                    hint: 'PNG, JPG, WEBP up to 5MB',
+                                    accept: 'image/*',
+                                    currentImage: editing && product ? product.main_image : null,
+                                    currentFolder: 'products'
+                                }) %>
+                            </div>
+                            <div class="col-12">
+                                <%- include('../partials/fileUpload', {
+                                    name: 'gallery_images',
+                                    label: 'Gallery Images (optional, max 8)',
+                                    hint: 'Select additional product images. Hold Ctrl/Cmd to select multiple.',
+                                    accept: 'image/*',
+                                    multiple: true
+                                }) %>
+                                <% if (editing && typeof gallery !== 'undefined' && gallery && gallery.length > 0) { %>
+                                <div class="file-upload-gallery">
+                                    <% gallery.forEach(img => { %>
+                                    <div class="file-upload-gallery-item">
+                                        <img src="<%= imageUrl(img.image_path, 'products') %>" alt="Gallery">
+                                    </div>
+                                    <% }) %>
+                                </div>
+                                <% } %>
+                            </div>
+                            <div class="col-12 text-center mt-3">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i><%= editing ? 'Update Product' : 'Create Product' %></button>
+                                <a href="/admin/products" class="btn btn-premium-outline rounded-pill px-4 ms-2">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

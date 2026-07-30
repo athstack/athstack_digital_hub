@@ -1,5 +1,6 @@
 const ProductModel = require('../models/ProductModel');
 const OrderModel = require('../models/OrderModel');
+const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
 const { formatCurrency } = require('../utils/helpers');
 
@@ -27,7 +28,7 @@ exports.getCart = async (req, res, next) => {
     }
 
     res.render('cart/index', {
-      title: 'Your Shopping Cart - Athstack',
+      title: 'Your Shopping Cart - TechBridge Digital Hub',
       cart: req.session.cart || {},
       cartItems,
       cartTotal,
@@ -150,6 +151,20 @@ exports.checkout = async (req, res, next) => {
     });
 
     req.session.cart = {};
+
+    await NotificationModel.create(req.session.userId, {
+      title: 'Order Placed',
+      message: `Your order #${order.id} for ${formatCurrency(totalAmount)} has been placed successfully.`,
+      type: 'order',
+      link: `/dashboard/orders/${order.id}`
+    });
+
+    NotificationModel.notifyAdmins({
+      title: 'New Order Received',
+      message: `Order #${order.id} for ${formatCurrency(totalAmount)} needs processing.`,
+      type: 'order',
+      link: '/admin/orders'
+    }).catch(() => {});
 
     req.flash('success', `Order #${order.id} placed successfully!`);
     res.redirect('/dashboard/orders');

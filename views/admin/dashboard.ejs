@@ -1,6 +1,6 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
         <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
@@ -15,35 +15,38 @@
             </div>
 
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Admin Control Matrix</h2>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Admin</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Admin Control Matrix</h2>
+                </div>
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-dollar-sign fa-2x text-success mb-2"></i>
                             <h4 class="text-white fw-bold mb-0"><%= formatCurrency(metrics.revenue) %></h4>
-                            <p class="text-muted small mb-0">Revenue</p>
+                            <p class="text-white-50 small mb-0">Revenue</p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.total_clients %></h3>
-                            <p class="text-muted small mb-0">Customers</p>
+                            <p class="text-white-50 small mb-0">Customers</p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-box-open fa-2x text-info mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.total_products %></h3>
-                            <p class="text-muted small mb-0">Products</p>
+                            <p class="text-white-50 small mb-0">Products</p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-wrench fa-2x text-warning mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.pending_bookings %></h3>
-                            <p class="text-muted small mb-0">Pending Repairs</p>
+                            <p class="text-white-50 small mb-0">Pending Repairs</p>
                         </div>
                     </div>
                 </div>
@@ -51,20 +54,26 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-muted">Total Orders</small>
+                            <small class="text-white-50">Total Orders</small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.total_orders %></h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-muted">Pending Orders</small>
+                            <small class="text-white-50">Pending Orders</small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.pending_orders %></h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-muted">Unread Messages</small>
+                            <small class="text-white-50">Unread Messages</small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.unread_messages %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50">Pending Reviews</small>
+                            <h5 class="text-warning fw-bold mb-0"><%= metrics.pending_reviews %></h5>
                         </div>
                     </div>
                 </div>
@@ -78,13 +87,13 @@
                             </div>
                             <% if (recentBookings && recentBookings.length > 0) { %>
                             <div class="table-responsive">
-                                <table class="table table-dark table-sm align-middle mb-0">
+                                <table class="table table-dark table-sm align-middle mb-0 premium-table">
                                     <thead><tr><th>Ref</th><th>Customer</th><th>Status</th></tr></thead>
                                     <tbody>
                                         <% recentBookings.forEach(b => { %>
                                         <tr>
                                             <td class="text-white"><%= b.reference_number || 'N/A' %></td>
-                                            <td class="text-muted"><%= b.customer_name %></td>
+                                            <td class="text-white-50"><%= b.customer_name %></td>
                                             <td><span class="badge <%= b.status === 'completed' ? 'bg-success' : (b.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary') %>"><%= b.status %></span></td>
                                         </tr>
                                         <% }) %>
@@ -92,7 +101,7 @@
                                 </table>
                             </div>
                             <% } else { %>
-                            <p class="text-muted text-center mb-0">No recent repairs.</p>
+                            <p class="text-white-50 text-center mb-0">No recent repairs.</p>
                             <% } %>
                         </div>
                     </div>
@@ -100,18 +109,18 @@
                     <div class="col-lg-6">
                         <div class="glass-card p-4 h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-box-shopping me-2 text-info"></i>Recent Orders</h5>
+                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-receipt me-2 text-info"></i>Recent Orders</h5>
                                 <a href="/admin/orders" class="btn btn-premium-outline btn-sm rounded-pill">View All</a>
                             </div>
                             <% if (recentOrders && recentOrders.length > 0) { %>
                             <div class="table-responsive">
-                                <table class="table table-dark table-sm align-middle mb-0">
+                                <table class="table table-dark table-sm align-middle mb-0 premium-table">
                                     <thead><tr><th>Order</th><th>Customer</th><th>Amount</th></tr></thead>
                                     <tbody>
                                         <% recentOrders.forEach(o => { %>
                                         <tr>
                                             <td class="text-white">#<%= o.id %></td>
-                                            <td class="text-muted"><%= o.first_name %> <%= o.last_name %></td>
+                                            <td class="text-white-50"><%= formatDisplayName(o.first_name, o.last_name) %></td>
                                             <td class="text-primary fw-bold"><%= formatCurrency(o.total_amount) %></td>
                                         </tr>
                                         <% }) %>
@@ -119,7 +128,7 @@
                                 </table>
                             </div>
                             <% } else { %>
-                            <p class="text-muted text-center mb-0">No recent orders.</p>
+                            <p class="text-white-50 text-center mb-0">No recent orders.</p>
                             <% } %>
                         </div>
                     </div>

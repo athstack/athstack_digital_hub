@@ -1,4 +1,5 @@
 const ServiceModel = require('../models/ServiceModel');
+const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
 const { formatCurrency } = require('../utils/helpers');
 
@@ -8,12 +9,22 @@ exports.getMaintenance = async (req, res, next) => {
     const phoneServices = await ServiceModel.getByCategory('phone');
     const services = [...computerServices, ...phoneServices];
 
+    let user = null;
+    if (req.session.userId) {
+      const [rows] = await pool.execute(
+        'SELECT first_name, last_name, email, phone, country FROM users WHERE id = ?',
+        [req.session.userId]
+      );
+      if (rows.length > 0) user = rows[0];
+    }
+
     res.render('maintenance/index', {
-      title: 'Enterprise IT Maintenance & Device Repair - Athstack',
+      title: 'Enterprise IT Maintenance & Device Repair - TechBridge Digital Hub',
       computerServices,
       phoneServices,
       services,
-      formatCurrency
+      formatCurrency,
+      user
     });
   } catch (err) {
     next(err);
@@ -22,7 +33,7 @@ exports.getMaintenance = async (req, res, next) => {
 
 exports.bookRepair = async (req, res, next) => {
   try {
-    const { name, email, phone, appointment_date, service_id, device_details, device_type, device_brand, device_model, issue_description } = req.body;
+    const { name, email, phone, customer_country, appointment_date, service_id, device_details, device_type, device_brand, device_model, issue_description } = req.body;
 
     if (!name || !email || !phone || !appointment_date || !service_id) {
       if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
@@ -36,9 +47,9 @@ exports.bookRepair = async (req, res, next) => {
     const reference = `ATH-TK-${digits}`;
 
     const [result] = await pool.execute(
-      `INSERT INTO repair_requests (user_id, service_id, reference_number, customer_name, customer_email, customer_phone,
+      `INSERT INTO repair_requests (user_id, service_id, reference_number, customer_name, customer_email, customer_phone, customer_country,
         device_type, device_brand, device_model, issue_description, appointment_date, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
         req.session.userId || null,
         parseInt(service_id),
@@ -46,6 +57,7 @@ exports.bookRepair = async (req, res, next) => {
         name,
         email,
         phone,
+        customer_country || '',
         device_type || '',
         device_brand || '',
         device_model || '',
@@ -53,6 +65,15 @@ exports.bookRepair = async (req, res, next) => {
         appointment_date
       ]
     );
+
+    if (req.session.userId) {
+      await NotificationModel.create(req.session.userId, {
+        title: 'Repair Request Filed',
+        message: `Your repair request ${reference} has been submitted. We'll get back to you soon.`,
+        type: 'repair',
+        link: '/dashboard/repairs'
+      });
+    }
 
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
       return res.json({ success: true, message: 'Your maintenance request has been scheduled successfully.', reference });

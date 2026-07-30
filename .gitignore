@@ -13,3 +13,6 @@ public/uploads/profiles/*
 public/uploads/courses/*
 !public/uploads/**/.gitkeep
 !public/uploads/**/index.html
+
+.vercel
+.env*

@@ -15,7 +15,10 @@ function attachUser(req, res, next) {
       id: req.session.userId,
       name: req.session.userName,
       email: req.session.userEmail,
-      role: req.session.userRole
+      role: req.session.userRole,
+      avatar: req.session.userAvatar || null,
+      firstName: req.session.userFirstName || '',
+      lastName: req.session.userLastName || ''
     };
   } else {
     req.user = null;
@@ -36,23 +39,32 @@ async function refreshSessionRole(req, res, next) {
     return next();
   }
   try {
-    const user = await queryOne('SELECT role, status FROM users WHERE id = ?', [req.session.userId]);
+    const user = await queryOne('SELECT role, status, avatar FROM users WHERE id = ?', [req.session.userId]);
     if (!user) {
       req.session.destroy(() => {
         res.redirect('/auth/login');
       });
       return;
     }
-    if (user.status !== 'active') {
+    if (user.status === 'suspended') {
       req.session.destroy(() => {
-        req.flash('error', 'Your account has been suspended.');
+        req.flash('error', 'Your account has been suspended. Please contact support.');
         res.redirect('/auth/login');
       });
       return;
     }
     if (req.session.userRole !== user.role) {
       req.session.userRole = user.role;
-      if (req.user) req.user.role = user.role;
+    }
+    if (user.avatar && req.session.userAvatar !== user.avatar) {
+      req.session.userAvatar = user.avatar;
+    }
+    req.session.userStatus = user.status || 'active';
+    res.locals.userStatus = req.session.userStatus;
+    if (req.user) {
+      req.user.role = user.role;
+      req.user.status = user.status || 'active';
+      req.user.avatar = req.session.userAvatar || null;
     }
     next();
   } catch (err) {
@@ -172,6 +184,33 @@ function isGuest(req, res, next) {
   next();
 }
 
+/**
+ * Require active status for write actions
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+function isActive(req, res, next) {
+  if (req.session && req.session.userId) {
+    const status = req.session.userStatus || 'active';
+    if (status === 'inactive') {
+      req.flash('error', 'Your account is inactive. Please contact an administrator to activate your account before performing this action.');
+      return res.redirect('back');
+    }
+    if (status === 'suspended') {
+      req.session.destroy(() => {
+        req.flash('error', 'Your account has been suspended. Please contact support.');
+        res.redirect('/auth/login');
+      });
+      return;
+    }
+    return next();
+  }
+  req.session.returnTo = req.originalUrl;
+  req.flash('error', 'Please log in to continue.');
+  res.redirect('/auth/login');
+}
+
 module.exports = {
   attachUser,
   refreshSessionRole,
@@ -180,5 +219,6 @@ module.exports = {
   isTechnician,
   isAdmin,
   isTechnicianOrAdmin,
-  isGuest
+  isGuest,
+  isActive
 };

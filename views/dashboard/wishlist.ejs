@@ -1,30 +1,68 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/sidebar') %>
             </div>
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-heart me-2 text-danger"></i>Your Wishlist</h2>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Wishlist</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-heart me-2 text-danger"></i>Your Wishlist</h2>
+                </div>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
 
                 <% if (wishlist && wishlist.length > 0) { %>
                 <div class="row g-4">
                     <% wishlist.forEach(item => { %>
                     <div class="col-md-4">
-                        <div class="glass-card p-3">
-                            <h6 class="text-white fw-bold"><%= item.name %></h6>
-                             <span class="text-primary fw-bold"><%= formatCurrency(item.price) %></span>
+                        <div class="glass-card p-3 h-100 product-card d-flex flex-column">
+                            <a href="/shop/<%= item.slug %>" class="text-decoration-none">
+                                <div class="rounded bg-dark overflow-hidden mb-3" style="height:160px;">
+                                    <% if (item.main_image) { %>
+                                    <img src="<%= imageUrl(item.main_image, 'products') %>" alt="<%= item.name %>" style="width:100%;height:100%;object-fit:cover;">
+                                    <% } else { %>
+                                    <div class="d-flex align-items-center justify-content-center h-100"><i class="fa-solid fa-image fa-3x text-white-50"></i></div>
+                                    <% } %>
+                                </div>
+                            </a>
+                            <h6 class="text-white fw-bold mb-1"><a href="/shop/<%= item.slug %>" class="text-white text-decoration-none"><%= item.name %></a></h6>
+                            <% if (item.category_name) { %><small class="text-white-50"><%= item.category_name %></small><% } %>
+                            <div class="mt-auto d-flex align-items-center justify-content-between pt-2">
+                                <span class="text-primary fw-bold"><%= formatCurrency(item.discount_price && item.discount_price < item.price ? item.discount_price : item.price) %></span>
+                                <form method="POST" action="/dashboard/wishlist/remove" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                    <input type="hidden" name="product_id" value="<%= item.product_id %>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="Remove"><i class="fa-solid fa-trash-can"></i></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <% }) %>
                 </div>
+
+                <% if (pagination && pagination.totalPages > 1) { %>
+                <nav class="mt-4"><ul class="pagination justify-content-center">
+                    <% if (pagination.hasPrev) { %><li class="page-item"><a class="page-link" href="?page=<%= pagination.page - 1 %>">Prev</a></li><% } %>
+                    <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                    <li class="page-item <%= i === pagination.page ? 'active' : '' %>"><a class="page-link" href="?page=<%= i %>"><%= i %></a></li>
+                    <% } %>
+                    <% if (pagination.hasNext) { %><li class="page-item"><a class="page-link" href="?page=<%= pagination.page + 1 %>">Next</a></li><% } %>
+                </ul></nav>
+                <% } %>
+
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-heart fa-4x mb-3"></i>
                     <h4 class="text-white fw-bold">Wishlist is Empty</h4>
-                    <p class="text-muted">Save products you love by clicking the heart icon. Your wishlist will appear here.</p>
+                    <p class="text-white-50">Save products you love by clicking the heart icon. Your wishlist will appear here.</p>
                     <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
                 </div>
                 <% } %>

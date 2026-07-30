@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Reviews</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i>Your Reviews</h2>
+                </div>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <% if (reviews && reviews.length > 0) { %>
+                <% reviews.forEach(review => { %>
+                <div class="glass-card p-4 mb-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="text-warning me-3">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star"></i>
+                                <% } %>
+                            </div>
+                            <div>
+                                <% if (review.product_name) { %>
+                                <h6 class="text-white mb-0">
+                                    <a href="/shop/<%= review.product_slug || '' %>" class="text-white text-decoration-none"><%= review.product_name %></a>
+                                </h6>
+                                <% } else { %>
+                                <h6 class="text-white mb-0">General Review</h6>
+                                <% } %>
+                                <small class="text-white-50">
+                                    <%= review.type ? review.type.charAt(0).toUpperCase() + review.type.slice(1) : 'Product' %> review
+                                    - <%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %>
+                                    <% if (review.status === 'pending') { %>
+                                    <span class="badge bg-warning text-dark rounded-pill ms-2">Pending Approval</span>
+                                    <% } else if (review.status === 'approved') { %>
+                                    <span class="badge bg-success rounded-pill ms-2">Approved</span>
+                                    <% } else if (review.status === 'rejected') { %>
+                                    <span class="badge bg-danger rounded-pill ms-2">Rejected</span>
+                                    <% } %>
+                                </small>
+                            </div>
+                        </div>
+                        <form method="POST" action="/dashboard/reviews/<%= review.id %>/delete" data-confirm="Delete this review?">
+                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash-can"></i></button>
+                        </form>
+                    </div>
+                    <% if (review.comment) { %>
+                    <p class="text-white-50 mt-3 mb-0"><%= review.comment %></p>
+                    <% } %>
+                </div>
+                <% }) %>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-star fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold">No Reviews Yet</h4>
+                    <p class="text-white-50">You haven't written any reviews. Share your experience with products you've purchased!</p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -51,8 +51,21 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Product Image</label>
-                                <input type="file" name="product_image" class="form-control" accept="image/*">
+                                <%- include('../partials/fileUpload', {
+                                    name: 'product_image',
+                                    label: 'Product Image',
+                                    hint: 'PNG, JPG, WEBP up to 5MB',
+                                    accept: 'image/*'
+                                }) %>
+                            </div>
+                            <div class="col-12">
+                                <%- include('../partials/fileUpload', {
+                                    name: 'gallery_images',
+                                    label: 'Gallery Images (optional, max 8)',
+                                    hint: 'Select additional product images. Hold Ctrl/Cmd to select multiple.',
+                                    accept: 'image/*',
+                                    multiple: true
+                                }) %>
                             </div>
                             <div class="col-12 text-center mt-3">
                                 <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i>Create Product</button>

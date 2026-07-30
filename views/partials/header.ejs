@@ -1,47 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="color-scheme:dark;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title || siteName %></title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/favicon-64x64.png" sizes="64x64" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#050814">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/">
-            <span class="text-primary">ATHSTACK</span> DIGITAL
+        <a class="navbar-brand py-1 gap-1" href="/">
+            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub — Home" class="d-none d-md-block logo-full" style="height:44px;">
+            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub — Home" class="d-none d-sm-block d-md-none logo-compact" style="height:34px;">
+            <img src="/images/techbridge-icon.png" alt="TechBridge Digital Hub — Home" class="d-sm-none logo-icon" style="height:40px;">
+            <span class="d-none d-sm-inline text-white fw-bold" style="font-size:1.2rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#athstackNav">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#athstackNav" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/' ? ' active' : '' %>" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop">Shop</a></li>
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance">Maintenance</a></li>
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training">Training</a></li>
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/about' ? ' active' : '' %>" href="/about">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact">Contact</a></li>
+            <ul class="navbar-nav mx-auto nav-links-center gap-1">
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop">Shop</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance">Maintenance</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training">Training</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact">Contact</a></li>
             </ul>
-            <div class="d-flex align-items-center gap-3">
-                <div class="position-relative d-none d-md-block">
-                    <input type="text" id="globalLiveSearch" class="form-control rounded-pill" placeholder="Search tech elements...">
+            <div class="d-flex align-items-center navbar-actions gap-2">
+                <div class="position-relative d-none d-md-block search-wrapper">
+                    <i class="fa-solid fa-search search-wrapper-icon"></i>
+                    <input type="text" id="globalLiveSearch" class="form-control rounded-pill navbar-search" placeholder="Search products...">
                     <div id="searchSuggestionsBox" class="search-results-tray"></div>
                 </div>
-                <a href="/cart" class="text-white position-relative me-2">
-                    <i class="fa-solid fa-bag-shopping fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" id="cartIndicatorCount"><%= cartCount %></span>
-                </a>
-                <% if (user) { %>
-                    <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn btn-premium-primary btn-sm"><i class="fa-solid fa-user-gear me-1"></i> <%= user.name %></a>
-                <% } else { %>
-                    <a href="/auth/login" class="btn btn-premium-primary btn-sm">Login</a>
-                <% } %>
+                <div class="navbar-icons d-flex align-items-center gap-3">
+                    <a href="/cart" class="navbar-icon-link position-relative" id="cartLink">
+                        <i class="fa-solid fa-bag-shopping fs-5"></i>
+                        <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
+                    </a>
+                    <% if (user) { %>
+                        <div class="dropdown" id="notifDropdown">
+                            <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="Notifications">
+                                <i class="fa-solid fa-bell fs-5"></i>
+                                <span class="notif-badge d-none" id="notifBadge">0</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0 shadow-lg" style="width:380px;max-height:460px;overflow-y:auto;border-radius:14px;background:#0a0e21;border:1px solid rgba(255,255,255,0.06);box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+                                <div class="d-flex justify-content-between align-items-center px-3 py-3 dropdown-header-bar rounded-top" style="background:linear-gradient(135deg,#0d1b2a,#1b2838);border-bottom:1px solid rgba(255,255,255,0.06);">
+                                    <h6 class="mb-0 text-white fw-semibold" style="font-size:0.85rem;letter-spacing:0.02em;">Notifications</h6>
+                                    <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="markAllRead" style="font-size:0.75rem;">Mark all read</button>
+                                </div>
+                                <div id="notifList" class="p-0" style="background:transparent;">
+                                    <div class="text-center py-4" style="color:rgba(255,255,255,0.35);font-size:0.85rem;">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
+                            <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:30px;height:30px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
+                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= formatDisplayName(user.firstName, user.lastName) %></span>
+                        </a>
+                    <% } else { %>
+                        <a href="/auth/login" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
+                            <i class="fa-solid fa-user-circle fs-5"></i>
+                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;">Sign In</span>
+                        </a>
+                    <% } %>
+                </div>
             </div>
         </div>
     </div>
 </nav>
+
+<% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
+<div class="bg-warning bg-opacity-10 border-bottom border-warning border-2 py-2">
+    <div class="container text-center">
+        <small class="text-warning fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i>Your account is inactive. Some features are limited until activated. <a href="/contact" class="text-warning text-decoration-underline">Contact support</a></small>
+    </div>
+</div>
+<% } %>

@@ -1,6 +1,6 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -21,28 +21,31 @@
             </div>
 
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Dashboard</h2>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge">Overview</span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Dashboard</h2>
+                </div>
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="glass-card p-4 text-center">
-                            <i class="fa-solid fa-box-shopping fa-2x text-primary mb-2"></i>
+                            <i class="fa-solid fa-receipt fa-2x text-primary mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= orderCount %></h3>
-                            <p class="text-muted small mb-0">Total Orders</p>
+                            <p class="text-white-50 small mb-0">Total Orders</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-wrench fa-2x text-info mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= bookingCount %></h3>
-                            <p class="text-muted small mb-0">Repair Requests</p>
+                            <p class="text-white-50 small mb-0">Repair Requests</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-graduation-cap fa-2x text-success mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= courseCount %></h3>
-                            <p class="text-muted small mb-0">Enrolled Courses</p>
+                            <p class="text-white-50 small mb-0">Enrolled Courses</p>
                         </div>
                     </div>
                 </div>
@@ -62,7 +65,7 @@
                                 <% orders.slice(0, 5).forEach(order => { %>
                                 <tr>
                                     <td class="text-white fw-bold">#<%= order.id %></td>
-                                    <td class="text-muted"><%= order.created_at ? new Date(order.created_at).toLocaleDateString() : '' %></td>
+                                    <td class="text-white-50"><%= order.created_at ? new Date(order.created_at).toLocaleDateString() : '' %></td>
                                      <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount || 0) %></td>
                                     <td><span class="badge bg-<%= order.order_status === 'delivered' ? 'success' : (order.order_status === 'pending' ? 'warning' : 'secondary') %>"><%= order.order_status %></span></td>
                                 </tr>
@@ -72,7 +75,7 @@
                     </div>
                     <% } else { %>
                     <div class="text-center py-3">
-                        <p class="text-muted mb-0"><i class="fa-solid fa-info-circle me-1"></i>No orders yet. <a href="/shop" class="text-primary">Browse our shop</a>.</p>
+                        <p class="text-white-50 mb-0"><i class="fa-solid fa-info-circle me-1"></i>No orders yet. <a href="/shop" class="text-primary">Browse our shop</a>.</p>
                     </div>
                     <% } %>
                 </div>
@@ -86,15 +89,16 @@
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0">
                             <thead>
-                                <tr><th>Reference</th><th>Service</th><th>Date</th><th>Status</th></tr>
+                                <tr><th>Reference</th><th>Service</th><th>Date</th><th>Status</th><th>Action</th></tr>
                             </thead>
                             <tbody>
                                 <% bookings.slice(0, 5).forEach(booking => { %>
                                 <tr>
                                     <td class="text-white fw-bold"><%= booking.reference_number || 'N/A' %></td>
-                                    <td class="text-muted"><%= booking.service_title || 'General Repair' %></td>
-                                    <td class="text-muted"><%= booking.appointment_date ? new Date(booking.appointment_date).toLocaleDateString() : '' %></td>
+                                    <td class="text-white-50"><%= booking.service_title || 'General Repair' %></td>
+                                    <td class="text-white-50"><%= booking.appointment_date ? new Date(booking.appointment_date).toLocaleDateString() : '' %></td>
                                     <td><span class="badge <%= booking.status === 'completed' ? 'bg-success' : (booking.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary') %>"><%= booking.status %></span></td>
+                                    <td><a href="/dashboard/repairs/<%= booking.reference_number %>" class="btn btn-sm btn-outline-primary">View</a></td>
                                 </tr>
                                 <% }) %>
                             </tbody>
@@ -102,7 +106,7 @@
                     </div>
                     <% } else { %>
                     <div class="text-center py-3">
-                        <p class="text-muted mb-0"><i class="fa-solid fa-info-circle me-1"></i>No repair requests yet. <a href="/maintenance" class="text-primary">Book a repair</a>.</p>
+                        <p class="text-white-50 mb-0"><i class="fa-solid fa-info-circle me-1"></i>No repair requests yet. <a href="/maintenance" class="text-primary">Book a repair</a>.</p>
                     </div>
                     <% } %>
                 </div>
@@ -118,14 +122,14 @@
                         <div class="col-md-4">
                             <div class="glass-card no-lift p-3">
                                 <h6 class="text-white fw-bold mb-1"><%= course.course_title || course.title %></h6>
-                                <small class="text-muted"><%= course.course_level || course.level || 'Beginner' %></small>
+                                <small class="text-white-50"><%= course.course_level || course.level || 'Beginner' %></small>
                             </div>
                         </div>
                         <% }) %>
                     </div>
                     <% } else { %>
                     <div class="text-center py-3">
-                        <p class="text-muted mb-0"><i class="fa-solid fa-info-circle me-1"></i>No courses enrolled. <a href="/training" class="text-primary">Explore courses</a>.</p>
+                        <p class="text-white-50 mb-0"><i class="fa-solid fa-info-circle me-1"></i>No courses enrolled. <a href="/training" class="text-primary">Explore courses</a>.</p>
                     </div>
                     <% } %>
                 </div>

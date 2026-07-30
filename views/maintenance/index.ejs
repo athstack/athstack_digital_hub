@@ -1,22 +1,22 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="text-primary fw-bold text-uppercase tracking-widest small">Device Repair & IT Maintenance</span>
-            <h1 class="text-white fw-bold mt-2">Enterprise Maintenance Services</h1>
-            <p class="text-muted">Professional diagnostics, repair, and IT maintenance for computers and mobile devices.</p>
+            <span class="section-badge"><i class="fa-solid fa-screwdriver-wrench me-2"></i>Device Repair & IT Maintenance</span>
+            <h1 class="display-4 text-white fw-bold mt-3">Enterprise Maintenance Services</h1>
+            <p class="text-white-50 fs-5">Professional diagnostics, repair, and IT maintenance for computers and mobile devices.</p>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= flashSuccess %>
+        <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
         <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <%= flashError %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+            <i class="fa-solid fa-exclamation-triangle me-2"></i><%= flashError %>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <% } %>
@@ -25,26 +25,38 @@
             <div class="col-lg-6">
                 <div class="glass-card p-4 h-100">
                     <div class="d-flex align-items-center mb-4">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:60px;height:60px;">
                             <i class="fa-solid fa-desktop fa-2x text-primary"></i>
                         </div>
-                        <h3 class="text-white fw-bold mb-0">Computer Services</h3>
+                        <div class="ms-3">
+                            <h3 class="text-white fw-bold mb-1">Computer Services</h3>
+                            <small class="text-white-50">Desktop & laptop repair solutions</small>
+                        </div>
                     </div>
                     <div class="row g-3">
                         <% if (computerServices && computerServices.length > 0) { %>
                             <% computerServices.forEach(service => { %>
                             <div class="col-sm-6">
-                                <div class="glass-card no-lift p-3 h-100">
-                                    <i class="<%= service.icon_class || 'fa-solid fa-tools' %> text-primary mb-2"></i>
-                                    <h6 class="text-white fw-bold mb-1"><%= service.title %></h6>
-                                    <p class="text-muted small mb-2"><%= service.description || 'Professional service' %></p>
-                                     <span class="text-primary fw-bold small"><%= formatCurrency(service.base_price || 0) %></span>
+                                <div class="glass-card p-3 h-100 service-card" data-service-id="<%= service.id %>" data-service-name="<%= service.title %>" data-service-price="<%= service.base_price || 0 %>">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-white fw-bold mb-0"><%= service.title %></h6>
+                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || 'Professional service' %></p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mt-2 pt-2" style="border-top:1px solid rgba(255,255,255,0.06);">
+                                        <span class="text-primary fw-bold"><%= formatCurrency(service.base_price || 0) %></span>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-book-now" type="button">
+                                            Book Now <i class="fa-solid fa-arrow-right ms-1"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <% }) %>
                         <% } else { %>
-                        <div class="col-12 text-center py-3">
-                            <p class="text-muted">Computer services are being configured. Check back soon.</p>
+                        <div class="col-12 text-center py-4">
+                            <i class="fa-solid fa-tools fa-3x text-white-50 mb-3"></i>
+                            <p class="text-white-50">Computer services are being configured. Check back soon.</p>
                         </div>
                         <% } %>
                     </div>
@@ -54,26 +66,38 @@
             <div class="col-lg-6">
                 <div class="glass-card p-4 h-100">
                     <div class="d-flex align-items-center mb-4">
-                        <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">
+                        <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:60px;height:60px;">
                             <i class="fa-solid fa-mobile-screen-button fa-2x text-info"></i>
                         </div>
-                        <h3 class="text-white fw-bold mb-0">Phone Services</h3>
+                        <div class="ms-3">
+                            <h3 class="text-white fw-bold mb-1">Phone Services</h3>
+                            <small class="text-white-50">Mobile device repair & diagnostics</small>
+                        </div>
                     </div>
                     <div class="row g-3">
                         <% if (phoneServices && phoneServices.length > 0) { %>
                             <% phoneServices.forEach(service => { %>
                             <div class="col-sm-6">
-                                <div class="glass-card no-lift p-3 h-100">
-                                    <i class="<%= service.icon_class || 'fa-solid fa-tools' %> text-info mb-2"></i>
-                                    <h6 class="text-white fw-bold mb-1"><%= service.title %></h6>
-                                    <p class="text-muted small mb-2"><%= service.description || 'Professional service' %></p>
-                                     <span class="text-primary fw-bold small"><%= formatCurrency(service.base_price || 0) %></span>
+                                <div class="glass-card p-3 h-100 service-card" data-service-id="<%= service.id %>" data-service-name="<%= service.title %>" data-service-price="<%= service.base_price || 0 %>">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <div class="flex-grow-1">
+                                            <h6 class="text-white fw-bold mb-0"><%= service.title %></h6>
+                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || 'Professional service' %></p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mt-2 pt-2" style="border-top:1px solid rgba(255,255,255,0.06);">
+                                        <span class="text-primary fw-bold"><%= formatCurrency(service.base_price || 0) %></span>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-book-now" type="button">
+                                            Book Now <i class="fa-solid fa-arrow-right ms-1"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <% }) %>
                         <% } else { %>
-                        <div class="col-12 text-center py-3">
-                            <p class="text-muted">Phone services are being configured. Check back soon.</p>
+                        <div class="col-12 text-center py-4">
+                            <i class="fa-solid fa-mobile-screen-button fa-3x text-white-50 mb-3"></i>
+                            <p class="text-white-50">Phone services are being configured. Check back soon.</p>
                         </div>
                         <% } %>
                     </div>
@@ -83,29 +107,65 @@
 
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="glass-card no-lift p-5">
-                    <h3 class="text-white fw-bold mb-4 text-center"><i class="fa-solid fa-calendar-check me-2 text-primary"></i>Book a Repair</h3>
+                <div class="glass-card p-5">
+                    <div class="text-center mb-4">
+                        <i class="fa-solid fa-calendar-check text-primary fa-3x mb-3"></i>
+                        <h3 class="text-white fw-bold">Book a Repair</h3>
+                        <p class="text-white-50">Fill out the form below and our team will get back to you within 24 hours.</p>
+                    </div>
                     <form method="POST" action="/maintenance/book">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <div class="row g-3">
+                        <input type="hidden" name="selected_services" id="selectedServicesInput" value="">
+                        <% if (user) { %>
+                        <input type="hidden" id="userFullName" value="<%= user.first_name + ' ' + user.last_name %>">
+                        <input type="hidden" id="userEmail" value="<%= user.email %>">
+                        <input type="hidden" id="userPhone" value="<%= user.phone || '' %>">
+                        <input type="hidden" id="userCountry" value="<%= user.country || '' %>">
+                        <% } %>
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label">Full Name *</label>
-                                <input type="text" name="name" class="form-control" required placeholder="John Doe">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Full Name <span class="text-primary">*</span></label>
+                                <input type="text" name="name" id="userName" class="form-control" required placeholder="Version John">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email Address *</label>
-                                <input type="email" name="email" class="form-control" required placeholder="john@example.com">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Email Address <span class="text-primary">*</span></label>
+                                <input type="email" name="email" id="userEmail" class="form-control" required placeholder="john@example.com">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone Number *</label>
-                                <input type="tel" name="phone" class="form-control" required placeholder="+255 7XX XXX XXX">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Phone Number <span class="text-primary">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="phoneCode" class="form-control" value="+255" readonly style="max-width:90px;text-align:center;font-weight:600;border-right:none;border-radius:var(--radius-md) 0 0 var(--radius-md);background:var(--bg-elevated) !important;color:var(--text-main) !important;">
+                                    <input type="tel" name="phone" id="phoneInput" class="form-control" required placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Appointment Date *</label>
-                                <input type="date" name="appointment_date" class="form-control" required>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Country <span class="text-primary">*</span></label>
+                                <select name="customer_country" id="countrySelect" class="form-select" required>
+                                    <option value="">Select your country</option>
+                                    <option value="NG" data-code="+234" data-placeholder="801 234 5678">Nigeria</option>
+                                    <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX">Tanzania</option>
+                                    <option value="KE" data-code="+254" data-placeholder="7XX XXX XXX">Kenya</option>
+                                    <option value="UG" data-code="+256" data-placeholder="7XX XXX XXX">Uganda</option>
+                                    <option value="ZA" data-code="+27" data-placeholder="8X XXX XXXX">South Africa</option>
+                                    <option value="GH" data-code="+233" data-placeholder="2X XXX XXXX">Ghana</option>
+                                    <option value="EG" data-code="+20" data-placeholder="1X XXX XXXX">Egypt</option>
+                                    <option value="RW" data-code="+250" data-placeholder="7XX XXX XXX">Rwanda</option>
+                                    <option value="ET" data-code="+251" data-placeholder="9XX XXX XXXX">Ethiopia</option>
+                                    <option value="CD" data-code="+243" data-placeholder="8X XXX XXXX">DR Congo</option>
+                                    <option value="CM" data-code="+237" data-placeholder="6XX XXX XXX">Cameroon</option>
+                                    <option value="SN" data-code="+221" data-placeholder="7X XXX XX XX">Senegal</option>
+                                    <option value="US" data-code="+1" data-placeholder="(XXX) XXX-XXXX">United States</option>
+                                    <option value="GB" data-code="+44" data-placeholder="7XXX XXXXXX">United Kingdom</option>
+                                    <option value="IN" data-code="+91" data-placeholder="XXXXX XXXXX">India</option>
+                                    <option value="CN" data-code="+86" data-placeholder="1XX XXXX XXXX">China</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Service Type *</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Appointment Date <span class="text-primary">*</span></label>
+                                <input type="date" name="appointment_date" id="appointmentDate" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Service Type <span class="text-primary">*</span></label>
                                 <select name="service_id" class="form-select" required>
                                     <option value="">Select a service...</option>
                                     <% if (services && services.length > 0) { %>
@@ -116,7 +176,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Device Type</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Type</label>
                                 <select name="device_type" class="form-select">
                                     <option value="laptop">Laptop</option>
                                     <option value="desktop">Desktop</option>
@@ -127,16 +187,16 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Device Brand</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Brand</label>
                                 <input type="text" name="device_brand" class="form-control" placeholder="e.g. Apple, Dell, Samsung">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Device Model</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Model</label>
                                 <input type="text" name="device_model" class="form-control" placeholder="e.g. MacBook Pro 14">
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Issue Description</label>
-                                <textarea name="issue_description" class="form-control" rows="4" placeholder="Describe the issue you're experiencing..."></textarea>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Issue Description</label>
+                                <textarea name="issue_description" class="form-control" rows="4" placeholder="Describe what is wrong with your device (e.g., screen won't turn on, unexpected shut downs, water spill...)"></textarea>
                             </div>
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-premium-primary btn-lg rounded-pill px-5"><i class="fa-solid fa-paper-plane me-2"></i>Submit Repair Request</button>
@@ -149,4 +209,218 @@
     </div>
 </section>
 
+<div id="selectionStickyBar" class="selection-sticky-bar">
+    <div class="bar-count" id="selectedCount">0 services selected</div>
+    <div class="bar-actions">
+        <button id="proceedBookingBtn" class="btn btn-premium-primary rounded-pill px-3" type="button" style="font-size:0.85rem;">
+            Proceed to Booking <i class="fa-solid fa-arrow-right ms-1"></i>
+        </button>
+        <button id="clearSelectionBtn" class="btn btn-sm btn-outline-light rounded-pill" type="button" style="font-size:0.8rem;">Clear</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+var selectedCardIds = [];
+
+function getSelected() {
+    return document.querySelectorAll('.service-card.selected');
+}
+
+function updateStickyBar() {
+    var bar = document.getElementById('selectionStickyBar');
+    var count = document.getElementById('selectedCount');
+    var selected = getSelected();
+    if (selected.length > 0) {
+        bar.classList.add('visible');
+        count.textContent = selected.length + ' service' + (selected.length > 1 ? 's' : '') + ' selected';
+        selectedCardIds = Array.from(selected).map(function(c) { return c.dataset.serviceId; });
+    } else {
+        bar.classList.remove('visible');
+        selectedCardIds = [];
+    }
+}
+
+function toggleCard(card) {
+    card.classList.toggle('selected');
+    updateStickyBar();
+}
+
+function fillUserData() {
+    var name = document.getElementById('userFullName');
+    var email = document.getElementById('userEmail');
+    if (name && name.value) document.querySelector('input[name="name"]').value = name.value;
+    if (email && email.value) document.querySelector('input[name="email"]').value = email.value;
+    var phone = document.getElementById('userPhone');
+    if (phone && phone.value && document.getElementById('phoneInput')) document.getElementById('phoneInput').value = phone.value;
+    var country = document.getElementById('userCountry');
+    if (country && country.value) {
+        var tsEl = document.querySelector('#countrySelect');
+        if (tsEl && tsEl.tomselect) tsEl.tomselect.addItem(country.value);
+    }
+}
+
+function proceedToBooking(serviceId) {
+    if (serviceId) {
+        var card = document.querySelector('.service-card[data-service-id="' + serviceId + '"]');
+        if (card && !card.classList.contains('selected')) {
+            toggleCard(card);
+        }
+    }
+
+    var ids = selectedCardIds.slice();
+    if (ids.length === 0) return;
+
+    fillUserData();
+
+    document.getElementById('selectedServicesInput').value = ids.join(',');
+
+    var select = document.querySelector('select[name="service_id"]');
+    if (select && ids.length > 0) {
+        select.value = ids[0];
+        select.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+
+    var submitBtn = document.querySelector('form[action="/maintenance/book"] button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.scrollIntoView({behavior: 'smooth', block: 'center'});
+        setTimeout(function() { submitBtn.focus(); }, 400);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Card selection toggle ---
+    document.querySelectorAll('.service-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-book-now')) return;
+            toggleCard(this);
+        });
+    });
+
+    // --- Book Now button ---
+    document.querySelectorAll('.btn-book-now').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var card = this.closest('.service-card');
+            if (!card.classList.contains('selected')) {
+                toggleCard(card);
+            }
+            proceedToBooking(card.dataset.serviceId);
+        });
+    });
+
+    // --- Proceed to Booking (sticky bar) ---
+    document.getElementById('proceedBookingBtn').addEventListener('click', function() {
+        proceedToBooking();
+    });
+
+    // --- Clear selection ---
+    document.getElementById('clearSelectionBtn').addEventListener('click', function() {
+        document.querySelectorAll('.service-card.selected').forEach(function(c) {
+            c.classList.remove('selected');
+        });
+        updateStickyBar();
+    });
+
+    // --- Auto-hide sticky bar when form is visible ---
+    var formSection = document.querySelector('form[action="/maintenance/book"]');
+    var stickyBar = document.getElementById('selectionStickyBar');
+    if (formSection && stickyBar && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting && stickyBar.classList.contains('visible')) {
+                    stickyBar.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        observer.observe(formSection);
+    }
+
+    // --- Form validation ---
+    var form = document.querySelector('form[action="/maintenance/book"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            var valid = true;
+            var requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(function(field) {
+                if (!field.value || field.value.trim() === '') {
+                    field.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            if (!valid) {
+                e.preventDefault();
+                var firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({behavior: 'smooth', block: 'center'});
+                }
+            }
+        });
+        form.querySelectorAll('[required]').forEach(function(field) {
+            field.addEventListener('input', function() {
+                if (this.value && this.value.trim() !== '') {
+                    this.classList.remove('is-invalid');
+                }
+            });
+            field.addEventListener('change', function() {
+                if (this.value && this.value.trim() !== '') {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+    }
+
+    // --- Set min date to today ---
+    var dateInput = document.getElementById('appointmentDate');
+    if (dateInput) {
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var dd = String(today.getDate()).padStart(2, '0');
+        dateInput.setAttribute('min', yyyy + '-' + mm + '-' + dd);
+    }
+
+    // --- Country select ---
+    var sel = document.getElementById('countrySelect');
+    var phoneCode = document.getElementById('phoneCode');
+    var phoneInput = document.getElementById('phoneInput');
+
+    var countryMap = {};
+    if (sel) {
+        sel.querySelectorAll('option[value]').forEach(function(opt) {
+            if (opt.value) {
+                countryMap[opt.value] = {
+                    code: opt.getAttribute('data-code') || '+255',
+                    placeholder: opt.getAttribute('data-placeholder') || 'phone number'
+                };
+            }
+        });
+
+        sel.tomselect = new TomSelect(sel, {
+            maxItems: 1,
+            searchField: ['text'],
+            sortField: [{field: 'text', direction: 'asc'}],
+            placeholder: 'Select your country',
+            allowEmptyOption: false,
+            onItemAdd: function(value) {
+                var info = countryMap[value];
+                if (info && phoneCode && phoneInput) {
+                    phoneCode.value = info.code;
+                    phoneInput.placeholder = info.placeholder;
+                }
+                sel.closest('.ts-wrapper')?.classList.remove('is-invalid');
+            },
+            onItemRemove: function() {
+                if (phoneCode && phoneInput) {
+                    phoneCode.value = '+255';
+                    phoneInput.placeholder = '7XX XXX XXX';
+                }
+            }
+        });
+    }
+});
+</script>
 <%- include('../partials/footer') %>

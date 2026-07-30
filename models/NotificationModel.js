@@ -1,4 +1,4 @@
-const { query, queryOne } = require('../config/db');
+const { query, queryOne, pool } = require('../config/db');
 
 class NotificationModel {
   async create(userId, { title, message, type, link }) {
@@ -41,6 +41,16 @@ class NotificationModel {
   async delete(id) {
     await query('DELETE FROM notifications WHERE id = ?', [id]);
     return true;
+  }
+
+  async notifyAdmins({ title, message, type, link }) {
+    const [admins] = await pool.execute(
+      "SELECT id FROM users WHERE role IN ('admin', 'super_admin') AND status = 'active'"
+    );
+    for (const admin of admins) {
+      await this.create(admin.id, { title, message, type, link });
+    }
+    return admins.length;
   }
 }
 

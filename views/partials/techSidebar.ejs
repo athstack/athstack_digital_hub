@@ -1,31 +1,43 @@
-<div class="glass-card no-lift p-3 mb-4">
+<div class="glass-card p-3 mb-4">
     <div class="d-flex align-items-center mb-3 px-2">
-        <div class="rounded-circle bg-info d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
-            <i class="fa-solid fa-microchip text-white"></i>
+        <a href="/" class="gap-1" style="background:transparent;padding:0;border:none;line-height:1;display:flex;align-items:center;text-decoration:none;flex-shrink:0;">
+            <img src="/images/techbridge-logo.png" alt="TechBridge" style="height:36px;width:auto;object-fit:contain;">
+            <span class="text-white fw-bold d-none d-lg-inline" style="font-size:1.1rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+        </a>
+        <div class="ms-auto">
+            <div class="rounded-circle d-flex align-items-center justify-content-center<% if (!user || !user.avatar) { %> bg-info<% } %>" style="width:40px;height:40px;overflow:hidden;">
+                <% if (user && user.avatar) { %>
+                    <img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" style="width:100%;height:100%;object-fit:cover;">
+                <% } else { %>
+                    <i class="fa-solid fa-microchip text-white"></i>
+                <% } %>
+            </div>
         </div>
-        <div class="ms-3">
-            <h6 class="mb-0 text-white"><%= user ? user.name : 'Technician' %></h6>
-            <small class="text-muted">Technician Panel</small>
+    </div>
+    <div class="d-flex align-items-center px-2 mb-2">
+        <div>
+            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'Technician' %></h6>
+            <small class="text-white-50" style="font-size:11px;">Technician Panel</small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
-        <a class="nav-link rounded<%= currentPath === '/technician' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician">
+        <a class="nav-link rounded<%= currentPath === '/technician' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician">
             <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
         </a>
-        <a class="nav-link rounded<%= currentPath.startsWith('/technician/products') ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/products">
+        <a class="nav-link rounded<%= currentPath.startsWith('/technician/products') ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/products">
             <i class="fa-solid fa-box-open me-2"></i> My Products
         </a>
-        <a class="nav-link rounded<%= currentPath === '/technician/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/repairs">
+        <a class="nav-link rounded<%= currentPath === '/technician/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/repairs">
             <i class="fa-solid fa-wrench me-2"></i> Repairs
         </a>
-        <a class="nav-link rounded<%= currentPath === '/technician/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/technician/orders">
+        <a class="nav-link rounded<%= currentPath === '/technician/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/orders">
             <i class="fa-solid fa-receipt me-2"></i> Orders
         </a>
         <hr class="border-secondary opacity-25 my-2">
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-            <button type="submit" class="nav-link rounded text-muted w-100 text-start border-0 bg-transparent">
+            <button type="submit" class="nav-link rounded text-white-50 w-100 text-start border-0 bg-transparent">
                 <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
             </button>
         </form>

@@ -6,24 +6,26 @@
             <div class="col-md-6 col-lg-5">
                 <div class="glass-card no-lift p-5">
                     <div class="text-center mb-4">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
-                            <i class="fa-solid fa-right-to-bracket fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="text-white fw-bold">Access Authorization</h3>
-                        <p class="text-muted small">Sign in to your Athstack account</p>
+                        <a href="/" class="gap-1" style="display:inline-flex;align-items:center;line-height:1;text-decoration:none;">
+                            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" style="height:52px;width:auto;">
+                            <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+                        </a>
+                        <h3 class="text-white fw-bold">Welcome Back</h3>
+                        <p class="text-muted small">Sign in to access your account</p>
                     </div>
 
-                    <% if (error) { %>
-                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= error %></div>
-                    <% } %>
-                    <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i><%= flashError %></div>
-                    <% } %>
                     <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
                     <div class="alert alert-success"><i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %></div>
                     <% } %>
+                    <% if (error) { %>
+                    <div class="alert alert-danger"><i class="fa-solid fa-exclamation-triangle me-2"></i><%= error %></div>
+                    <% } %>
 
-                    <form method="POST" action="/auth/login">
+                    <div id="loginError" class="alert alert-danger d-none">
+                        <i class="fa-solid fa-exclamation-triangle me-2"></i><span id="loginErrorText"></span>
+                    </div>
+
+                    <form id="loginForm" method="POST" action="/auth/login" novalidate>
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="mb-3">
                             <label class="form-label">Email Address</label>
@@ -39,7 +41,9 @@
                                 <input type="password" name="password" class="form-control" required placeholder="Your password" autocomplete="current-password">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-right-to-bracket me-2"></i>Sign In</button>
+                        <button type="submit" id="loginBtn" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i><span id="loginBtnText">Sign In</span>
+                        </button>
                     </form>
 
                     <div class="text-center">
@@ -51,5 +55,78 @@
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    var form = document.getElementById('loginForm');
+    var errorDiv = document.getElementById('loginError');
+    var errorText = document.getElementById('loginErrorText');
+    var btn = document.getElementById('loginBtn');
+    var btnText = document.getElementById('loginBtnText');
+
+    function showError(msg) {
+        errorText.textContent = msg;
+        errorDiv.classList.remove('d-none');
+    }
+
+    function hideError() {
+        errorDiv.classList.add('d-none');
+        errorText.textContent = '';
+    }
+
+    function setLoading(loading) {
+        btn.disabled = loading;
+        if (loading) {
+            btnText.textContent = 'Signing In...';
+            btn.querySelector('i').className = 'fa-solid fa-spinner fa-spin me-2';
+        } else {
+            btnText.textContent = 'Sign In';
+            btn.querySelector('i').className = 'fa-solid fa-right-to-bracket me-2';
+        }
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideError();
+
+        var formData = new FormData(form);
+        var params = new URLSearchParams(formData);
+        setLoading(true);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: params.toString()
+        })
+        .then(function(res) {
+            var contentType = res.headers.get('content-type') || '';
+            if (contentType.indexOf('application/json') !== -1) {
+                return res.json().then(function(data) {
+                    return { ok: res.ok, status: res.status, data: data };
+                });
+            }
+            if (res.redirected) {
+                return { ok: false, status: res.status, data: { success: false, message: 'Session expired. Please refresh and try again.' } };
+            }
+            return { ok: false, status: res.status, data: { success: false, message: 'Unexpected server response. Please try again.' } };
+        })
+        .then(function(result) {
+            if (result.ok && result.data.success) {
+                window.location.href = result.data.redirect || '/dashboard';
+            } else {
+                showError(result.data.message || 'Login failed. Please try again.');
+                setLoading(false);
+            }
+        })
+        .catch(function() {
+            showError('Network error. Please check your connection and try again.');
+            setLoading(false);
+        });
+    });
+})();
+</script>
 
 <%- include('../partials/footer') %>
