@@ -185,24 +185,24 @@ exports.getProductReviewsApi = async (req, res, next) => {
       userId: req.session.userId
     });
 
-    const renderOptions = {
-      reviews: result.reviews,
-      currentUserId: req.session.userId,
-      csrfToken: res.locals.csrfToken || '',
-      formatDisplayName: res.locals.formatDisplayName,
-      reviewThumbUrl: res.locals.reviewThumbUrl,
-      imageUrl: res.locals.imageUrl
-    };
+    const renderReview = (review) => new Promise((resolve, reject) => {
+      res.render('partials/reviewCard', {
+        review,
+        currentUserId: req.session.userId,
+        csrfToken: res.locals.csrfToken || '',
+        formatDisplayName: res.locals.formatDisplayName,
+        reviewThumbUrl: res.locals.reviewThumbUrl,
+        imageUrl: res.locals.imageUrl
+      }, (err, html) => err ? reject(err) : resolve(html));
+    });
 
-    res.render('partials/reviewCard', renderOptions, (err, html) => {
-      if (err) return next(err);
-      res.json({
-        success: true,
-        html,
-        total: result.total,
-        page: result.page,
-        hasMore: result.hasMore
-      });
+    const html = (await Promise.all(result.reviews.map(renderReview))).join('');
+    res.json({
+      success: true,
+      html,
+      total: result.total,
+      page: result.page,
+      hasMore: result.hasMore
     });
   } catch (err) {
     next(err);
