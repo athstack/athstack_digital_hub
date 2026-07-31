@@ -87,6 +87,63 @@ async function runMigrations() {
     } catch (err) {
       console.error('Product image migration failed:', err.message);
     }
+
+    try {
+      const [reviewCols] = await pool.query(
+        "SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'reviews' AND COLUMN_NAME = 'title'"
+      );
+      if (reviewCols[0].cnt === 0) {
+        await pool.query(
+          `DELETE r1 FROM reviews r1
+           INNER JOIN reviews r2 ON r1.user_id = r2.user_id AND r1.product_id = r2.product_id AND r1.id < r2.id
+           WHERE r1.product_id IS NOT NULL`
+        );
+        await pool.query(
+          `ALTER TABLE reviews
+             ADD COLUMN order_id INT DEFAULT NULL AFTER product_id,
+             ADD COLUMN title VARCHAR(255) DEFAULT NULL AFTER comment,
+             ADD COLUMN images JSON DEFAULT NULL AFTER title,
+             ADD COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER images,
+             ADD COLUMN helpful_count INT NOT NULL DEFAULT 0 AFTER is_verified,
+             ADD COLUMN seller_reply TEXT DEFAULT NULL AFTER helpful_count,
+             ADD COLUMN seller_replied_at TIMESTAMP NULL DEFAULT NULL AFTER seller_reply,
+             ADD COLUMN seller_replied_by INT DEFAULT NULL AFTER seller_replied_at,
+             ADD COLUMN reported_count INT NOT NULL DEFAULT 0 AFTER seller_replied_by,
+             ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER reported_count,
+             ADD COLUMN is_edited TINYINT(1) NOT NULL DEFAULT 0 AFTER is_hidden,
+             ADD UNIQUE KEY uq_review_user_product (user_id, product_id),
+             ADD KEY idx_reviews_order (order_id)`
+        );
+        console.log('Migration: review system columns added');
+      }
+      await pool.query(
+        `CREATE TABLE IF NOT EXISTS review_helpful_votes (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          review_id INT NOT NULL,
+          user_id INT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_review_vote (review_id, user_id),
+          FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB`
+      );
+      await pool.query(
+        `CREATE TABLE IF NOT EXISTS review_reports (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          review_id INT NOT NULL,
+          user_id INT DEFAULT NULL,
+          reason VARCHAR(255) NOT NULL,
+          status ENUM('pending','resolved','dismissed') NOT NULL DEFAULT 'pending',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+          INDEX idx_reports_status (status)
+        ) ENGINE=InnoDB`
+      );
+      console.log('Migration: review system tables ensured');
+    } catch (err) {
+      console.error('Review system migration failed:', err.message);
+    }
   } catch (err) {
     console.error('Migration check failed:', err.message);
   }

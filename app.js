@@ -168,6 +168,7 @@ app.use((req, res, next) => {
     if (path.startsWith('/')) return path;
     return `/uploads/${folder}/${path}`;
   };
+  res.locals.reviewThumbUrl = require('./helpers/reviewImages').reviewThumbUrl;
   next();
 });
 

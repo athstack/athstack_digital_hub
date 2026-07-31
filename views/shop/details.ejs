@@ -297,110 +297,121 @@
       </div>
 
       <div class="detail-tab-content" id="tab-reviews" role="tabpanel">
-        <!-- Review Summary -->
-        <% if (reviewCount > 0) { %>
-        <div class="review-summary-card">
-          <div class="review-summary-left">
-            <div class="review-summary-score"><%= avgRating > 0 ? avgRating.toFixed(1) : (product.rating || 0).toFixed(1) %></div>
-            <div class="review-summary-stars">
-              <% var avgR = avgRating > 0 ? avgRating : (product.rating || 0); %>
-              <% for (var i = 1; i <= 5; i++) { %>
-                <i class="<%= i <= Math.round(avgR) ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
-              <% } %>
-            </div>
-            <div class="review-summary-count"><%= reviewCount %> Review<%= reviewCount !== 1 ? 's' : '' %></div>
+        <% if (reviewGallery && reviewGallery.length > 0) { %>
+        <!-- Customer Photo Gallery -->
+        <div class="review-gallery-section" data-aos="fade-up">
+          <div class="review-gallery-head">
+            <h3 class="review-write-title mb-0"><i class="fa-solid fa-images me-2 text-primary"></i>Customer Photos</h3>
+            <span class="review-gallery-meta"><%= reviewStats.photoCount || reviewGallery.length %> photo<%= (reviewStats.photoCount || reviewGallery.length) !== 1 ? 's' : '' %> from customers</span>
           </div>
-          <div class="review-summary-bars">
-            <% var bars = [5,4,3,2,1];
-               var maxBarCount = 0;
-               if (reviews && reviews.length > 0) {
-                 var ratingCounts = {5:0,4:0,3:0,2:0,1:0};
-                 reviews.forEach(function(r) { if (ratingCounts[r.rating] !== undefined) ratingCounts[r.rating]++; });
-                 maxBarCount = Math.max.apply(null, Object.values(ratingCounts));
-               }
-               bars.forEach(function(star) {
-                 var pct = maxBarCount > 0 && ratingCounts ? Math.round((ratingCounts[star] / maxBarCount) * 100) : 0;
-            %>
-            <div class="review-bar-row">
-              <span class="review-bar-label"><%= star %> <i class="fa-solid fa-star" style="font-size:0.6rem;"></i></span>
-              <div class="review-bar-track">
-                <div class="review-bar-fill" style="width:<%= pct %>%"></div>
-              </div>
-              <span class="review-bar-count"><%= ratingCounts ? ratingCounts[star] : 0 %></span>
-            </div>
-            <% }); %>
+          <div class="review-gallery-carousel" id="reviewGalleryCarousel">
+            <% reviewGallery.forEach(function(photo, pi) { %>
+            <button type="button" class="review-gallery-thumb" data-gallery-index="<%= pi %>" data-full="<%= photo.url %>" aria-label="Open customer photo <%= pi + 1 %>">
+              <img src="<%= reviewThumbUrl(photo.url) %>" alt="Customer photo" loading="lazy">
+            </button>
+            <% }) %>
           </div>
         </div>
         <% } %>
 
+        <!-- Review Summary -->
+        <div class="review-summary-card" data-aos="fade-up">
+          <div class="review-summary-left">
+            <div class="review-summary-score"><%= reviewStats.average > 0 ? reviewStats.average.toFixed(1) : (product.rating || 0).toFixed(1) %></div>
+            <div class="review-summary-stars">
+              <% var avgR = reviewStats.average > 0 ? reviewStats.average : (product.rating || 0); %>
+              <% for (let i = 1; i <= 5; i++) { %>
+                <i class="<%= i <= Math.round(avgR) ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
+              <% } %>
+            </div>
+            <div class="review-summary-count"><%= reviewStats.count %> Review<%= reviewStats.count !== 1 ? 's' : '' %></div>
+            <% if (reviewStats.verifiedCount > 0) { %>
+            <div class="review-summary-verified"><i class="fa-solid fa-circle-check"></i> <%= reviewStats.verifiedCount %> Verified Purchase<%= reviewStats.verifiedCount !== 1 ? 's' : '' %></div>
+            <% } %>
+          </div>
+          <div class="review-summary-bars">
+            <% var dist = reviewStats.distribution || {5:0,4:0,3:0,2:0,1:0};
+               var maxBar = Math.max.apply(null, [dist[5], dist[4], dist[3], dist[2], dist[1], 1]); %>
+            <% [5,4,3,2,1].forEach(function(star) { %>
+            <div class="review-bar-row">
+              <button type="button" class="review-bar-filter" data-rating="<%= star %>" aria-label="Filter reviews with <%= star %> stars">
+                <span class="review-bar-label"><%= star %> <i class="fa-solid fa-star" style="font-size:0.6rem;"></i></span>
+                <span class="review-bar-track"><span class="review-bar-fill" style="width:<%= Math.round((dist[star] / maxBar) * 100) %>%"></span></span>
+                <span class="review-bar-count"><%= dist[star] %></span>
+              </button>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
         <!-- Write Review -->
         <% if (user) { %>
-        <div class="review-write-card">
-          <h3 class="review-write-title"><i class="fa-solid fa-pen me-2 text-primary"></i>Write a Review</h3>
-          <form method="POST" action="/reviews/product/<%= product.id %>" id="reviewForm">
-            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-            <div class="review-write-rating">
-              <label class="review-write-label">Your Rating</label>
-              <div class="review-stars-input" id="reviewStars" role="radiogroup" aria-label="Rating">
-                <% for (var i = 1; i <= 5; i++) { %>
-                <button type="button" class="review-star-btn" data-rating="<%= i %>" role="radio" aria-checked="<%= i === 5 ? 'true' : 'false' %>" aria-label="<%= i %> star<%= i > 1 ? 's' : '' %>">
-                  <i class="fa-solid fa-star"></i>
-                </button>
-                <% } %>
+          <% if (reviewEligibility && reviewEligibility.hasPurchased) { %>
+            <% if (reviewEligibility.hasReviewed) { %>
+            <div class="review-login-card review-written-card">
+              <div>
+                <p class="mb-0 text-white"><i class="fa-solid fa-circle-check me-2 text-success"></i>You've reviewed this product.</p>
+                <small class="text-white-50">Status: <%= reviewEligibility.review.status === 'approved' ? 'Approved' : (reviewEligibility.review.status === 'rejected' ? 'Rejected' : 'Pending approval') %></small>
               </div>
-              <small class="review-hint" id="reviewHint"></small>
-              <input type="hidden" name="rating" id="ratingValue" value="5">
+              <a href="/dashboard/reviews/<%= reviewEligibility.review.id %>/edit" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i>Edit Review</a>
             </div>
-            <div class="review-write-comment">
-              <label class="review-write-label">Comment <span class="text-muted">(optional)</span></label>
-              <textarea name="comment" class="review-textarea" rows="3" placeholder="Share your experience with this product..."></textarea>
+            <% } else { %>
+            <div class="review-write-card">
+              <div class="d-flex align-items-center gap-3">
+                <h3 class="review-write-title mb-0"><i class="fa-solid fa-pen me-2 text-primary"></i>Write a Review</h3>
+                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+              </div>
+              <p class="text-white-50 mt-2">You purchased this product. Share your experience with the community.</p>
+              <button type="button" class="btn-action btn-submit-review" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fa-solid fa-paper-plane me-2"></i>Write Your Review</button>
             </div>
-            <div class="review-write-submit">
-              <button type="submit" class="btn-action btn-submit-review"><i class="fa-solid fa-paper-plane me-2"></i>Submit Review</button>
-            </div>
-          </form>
-        </div>
+            <% } %>
+          <% } else { %>
+          <div class="review-login-card">
+            <p class="mb-0"><i class="fa-solid fa-lock me-2 text-warning"></i>Only verified customers can review this product. <a href="/shop" class="text-primary fw-bold text-link">Shop now</a> and get an invite to review after your order is delivered.</p>
+          </div>
+          <% } %>
         <% } else { %>
         <div class="review-login-card">
           <p class="mb-0"><a href="/auth/login" class="text-primary fw-bold text-link">Login</a> to write a review and share your experience.</p>
         </div>
         <% } %>
 
-        <!-- Review List -->
-        <% if (reviews && reviews.length > 0) { %>
-        <div class="review-list">
-          <% reviews.forEach(function(review) { %>
-          <div class="review-item">
-            <div class="review-item-header">
-              <div class="review-item-avatar">
-                <% if (review.avatar) { %>
-                <img src="<%= imageUrl(review.avatar, 'profiles') %>" alt="">
-                <% } else { %>
-                <i class="fa-solid fa-user"></i>
-                <% } %>
-              </div>
-              <div class="review-item-user">
-                <span class="review-item-name"><%= formatDisplayName ? formatDisplayName(review.first_name, review.last_name) : (review.first_name + ' ' + review.last_name) %></span>
-                <span class="review-item-date"><%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %></span>
-              </div>
-              <div class="review-item-stars">
-                <% for (var i = 1; i <= 5; i++) { %>
-                <i class="<%= i <= review.rating ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
-                <% } %>
-              </div>
-            </div>
-            <% if (review.comment) { %>
-            <p class="review-item-comment"><%= review.comment %></p>
-            <% } %>
+        <!-- Review Filters -->
+        <div class="review-filter-bar" data-aos="fade-up">
+          <div class="review-filter-chips" role="group" aria-label="Sort reviews">
+            <button type="button" class="review-chip active" data-sort="recent">Most Recent</button>
+            <button type="button" class="review-chip" data-sort="highest">Highest Rated</button>
+            <button type="button" class="review-chip" data-sort="lowest">Lowest Rated</button>
+            <button type="button" class="review-chip" data-sort="helpful">Most Helpful</button>
           </div>
-          <% }); %>
+          <div class="review-filter-toggles">
+            <button type="button" class="review-chip" data-has-photos="1"><i class="fa-solid fa-camera me-1"></i>With Photos</button>
+            <button type="button" class="review-chip" data-verified="1"><i class="fa-solid fa-circle-check me-1"></i>Verified</button>
+          </div>
+          <div class="review-filter-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="reviewSearchInput" class="form-control" placeholder="Search reviews..." aria-label="Search reviews">
+          </div>
         </div>
-        <% } else { %>
-        <div class="review-empty">
-          <i class="fa-regular fa-comments"></i>
-          <p>No reviews yet. Be the first to review this product!</p>
+
+        <!-- Review List -->
+        <div id="reviewListContainer" data-product-id="<%= product.id %>" data-total="<%= reviewStats.count %>">
+          <% if (reviews && reviews.length > 0) { %>
+          <div class="review-list" id="reviewList">
+            <% reviews.forEach(function(review) { %>
+            <%- include('../partials/reviewCard', { review: review, currentUserId: user ? user.id : null }) %>
+            <% }) %>
+          </div>
+          <div class="review-load-more text-center mt-4" style="<%= hasMoreReviews ? '' : 'display:none;' %>">
+            <button type="button" class="btn btn-premium-outline rounded-pill px-4" id="reviewLoadMoreBtn">Load More Reviews</button>
+          </div>
+          <% } else { %>
+          <div class="review-empty" id="reviewEmptyState">
+            <i class="fa-regular fa-comments"></i>
+            <p>No reviews yet. Be the first to review this product!</p>
+          </div>
+          <% } %>
         </div>
-        <% } %>
       </div>
     </div>
 
@@ -439,6 +450,49 @@
     </div>
     <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
+</div>
+
+<!-- Review Photo Lightbox -->
+<div class="lightbox-overlay" id="reviewLightbox" role="dialog" aria-modal="true" aria-label="Review photo viewer">
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="reviewLightboxClose" aria-label="Close review photo viewer">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="reviewLightboxPrev" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="lightbox-image-wrapper">
+      <img id="reviewLightboxImage" src="" alt="">
+    </div>
+    <button class="lightbox-nav lightbox-next" id="reviewLightboxNext" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="lightbox-counter" id="reviewLightboxCounter"></div>
+  </div>
+</div>
+
+<%- include('../partials/reviewModal', { productId: product.id, productName: product.name, csrfToken: csrfToken }) %>
+
+<!-- Report Review Modal -->
+<div class="modal fade" id="reportReviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white fw-bold"><i class="fa-regular fa-flag me-2 text-warning"></i>Report Review</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-white-50 mb-3">Help us keep TechBridge reviews genuine. Why are you reporting this review?</p>
+        <div class="report-reasons">
+          <% ['Spam or advertising', 'Fake review', 'Inappropriate content', 'Conflict of interest', 'Off-topic'].forEach(function(reason) { %>
+          <label class="report-reason-option">
+            <input type="radio" name="reportReason" value="<%= reason %>">
+            <span><%= reason %></span>
+          </label>
+          <% }) %>
+        </div>
+        <div class="form-text text-white-50 mt-2" id="reportFormError"></div>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger rounded-pill" id="reportSubmitBtn"><i class="fa-solid fa-flag me-2"></i>Report Review</button>
+      </div>
+    </div>
   </div>
 </div>
 

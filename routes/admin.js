@@ -81,6 +81,9 @@ router.post('/reviews/:id/edit', validateCsrf, adminController.updateReview);
 router.post('/reviews/add', validateCsrf, adminController.createReview);
 router.post('/reviews/:id/approve', validateCsrf, adminController.approveReview);
 router.post('/reviews/:id/reject', validateCsrf, adminController.rejectReview);
+router.post('/reviews/:id/reply', validateCsrf, adminController.replyToReview);
+router.post('/reviews/:id/hide', validateCsrf, adminController.toggleReviewHidden);
 router.post('/reviews/:id/delete', validateCsrf, adminController.deleteReview);
+router.post('/reports/:id/resolve', validateCsrf, adminController.resolveReviewReport);
 
 module.exports = router;

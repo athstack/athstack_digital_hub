@@ -1,0 +1,74 @@
+<%
+  const isOwn = currentUserId && review.user_id === currentUserId;
+  const images = review.images || [];
+%>
+<div class="review-item<%= review.is_verified ? ' review-item-verified' : '' %>" id="review-<%= review.id %>" data-review-id="<%= review.id %>">
+  <div class="review-item-header">
+    <div class="review-item-avatar">
+      <% if (review.avatar) { %>
+      <img src="<%= imageUrl(review.avatar, 'profiles') %>" alt="">
+      <% } else { %>
+      <i class="fa-solid fa-user"></i>
+      <% } %>
+    </div>
+    <div class="review-item-user">
+      <div class="review-item-name-line">
+        <span class="review-item-name"><%= formatDisplayName ? formatDisplayName(review.first_name, review.last_name) : (review.first_name + ' ' + (review.last_name || '')) %></span>
+        <% if (review.is_verified) { %>
+        <span class="verified-badge" title="Verified Purchase"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+        <% } %>
+      </div>
+      <span class="review-item-date">
+        <%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '' %>
+        <% if (review.is_edited) { %><span class="review-edited-label">· Edited</span><% } %>
+      </span>
+    </div>
+    <div class="review-item-stars" aria-label="<%= review.rating %> out of 5 stars">
+      <% for (let i = 1; i <= 5; i++) { %>
+      <i class="<%= i <= review.rating ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (review.title) { %>
+  <h4 class="review-item-title"><%= review.title %></h4>
+  <% } %>
+  <% if (review.comment) { %>
+  <p class="review-item-comment"><%= review.comment %></p>
+  <% } %>
+
+  <% if (images.length > 0) { %>
+  <div class="review-images-grid">
+    <% images.forEach(function(url, idx) { %>
+    <button type="button" class="review-image-btn" data-full="<%= url %>" data-thumb="<%= reviewThumbUrl(url) %>" aria-label="View review photo <%= idx + 1 %>">
+      <img src="<%= reviewThumbUrl(url) %>" alt="Review photo <%= idx + 1 %>" loading="lazy">
+    </button>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <% if (review.seller_reply) { %>
+  <div class="seller-reply">
+    <div class="seller-reply-head">
+      <span class="seller-reply-badge"><i class="fa-solid fa-headset"></i> TechBridge Response</span>
+      <% if (review.seller_replied_at) { %>
+      <span class="seller-reply-date"><%= new Date(review.seller_replied_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+      <% } %>
+    </div>
+    <p class="seller-reply-text mb-0"><%= review.seller_reply %></p>
+  </div>
+  <% } %>
+
+  <div class="review-item-actions">
+    <button type="button" class="helpful-btn<%= review.user_voted ? ' active' : '' %>" data-review-id="<%= review.id %>" data-csrf="<%= csrfToken %>">
+      <i class="fa-solid fa-thumbs-up"></i>
+      <span class="helpful-count" data-count="<%= review.helpful_count || 0 %>"><%= review.helpful_count || 0 %></span>
+      <span class="helpful-label"><%= review.helpful_count === 1 ? 'Helpful' : 'Helpful' %></span>
+    </button>
+    <% if (!isOwn) { %>
+    <button type="button" class="report-btn" data-review-id="<%= review.id %>" data-csrf="<%= csrfToken %>">
+      <i class="fa-regular fa-flag"></i> Report
+    </button>
+    <% } %>
+  </div>
+</div>

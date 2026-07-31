@@ -41,13 +41,26 @@
                     </div>
                 </div>
 
+                <% if (isDelivered) { %>
+                <div class="review-order-banner mb-4">
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <i class="fa-solid fa-circle-check fa-2x text-success"></i>
+                        <div class="flex-grow-1 min-width-0">
+                            <h6 class="text-white fw-bold mb-0">Your order has been delivered!</h6>
+                            <small class="text-white-50">Enjoy your products — let others know what you think with a verified review.</small>
+                        </div>
+                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase Eligible</span>
+                    </div>
+                </div>
+                <% } %>
+
                 <div class="glass-card p-4 mb-4">
                     <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-box-open me-2 text-primary"></i>Items Ordered</h5>
                     <% if (order.items && order.items.length > 0) { %>
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
-                                <tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr>
+                                <tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th><th>Review</th></tr>
                             </thead>
                             <tbody>
                                 <% order.items.forEach(item => { %>
@@ -66,6 +79,17 @@
                                     <td class="text-white-50"><%= item.quantity %></td>
                                     <td class="text-white-50"><%= formatCurrency(item.unit_price) %></td>
                                     <td class="text-primary fw-bold"><%= formatCurrency(item.total_price) %></td>
+                                    <td>
+                                        <% if (isDelivered && item.product_id) { %>
+                                            <% if (reviewedProductIds && reviewedProductIds.has(item.product_id)) { %>
+                                            <span class="badge bg-success rounded-pill"><i class="fa-solid fa-check me-1"></i>Reviewed</span>
+                                            <% } else { %>
+                                            <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill"><i class="fa-solid fa-star me-1"></i>Write Review</a>
+                                            <% } %>
+                                        <% } else if (item.product_id) { %>
+                                        <span class="text-white-50 small">Available after delivery</span>
+                                        <% } %>
+                                    </td>
                                 </tr>
                                 <% }) %>
                             </tbody>

@@ -19,45 +19,98 @@
                 <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <% } %>
 
+                <% if (eligibleProducts && eligibleProducts.length > 0) { %>
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-circle-check text-success me-2"></i>
+                        <h5 class="text-white fw-bold mb-0">Products You Can Review</h5>
+                    </div>
+                    <p class="text-white-50 small mb-3">Your orders have been delivered. Share your experience with a verified review!</p>
+                    <div class="row g-3">
+                        <% eligibleProducts.forEach(function(item) { %>
+                        <div class="col-md-6">
+                            <div class="review-eligible-card">
+                                <div class="review-eligible-img">
+                                    <%- include('../partials/productImage', { src: item.product_image ? imageUrl(item.product_image, 'products') : '', alt: item.product_name, style: 'max-height:56px;object-fit:contain;' }) %>
+                                </div>
+                                <div class="flex-grow-1 min-width-0">
+                                    <div class="text-white fw-bold small text-truncate"><%= item.product_name %></div>
+                                    <small class="text-white-50">Order #<%= item.order_reference || item.order_id %> · Delivered <%= item.delivered_at ? new Date(item.delivered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '' %></small>
+                                </div>
+                                <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i>Review</a>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+                <% } %>
+
                 <% if (reviews && reviews.length > 0) { %>
                 <% reviews.forEach(review => { %>
                 <div class="glass-card p-4 mb-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <div class="text-warning me-3">
-                                <% for (let i = 1; i <= 5; i++) { %>
-                                <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star"></i>
-                                <% } %>
-                            </div>
-                            <div>
-                                <% if (review.product_name) { %>
-                                <h6 class="text-white mb-0">
-                                    <a href="/shop/<%= review.product_slug || '' %>" class="text-primary text-link"><%= review.product_name %></a>
-                                </h6>
-                                <% } else { %>
-                                <h6 class="text-white mb-0">General Review</h6>
-                                <% } %>
-                                <small class="text-white-50">
-                                    <%= review.type ? review.type.charAt(0).toUpperCase() + review.type.slice(1) : 'Product' %> review
-                                    - <%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %>
-                                    <% if (review.status === 'pending') { %>
-                                    <span class="badge bg-warning text-dark rounded-pill ms-2">Pending Approval</span>
-                                    <% } else if (review.status === 'approved') { %>
-                                    <span class="badge bg-success rounded-pill ms-2">Approved</span>
-                                    <% } else if (review.status === 'rejected') { %>
-                                    <span class="badge bg-danger rounded-pill ms-2">Rejected</span>
+                    <div class="d-flex align-items-start justify-content-between gap-3">
+                        <div class="min-width-0">
+                            <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                                <div class="text-warning">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                    <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star"></i>
                                     <% } %>
-                                </small>
+                                </div>
+                                <% if (review.is_verified) { %>
+                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+                                <% } %>
                             </div>
+                            <h6 class="text-white mb-1">
+                                <% if (review.product_name) { %>
+                                <a href="/shop/<%= review.product_slug || '' %>" class="text-primary text-link"><%= review.product_name %></a>
+                                <% } else { %>
+                                General Review
+                                <% } %>
+                            </h6>
+                            <small class="text-white-50">
+                                <%= review.type ? review.type.charAt(0).toUpperCase() + review.type.slice(1) : 'Product' %> review
+                                - <%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %>
+                                <% if (review.status === 'pending') { %>
+                                <span class="badge bg-warning text-dark rounded-pill ms-2">Pending Approval</span>
+                                <% } else if (review.status === 'approved') { %>
+                                <span class="badge bg-success rounded-pill ms-2">Approved</span>
+                                <% } else if (review.status === 'rejected') { %>
+                                <span class="badge bg-danger rounded-pill ms-2">Rejected</span>
+                                <% } %>
+                            </small>
+                            <% if (review.title) { %>
+                            <div class="text-white fw-semibold mt-2"><%= review.title %></div>
+                            <% } %>
+                            <% if (review.comment) { %>
+                            <p class="text-white-50 mt-1 mb-2"><%= review.comment %></p>
+                            <% } %>
+                            <% if (review.images && review.images.length > 0) { %>
+                            <div class="review-images-grid review-images-grid-sm mt-2">
+                                <% review.images.slice(0, 5).forEach(function(url) { %>
+                                <img src="<%= reviewThumbUrl(url) %>" alt="Review photo" loading="lazy">
+                                <% }) %>
+                            </div>
+                            <% } %>
+                            <% if (review.seller_reply) { %>
+                            <div class="seller-reply mt-3">
+                                <div class="seller-reply-head">
+                                    <span class="seller-reply-badge"><i class="fa-solid fa-headset"></i> TechBridge Response</span>
+                                </div>
+                                <p class="seller-reply-text mb-0"><%= review.seller_reply %></p>
+                            </div>
+                            <% } %>
+                            <small class="text-white-50 d-inline-flex align-items-center mt-2">
+                                <i class="fa-solid fa-thumbs-up me-1"></i> <%= review.helpful_count || 0 %> found this helpful
+                            </small>
                         </div>
-                        <form method="POST" action="/dashboard/reviews/<%= review.id %>/delete" data-confirm="Delete this review?">
-                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash-can"></i></button>
-                        </form>
+                        <div class="d-flex flex-column gap-2 flex-shrink-0">
+                            <a href="/dashboard/reviews/<%= review.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill"><i class="fa-solid fa-pen me-1"></i>Edit</a>
+                            <form method="POST" action="/dashboard/reviews/<%= review.id %>/delete" data-confirm="Delete this review?">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100"><i class="fa-solid fa-trash-can me-1"></i>Delete</button>
+                            </form>
+                        </div>
                     </div>
-                    <% if (review.comment) { %>
-                    <p class="text-white-50 mt-3 mb-0"><%= review.comment %></p>
-                    <% } %>
                 </div>
                 <% }) %>
                 <% } else { %>

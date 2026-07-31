@@ -1,0 +1,110 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/sidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <a href="/dashboard/reviews" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i>Edit Review</h2>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded bg-dark d-flex align-items-center justify-content-center" style="width:56px;height:56px;overflow:hidden;flex-shrink:0;">
+                            <% if (product) { %>
+                            <%- include('../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'max-height:52px;object-fit:contain;' }) %>
+                            <% } else { %>
+                            <i class="fa-solid fa-box text-primary"></i>
+                            <% } %>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-0"><%= product ? product.name : 'General Review' %></h5>
+                            <% if (product) { %>
+                            <a href="/shop/<%= product.slug %>#reviews" class="text-primary small text-link">View product page</a>
+                            <% } %>
+                        </div>
+                        <% if (review.is_verified) { %>
+                        <span class="verified-badge ms-auto"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <form method="POST" action="/dashboard/reviews/<%= review.id %>/edit" id="reviewEditForm" enctype="multipart/form-data" novalidate>
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="review-write-rating mb-4">
+                            <label class="review-write-label d-block mb-2">Your Rating <span class="text-danger">*</span></label>
+                            <div class="review-stars-input" data-review-stars="<%= review.rating %>" data-rating-input="reviewEditRating" role="radiogroup" aria-label="Rating">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                <button type="button" class="review-star-btn" data-rating="<%= i %>" role="radio" aria-checked="<%= i <= review.rating ? 'true' : 'false' %>" aria-label="<%= i %> star<%= i > 1 ? 's' : '' %>">
+                                    <i class="fa-solid fa-star"></i>
+                                </button>
+                                <% } %>
+                            </div>
+                            <small class="review-hint" id="reviewEditHint"></small>
+                            <input type="hidden" name="rating" id="reviewEditRating" value="<%= review.rating %>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="review-write-label d-block mb-2" for="reviewEditTitle">Review Title</label>
+                            <input type="text" name="title" id="reviewEditTitle" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="Great quality, fast delivery">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="review-write-label d-block mb-2" for="reviewEditComment">Your Review <span class="text-danger">*</span></label>
+                            <textarea name="comment" id="reviewEditComment" class="review-textarea" rows="5" maxlength="1500" placeholder="Share what you loved or how it could be better..."><%= review.comment || '' %></textarea>
+                            <div class="d-flex justify-content-end mt-1">
+                                <small class="review-charcount text-white-50" id="reviewEditCommentCount"><%= (review.comment || '').length %> / 1500 (min 20)</small>
+                            </div>
+                        </div>
+
+                        <% if (review.images && review.images.length > 0) { %>
+                        <div class="mb-4">
+                            <label class="review-write-label d-block mb-2">Current Photos</label>
+                            <div class="review-images-grid">
+                                <% review.images.forEach(function(url) { %>
+                                <label class="review-edit-image">
+                                    <img src="<%= reviewThumbUrl(url) %>" alt="Review photo">
+                                    <input type="checkbox" name="remove_images" value="<%= url %>">
+                                    <span class="review-edit-image-remove"><i class="fa-solid fa-xmark"></i></span>
+                                </label>
+                                <% }) %>
+                            </div>
+                            <small class="text-white-50">Check a photo to remove it.</small>
+                        </div>
+                        <% } %>
+
+                        <div class="mb-4">
+                            <label class="review-write-label d-block mb-2">Add Photos</label>
+                            <div class="review-upload-widget">
+                                <label class="review-upload-zone" for="reviewEditImagesInput">
+                                    <input type="file" name="images" id="reviewEditImagesInput" class="review-upload-input" accept="image/*" multiple>
+                                    <i class="fa-solid fa-camera-retro"></i>
+                                    <p class="mb-1">Tap to take a photo or upload photos</p>
+                                    <small>JPG, PNG or WebP · Max 5MB each · Up to 5 photos total</small>
+                                </label>
+                                <div class="review-upload-previews" id="reviewEditUploadPreviews"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="/dashboard/reviews" class="btn btn-premium-outline rounded-pill">Cancel</a>
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

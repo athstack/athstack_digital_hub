@@ -4,6 +4,7 @@ const RepairModel = require('../models/RepairModel');
 const CourseModel = require('../models/CourseModel');
 const WishlistModel = require('../models/WishlistModel');
 const ReviewModel = require('../models/ReviewModel');
+const ProductModel = require('../models/ProductModel');
 const ContactModel = require('../models/ContactModel');
 const { pool } = require('../config/db');
 const { formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
@@ -63,9 +64,19 @@ exports.getOrderDetail = async (req, res, next) => {
       return res.redirect('/dashboard/orders');
     }
 
+    let reviewedProductIds = new Set();
+    if (order.items && order.items.length) {
+      const userReviews = await ReviewModel.getByUser(req.session.userId);
+      userReviews.forEach(r => {
+        if (r.product_id) reviewedProductIds.add(r.product_id);
+      });
+    }
+
     res.render('dashboard/order-detail', {
       title: 'Order Details - TechBridge Digital Hub',
       order,
+      reviewedProductIds,
+      isDelivered: (order.order_status || order.status) === 'delivered',
       formatDate,
       formatCurrency,
       getStatusBadgeClass
@@ -235,9 +246,11 @@ exports.removeFromWishlist = async (req, res, next) => {
 exports.getReviews = async (req, res, next) => {
   try {
     const reviews = await ReviewModel.getByUser(req.session.userId);
+    const eligibleProducts = await ReviewModel.getEligibleProducts(req.session.userId);
     res.render('dashboard/reviews', {
       title: 'Your Reviews - TechBridge Digital Hub',
       reviews,
+      eligibleProducts,
       formatDate,
       formatCurrency
     });
@@ -246,10 +259,103 @@ exports.getReviews = async (req, res, next) => {
   }
 };
 
+exports.getEditReview = async (req, res, next) => {
+  try {
+    const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getOwnedById(req.session.userId, reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/dashboard/reviews');
+    }
+
+    const product = review.product_id ? await ProductModel.findById(review.product_id) : null;
+
+    res.render('dashboard/review-edit', {
+      title: 'Edit Review - TechBridge Digital Hub',
+      review,
+      product,
+      formatDate,
+      formatCurrency
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateReview = async (req, res, next) => {
+  try {
+    const reviewId = parseInt(req.params.id);
+    const userId = req.session.userId;
+    const { rating, title, comment, remove_images } = req.body;
+
+    const review = await ReviewModel.getOwnedById(userId, reviewId);
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/dashboard/reviews');
+    }
+
+    const r = parseInt(rating, 10);
+    if (isNaN(r) || r < 1 || r > 5) {
+      req.flash('error', 'Please select a rating between 1 and 5.');
+      return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
+    }
+    const text = String(comment || '').trim();
+    if (text.length < ReviewModel.COMMENT_MIN || text.length > ReviewModel.COMMENT_MAX) {
+      req.flash('error', `Your review must be between ${ReviewModel.COMMENT_MIN} and ${ReviewModel.COMMENT_MAX} characters.`);
+      return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
+    }
+    if (title && String(title).trim().length > ReviewModel.TITLE_MAX) {
+      req.flash('error', `Review title must be under ${ReviewModel.TITLE_MAX} characters.`);
+      return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
+    }
+
+    const processReviewImages = require('../helpers/reviewImages').processReviewImages;
+
+    let images = review.images || [];
+    if (remove_images) {
+      const removeSet = new Set(
+        (Array.isArray(remove_images) ? remove_images : [remove_images]).map(String)
+      );
+      images = images.filter(url => !removeSet.has(String(url)));
+    }
+    const newImages = await processReviewImages(req.files || []);
+    images = images.concat(newImages).slice(0, ReviewModel.MAX_REVIEW_IMAGES);
+
+    await ReviewModel.updateCustomer(userId, reviewId, {
+      rating: r,
+      title: (title || '').trim() || null,
+      comment: text,
+      images
+    });
+
+    if (review.status === 'approved' && review.product_id) {
+      await ReviewModel.updateProductRating(review.product_id);
+    }
+
+    req.flash('success', 'Your review has been updated.');
+    res.redirect('/dashboard/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.deleteReview = async (req, res, next) => {
   try {
     const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getOwnedById(req.session.userId, reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/dashboard/reviews');
+    }
+
     await ReviewModel.delete(reviewId);
+
+    if (review.product_id) {
+      await ReviewModel.updateProductRating(review.product_id);
+    }
+
     req.flash('success', 'Review deleted.');
     res.redirect('/dashboard/reviews');
   } catch (err) {

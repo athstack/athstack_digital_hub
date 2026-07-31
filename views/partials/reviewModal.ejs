@@ -1,0 +1,59 @@
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content review-modal-content">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-pen me-2 text-primary"></i>Write a Review</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="/reviews/product/<%= productId %>" id="reviewForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+        <div class="modal-body">
+          <p class="text-white-50 mb-4"><%= productName || 'This product' %> · <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase Only</span></p>
+
+          <div class="review-write-rating mb-4">
+            <label class="review-write-label d-block mb-2">Your Rating <span class="text-danger">*</span></label>
+            <div class="review-stars-input" id="reviewModalStars" role="radiogroup" aria-label="Rating">
+              <% for (let i = 1; i <= 5; i++) { %>
+              <button type="button" class="review-star-btn" data-rating="<%= i %>" role="radio" aria-checked="<%= i === 5 ? 'true' : 'false' %>" aria-label="<%= i %> star<%= i > 1 ? 's' : '' %>">
+                <i class="fa-solid fa-star"></i>
+              </button>
+              <% } %>
+            </div>
+            <small class="review-hint" id="reviewModalHint"></small>
+            <input type="hidden" name="rating" id="reviewModalRating" value="5">
+          </div>
+
+          <div class="mb-3">
+            <label class="review-write-label d-block mb-2" for="reviewTitleInput">Review Title</label>
+            <input type="text" name="title" id="reviewTitleInput" class="form-control" maxlength="120" placeholder="Great quality, fast delivery">
+          </div>
+
+          <div class="mb-4">
+            <label class="review-write-label d-block mb-2" for="reviewCommentInput">Your Review <span class="text-danger">*</span></label>
+            <textarea name="comment" id="reviewCommentInput" class="review-textarea" rows="4" maxlength="1500" placeholder="Share what you loved or how it could be better..."></textarea>
+            <div class="d-flex justify-content-end mt-1">
+              <small class="review-charcount text-white-50" id="reviewCommentCount">0 / 1500 (min 20)</small>
+            </div>
+          </div>
+
+          <div class="mb-1">
+            <label class="review-write-label d-block mb-2">Add Photos</label>
+            <div class="review-upload-widget">
+              <label class="review-upload-zone" for="reviewImagesInput">
+                <input type="file" name="images" id="reviewImagesInput" class="review-upload-input" accept="image/*" multiple>
+                <i class="fa-solid fa-camera-retro"></i>
+                <p class="mb-1">Tap to take a photo or upload photos</p>
+                <small>JPG, PNG or WebP · Max 5MB each · Up to 5 photos</small>
+              </label>
+              <div class="review-upload-previews" id="reviewUploadPreviews"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i>Submit Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

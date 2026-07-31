@@ -2,10 +2,16 @@ const express = require('express');
 const router = express.Router();
 const shopController = require('../controllers/shopController');
 const repairController = require('../controllers/repairController');
+const reviewController = require('../controllers/reviewController');
 const NotificationModel = require('../models/NotificationModel');
+const { validateCsrf } = require('../middleware/csrf');
 
 router.get('/search', shopController.searchSuggestions);
 router.get('/repair/status/:ref', repairController.checkRepairStatus);
+
+router.get('/reviews/product/:id', reviewController.getProductReviewsApi);
+router.post('/reviews/:id/helpful', validateCsrf, reviewController.toggleHelpful);
+router.post('/reviews/:id/report', validateCsrf, reviewController.reportReview);
 
 router.get('/notifications', async (req, res) => {
   try {

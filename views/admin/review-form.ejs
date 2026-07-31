@@ -82,8 +82,20 @@
                             </div>
 
                             <div class="col-12">
+                                <label class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="Review title (optional)">
+                            </div>
+
+                            <div class="col-12">
                                 <label class="form-label">Comment</label>
                                 <textarea name="comment" class="form-control" rows="4"><%= review.comment || '' %></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_verified" id="isVerifiedToggle" value="1"<%= review.is_verified ? ' checked' : '' %>>
+                                    <label class="form-check-label text-white-50" for="isVerifiedToggle"><i class="fa-solid fa-circle-check me-1 text-success"></i>Verified Purchase</label>
+                                </div>
                             </div>
 
                             <div class="col-12 d-flex gap-2 justify-content-end">

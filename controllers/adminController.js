@@ -697,7 +697,23 @@ exports.updateOrderStatus = async (req, res, next) => {
       return res.redirect('/admin/orders');
     }
 
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+      req.flash('error', 'Order not found.');
+      return res.redirect('/admin/orders');
+    }
+
     await pool.execute('UPDATE orders SET order_status = ? WHERE id = ?', [status, orderId]);
+
+    if (status === 'delivered' && order.user_id) {
+      await NotificationModel.create(order.user_id, {
+        title: 'Order Delivered',
+        message: `Your order #${order.order_reference || orderId} has been delivered. We hope you love it! Share your experience with a verified review.`,
+        type: 'order',
+        link: `/dashboard/orders/${orderId}`
+      });
+    }
+
     req.flash('success', 'Order status updated.');
     res.redirect('/admin/orders');
   } catch (err) {
@@ -967,20 +983,105 @@ exports.getReviews = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const status = req.query.status || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const reported = req.query.reported === '1';
     const page = parseInt(req.query.page) || 1;
-    const result = await ReviewModel.getAllAdmin({ status, page, limit: 20 });
+    const result = await ReviewModel.getAllAdmin({ status, search, reported, page, limit: 20 });
     const totalPages = Math.ceil(result.total / result.limit);
-    const pendingCount = (await ReviewModel.getAllAdmin({ status: 'pending', limit: 1000 })).total;
+    const pendingCount = await ReviewModel.getPendingCount();
+    const reportedCount = await ReviewModel.getReportedCount();
 
     res.render('admin/reviews', {
       title: 'Review Moderation - TechBridge Digital Hub',
       reviews: result.reviews,
       pagination: { page, totalPages, total: result.total, hasNext: page < totalPages, hasPrev: page > 1 },
       currentStatus: status,
+      currentSearch: search,
+      isReportedFilter: reported,
       pendingCount,
+      reportedCount,
       formatDate,
       formatCurrency
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.replyToReview = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const NotificationModel = require('../models/NotificationModel');
+    const reviewId = parseInt(req.params.id);
+    const reply = String(req.body.reply || '').trim();
+
+    if (!reply) {
+      req.flash('error', 'Reply text is required.');
+      return res.redirect('/admin/reviews');
+    }
+    if (reply.length > 2000) {
+      req.flash('error', 'Reply must be under 2000 characters.');
+      return res.redirect('/admin/reviews');
+    }
+
+    const review = await ReviewModel.getById(reviewId);
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    await ReviewModel.sellerReply(reviewId, req.session.userId, reply);
+
+    if (review.user_id) {
+      await NotificationModel.create(review.user_id, {
+        title: 'Seller Replied to Your Review',
+        message: 'The TechBridge team replied to your review.',
+        type: 'review',
+        link: review.product_id ? `/shop/${review.product_slug || ''}#reviews` : '/dashboard/reviews'
+      });
+    }
+
+    req.flash('success', 'Reply posted to the review.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.toggleReviewHidden = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const review = await ReviewModel.getById(reviewId);
+
+    if (!review) {
+      req.flash('error', 'Review not found.');
+      return res.redirect('/admin/reviews');
+    }
+
+    await ReviewModel.toggleHidden(reviewId);
+
+    if (review.product_id) {
+      await ReviewModel.updateProductRating(review.product_id);
+    }
+
+    req.flash('success', review.is_hidden ? 'Review unhidden.' : 'Review hidden from public view.');
+    res.redirect('/admin/reviews');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resolveReviewReport = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reportId = parseInt(req.params.id);
+    const action = req.body.action === 'dismissed' ? 'dismissed' : 'resolved';
+
+    await ReviewModel.resolveReport(reportId, action);
+
+    req.flash('success', action === 'dismissed' ? 'Report dismissed.' : 'Report resolved.');
+    res.redirect('/admin/reviews?reported=1');
   } catch (err) {
     next(err);
   }
@@ -1000,8 +1101,7 @@ exports.approveReview = async (req, res, next) => {
     await ReviewModel.approve(reviewId, req.session.userId);
 
     if (review.product_id) {
-      const avgData = await ReviewModel.getAverageRating(review.product_id);
-      await ProductModel.updateRating(review.product_id, avgData.average);
+      await ReviewModel.updateProductRating(review.product_id);
     }
 
     req.flash('success', 'Review approved.');
@@ -1025,8 +1125,7 @@ exports.rejectReview = async (req, res, next) => {
     await ReviewModel.reject(reviewId, req.session.userId);
 
     if (review.product_id) {
-      const avgData = await ReviewModel.getAverageRating(review.product_id);
-      await ProductModel.updateRating(review.product_id, avgData.average);
+      await ReviewModel.updateProductRating(review.product_id);
     }
 
     req.flash('success', 'Review rejected.');
@@ -1082,12 +1181,15 @@ exports.updateReview = async (req, res, next) => {
     await ReviewModel.update(reviewId, {
       rating: parseInt(rating),
       comment: comment || null,
-      status: status || 'pending'
+      title: req.body.title || null,
+      status: status || 'pending',
+      is_verified: req.body.is_verified === '1' || req.body.is_verified === true
     });
 
     const targetProductId = parseInt(product_id) || review.product_id;
-    const avgData = await ReviewModel.getAverageRating(targetProductId);
-    await ProductModel.updateRating(targetProductId, avgData.average);
+    if (targetProductId) {
+      await ReviewModel.updateProductRating(targetProductId);
+    }
 
     if (status === 'approved' && review.status !== 'approved') {
       await ReviewModel.approve(reviewId, req.session.userId);
@@ -1114,13 +1216,16 @@ exports.createReview = async (req, res, next) => {
       user_id: parseInt(user_id),
       product_id: parseInt(product_id),
       rating: parseInt(rating),
+      title: req.body.title || null,
       comment: comment || null,
       type: type || 'product',
-      status: status || 'approved'
+      status: status || 'approved',
+      is_verified: true
     });
 
-    const avgData = await ReviewModel.getAverageRating(parseInt(product_id));
-    await ProductModel.updateRating(parseInt(product_id), avgData.average);
+    if (created && created.product_id) {
+      await ReviewModel.updateProductRating(created.product_id);
+    }
 
     req.flash('success', 'Review created.');
     res.redirect('/admin/reviews');
@@ -1143,8 +1248,7 @@ exports.deleteReview = async (req, res, next) => {
     await ReviewModel.delete(reviewId);
 
     if (review.product_id) {
-      const avgData = await ReviewModel.getAverageRating(review.product_id);
-      await ProductModel.updateRating(review.product_id, avgData.average);
+      await ReviewModel.updateProductRating(review.product_id);
     }
 
     req.flash('success', 'Review deleted.');

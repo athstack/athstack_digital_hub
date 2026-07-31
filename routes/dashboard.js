@@ -23,6 +23,12 @@ router.get('/wishlist', customerController.getWishlist);
 router.post('/wishlist/add', validateCsrf, customerController.addToWishlist);
 router.post('/wishlist/remove', validateCsrf, customerController.removeFromWishlist);
 router.get('/reviews', customerController.getReviews);
+router.get('/reviews/:id/edit', customerController.getEditReview);
+router.post('/reviews/:id/edit',
+  withUpload(uploadProductImages.array('images', 5)),
+  validateCsrf,
+  customerController.updateReview
+);
 router.post('/reviews/:id/delete', validateCsrf, customerController.deleteReview);
 router.get('/messages', customerController.getMessages);
 

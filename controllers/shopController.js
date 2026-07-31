@@ -55,8 +55,18 @@ exports.getProduct = async (req, res, next) => {
       isWishlisted = await WishlistModel.isWishlisted(req.session.userId, product.id);
     }
 
-    const reviewData = await ReviewModel.getByProduct(product.id, 1, 10);
-    const ratingInfo = await ReviewModel.getAverageRating(product.id);
+    const reviewStats = await ReviewModel.getProductStats(product.id);
+    const reviewData = await ReviewModel.getByProduct(product.id, {
+      page: 1,
+      limit: 5,
+      userId: req.session.userId
+    });
+    const reviewGallery = await ReviewModel.getPhotoGallery(product.id, 24);
+
+    let reviewEligibility = null;
+    if (req.session.userId) {
+      reviewEligibility = await ReviewModel.getEligibilityForProduct(req.session.userId, product.id);
+    }
 
     const relatedProducts = await ProductModel.getRelated(product.id, product.category_id, 8);
 
@@ -69,12 +79,18 @@ exports.getProduct = async (req, res, next) => {
       gallery,
       isWishlisted,
       reviews: reviewData.reviews,
-      reviewCount: reviewData.total,
-      avgRating: ratingInfo.average,
+      reviewCount: reviewStats.count,
+      avgRating: reviewStats.average,
+      reviewStats,
+      reviewGallery,
+      reviewEligibility,
+      hasMoreReviews: reviewData.hasMore,
       relatedProducts,
       deliveryDate,
       formatCurrency,
-      calculateDiscount
+      calculateDiscount,
+      formatDisplayName: res.locals.formatDisplayName,
+      reviewThumbUrl: res.locals.reviewThumbUrl
     });
   } catch (err) {
     next(err);

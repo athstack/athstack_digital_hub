@@ -243,10 +243,21 @@ CREATE TABLE `reviews` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
     `product_id` INT DEFAULT NULL,
+    `order_id` INT DEFAULT NULL,
     `technician_id` INT DEFAULT NULL,
     `repair_id` INT DEFAULT NULL,
     `rating` INT NOT NULL,
     `comment` TEXT DEFAULT NULL,
+    `title` VARCHAR(255) DEFAULT NULL,
+    `images` JSON DEFAULT NULL,
+    `is_verified` TINYINT(1) NOT NULL DEFAULT 0,
+    `helpful_count` INT NOT NULL DEFAULT 0,
+    `seller_reply` TEXT DEFAULT NULL,
+    `seller_replied_at` TIMESTAMP NULL DEFAULT NULL,
+    `seller_replied_by` INT DEFAULT NULL,
+    `reported_count` INT NOT NULL DEFAULT 0,
+    `is_hidden` TINYINT(1) NOT NULL DEFAULT 0,
+    `is_edited` TINYINT(1) NOT NULL DEFAULT 0,
     `type` ENUM('product','technician','service') NOT NULL,
     `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
     `approved_at` TIMESTAMP NULL DEFAULT NULL,
@@ -257,10 +268,40 @@ CREATE TABLE `reviews` (
     FOREIGN KEY (`technician_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
     FOREIGN KEY (`repair_id`) REFERENCES `repair_requests`(`id`) ON DELETE SET NULL,
     FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    UNIQUE KEY `uq_review_user_product` (`user_id`, `product_id`),
     INDEX `idx_reviews_product` (`product_id`),
+    INDEX `idx_reviews_order` (`order_id`),
     INDEX `idx_reviews_tech` (`technician_id`),
     INDEX `idx_reviews_type` (`type`),
     INDEX `idx_reviews_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 12a. REVIEW HELPFUL VOTES
+-- ================================================================
+CREATE TABLE `review_helpful_votes` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `review_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uq_review_vote` (`review_id`, `user_id`),
+    FOREIGN KEY (`review_id`) REFERENCES `reviews`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 12b. REVIEW REPORTS
+-- ================================================================
+CREATE TABLE `review_reports` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `review_id` INT NOT NULL,
+    `user_id` INT DEFAULT NULL,
+    `reason` VARCHAR(255) NOT NULL,
+    `status` ENUM('pending','resolved','dismissed') NOT NULL DEFAULT 'pending',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`review_id`) REFERENCES `reviews`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    INDEX `idx_reports_status` (`status`)
 ) ENGINE=InnoDB;
 
 -- ================================================================
