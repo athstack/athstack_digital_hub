@@ -43,7 +43,7 @@
             <div class="col-6 col-md-3">
                 <div class="stat-card text-center p-4 h-100">
                     <div class="stat-icon-wrapper mx-auto mb-3 d-flex align-items-center justify-content-center rounded-3" style="width:56px;height:56px;">
-                        <i class="fa-solid fa-box-open fa-xl" style="color:#00d4ff;"></i>
+                        <i class="fa-solid fa-box-open fa-xl" style="color:var(--accent);"></i>
                     </div>
                     <h3 class="stat-number text-white fw-bold mb-1"><%= stats.products %>+</h3>
                     <p class="stat-label text-white-50 small mb-0">Tech Products</p>
@@ -52,7 +52,7 @@
             <div class="col-6 col-md-3">
                 <div class="stat-card text-center p-4 h-100">
                     <div class="stat-icon-wrapper mx-auto mb-3 d-flex align-items-center justify-content-center rounded-3" style="width:56px;height:56px;">
-                        <i class="fa-solid fa-graduation-cap fa-xl" style="color:#00e676;"></i>
+                        <i class="fa-solid fa-graduation-cap fa-xl" style="color:var(--success);"></i>
                     </div>
                     <h3 class="stat-number text-white fw-bold mb-1"><%= stats.courses %>+</h3>
                     <p class="stat-label text-white-50 small mb-0">Training Courses</p>
@@ -61,7 +61,7 @@
             <div class="col-6 col-md-3">
                 <div class="stat-card text-center p-4 h-100">
                     <div class="stat-icon-wrapper mx-auto mb-3 d-flex align-items-center justify-content-center rounded-3" style="width:56px;height:56px;">
-                        <i class="fa-solid fa-check-circle fa-xl" style="color:#b388ff;"></i>
+                        <i class="fa-solid fa-check-circle fa-xl" style="color:var(--primary-light);"></i>
                     </div>
                     <h3 class="stat-number text-white fw-bold mb-1"><%= stats.repairs %>+</h3>
                     <p class="stat-label text-white-50 small mb-0">Repairs Completed</p>
@@ -71,7 +71,7 @@
     </div>
 </section>
 
-<section class="services-section position-relative overflow-hidden">
+<section class="services-section section-alt position-relative overflow-hidden">
     <div class="section-top-divider"></div>
     <div class="section-glow section-glow-1"></div>
     <div class="section-glow section-glow-2"></div>
@@ -89,7 +89,7 @@
                 <div class="service-card text-center h-100">
                     <div class="service-icon-wrapper mx-auto mb-4 d-flex align-items-center justify-content-center rounded-4 position-relative">
                         <div class="service-icon-glow position-absolute top-50 start-50 translate-middle"></div>
-                        <i class="fa-solid fa-bag-shopping fa-2x position-relative z-1" style="color:#0d6efd;"></i>
+                        <i class="fa-solid fa-bag-shopping fa-2x position-relative z-1" style="color:var(--primary);"></i>
                     </div>
                     <h5 class="service-title text-white fw-bold mb-3">Tech Shop</h5>
                     <p class="service-desc mb-4">Premium hardware, accessories, and enterprise equipment curated for performance.</p>
@@ -111,7 +111,7 @@
                 <div class="service-card text-center h-100">
                     <div class="service-icon-wrapper mx-auto mb-4 d-flex align-items-center justify-content-center rounded-4 position-relative">
                         <div class="service-icon-glow position-absolute top-50 start-50 translate-middle"></div>
-                        <i class="fa-solid fa-graduation-cap fa-2x position-relative z-1" style="color:#00e676;"></i>
+                        <i class="fa-solid fa-graduation-cap fa-2x position-relative z-1" style="color:var(--success);"></i>
                     </div>
                     <h5 class="service-title text-white fw-bold mb-3">Training Academy</h5>
                     <p class="service-desc mb-4">Professional engineering courses and technical certification programs.</p>
@@ -172,7 +172,7 @@
 <% } %>
 
 <% if (recentCourses && recentCourses.length > 0) { %>
-<section class="courses-section position-relative overflow-hidden">
+<section class="courses-section section-alt position-relative overflow-hidden">
     <div class="section-top-divider"></div>
     <div class="section-glow section-glow-1"></div>
     <div class="section-glow section-glow-2"></div>

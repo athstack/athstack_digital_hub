@@ -75,7 +75,7 @@
                         else if (diff < 86400) time = Math.floor(diff / 3600) + 'h ago';
                         else time = d.toLocaleDateString();
                     }
-                    var unreadStyle = n.is_read ? '' : 'background:rgba(0,102,255,0.08);border-left:3px solid var(--bs-primary);';
+                    var unreadStyle = n.is_read ? '' : 'background:rgba(37,99,235,0.12);border-left:3px solid var(--bs-primary);';
                     return '<a href="' + esc(n.link || '#') + '" class="dropdown-item px-3 py-2 text-decoration-none notif-item" style="white-space:normal;word-wrap:break-word;' + unreadStyle + 'background-color:transparent;color:inherit;">' +
                         '<div style="font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.95);">' + esc(n.title) + '</div>' +
                         '<div style="font-size:0.8rem;line-height:1.45;color:rgba(255,255,255,0.55);">' + esc(n.message) + '</div>' +
