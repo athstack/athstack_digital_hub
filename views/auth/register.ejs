@@ -1,17 +1,19 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
-    <div class="container">
+<section class="auth-section">
+    <div class="container position-relative z-1">
         <div class="row justify-content-center">
             <div class="col-md-7 col-lg-6">
-                <div class="glass-card no-lift p-5">
-                    <div class="text-center mb-4">
+                <div class="auth-card">
+                    <div class="auth-brand">
                         <a href="/" class="gap-1" style="display:inline-flex;align-items:center;line-height:1;text-decoration:none;">
                             <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" style="height:52px;width:auto;">
                             <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
                         </a>
-                        <h3 class="text-white fw-bold">Create Account</h3>
-                        <p class="text-muted small">Join TechBridge Digital Hub today</p>
+                    </div>
+                    <div class="text-center mb-4">
+                        <h3 class="auth-heading">Create Account</h3>
+                        <p class="auth-subtext">Join TechBridge Digital Hub today</p>
                     </div>
 
                     <% if (typeof pendingMessage !== 'undefined' && pendingMessage) { %>
@@ -98,12 +100,14 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Create Account</button>
+                                <button type="submit" class="btn btn-premium-primary w-100 btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Create Account</button>
                             </div>
                         </div>
                     </form>
 
-                    <div class="text-center mt-3">
+                    <div class="auth-divider"></div>
+
+                    <div class="text-center">
                         <p class="text-muted small mb-0">Already have an account? <a href="/auth/login" class="text-primary">Sign in</a></p>
                     </div>
                 </div>
