@@ -120,9 +120,9 @@ class ReviewModel {
       conditions.push('r.is_verified = 1');
     }
     if (search) {
-      conditions.push('(r.comment LIKE ? OR r.title LIKE ?)');
+      conditions.push('(r.comment LIKE ? OR r.title LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)');
       const term = `%${search}%`;
-      filterParams.push(term, term);
+      filterParams.push(term, term, term, term);
     }
 
     const where = conditions.join(' AND ');
@@ -146,7 +146,9 @@ class ReviewModel {
     );
 
     const countRow = await queryOne(
-      `SELECT COUNT(*) AS total FROM reviews r WHERE ${where}`,
+      `SELECT COUNT(*) AS total FROM reviews r
+       LEFT JOIN users u ON r.user_id = u.id
+       WHERE ${where}`,
       countParams
     );
 

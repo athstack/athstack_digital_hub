@@ -3775,6 +3775,52 @@ input[type="date"]:not(:focus):placeholder-shown {
 .review-bar-filter:hover {
     opacity: 0.85;
 }
+.review-chip:focus-visible,
+.review-bar-filter:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+.review-chip:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.review-bar-filter:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.review-bar-filter.active .review-bar-label,
+.review-bar-filter.active .review-bar-count {
+    color: var(--primary);
+    font-weight: 700;
+}
+.review-bar-filter.active .review-bar-track {
+    outline: 2px solid rgba(37, 99, 235, 0.5);
+    outline-offset: 2px;
+}
+.review-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 2.5rem 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+}
+.review-loading-spinner {
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+    flex-shrink: 0;
+}
 .review-bar-track {
     flex: 1;
     height: 8px;

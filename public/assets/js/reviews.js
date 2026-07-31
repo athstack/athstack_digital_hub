@@ -276,16 +276,21 @@ function initReviewEditForm() {
 
 // ---------------------------------------------------------------------------
 // Review filters, search and load-more (AJAX)
+//
+// Filter state lives in a single `state` object (the only source of truth).
+// Every interaction updates `state`, highlights the active controls, then
+// re-fetches page 1 from the API with the current query. Load More re-uses
+// the same state so filters/search are preserved while paginating.
 // ---------------------------------------------------------------------------
 function initReviewFilters() {
   const container = document.getElementById('reviewListContainer');
-  const list = document.getElementById('reviewList');
-  const loadMoreBtn = document.getElementById('reviewLoadMoreBtn');
-  const emptyState = document.getElementById('reviewEmptyState');
   const searchInput = document.getElementById('reviewSearchInput');
+  const filterBar = document.querySelector('.review-filter-bar');
+  const ratingBars = document.querySelectorAll('.review-bar-filter');
   if (!container) return;
 
   const productId = container.getAttribute('data-product-id');
+
   const state = {
     page: 1,
     sort: 'recent',
@@ -294,13 +299,68 @@ function initReviewFilters() {
     verified: false,
     search: '',
     total: parseInt(container.getAttribute('data-total') || '0', 10) || 0,
-    hasMore: !!loadMoreBtn
+    hasMore: false,
+    loading: false,
+    requestId: 0
   };
+
+  let listEl = document.getElementById('reviewList');
+  let emptyEl = document.getElementById('reviewEmptyState');
+  let loadMoreBtn = document.getElementById('reviewLoadMoreBtn');
+  let loadMoreWrap = loadMoreBtn ? loadMoreBtn.closest('.review-load-more') : null;
+
+  function ensureListEl() {
+    if (listEl) return listEl;
+    listEl = document.createElement('div');
+    listEl.className = 'review-list';
+    listEl.id = 'reviewList';
+    container.appendChild(listEl);
+    return listEl;
+  }
+
+  function ensureEmptyEl() {
+    if (emptyEl) return emptyEl;
+    emptyEl = document.createElement('div');
+    emptyEl.id = 'reviewEmptyState';
+    emptyEl.className = 'review-empty';
+    emptyEl.innerHTML = '<i class="fa-regular fa-comments"></i><p></p>';
+    emptyEl.style.display = 'none';
+    container.appendChild(emptyEl);
+    return emptyEl;
+  }
+
+  function ensureLoadingEl() {
+    let el = document.getElementById('reviewLoading');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'reviewLoading';
+    el.className = 'review-loading';
+    el.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span><span>Loading reviews...</span>';
+    el.style.display = 'none';
+    container.appendChild(el);
+    return el;
+  }
+
+  function ensureStatusEl() {
+    let el = document.getElementById('reviewStatusRegion');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'reviewStatusRegion';
+    el.className = 'visually-hidden';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
+    container.appendChild(el);
+    return el;
+  }
+
+  function announce(message) {
+    ensureStatusEl().textContent = message;
+  }
 
   function buildQuery(page) {
     const q = new URLSearchParams();
     q.set('page', page);
-    if (state.sort) q.set('sort', state.sort);
+    q.set('sort', state.sort || 'recent');
     if (state.rating) q.set('rating', state.rating);
     if (state.hasPhotos) q.set('hasPhotos', '1');
     if (state.verified) q.set('verified', '1');
@@ -308,112 +368,191 @@ function initReviewFilters() {
     return q.toString();
   }
 
-  function setChips() {
-    container.querySelectorAll('.review-chip').forEach(chip => {
-      if (chip.hasAttribute('data-sort')) {
-        chip.classList.toggle('active', chip.getAttribute('data-sort') === state.sort);
-      } else if (chip.hasAttribute('data-has-photos')) {
+  function hasActiveFilter() {
+    return state.sort !== 'recent' || state.rating !== null || state.hasPhotos || state.verified || state.search !== '';
+  }
+
+  function updateActiveUI() {
+    if (filterBar) {
+      filterBar.querySelectorAll('.review-chip[data-sort]').forEach(chip => {
+        const active = chip.getAttribute('data-sort') === state.sort;
+        chip.classList.toggle('active', active);
+        chip.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      filterBar.querySelectorAll('.review-chip[data-has-photos]').forEach(chip => {
         chip.classList.toggle('active', state.hasPhotos);
-      } else if (chip.hasAttribute('data-verified')) {
+        chip.setAttribute('aria-pressed', state.hasPhotos ? 'true' : 'false');
+      });
+      filterBar.querySelectorAll('.review-chip[data-verified]').forEach(chip => {
         chip.classList.toggle('active', state.verified);
-      }
-    });
-    container.querySelectorAll('[data-rating]').forEach(chip => {
-      chip.classList.toggle('active', chip.getAttribute('data-rating') === String(state.rating));
+        chip.setAttribute('aria-pressed', state.verified ? 'true' : 'false');
+      });
+    }
+    ratingBars.forEach(bar => {
+      const active = String(state.rating) === bar.getAttribute('data-rating');
+      bar.classList.toggle('active', active);
+      bar.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
   }
 
-  async function load(page, append) {
+  function setLoading(on, append) {
+    state.loading = on;
+    container.setAttribute('aria-busy', on ? 'true' : 'false');
+
+    if (on && append && loadMoreBtn) {
+      loadMoreBtn.dataset.label = loadMoreBtn.innerHTML;
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span> Loading...';
+    } else {
+      const loadingEl = ensureLoadingEl();
+      loadingEl.style.display = on ? '' : 'none';
+      if (on) {
+        if (listEl) listEl.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = 'none';
+        if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      }
+    }
+
+    if (!on && loadMoreBtn && loadMoreBtn.dataset.label) {
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.innerHTML = loadMoreBtn.dataset.label;
+      delete loadMoreBtn.dataset.label;
+    }
+
+    if (filterBar) {
+      filterBar.querySelectorAll('.review-chip').forEach(chip => { chip.disabled = on; });
+    }
+    ratingBars.forEach(bar => { bar.disabled = on; });
+    if (loadMoreBtn) loadMoreBtn.disabled = on;
+  }
+
+  function renderResults(data) {
+    state.page = data.page;
+    state.hasMore = data.hasMore;
+    state.total = data.total;
+
+    const list = ensureListEl();
+    const empty = ensureEmptyEl();
+
+    list.innerHTML = data.html;
+    list.style.display = data.total > 0 ? '' : 'none';
+    empty.querySelector('p').textContent = hasActiveFilter()
+      ? 'No reviews match your filters.'
+      : 'No reviews yet. Be the first to review this product!';
+    empty.style.display = data.total > 0 ? 'none' : '';
+    if (loadMoreWrap) loadMoreWrap.style.display = (data.total > 0 && data.hasMore) ? '' : 'none';
+
+    if (data.total > 0) {
+      initReviewHelpful();
+      initReviewReport();
+      initReviewLightbox();
+      announce(data.total + (data.total === 1 ? ' review found.' : ' reviews found.'));
+    } else {
+      announce('No reviews match your filters.');
+    }
+  }
+
+  function renderAppend(data) {
+    state.page = data.page;
+    state.hasMore = data.hasMore;
+    state.total = data.total;
+    ensureListEl().insertAdjacentHTML('beforeend', data.html);
+    if (loadMoreWrap) loadMoreWrap.style.display = data.hasMore ? '' : 'none';
+    initReviewHelpful();
+    initReviewReport();
+    initReviewLightbox();
+  }
+
+  async function fetchReviews(page, append) {
+    const requestId = ++state.requestId;
+    setLoading(true, append);
     try {
       const res = await fetch('/api/reviews/product/' + productId + '?' + buildQuery(page));
       if (!res.ok) throw new Error('Failed to load reviews');
       const data = await res.json();
-      state.page = data.page;
-      state.hasMore = data.hasMore;
-
-      if (append && list) {
-        list.insertAdjacentHTML('beforeend', data.html);
-      } else {
-        if (data.total > 0) {
-          if (!list) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'review-list';
-            wrapper.id = 'reviewList';
-            wrapper.innerHTML = data.html;
-            container.insertBefore(wrapper, loadMoreBtn ? loadMoreBtn.closest('.review-load-more') : null);
-            initReviewHelpful();
-            initReviewReport();
-            initReviewLightbox();
-          } else {
-            list.innerHTML = data.html;
-            initReviewHelpful();
-            initReviewReport();
-            initReviewLightbox();
-          }
-          if (loadMoreBtn) loadMoreBtn.closest('.review-load-more').style.display = data.hasMore ? '' : 'none';
-          if (emptyState) emptyState.style.display = 'none';
-        } else {
-          if (list) list.innerHTML = '';
-          if (loadMoreBtn) loadMoreBtn.closest('.review-load-more').style.display = 'none';
-          if (emptyState) {
-            emptyState.style.display = '';
-            emptyState.querySelector('p').textContent = state.search
-              ? 'No reviews match your search.'
-              : 'No reviews found for this filter.';
-          }
-        }
-      }
+      if (requestId !== state.requestId) return;
+      if (append) renderAppend(data);
+      else renderResults(data);
     } catch (err) {
+      if (requestId !== state.requestId) return;
       console.error('Review load error:', err);
+      const list = ensureListEl();
+      const empty = ensureEmptyEl();
+      list.innerHTML = '';
+      list.style.display = 'none';
+      empty.querySelector('p').textContent = 'Failed to load reviews. Please try again.';
+      empty.style.display = '';
+      if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      announce('Failed to load reviews. Please try again.');
+    } finally {
+      if (requestId === state.requestId) setLoading(false, append);
     }
   }
 
-  container.querySelectorAll('.review-chip[data-sort]').forEach(chip => {
-    chip.addEventListener('click', () => {
-      state.sort = chip.getAttribute('data-sort');
-      setChips();
-      load(1, false);
-    });
-  });
+  function applyFilter() {
+    updateActiveUI();
+    fetchReviews(1, false);
+  }
 
-  container.querySelectorAll('.review-chip[data-has-photos]').forEach(chip => {
-    chip.addEventListener('click', () => {
-      state.hasPhotos = !state.hasPhotos;
-      setChips();
-      load(1, false);
+  if (filterBar) {
+    filterBar.querySelectorAll('.review-chip[data-sort]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (state.loading) return;
+        state.sort = chip.getAttribute('data-sort');
+        applyFilter();
+      });
     });
-  });
-
-  container.querySelectorAll('.review-chip[data-verified]').forEach(chip => {
-    chip.addEventListener('click', () => {
-      state.verified = !state.verified;
-      setChips();
-      load(1, false);
+    filterBar.querySelectorAll('.review-chip[data-has-photos]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (state.loading) return;
+        state.hasPhotos = !state.hasPhotos;
+        applyFilter();
+      });
     });
-  });
+    filterBar.querySelectorAll('.review-chip[data-verified]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (state.loading) return;
+        state.verified = !state.verified;
+        applyFilter();
+      });
+    });
+  }
 
-  container.querySelectorAll('.review-bar-filter').forEach(bar => {
+  ratingBars.forEach(bar => {
     bar.addEventListener('click', () => {
+      if (state.loading) return;
       state.rating = state.rating === bar.getAttribute('data-rating') ? null : bar.getAttribute('data-rating');
-      setChips();
-      load(1, false);
+      applyFilter();
     });
   });
 
   if (searchInput) {
     let debounce = null;
     searchInput.addEventListener('input', () => {
+      if (state.loading) return;
       clearTimeout(debounce);
       debounce = setTimeout(() => {
         state.search = searchInput.value.trim();
-        load(1, false);
+        applyFilter();
       }, 400);
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(debounce);
+        state.search = searchInput.value.trim();
+        applyFilter();
+      }
     });
   }
 
   if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', () => load(state.page + 1, true));
+    loadMoreBtn.addEventListener('click', () => {
+      if (state.loading) return;
+      fetchReviews(state.page + 1, true);
+    });
   }
+
+  updateActiveUI();
 }
 
 // ---------------------------------------------------------------------------
