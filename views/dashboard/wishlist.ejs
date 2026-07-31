@@ -33,7 +33,7 @@
                                     <% } %>
                                 </div>
                             </a>
-                            <h6 class="text-white fw-bold mb-1"><a href="/shop/<%= item.slug %>" class="text-white text-decoration-none"><%= item.name %></a></h6>
+                            <h6 class="text-white fw-bold mb-1"><a href="/shop/<%= item.slug %>" class="text-primary text-link"><%= item.name %></a></h6>
                             <% if (item.category_name) { %><small class="text-white-50"><%= item.category_name %></small><% } %>
                             <div class="mt-auto d-flex align-items-center justify-content-between pt-2">
                                 <span class="text-primary fw-bold"><%= formatCurrency(item.discount_price && item.discount_price < item.price ? item.discount_price : item.price) %></span>

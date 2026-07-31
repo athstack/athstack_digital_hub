@@ -44,7 +44,7 @@
                                              <%- include('../partials/productImage', { src: item.main_image ? imageUrl(item.main_image, 'products') : '', alt: item.name, style: 'max-height:68px;object-fit:contain;' }) %>
                                             </div>
                                             <div>
-                                                <a href="/shop/<%= item.slug %>" class="text-white fw-bold text-decoration-none fs-5"><%= item.name %></a>
+                                                <a href="/shop/<%= item.slug %>" class="text-primary fw-bold text-link fs-5"><%= item.name %></a>
                                                 <% if (item.category_name) { %>
                                                     <br><small class="text-white-50"><%= item.category_name %></small>
                                                 <% } %>
