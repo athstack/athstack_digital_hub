@@ -125,11 +125,6 @@ async function migrate(connection) {
     );
     if (reviewCols[0].cnt === 0) {
       await connection.query(
-        `DELETE r1 FROM reviews r1
-         INNER JOIN reviews r2 ON r1.user_id = r2.user_id AND r1.product_id = r2.product_id AND r1.id < r2.id
-         WHERE r1.product_id IS NOT NULL`
-      );
-      await connection.query(
         `ALTER TABLE reviews
            ADD COLUMN order_id INT DEFAULT NULL,
            ADD COLUMN title VARCHAR(255) DEFAULT NULL,
@@ -141,11 +136,30 @@ async function migrate(connection) {
            ADD COLUMN seller_replied_by INT DEFAULT NULL,
            ADD COLUMN reported_count INT NOT NULL DEFAULT 0,
            ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0,
-           ADD COLUMN is_edited TINYINT(1) NOT NULL DEFAULT 0,
-           ADD UNIQUE KEY uq_review_user_product (user_id, product_id),
-           ADD KEY idx_reviews_order (order_id)`
+           ADD COLUMN is_edited TINYINT(1) NOT NULL DEFAULT 0`
       );
       console.log('Migration: review system columns added');
+    }
+    const [uniqKey] = await connection.query(
+      "SELECT COUNT(*) AS cnt FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'reviews' AND INDEX_NAME = 'uq_review_user_product'"
+    );
+    if (uniqKey[0].cnt === 0) {
+      await connection.query(
+        `DELETE r1 FROM reviews r1
+         INNER JOIN reviews r2 ON r1.user_id = r2.user_id AND r1.product_id = r2.product_id AND r1.id < r2.id
+         WHERE r1.product_id IS NOT NULL`
+      );
+      await connection.query(
+        'ALTER TABLE reviews ADD UNIQUE KEY uq_review_user_product (user_id, product_id)'
+      );
+      console.log('Migration: added unique review user/product key');
+    }
+    const [orderIdx] = await connection.query(
+      "SELECT COUNT(*) AS cnt FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'reviews' AND INDEX_NAME = 'idx_reviews_order'"
+    );
+    if (orderIdx[0].cnt === 0) {
+      await connection.query('ALTER TABLE reviews ADD KEY idx_reviews_order (order_id)');
+      console.log('Migration: added idx_reviews_order index');
     }
     await connection.query(
       `CREATE TABLE IF NOT EXISTS review_helpful_votes (
