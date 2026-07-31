@@ -100,17 +100,17 @@ async function runMigrations() {
         );
         await pool.query(
           `ALTER TABLE reviews
-             ADD COLUMN order_id INT DEFAULT NULL AFTER product_id,
-             ADD COLUMN title VARCHAR(255) DEFAULT NULL AFTER comment,
-             ADD COLUMN images JSON DEFAULT NULL AFTER title,
-             ADD COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER images,
-             ADD COLUMN helpful_count INT NOT NULL DEFAULT 0 AFTER is_verified,
-             ADD COLUMN seller_reply TEXT DEFAULT NULL AFTER helpful_count,
-             ADD COLUMN seller_replied_at TIMESTAMP NULL DEFAULT NULL AFTER seller_reply,
-             ADD COLUMN seller_replied_by INT DEFAULT NULL AFTER seller_replied_at,
-             ADD COLUMN reported_count INT NOT NULL DEFAULT 0 AFTER seller_replied_by,
-             ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER reported_count,
-             ADD COLUMN is_edited TINYINT(1) NOT NULL DEFAULT 0 AFTER is_hidden,
+             ADD COLUMN order_id INT DEFAULT NULL,
+             ADD COLUMN title VARCHAR(255) DEFAULT NULL,
+             ADD COLUMN images JSON DEFAULT NULL,
+             ADD COLUMN is_verified TINYINT(1) NOT NULL DEFAULT 0,
+             ADD COLUMN helpful_count INT NOT NULL DEFAULT 0,
+             ADD COLUMN seller_reply TEXT DEFAULT NULL,
+             ADD COLUMN seller_replied_at TIMESTAMP NULL DEFAULT NULL,
+             ADD COLUMN seller_replied_by INT DEFAULT NULL,
+             ADD COLUMN reported_count INT NOT NULL DEFAULT 0,
+             ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0,
+             ADD COLUMN is_edited TINYINT(1) NOT NULL DEFAULT 0,
              ADD UNIQUE KEY uq_review_user_product (user_id, product_id),
              ADD KEY idx_reviews_order (order_id)`
         );
