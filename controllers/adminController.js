@@ -269,6 +269,11 @@ exports.createUser = async (req, res, next) => {
 exports.getEditUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      req.flash('error', 'Invalid user ID.');
+      return res.redirect('/admin/users');
+    }
+
     const target = await UserModel.findById(userId);
 
     if (!target) {
@@ -296,6 +301,11 @@ exports.getEditUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      req.flash('error', 'Invalid user ID.');
+      return res.redirect('/admin/users');
+    }
+
     const { first_name, last_name, email, phone, role, status, password } = req.body;
 
     const target = await UserModel.findById(userId);
@@ -368,6 +378,11 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
+
+    if (isNaN(userId)) {
+      req.flash('error', 'Invalid user ID.');
+      return res.redirect('/admin/users');
+    }
 
     if (userId === Number(req.session.userId)) {
       req.flash('error', 'You cannot delete your own account.');

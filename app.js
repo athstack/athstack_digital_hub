@@ -173,6 +173,41 @@ app.use((req, res, next) => {
 });
 
 // ---------------------------------------------------------------------------
+// Redirect normalization
+//
+// The @vercel/node runtime replaces res.redirect with a version that defaults
+// to 307 (which preserves the method and body) and treats 'back' as a literal
+// relative URL. On POST this re-submits the original body to the redirect
+// target (e.g. after an admin user update it would re-POST to the create
+// route, causing cascading side effects and 500s). Restore standard behavior:
+// default to 302 for GET/HEAD and 303 (force GET) for state-changing methods,
+// and resolve 'back' to the Referrer header.
+// ---------------------------------------------------------------------------
+app.use((req, res, next) => {
+  const originalRedirect = res.redirect;
+  res.redirect = function (statusOrUrl, url) {
+    let status = statusOrUrl;
+    let target = url;
+
+    if (typeof statusOrUrl !== 'number') {
+      target = statusOrUrl;
+      status = undefined;
+    }
+
+    if (target === 'back') {
+      target = req.get('Referrer') || '/';
+    }
+
+    if (status === undefined) {
+      status = (req.method === 'GET' || req.method === 'HEAD') ? 302 : 303;
+    }
+
+    return originalRedirect.call(this, status, target);
+  };
+  next();
+});
+
+// ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
 app.use('/', require('./routes/home'));
