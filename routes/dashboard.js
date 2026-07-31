@@ -3,7 +3,7 @@ const router = express.Router();
 const customerController = require('../controllers/customerController');
 const { isCustomer } = require('../middleware/auth');
 const { validateCsrf } = require('../middleware/csrf');
-const { uploadProfileImage, withUpload } = require('../middleware/upload');
+const { uploadProfileImage, uploadProductImages, withUpload } = require('../middleware/upload');
 
 router.use(isCustomer);
 
