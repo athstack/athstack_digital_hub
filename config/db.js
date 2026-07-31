@@ -192,6 +192,6 @@ async function migrate(connection) {
   }
 }
 
-runMigrations();
+const whenReady = runMigrations();
 
-module.exports = { pool, query, queryOne, testConnection };
+module.exports = { pool, query, queryOne, testConnection, whenReady };
