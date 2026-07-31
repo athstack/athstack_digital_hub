@@ -91,13 +91,13 @@
           </div>
           <span class="info-rating-value"><%= avgRating.toFixed(1) %></span>
           <span class="info-rating-count">(<%= reviewCount %> Review<%= reviewCount !== 1 ? 's' : '' %>)</span>
-          <% } else if (product.rating && product.rating > 0) { %>
-          <div class="info-rating-stars" aria-label="<%= product.rating %> out of 5 stars">
+          <% } else if (product.rating && Number(product.rating) > 0) { %>
+          <div class="info-rating-stars" aria-label="<%= Number(product.rating).toFixed(1) %> out of 5 stars">
             <% for (var i = 1; i <= 5; i++) { %>
-              <i class="<%= i <= Math.round(product.rating) ? 'fa-solid' : 'fa-regular' %> fa-star <%= i <= Math.round(product.rating) ? 'star-filled' : '' %>"></i>
+              <i class="<%= i <= Math.round(Number(product.rating)) ? 'fa-solid' : 'fa-regular' %> fa-star <%= i <= Math.round(Number(product.rating)) ? 'star-filled' : '' %>"></i>
             <% } %>
           </div>
-          <span class="info-rating-value"><%= product.rating.toFixed(1) %></span>
+          <span class="info-rating-value"><%= Number(product.rating).toFixed(1) %></span>
           <% } %>
           <% if (product.total_sales && product.total_sales > 10) { %>
           <span class="info-sold"><i class="fa-solid fa-fire"></i> <%= product.total_sales %> sold</span>
@@ -317,9 +317,9 @@
         <!-- Review Summary -->
         <div class="review-summary-card" data-aos="fade-up">
           <div class="review-summary-left">
-            <div class="review-summary-score"><%= reviewStats.average > 0 ? reviewStats.average.toFixed(1) : (product.rating || 0).toFixed(1) %></div>
+            <div class="review-summary-score"><%= reviewStats.average > 0 ? reviewStats.average.toFixed(1) : Number(product.rating || 0).toFixed(1) %></div>
             <div class="review-summary-stars">
-              <% var avgR = reviewStats.average > 0 ? reviewStats.average : (product.rating || 0); %>
+              <% var avgR = reviewStats.average > 0 ? reviewStats.average : Number(product.rating || 0); %>
               <% for (let i = 1; i <= 5; i++) { %>
                 <i class="<%= i <= Math.round(avgR) ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
               <% } %>
