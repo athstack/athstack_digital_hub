@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "Votre panier - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "Produit",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "remove": "Retirer"
+  },
+  "index": {
+    "badge": "Panier d'achat",
+    "heading": "Votre panier",
+    "orderSummary": "Récapitulatif de la commande",
+    "subtotalItems": "Sous-total ({{count}} articles)",
+    "calculatedAtCheckout": "Calculé au moment du paiement",
+    "checkout": "Passer au paiement",
+    "continueShopping": "Continuer vos achats"
+  },
+  "empty": {
+    "heading": "Votre panier est vide",
+    "message": "On dirait que vous n'avez encore ajouté aucun produit. Parcourez notre boutique pour trouver du matériel informatique premium.",
+    "browseShop": "Parcourir la boutique"
+  },
+  "flash": {
+    "invalidProduct": "Produit invalide.",
+    "productNotFound": "Produit introuvable ou indisponible.",
+    "itemAdded": "Article ajouté au panier.",
+    "itemNotFound": "Article introuvable dans le panier.",
+    "cartUpdated": "Panier mis à jour.",
+    "itemRemoved": "Article retiré du panier.",
+    "emptyCart": "Votre panier est vide.",
+    "noValidProducts": "Aucun produit valide dans le panier.",
+    "insufficientStock": "Stock insuffisant pour « {{name}} ». Seulement {{stock}} disponibles.",
+    "orderPlaced": "Commande n°{{id}} passée avec succès !"
+  },
+  "notification": {
+    "orderPlacedTitle": "Commande passée",
+    "orderPlacedMessage": "Votre commande n°{{id}} d'un montant de {{total}} a été passée avec succès.",
+    "newOrderTitle": "Nouvelle commande reçue",
+    "newOrderMessage": "La commande n°{{id}} d'un montant de {{total}} nécessite un traitement."
+  }
+}

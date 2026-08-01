@@ -14,29 +14,30 @@
                 <%- include('../partials/sidebar') %>
             </div>
             <div class="col-lg-9">
+                <% function _tStatus(s) { var k = String(s || '').replace(/_([a-z])/g, function(m, c) { return c.toUpperCase(); }); return t('status.' + k, { defaultValue: t('dashboard:words.' + k, { defaultValue: s }) }); } %>
                 <div class="d-flex align-items-center mb-4">
                     <a href="/dashboard/orders" class="text-white-50 text-decoration-none me-3"><i class="fa-solid fa-arrow-left"></i></a>
-                    <span class="section-badge me-3">Order</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i>Order #<%= order.id %></h2>
+                    <span class="section-badge me-3"><%= t('dashboard:orderDetail.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i><%= t('dashboard:orderDetail.title', { id: order.id }) %></h2>
                 </div>
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="glass-card p-3">
-                            <small class="text-white-50 d-block mb-1">Order Reference</small>
+                            <small class="text-white-50 d-block mb-1"><%= t('dashboard:orderDetail.orderReference') %></small>
                             <span class="text-white fw-bold"><%= order.order_reference || '#' + order.id %></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3">
-                            <small class="text-white-50 d-block mb-1">Date Placed</small>
+                            <small class="text-white-50 d-block mb-1"><%= t('dashboard:orderDetail.datePlaced') %></small>
                             <span class="text-white fw-bold"><%= formatDate(order.created_at) %></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3">
-                            <small class="text-white-50 d-block mb-1">Status</small>
-                            <span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= order.status || order.order_status %></span>
+                            <small class="text-white-50 d-block mb-1"><%= t('words.status') %></small>
+                            <span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= _tStatus(order.status || order.order_status) %></span>
                         </div>
                     </div>
                 </div>
@@ -46,21 +47,21 @@
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                         <i class="fa-solid fa-circle-check fa-2x text-success"></i>
                         <div class="flex-grow-1 min-width-0">
-                            <h6 class="text-white fw-bold mb-0">Your order has been delivered!</h6>
-                            <small class="text-white-50">Enjoy your products — let others know what you think with a verified review.</small>
+                            <h6 class="text-white fw-bold mb-0"><%= t('dashboard:orderDetail.deliveredTitle') %></h6>
+                            <small class="text-white-50"><%= t('dashboard:orderDetail.deliveredMessage') %></small>
                         </div>
-                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase Eligible</span>
+                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> <%= t('dashboard:orderDetail.verifiedPurchaseEligible') %></span>
                     </div>
                 </div>
                 <% } %>
 
                 <div class="glass-card p-4 mb-4">
-                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-box-open me-2 text-primary"></i>Items Ordered</h5>
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-box-open me-2 text-primary"></i><%= t('dashboard:orderDetail.itemsOrdered') %></h5>
                     <% if (order.items && order.items.length > 0) { %>
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
-                                <tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th><th>Review</th></tr>
+                                <tr><th><%= t('dashboard:words.product') %></th><th><%= t('dashboard:words.qty') %></th><th><%= t('dashboard:words.unitPrice') %></th><th><%= t('dashboard:words.subtotal') %></th><th><%= t('dashboard:words.review') %></th></tr>
                             </thead>
                             <tbody>
                                 <% order.items.forEach(item => { %>
@@ -72,7 +73,7 @@
                                             </div>
                                             <div>
                                                 <span class="text-white fw-bold"><%= item.product_name %></span>
-                                                <% if (item.product_slug) { %><br><a href="/shop/<%= item.product_slug %>" class="text-primary small text-link">View product</a><% } %>
+                                                <% if (item.product_slug) { %><br><a href="/shop/<%= item.product_slug %>" class="text-primary small text-link"><%= t('dashboard:orderDetail.viewProduct') %></a><% } %>
                                             </div>
                                         </div>
                                     </td>
@@ -82,12 +83,12 @@
                                     <td>
                                         <% if (isDelivered && item.product_id) { %>
                                             <% if (reviewedProductIds && reviewedProductIds.has(item.product_id)) { %>
-                                            <span class="badge bg-success rounded-pill"><i class="fa-solid fa-check me-1"></i>Reviewed</span>
+                                            <span class="badge bg-success rounded-pill"><i class="fa-solid fa-check me-1"></i><%= t('dashboard:orderDetail.reviewed') %></span>
                                             <% } else { %>
-                                            <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill"><i class="fa-solid fa-star me-1"></i>Write Review</a>
+                                            <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill"><i class="fa-solid fa-star me-1"></i><%= t('dashboard:orderDetail.writeReview') %></a>
                                             <% } %>
                                         <% } else if (item.product_id) { %>
-                                        <span class="text-white-50 small">Available after delivery</span>
+                                        <span class="text-white-50 small"><%= t('dashboard:orderDetail.availableAfterDelivery') %></span>
                                         <% } %>
                                     </td>
                                 </tr>
@@ -96,28 +97,28 @@
                         </table>
                     </div>
                     <% } else { %>
-                    <p class="text-white-50 mb-0">No item details available.</p>
+                    <p class="text-white-50 mb-0"><%= t('dashboard:orderDetail.noItems') %></p>
                     <% } %>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="glass-card p-4">
-                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Payment</h6>
-                            <p class="text-white-50 mb-1">Method: <span class="text-white"><%= order.payment_method ? order.payment_method.toUpperCase() : 'N/A' %></span></p>
-                            <p class="text-white-50 mb-0">Status: <span class="badge <%= getStatusBadgeClass(order.payment_status || 'pending') %>"><%= order.payment_status || 'pending' %></span></p>
+                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i><%= t('dashboard:orderDetail.payment') %></h6>
+                            <p class="text-white-50 mb-1"><%= t('dashboard:words.method') %>: <span class="text-white"><%= order.payment_method ? order.payment_method.toUpperCase() : t('dashboard:words.na') %></span></p>
+                            <p class="text-white-50 mb-0"><%= t('words.status') %>: <span class="badge <%= getStatusBadgeClass(order.payment_status || 'pending') %>"><%= _tStatus(order.payment_status || 'pending') %></span></p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="glass-card p-4">
-                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-calculator me-2 text-primary"></i>Order Summary</h6>
+                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-calculator me-2 text-primary"></i><%= t('dashboard:orderDetail.orderSummary') %></h6>
                             <div class="d-flex justify-content-between mb-1">
-                                <span class="text-white-50">Items (<%= order.items ? order.items.reduce((s, i) => s + i.quantity, 0) : 0 %>)</span>
+                                <span class="text-white-50"><%= t('dashboard:orderDetail.itemsCount', { count: order.items ? order.items.reduce((s, i) => s + i.quantity, 0) : 0 }) %></span>
                                 <span class="text-white"><%= formatCurrency(order.total_amount) %></span>
                             </div>
                             <hr class="border-secondary opacity-25 my-2">
                             <div class="d-flex justify-content-between">
-                                <span class="text-white fw-bold">Total</span>
+                                <span class="text-white fw-bold"><%= t('words.total') %></span>
                                 <span class="text-primary fw-bold fs-5"><%= formatCurrency(order.total_amount) %></span>
                             </div>
                         </div>

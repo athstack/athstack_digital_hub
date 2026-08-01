@@ -15,8 +15,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Orders</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i>All Orders</h2>
+                    <span class="section-badge"><%= t('admin:words.orders') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i><%= t('admin:orders.heading') %></h2>
                 </div>
 
                 <% if (orders && orders.length > 0) { %>
@@ -24,7 +24,7 @@
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
-                                <tr><th>Order</th><th>Customer</th><th>Email</th><th>Date</th><th>Total</th><th>Status</th><th>Action</th></tr>
+                                <tr><th><%= t('admin:words.order') %></th><th><%= t('admin:words.customer') %></th><th><%= t('common:words.email') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.total') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:words.action') %></th></tr>
                             </thead>
                             <tbody>
                                 <% orders.forEach(order => { %>
@@ -34,7 +34,7 @@
                                     <td class="text-white-50 small"><%= order.email %></td>
                                     <td class="text-white-50"><%= formatDate(order.created_at) %></td>
                                     <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount) %></td>
-                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= order.status || order.order_status %></span></td>
+                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= t('admin:status.' + ((order.status || order.order_status)||'').toLowerCase(), {defaultValue: order.status || order.order_status}) %></span></td>
                                     <td>
                                         <button type="button" class="btn btn-premium-outline btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#orderModal<%= order.id %>">
                                             <i class="fa-solid fa-pen"></i>
@@ -45,22 +45,22 @@
                                                     <form method="POST" action="/admin/orders/<%= order.id %>/status">
                                                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                                         <div class="modal-header border-secondary">
-                                                            <h5 class="text-white fw-bold">Update Order #<%= order.id %></h5>
+                                                            <h5 class="text-white fw-bold"><%= t('admin:orders.updateOrder', {id: order.id}) %></h5>
                                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <label class="form-label">Order Status</label>
+                                                            <label class="form-label"><%= t('admin:orders.orderStatusLabel') %></label>
                                                             <select name="status" class="form-select" required>
-                                                                <option value="pending" <%= (order.status || order.order_status) === 'pending' ? 'selected' : '' %>>Pending</option>
-                                                                <option value="processing" <%= (order.status || order.order_status) === 'processing' ? 'selected' : '' %>>Processing</option>
-                                                                <option value="shipped" <%= (order.status || order.order_status) === 'shipped' ? 'selected' : '' %>>Shipped</option>
-                                                                <option value="delivered" <%= (order.status || order.order_status) === 'delivered' ? 'selected' : '' %>>Delivered</option>
-                                                                <option value="cancelled" <%= (order.status || order.order_status) === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                                <option value="pending" <%= (order.status || order.order_status) === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
+                                                                <option value="processing" <%= (order.status || order.order_status) === 'processing' ? 'selected' : '' %>><%= t('admin:status.processing') %></option>
+                                                                <option value="shipped" <%= (order.status || order.order_status) === 'shipped' ? 'selected' : '' %>><%= t('admin:status.shipped') %></option>
+                                                                <option value="delivered" <%= (order.status || order.order_status) === 'delivered' ? 'selected' : '' %>><%= t('admin:status.delivered') %></option>
+                                                                <option value="cancelled" <%= (order.status || order.order_status) === 'cancelled' ? 'selected' : '' %>><%= t('admin:status.cancelled') %></option>
                                                             </select>
                                                         </div>
                                                         <div class="modal-footer border-secondary">
-                                                            <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-premium-primary rounded-pill">Update</button>
+                                                            <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                                                            <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('common:words.update') %></button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -76,8 +76,8 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-receipt fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Orders</h4>
-                    <p class="text-white-50">No orders have been placed yet.</p>
+                    <h4 class="text-white fw-bold"><%= t('admin:orders.noOrders') %></h4>
+                    <p class="text-white-50"><%= t('admin:orders.noOrdersPlaced') %></p>
                 </div>
                 <% } %>
             </div>

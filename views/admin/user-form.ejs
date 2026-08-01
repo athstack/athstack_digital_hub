@@ -9,7 +9,7 @@
             <div class="col-lg-9">
                 <h2 class="text-white fw-bold mb-4">
                     <i class="fa-solid fa-<%= editing ? 'pencil' : 'user-plus' %> me-2 text-primary"></i>
-                    <%= editing ? 'Edit User' : 'Create New User' %>
+                    <%= editing ? t('admin:userForm.headingEdit') : t('admin:userForm.headingCreate') %>
                 </h2>
 
                 <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -25,51 +25,51 @@
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">First Name *</label>
-                                <input type="text" name="first_name" class="form-control" required value="<%= editing && user ? user.first_name : '' %>" placeholder="First name">
+                                <label class="form-label"><%= t('admin:userForm.firstName') %> *</label>
+                                <input type="text" name="first_name" class="form-control" required value="<%= editing && user ? user.first_name : '' %>" placeholder="<%= t('admin:userForm.firstNamePlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Last Name *</label>
-                                <input type="text" name="last_name" class="form-control" required value="<%= editing && user ? user.last_name : '' %>" placeholder="Last name">
+                                <label class="form-label"><%= t('admin:userForm.lastName') %> *</label>
+                                <input type="text" name="last_name" class="form-control" required value="<%= editing && user ? user.last_name : '' %>" placeholder="<%= t('admin:userForm.lastNamePlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email *</label>
+                                <label class="form-label"><%= t('common:words.email') %> *</label>
                                 <input type="email" name="email" class="form-control" required value="<%= editing && user ? user.email : '' %>" placeholder="user@example.com">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone</label>
+                                <label class="form-label"><%= t('common:words.phone') %></label>
                                 <input type="text" name="phone" class="form-control" value="<%= editing && user ? (user.phone || '') : '' %>" placeholder="+255 7XX XXX XXX">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Role *</label>
+                                <label class="form-label"><%= t('admin:users.roleLabel') %> *</label>
                                 <select name="role" class="form-select" required>
-                                    <option value="customer" <%= editing && user && user.role === 'customer' ? 'selected' : '' %>>Customer</option>
-                                    <option value="technician" <%= editing && user && user.role === 'technician' ? 'selected' : '' %>>Technician</option>
+                                    <option value="customer" <%= editing && user && user.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
+                                    <option value="technician" <%= editing && user && user.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
                                     <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-                                    <option value="admin" <%= editing && user && user.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                                    <option value="super_admin" <%= editing && user && user.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
+                                    <option value="admin" <%= editing && user && user.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
+                                    <option value="super_admin" <%= editing && user && user.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
                                     <% } %>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Status *</label>
+                                <label class="form-label"><%= t('common:words.status') %> *</label>
                                 <select name="status" class="form-select" required>
-                                    <option value="active" <%= editing && user && user.status === 'active' ? 'selected' : '' %>>Active</option>
-                                    <option value="inactive" <%= editing && user && user.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
-                                    <option value="suspended" <%= editing && user && user.status === 'suspended' ? 'selected' : '' %>>Suspended</option>
+                                    <option value="active" <%= editing && user && user.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+                                    <option value="inactive" <%= editing && user && user.status === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
+                                    <option value="suspended" <%= editing && user && user.status === 'suspended' ? 'selected' : '' %>><%= t('admin:status.suspended') %></option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Password <%= editing ? '(leave blank to keep current)' : '*' %></label>
-                                <input type="password" name="password" class="form-control" <%= editing ? '' : 'required' %> placeholder="<%= editing ? 'Leave blank to keep current' : 'Enter password' %>" minlength="6">
+                                <label class="form-label"><%= t('admin:userForm.password') %> <%= editing ? t('admin:userForm.leaveBlank') : '*' %></label>
+                                <input type="password" name="password" class="form-control" <%= editing ? '' : 'required' %> placeholder="<%= editing ? t('admin:userForm.leaveBlankPlaceholder') : t('admin:userForm.enterPassword') %>" minlength="6">
                             </div>
                         </div>
 
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
-                                <i class="fa-solid fa-<%= editing ? 'save' : 'user-plus' %> me-2"></i><%= editing ? 'Update User' : 'Create User' %>
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'user-plus' %> me-2"></i><%= editing ? t('admin:userForm.updateUser') : t('admin:userForm.createUser') %>
                             </button>
-                            <a href="/admin/users" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                            <a href="/admin/users" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
                         </div>
                     </form>
                 </div>

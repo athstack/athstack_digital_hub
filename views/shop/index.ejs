@@ -3,9 +3,9 @@
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge"><i class="fa-solid fa-microchip me-2"></i>Tech Hardware Store</span>
-            <h1 class="display-4 text-white fw-bold mt-3">Premium Products</h1>
-            <p class="text-white-50 fs-5">Explore our curated collection of enterprise-grade hardware and accessories.</p>
+            <span class="section-badge"><i class="fa-solid fa-microchip me-2"></i><%= t('shop:index.badge') %></span>
+            <h1 class="display-4 text-white fw-bold mt-3"><%= t('shop:index.heading') %></h1>
+            <p class="text-white-50 fs-5"><%= t('shop:index.subtitle') %></p>
         </div>
 
         <div class="row g-4">
@@ -13,24 +13,24 @@
                 <div class="glass-card p-4 mb-4">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fa-solid fa-sliders me-2 text-primary"></i>
-                        <h6 class="text-white fw-bold mb-0">Filters</h6>
+                        <h6 class="text-white fw-bold mb-0"><%= t('shop:index.filters') %></h6>
                     </div>
                     <form method="GET" action="/shop">
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Search</label>
-                            <input type="text" name="search" class="form-control sidebar-search" placeholder="Search products..." value="<%= searchQuery || '' %>">
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.search') %></label>
+                            <input type="text" name="search" class="form-control sidebar-search" placeholder="<%= t('common:nav.searchPlaceholder') %>" value="<%= searchQuery || '' %>">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Category</label>
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.category') %></label>
                             <select name="category" class="form-select">
-                                <option value="">All Categories</option>
+                                <option value=""><%= t('shop:index.allCategories') %></option>
                                 <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
                                 <option value="<%= cat.slug %>" <%= activeCategory === cat.slug ? 'selected' : '' %>><%= cat.name %></option>
                                 <% }) } %>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest">Price Range</label>
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.priceRange') %></label>
                             <div class="row g-2">
                                 <div class="col-6">
                                     <input type="number" name="min_price" class="form-control" placeholder="$0" value="<%= minPrice || '' %>">
@@ -40,8 +40,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-2"></i>Apply Filters</button>
-                        <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2">Clear All</a><% } %>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-2"></i><%= t('shop:index.applyFilters') %></button>
+                        <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2"><%= t('shop:index.clearAll') %></a><% } %>
                     </form>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 </div>
 
                 <% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
-                <nav class="mt-5" aria-label="Product pagination">
+                <nav class="mt-5" aria-label="<%= t('shop:index.paginationAria') %>">
                     <ul class="pagination justify-content-center gap-1">
                         <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
                             <a class="page-link rounded-pill" href="/shop?page=<%= pagination.page - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><i class="fa-solid fa-chevron-left"></i></a>
@@ -88,9 +88,9 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-box-open fa-4x mb-4"></i>
-                    <h4 class="text-white fw-bold">No Products Found</h4>
-                    <p class="text-white-50">No products match your current filters. Try adjusting your search criteria.</p>
-                    <a href="/shop" class="btn btn-premium-primary rounded-pill px-5">View All Products</a>
+                    <h4 class="text-white fw-bold"><%= t('shop:index.emptyTitle') %></h4>
+                    <p class="text-white-50"><%= t('shop:index.emptyMessage') %></p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill px-5"><%= t('shop:index.viewAllProducts') %></a>
                 </div>
                 <% } %>
             </div>

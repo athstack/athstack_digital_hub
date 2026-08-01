@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initReviewLightbox();
 });
 
+function getString(key, fallback) {
+  const s = window.i18nStrings || {};
+  return s[key] || fallback;
+}
+
 // ---------------------------------------------------------------------------
 // Review Modal: stars, char counter, multi-photo upload with previews
 // ---------------------------------------------------------------------------
@@ -77,15 +82,15 @@ function initReviewModal() {
       const errors = [];
       files.forEach(file => {
         if (!ALLOWED.includes(file.type)) {
-          errors.push('Only JPG, PNG, WebP or GIF images are allowed.');
+          errors.push(getString('reviewInvalidImageType', 'Only JPG, PNG, WebP or GIF images are allowed.'));
           return;
         }
         if (file.size > MAX_SIZE) {
-          errors.push('Each photo must be 5MB or smaller.');
+          errors.push(getString('reviewPhotoTooLarge', 'Each photo must be 5MB or smaller.'));
           return;
         }
         if (pendingFiles.length >= MAX_IMAGES) {
-          errors.push('You can upload up to 5 photos.');
+          errors.push(getString('reviewMaxPhotos', 'You can upload up to 5 photos.'));
           return;
         }
         pendingFiles.push(file);
@@ -109,7 +114,7 @@ function initReviewModal() {
       removeBtn.type = 'button';
       removeBtn.className = 'review-upload-remove';
       removeBtn.innerHTML = '&times;';
-      removeBtn.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+      removeBtn.setAttribute('aria-label', getString('reviewRemovePhoto', 'Remove photo {{count}}').replace('{{count}}', i + 1));
       removeBtn.addEventListener('click', () => {
         pendingFiles.splice(i, 1);
         renderPreviews();
@@ -130,13 +135,13 @@ function initReviewModal() {
   form.addEventListener('submit', (e) => {
     if (selectedRating < 1 || selectedRating > 5) {
       e.preventDefault();
-      if (hint) hint.textContent = 'Please select a rating between 1 and 5.';
+      if (hint) hint.textContent = getString('reviewRatingHint', 'Please select a rating between 1 and 5.');
       return;
     }
     const len = commentInput ? commentInput.value.trim().length : 0;
     if (len < 20) {
       e.preventDefault();
-      if (hint) hint.textContent = 'Please write at least 20 characters.';
+      if (hint) hint.textContent = getString('reviewMinLength', 'Please write at least 20 characters.');
       return;
     }
     if (hint) hint.textContent = '';
@@ -211,7 +216,7 @@ function initReviewEditForm() {
       removeBtn.type = 'button';
       removeBtn.className = 'review-upload-remove';
       removeBtn.innerHTML = '&times;';
-      removeBtn.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+      removeBtn.setAttribute('aria-label', getString('reviewRemovePhoto', 'Remove photo {{count}}').replace('{{count}}', i + 1));
       removeBtn.addEventListener('click', () => {
         pendingFiles.splice(i, 1);
         renderPreviews();
@@ -233,15 +238,15 @@ function initReviewEditForm() {
       if (!files.length) return;
       files.forEach(file => {
         if (!ALLOWED.includes(file.type)) {
-          if (hint) hint.textContent = 'Only JPG, PNG, WebP or GIF images are allowed.';
+          if (hint) hint.textContent = getString('reviewInvalidImageType', 'Only JPG, PNG, WebP or GIF images are allowed.');
           return;
         }
         if (file.size > MAX_SIZE) {
-          if (hint) hint.textContent = 'Each photo must be 5MB or smaller.';
+          if (hint) hint.textContent = getString('reviewPhotoTooLarge', 'Each photo must be 5MB or smaller.');
           return;
         }
         if (pendingFiles.length >= MAX_IMAGES) {
-          if (hint) hint.textContent = 'You can upload up to 5 photos.';
+          if (hint) hint.textContent = getString('reviewMaxPhotos', 'You can upload up to 5 photos.');
           return;
         }
         pendingFiles.push(file);
@@ -255,13 +260,13 @@ function initReviewEditForm() {
     form.addEventListener('submit', (e) => {
       if (selectedRating < 1 || selectedRating > 5) {
         e.preventDefault();
-        if (hint) hint.textContent = 'Please select a rating between 1 and 5.';
+        if (hint) hint.textContent = getString('reviewRatingHint', 'Please select a rating between 1 and 5.');
         return;
       }
       const len = commentInput ? commentInput.value.trim().length : 0;
       if (len < 20) {
         e.preventDefault();
-        if (hint) hint.textContent = 'Please write at least 20 characters.';
+        if (hint) hint.textContent = getString('reviewMinLength', 'Please write at least 20 characters.');
         return;
       }
       if (hint) hint.textContent = '';
@@ -335,7 +340,7 @@ function initReviewFilters() {
     el = document.createElement('div');
     el.id = 'reviewLoading';
     el.className = 'review-loading';
-    el.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span><span>Loading reviews...</span>';
+    el.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span><span>' + getString('reviewLoading', 'Loading reviews...') + '</span>';
     el.style.display = 'none';
     container.appendChild(el);
     return el;
@@ -402,7 +407,7 @@ function initReviewFilters() {
     if (on && append && loadMoreBtn) {
       loadMoreBtn.dataset.label = loadMoreBtn.innerHTML;
       loadMoreBtn.disabled = true;
-      loadMoreBtn.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span> Loading...';
+      loadMoreBtn.innerHTML = '<span class="review-loading-spinner" aria-hidden="true"></span> ' + getString('reviewLoadingMore', 'Loading...');
     } else {
       const loadingEl = ensureLoadingEl();
       loadingEl.style.display = on ? '' : 'none';
@@ -437,8 +442,8 @@ function initReviewFilters() {
     list.innerHTML = data.html;
     list.style.display = data.total > 0 ? '' : 'none';
     empty.querySelector('p').textContent = hasActiveFilter()
-      ? 'No reviews match your filters.'
-      : 'No reviews yet. Be the first to review this product!';
+      ? getString('reviewNoMatch', 'No reviews match your filters.')
+      : getString('reviewEmpty', 'No reviews yet. Be the first to review this product!');
     empty.style.display = data.total > 0 ? 'none' : '';
     if (loadMoreWrap) loadMoreWrap.style.display = (data.total > 0 && data.hasMore) ? '' : 'none';
 
@@ -448,7 +453,7 @@ function initReviewFilters() {
       initReviewLightbox();
       announce(data.total + (data.total === 1 ? ' review found.' : ' reviews found.'));
     } else {
-      announce('No reviews match your filters.');
+      announce(getString('reviewNoMatch', 'No reviews match your filters.'));
     }
   }
 
@@ -480,10 +485,10 @@ function initReviewFilters() {
       const empty = ensureEmptyEl();
       list.innerHTML = '';
       list.style.display = 'none';
-      empty.querySelector('p').textContent = 'Failed to load reviews. Please try again.';
+      empty.querySelector('p').textContent = getString('reviewLoadFailed', 'Failed to load reviews. Please try again.');
       empty.style.display = '';
       if (loadMoreWrap) loadMoreWrap.style.display = 'none';
-      announce('Failed to load reviews. Please try again.');
+      announce(getString('reviewLoadFailed', 'Failed to load reviews. Please try again.'));
     } finally {
       if (requestId === state.requestId) setLoading(false, append);
     }
@@ -577,7 +582,7 @@ function initReviewHelpful() {
             window.location.href = '/auth/login';
             return;
           }
-          throw new Error(data.error || 'Request failed');
+          throw new Error(data.error || getString('reviewRequestFailed', 'Request failed'));
         }
         btn.classList.toggle('active', data.helpful);
         const countEl = btn.querySelector('.helpful-count');
@@ -617,7 +622,7 @@ function initReviewReport() {
       if (!currentReviewId) return;
       const reason = modalEl.querySelector('input[name="reportReason"]:checked');
       if (!reason) {
-        if (errorEl) errorEl.textContent = 'Please select a reason.';
+        if (errorEl) errorEl.textContent = getString('reviewSelectReason', 'Please select a reason.');
         return;
       }
       const btn = document.querySelector('.report-btn[data-review-id="' + currentReviewId + '"]');
@@ -634,13 +639,13 @@ function initReviewReport() {
             window.location.href = '/auth/login';
             return;
           }
-          throw new Error(data.error || 'Request failed');
+          throw new Error(data.error || getString('reviewRequestFailed', 'Request failed'));
         }
         modal.hide();
         const reportBtn = document.querySelector('.report-btn[data-review-id="' + currentReviewId + '"]');
         if (reportBtn) {
           reportBtn.disabled = true;
-          reportBtn.innerHTML = '<i class="fa-solid fa-check"></i> Reported';
+          reportBtn.innerHTML = '<i class="fa-solid fa-check"></i> ' + getString('reviewReported', 'Reported');
         }
         currentReviewId = null;
       } catch (err) {

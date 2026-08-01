@@ -1,0 +1,34 @@
+{
+  "index": {
+    "title": "Sobre Nosotros - TechBridge Digital Hub",
+    "heading": "Ingeniería del Futuro de las Soluciones Tecnológicas",
+    "intro": "Somos una empresa tecnológica con visión de futuro dedicada a ofrecer soluciones de hardware premium, servicios expertos de mantenimiento y formación profesional en ingeniería.",
+    "mission": {
+      "title": "Nuestra Misión",
+      "text": "Entregar soluciones tecnológicas de grado empresarial que empoderen a negocios y personas en toda África, cerrando la brecha entre la innovación y la implementación práctica."
+    },
+    "vision": {
+      "title": "Nuestra Visión",
+      "text": "Ser el centro tecnológico líder de África Oriental, reconocido por nuestros productos de calidad, servicios de mantenimiento fiables y programas de formación técnica de clase mundial."
+    },
+    "values": {
+      "title": "Nuestros Valores",
+      "text": "La integridad, la excelencia y el enfoque en el cliente impulsan todo lo que hacemos. Creemos en construir relaciones duraderas a través de un servicio de calidad y operaciones transparentes."
+    },
+    "whoWeAre": {
+      "badge": "Quiénes Somos",
+      "heading": "Ingeniería del Futuro del Suministro Tecnológico",
+      "paragraph1": "TechBridge Digital Hub fue fundado con una visión singular: crear una plataforma unificada donde empresas y personas puedan acceder a productos tecnológicos premium, servicios de mantenimiento fiables y formación técnica integral.",
+      "paragraph2": "Nuestro equipo de ingenieros certificados y especialistas técnicos aporta décadas de experiencia combinada en adquisición de hardware, diagnóstico de sistemas, infraestructura de TI empresarial y formación profesional.",
+      "paragraph3": "Desde el suministro de dispositivos corporativos hasta la formación técnica práctica, ofrecemos soluciones que mantienen tus operaciones funcionando al máximo rendimiento.",
+      "visitShop": "Visitar Tienda",
+      "contactUs": "Contáctanos"
+    },
+    "stats": {
+      "clientsServed": "Clientes Atendidos",
+      "repairsCompleted": "Reparaciones Completadas",
+      "trainingGraduates": "Graduados de Formación",
+      "yearsExperience": "Años de Experiencia"
+    }
+  }
+}

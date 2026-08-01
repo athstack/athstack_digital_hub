@@ -15,10 +15,10 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Inventory</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-box-open me-2 text-primary"></i>Manage Inventory</h2>
+                    <span class="section-badge"><%= t('admin:products.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-box-open me-2 text-primary"></i><%= t('admin:products.heading') %></h2>
                     <div class="ms-auto">
-                        <a href="/admin/products/new" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i>Add Product</a>
+                        <a href="/admin/products/new" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('admin:products.addProduct') %></a>
                     </div>
                 </div>
 
@@ -27,7 +27,7 @@
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table products-table">
                             <thead>
-                                <tr><th class="col-product">Product</th><th>Listed By</th><th class="col-category">Category</th><th class="col-price">Price</th><th class="col-stock">Stock</th><th>Status</th><th class="col-actions">Actions</th></tr>
+                                <tr><th class="col-product"><%= t('admin:products.colProduct') %></th><th><%= t('admin:words.listedBy') %></th><th class="col-category"><%= t('common:words.category') %></th><th class="col-price"><%= t('common:words.price') %></th><th class="col-stock"><%= t('admin:words.stock') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
                             </thead>
                             <tbody>
                                 <% products.forEach(product => { %>
@@ -44,7 +44,7 @@
                                         <% if (product.technician_first_name) { %>
                                             <span class="text-white"><%= formatDisplayName(product.technician_first_name, product.technician_last_name) %></span>
                                         <% } else { %>
-                                            <span class="text-white-50">Admin</span>
+                                            <span class="text-white-50"><%= t('admin:words.admin') %></span>
                                         <% } %>
                                     </td>
                                     <td class="col-category text-white-50"><%= product.category_name || 'N/A' %></td>
@@ -55,19 +55,19 @@
                                             class="btn btn-sm rounded-pill status-toggle <%= product.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary' %>"
                                             data-id="<%= product.id %>"
                                             data-status="<%= product.status %>"
-                                            title="<%= product.status === 'active' ? 'Click to deactivate' : 'Click to activate' %>">
+                                            title="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>">
                                             <i class="fa-solid fa-<%= product.status === 'active' ? 'toggle-on' : 'toggle-off' %>"></i>
-                                            <span class="status-label"><%= product.status %></span>
+                                            <span class="status-label"><%= t('admin:status.' + (product.status||'').toLowerCase(), {defaultValue: product.status}) %></span>
                                         </button>
                                     </td>
                                     <td class="col-actions">
                                         <div class="d-flex gap-2 align-items-center">
-                                            <a href="/admin/products/edit/<%= product.id %>" class="btn-product-action btn-product-action-edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                            <a href="/admin/products/edit/<%= product.id %>" class="btn-product-action btn-product-action-edit" title="<%= t('common:words.edit') %>"><i class="fa-solid fa-pen"></i></a>
                                             <button type="button"
                                                 class="btn-product-action btn-product-action-delete btn-delete-product"
                                                 data-id="<%= product.id %>"
                                                 data-name="<%= product.name %>"
-                                                title="Delete">
+                                                title="<%= t('common:words.delete') %>">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -81,8 +81,8 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-box-open fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Products</h4>
-                    <p class="text-white-50">No products have been listed yet.</p>
+                    <h4 class="text-white fw-bold"><%= t('admin:products.noProducts') %></h4>
+                    <p class="text-white-50"><%= t('admin:products.noProductsListed') %></p>
                 </div>
                 <% } %>
             </div>
@@ -94,16 +94,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Delete Product</h5>
+                <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i><%= t('admin:products.deleteTitle') %></h5>
                 <button type="button" class="modal-close" id="deleteModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="mb-0">Are you sure you want to delete <strong class="text-white" id="deleteProductName"></strong>?</p>
-                <p class="text-muted small mt-2 mb-0">This action cannot be undone.</p>
+                <p class="mb-0"><%= t('admin:products.deleteConfirm') %> <strong class="text-white" id="deleteProductName"></strong>?</p>
+                <p class="text-muted small mt-2 mb-0"><%= t('admin:products.cannotUndo') %></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-premium-outline" id="deleteModalCancel">Cancel</button>
-                <button type="button" class="btn btn-danger" id="deleteModalConfirm"><i class="fa-solid fa-trash me-1"></i>Delete</button>
+                <button type="button" class="btn btn-premium-outline" id="deleteModalCancel"><%= t('common:words.cancel') %></button>
+                <button type="button" class="btn btn-danger" id="deleteModalConfirm"><i class="fa-solid fa-trash me-1"></i><%= t('common:words.delete') %></button>
             </div>
         </div>
     </div>
@@ -144,7 +144,7 @@
     confirmBtn.addEventListener('click', function() {
         if (!currentId) return;
         confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>Deleting...';
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i><%= t('admin:products.deleting') %>';
 
         fetch('/admin/products/delete/' + currentId, {
             method: 'POST',
@@ -164,13 +164,13 @@
                 }
                 hideModal();
             } else {
-                alert(data.message || 'Failed to delete product.');
+                alert(data.message || '<%= t('admin:products.deleteFailed') %>');
             }
         })
-        .catch(function() { alert('Network error. Please try again.'); })
+        .catch(function() { alert('<%= t('admin:products.networkError') %>'); })
         .finally(function() {
             confirmBtn.disabled = false;
-            confirmBtn.innerHTML = '<i class="fa-solid fa-trash me-1"></i>Delete';
+            confirmBtn.innerHTML = '<i class="fa-solid fa-trash me-1"></i><%= t('common:words.delete') %>';
         });
     });
 
@@ -191,15 +191,15 @@
             .then(function(data) {
                 if (data.success) {
                     el.dataset.status = data.status;
-                    el.title = data.status === 'active' ? 'Click to deactivate' : 'Click to activate';
+                    el.title = data.status === 'active' ? '<%= t('admin:products.clickDeactivate') %>' : '<%= t('admin:products.clickActivate') %>';
                     el.className = 'btn btn-sm rounded-pill status-toggle ' + (data.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary');
                     el.querySelector('i').className = 'fa-solid fa-' + (data.status === 'active' ? 'toggle-on' : 'toggle-off');
                     el.querySelector('.status-label').textContent = data.status;
                 } else {
-                    alert(data.message || 'Failed to update status.');
+                    alert(data.message || '<%= t('admin:products.updateStatusFailed') %>');
                 }
             })
-            .catch(function() { alert('Network error. Please try again.'); })
+            .catch(function() { alert('<%= t('admin:products.networkError') %>'); })
             .finally(function() { el.disabled = false; });
         });
     });

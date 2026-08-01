@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "Academia Profesional de Ingeniería - TechBridge Digital Hub",
+    "badge": "Academia Profesional de Ingeniería",
+    "heading": "Formación y Certificación",
+    "intro": "Avanza en tu carrera con cursos técnicos dirigidos por expertos y programas profesionales de certificación.",
+    "levelBeginner": "Principiante",
+    "emptyTitle": "Cursos Muy Pronto",
+    "emptyText": "Estamos preparando nuevos e interesantes programas de formación. Vuelve en breve.",
+    "flashes": {
+      "courseNotFound": "Curso no encontrado.",
+      "invalidCourse": "Curso no válido.",
+      "loginRequired": "Por favor, inicia sesión para inscribirte en un curso.",
+      "alreadyEnrolled": "Ya estás inscrito en este curso.",
+      "courseFull": "Este curso ha alcanzado el máximo de inscripciones.",
+      "enrollSuccess": "Te has inscrito en \"{{courseTitle}}\".",
+      "enrollFailed": "La inscripción falló. Por favor, inténtalo de nuevo."
+    },
+    "notifications": {
+      "title": "Inscripción al Curso",
+      "message": "Te has inscrito en \"{{courseTitle}}\". ¡Empieza a aprender ahora!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "Principiante",
+    "enrolledBadge": "Inscrito",
+    "enrolledCount": "{{count}} inscritos",
+    "studentsCount": "{{count}} estudiantes",
+    "aboutThisCourse": "Acerca de Este Curso",
+    "descriptionComingSoon": "La descripción del curso estará disponible pronto.",
+    "instructorAlt": "Instructor",
+    "goToCourse": "Ir al Curso",
+    "enrollNow": "Inscribirme Ahora",
+    "courseDetails": "Detalles del Curso"
+  },
+  "words": {
+    "duration": "Duración",
+    "level": "Nivel",
+    "instructor": "Instructor"
+  }
+}

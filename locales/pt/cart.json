@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "O Seu Carrinho de Compras - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "Produto",
+    "subtotal": "Subtotal",
+    "shipping": "Envio",
+    "remove": "Remover"
+  },
+  "index": {
+    "badge": "Carrinho de Compras",
+    "heading": "O Seu Carrinho",
+    "orderSummary": "Resumo da Encomenda",
+    "subtotalItems": "Subtotal ({{count}} artigos)",
+    "calculatedAtCheckout": "Calculado no checkout",
+    "checkout": "Prosseguir para o Checkout",
+    "continueShopping": "Continuar a Comprar"
+  },
+  "empty": {
+    "heading": "O Seu Carrinho Está Vazio",
+    "message": "Parece que ainda não adicionou nenhum produto. Explore a nossa loja para encontrar hardware tecnológico premium.",
+    "browseShop": "Explorar a Loja"
+  },
+  "flash": {
+    "invalidProduct": "Produto inválido.",
+    "productNotFound": "Produto não encontrado ou indisponível.",
+    "itemAdded": "Artigo adicionado ao carrinho.",
+    "itemNotFound": "Artigo não encontrado no carrinho.",
+    "cartUpdated": "Carrinho atualizado.",
+    "itemRemoved": "Artigo removido do carrinho.",
+    "emptyCart": "O seu carrinho está vazio.",
+    "noValidProducts": "Não existem produtos válidos no carrinho.",
+    "insufficientStock": "Stock insuficiente para \"{{name}}\". Apenas {{stock}} disponíveis.",
+    "orderPlaced": "Encomenda #{{id}} realizada com sucesso!"
+  },
+  "notification": {
+    "orderPlacedTitle": "Encomenda Realizada",
+    "orderPlacedMessage": "A sua encomenda #{{id}} no valor de {{total}} foi realizada com sucesso.",
+    "newOrderTitle": "Nova Encomenda Recebida",
+    "newOrderMessage": "A encomenda #{{id}} no valor de {{total}} precisa de ser processada."
+  }
+}

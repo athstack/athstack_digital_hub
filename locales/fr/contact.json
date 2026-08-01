@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "Contactez-nous - TechBridge Digital Hub",
+    "badge": "Restez en contact",
+    "heading": "Contactez-nous",
+    "intro": "Une question ou besoin d'un devis ? Contactez-nous et notre équipe vous répondra rapidement.",
+    "form": {
+      "title": "Envoyer un message",
+      "fullName": "Nom complet",
+      "emailAddress": "Adresse e-mail",
+      "countryCode": "Indicatif du pays",
+      "phoneNumber": "Numéro de téléphone",
+      "subject": "Objet",
+      "message": "Message",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "votre@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "Comment pouvons-nous vous aider ?",
+      "messagePlaceholder": "Rédigez votre message ici...",
+      "submit": "Envoyer le message",
+      "countries": {
+        "TZ": "Tanzanie (+255)",
+        "KE": "Kenya (+254)",
+        "UG": "Ouganda (+256)",
+        "RW": "Rwanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "Afrique du Sud (+27)",
+        "US": "États-Unis/Canada (+1)",
+        "GB": "Royaume-Uni (+44)",
+        "DE": "Allemagne (+49)",
+        "FR": "France (+33)",
+        "AU": "Australie (+61)",
+        "CN": "Chine (+86)",
+        "IN": "Inde (+91)",
+        "AE": "Émirats arabes unis (+971)",
+        "NG": "Nigeria (+234)"
+      }
+    },
+    "info": {
+      "title": "Coordonnées",
+      "officeAddress": "Adresse du bureau",
+      "address": "Mbeya, Tanzanie",
+      "businessHours": "Horaires d'ouverture"
+    },
+    "social": {
+      "title": "Suivez-nous",
+      "intro": "Restez connectés sur les réseaux sociaux pour les dernières actualités.",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "Le nom, l'e-mail et le message sont requis.",
+      "loginRequired": "Veuillez créer un compte pour envoyer votre message.",
+      "success": "Votre message a été envoyé. Nous vous répondrons dans les plus brefs délais."
+    },
+    "notifications": {
+      "newMessage": "Nouveau message de contact",
+      "sentMessage": "{{name}} a envoyé un message",
+      "sentMessageWithSubject": "{{name}} a envoyé un message : {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "Le nom est requis",
+    "nameLength": "Le nom doit contenir entre 2 et 100 caractères",
+    "emailRequired": "L'e-mail est requis",
+    "emailInvalid": "Veuillez fournir une adresse e-mail valide",
+    "phoneInvalid": "Veuillez fournir un numéro de téléphone valide",
+    "phoneDigits": "Le numéro de téléphone doit contenir entre 7 et 15 chiffres",
+    "subjectRequired": "L'objet est requis",
+    "subjectLength": "L'objet doit contenir entre 3 et 200 caractères",
+    "messageRequired": "Le message est requis",
+    "messageLength": "Le message doit contenir entre 10 et 5000 caractères"
+  }
+}

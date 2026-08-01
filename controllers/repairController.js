@@ -1,7 +1,6 @@
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
-const { formatCurrency } = require('../utils/helpers');
 
 exports.getMaintenance = async (req, res, next) => {
   try {
@@ -19,11 +18,10 @@ exports.getMaintenance = async (req, res, next) => {
     }
 
     res.render('maintenance/index', {
-      title: 'Enterprise IT Maintenance & Device Repair - TechBridge Digital Hub',
+      title: req.t('maintenance:index.title'),
       computerServices,
       phoneServices,
       services,
-      formatCurrency,
       user
     });
   } catch (err) {
@@ -37,9 +35,9 @@ exports.bookRepair = async (req, res, next) => {
 
     if (!name || !email || !phone || !appointment_date || !service_id) {
       if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-        return res.status(400).json({ success: false, message: 'All mandatory fields are required.' });
+        return res.status(400).json({ success: false, message: req.t('maintenance:index.flashes.missingFields') });
       }
-      req.flash('error', 'All mandatory fields are required.');
+      req.flash('error', req.t('maintenance:index.flashes.missingFields'));
       return res.redirect('/maintenance');
     }
 
@@ -68,18 +66,18 @@ exports.bookRepair = async (req, res, next) => {
 
     if (req.session.userId) {
       await NotificationModel.create(req.session.userId, {
-        title: 'Repair Request Filed',
-        message: `Your repair request ${reference} has been submitted. We'll get back to you soon.`,
+        title: req.t('maintenance:index.notifications.title'),
+        message: req.t('maintenance:index.notifications.message', { reference }),
         type: 'repair',
         link: '/dashboard/repairs'
       });
     }
 
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.json({ success: true, message: 'Your maintenance request has been scheduled successfully.', reference });
+      return res.json({ success: true, message: req.t('maintenance:index.flashes.scheduled'), reference });
     }
 
-    req.flash('success', `Maintenance request filed successfully. Reference: ${reference}`);
+    req.flash('success', req.t('maintenance:index.flashes.success', { reference }));
     res.redirect('/maintenance');
   } catch (err) {
     next(err);
@@ -90,7 +88,7 @@ exports.checkRepairStatus = async (req, res, next) => {
   try {
     const ref = req.params.ref;
     if (!ref) {
-      return res.status(400).json({ success: false, message: 'Reference number is required.' });
+      return res.status(400).json({ success: false, message: req.t('maintenance:index.errors.missingRef') });
     }
 
     const [rows] = await pool.execute(
@@ -102,7 +100,7 @@ exports.checkRepairStatus = async (req, res, next) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'No repair request found with that reference.' });
+      return res.status(404).json({ success: false, message: req.t('maintenance:index.errors.notFound') });
     }
 
     const repair = rows[0];

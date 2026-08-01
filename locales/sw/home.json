@@ -1,0 +1,43 @@
+{
+  "index": {
+    "title": "Nyumbani - TechBridge Digital Hub",
+    "heroBadge": "Karibu TechBridge Digital Hub",
+    "heroTitle1": "Uhandisi wa Juu na ",
+    "heroTitle2": "Suluhu za Vifaa",
+    "heroSubtitle": "Mfumo wako wa pamoja wa ununuzi wa vifaa vya juu vya teknolojia, uchunguzi wa vifaa vya mashirika, na mafundisho bora ya mifumo ya kiufundi.",
+    "exploreShop": "Tembelea Duka",
+    "bookDiagnostic": "Weka Uchunguzi",
+    "trainingAcademy": "Akademia ya Mafunzo",
+    "stats": {
+      "customers": "Wateja Wanaofanya Kazi",
+      "products": "Bidhaa za Teknolojia",
+      "courses": "Kozi za Mafunzo",
+      "repairs": "Matengenezo Yaliyokamilika"
+    },
+    "services": {
+      "badge": "Huduma Zetu",
+      "title": "Suluhu Kamili za Teknolojia",
+      "desc": "Huduma kamili za teknolojia zilizoundwa kwa utendakazi, kutegemewa, na ukuaji.",
+      "shopTitle": "Duka la Teknolojia",
+      "shopDesc": "Vifaa vya juu, vifuasi, na vifaa vya mashirika vilivyochaguliwa kwa utendakazi.",
+      "browseProducts": "Vinjari Bidhaa",
+      "maintenanceTitle": "Matengenezo na Urekebishaji",
+      "maintenanceDesc": "Uchunguzi wa kitaalamu wa vifaa, urekebishaji wa mifumo, na njia za matengenezo ya IT ya mashirika.",
+      "bookRepair": "Weka Urekebishaji",
+      "trainingDesc": "Kozi za kitaalamu za uhandisi na programu za uthibitisho wa kiufundi.",
+      "exploreCourses": "Vinjari Kozi"
+    },
+    "featured": {
+      "badge": "Bidhaa Zilizoangaziwa",
+      "title": "Vifaa Bora vya Teknolojia"
+    },
+    "courses": {
+      "title": "Kozi za Hivi Karibuni"
+    },
+    "cta": {
+      "title": "Uko Tayari Kuanza?",
+      "desc": "Jiunge na TechBridge Digital Hub na ufikie bidhaa bora za teknolojia, urekebishaji wa kitaalamu, na mafunzo ya kitaalamu.",
+      "contactSales": "Wasiliana na Mauzo"
+    }
+  }
+}

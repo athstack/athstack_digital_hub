@@ -4836,3 +4836,99 @@ input[type="date"]:not(:focus):placeholder-shown {
         min-height: 44px;
     }
 }
+
+/* ============================================================
+   Language selector
+   ============================================================ */
+.language-selector {
+    display: inline-block;
+}
+
+.language-selector-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    border-radius: 9999px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+.language-selector-btn:hover,
+.language-selector-btn:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.09);
+    border-color: var(--border-hover);
+    box-shadow: var(--focus-ring);
+}
+.language-selector-btn .fa-globe {
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.language-selector-current {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.language-selector-caret {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.5);
+    transition: transform 0.2s ease;
+}
+.language-selector.show .language-selector-caret {
+    transform: rotate(180deg);
+}
+
+.language-selector-menu {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.375rem;
+    min-width: 220px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.language-selector-menu .language-option {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--text-main);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.language-selector-menu .language-option:hover,
+.language-selector-menu .language-option:focus {
+    background: var(--primary-subtle);
+    color: #fff;
+}
+.language-selector-menu .language-option.active {
+    background: var(--primary-subtle);
+    color: #fff;
+    font-weight: 600;
+}
+.language-selector-menu .language-option.active .language-option-check {
+    color: var(--primary-light);
+}
+.language-selector-menu .language-option-flag {
+    font-size: 1.05rem;
+    line-height: 1;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.mobile-drawer-lang {
+    padding: 0.75rem 1rem 1.25rem;
+}
+.mobile-drawer-lang .language-selector-btn {
+    width: 100%;
+    justify-content: flex-start;
+}

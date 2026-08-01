@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "Akademia ya Uhandisi wa Kitaalamu - TechBridge Digital Hub",
+    "badge": "Akademia ya Uhandisi wa Kitaalamu",
+    "heading": "Mafunzo na Uthibitisho",
+    "intro": "Endeleza kazi yako kwa kozi za kiufundi zinazoendeshwa na wataalamu na programu za uthibitisho wa kitaalamu.",
+    "levelBeginner": "Mwanzilishi",
+    "emptyTitle": "Kozi Zinakuja Hivi Karibuni",
+    "emptyText": "Tunatayarisha programu mpya za kusisimua za mafunzo. Rudi tena hivi karibuni.",
+    "flashes": {
+      "courseNotFound": "Kozi haipatikani.",
+      "invalidCourse": "Kozi batili.",
+      "loginRequired": "Tafadhali ingia kujiandikisha katika kozi.",
+      "alreadyEnrolled": "Umeshajiandikisha katika kozi hii.",
+      "courseFull": "Kozi hii imefikia upeo wa waandikishaji.",
+      "enrollSuccess": "Umejiandikisha katika \"{{courseTitle}}\".",
+      "enrollFailed": "Kuandikisha kumeshindikana. Tafadhali jaribu tena."
+    },
+    "notifications": {
+      "title": "Kuandikishwa kwa Kozi",
+      "message": "Umejiandikisha katika \"{{courseTitle}}\". Anza kujifunza sasa!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "Mwanzilishi",
+    "enrolledBadge": "Umejiandikisha",
+    "enrolledCount": "{{count}} wamejiandikisha",
+    "studentsCount": "wanafunzi {{count}}",
+    "aboutThisCourse": "Kuhusu Kozi Hii",
+    "descriptionComingSoon": "Maelezo ya kozi yanakuja hivi karibuni.",
+    "instructorAlt": "Mkufunzi",
+    "goToCourse": "Nenda kwenye Kozi",
+    "enrollNow": "Jiandikishe Sasa",
+    "courseDetails": "Maelezo ya Kozi"
+  },
+  "words": {
+    "duration": "Muda",
+    "level": "Kiwango",
+    "instructor": "Mkufunzi"
+  }
+}

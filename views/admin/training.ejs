@@ -15,10 +15,10 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Training</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i>Training Academy</h2>
+                    <span class="section-badge"><%= t('admin:words.training') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i><%= t('admin:training.heading') %></h2>
                     <div class="ms-auto">
-                        <button type="button" class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="fa-solid fa-plus me-2"></i>Add Course</button>
+                        <button type="button" class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="fa-solid fa-plus me-2"></i><%= t('admin:training.addCourse') %></button>
                     </div>
                 </div>
 
@@ -28,48 +28,48 @@
                             <form method="POST" action="/admin/training/add" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                 <div class="modal-header border-secondary">
-                                    <h5 class="text-white fw-bold">Create New Course</h5>
+                                    <h5 class="text-white fw-bold"><%= t('admin:training.createCourseModal') %></h5>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-12">
-                                            <label class="form-label">Course Title *</label>
-                                            <input type="text" name="title" class="form-control" required placeholder="e.g. Advanced Network Engineering">
+                                            <label class="form-label"><%= t('admin:training.courseTitle') %> *</label>
+                                            <input type="text" name="title" class="form-control" required placeholder="<%= t('admin:training.courseTitlePlaceholder') %>">
                                         </div>
                                         <div class="col-12">
-                                            <label class="form-label">Description</label>
-                                            <textarea name="description" class="form-control" rows="3" placeholder="Course description..."></textarea>
+                                            <label class="form-label"><%= t('common:words.description') %></label>
+                                            <textarea name="description" class="form-control" rows="3" placeholder="<%= t('admin:training.descriptionPlaceholder') %>"></textarea>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Duration</label>
-                                            <input type="text" name="duration" class="form-control" placeholder="e.g. 8 weeks">
+                                            <label class="form-label"><%= t('admin:training.duration') %></label>
+                                            <input type="text" name="duration" class="form-control" placeholder="<%= t('admin:training.durationPlaceholder') %>">
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Level</label>
+                                            <label class="form-label"><%= t('admin:training.level') %></label>
                                             <select name="level" class="form-select">
-                                                <option value="Beginner">Beginner</option>
-                                                <option value="Intermediate">Intermediate</option>
-                                                <option value="Advanced">Advanced</option>
+                                                <option value="Beginner"><%= t('admin:training.levelBeginner') %></option>
+                                                <option value="Intermediate"><%= t('admin:training.levelIntermediate') %></option>
+                                                <option value="Advanced"><%= t('admin:training.levelAdvanced') %></option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Price ($)</label>
+                                            <label class="form-label"><%= t('admin:training.price') %></label>
                                             <input type="number" name="price" class="form-control" min="0" step="0.01" value="0">
                                         </div>
                                         <div class="col-12">
                                             <%- include('../partials/fileUpload', {
                                                 name: 'course_image',
-                                                label: 'Course Image',
-                                                hint: 'PNG, JPG, WEBP up to 5MB',
+                                                label: t('admin:training.courseImage'),
+                                                hint: t('admin:fileUpload.hint'),
                                                 accept: 'image/*'
                                             }) %>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer border-secondary">
-                                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-premium-primary rounded-pill">Create Course</button>
+                                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                                    <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:training.createCourse') %></button>
                                 </div>
                             </form>
                         </div>
@@ -81,7 +81,7 @@
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
-                                <tr><th>Course</th><th>Level</th><th>Duration</th><th>Price</th><th>Enrollments</th><th>Status</th><th>Actions</th></tr>
+                                <tr><th><%= t('admin:words.course') %></th><th><%= t('admin:training.level') %></th><th><%= t('admin:training.duration') %></th><th><%= t('common:words.price') %></th><th><%= t('admin:words.enrollments') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.actions') %></th></tr>
                             </thead>
                             <tbody>
                                 <% modules.forEach(mod => { %>
@@ -97,15 +97,15 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td><span class="badge bg-primary rounded-pill"><%= mod.level || 'Beginner' %></span></td>
+                                    <td><span class="badge bg-primary rounded-pill"><%= mod.level === 'Intermediate' ? t('admin:training.levelIntermediate') : mod.level === 'Advanced' ? t('admin:training.levelAdvanced') : t('admin:training.levelBeginner') %></span></td>
                                     <td class="text-white-50"><%= mod.duration || 'N/A' %></td>
                                     <td class="text-primary fw-bold"><%= formatCurrency(mod.price) %></td>
                                     <td class="text-white-50"><%= mod.enrollment_count || 0 %></td>
-                                    <td><span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= mod.status %></span></td>
+                                    <td><span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('admin:status.' + (mod.status||'').toLowerCase(), {defaultValue: mod.status}) %></span></td>
                                     <td>
-                                        <form method="POST" action="/admin/training/delete/<%= mod.id %>" class="d-inline" data-confirm="Delete this course?">
+                                        <form method="POST" action="/admin/training/delete/<%= mod.id %>" class="d-inline" data-confirm="<%= t('admin:training.deleteConfirm') %>">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
@@ -117,8 +117,8 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Courses Yet</h4>
-                    <p class="text-white-50">Create your first training course to get started.</p>
+                    <h4 class="text-white fw-bold"><%= t('admin:training.noCourses') %></h4>
+                    <p class="text-white-50"><%= t('admin:training.noCoursesHint') %></p>
                 </div>
                 <% } %>
             </div>

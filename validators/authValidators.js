@@ -3,46 +3,46 @@ const { body } = require('express-validator');
 const registerValidator = [
   body('first_name')
     .trim()
-    .notEmpty().withMessage('First name is required')
-    .isLength({ min: 2, max: 50 }).withMessage('First name must be between 2 and 50 characters')
-    .matches(/^[A-Za-z\s'-]+$/).withMessage('First name can only contain letters, spaces, hyphens, and apostrophes'),
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.firstNameRequired'))
+    .isLength({ min: 2, max: 50 }).withMessage((value, { req }) => req.t('auth:validators.firstNameLength'))
+    .matches(/^[A-Za-z\s'-]+$/).withMessage((value, { req }) => req.t('auth:validators.firstNameChars')),
 
   body('last_name')
     .trim()
-    .notEmpty().withMessage('Last name is required')
-    .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters')
-    .matches(/^[A-Za-z\s'-]+$/).withMessage('Last name can only contain letters, spaces, hyphens, and apostrophes'),
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.lastNameRequired'))
+    .isLength({ min: 2, max: 50 }).withMessage((value, { req }) => req.t('auth:validators.lastNameLength'))
+    .matches(/^[A-Za-z\s'-]+$/).withMessage((value, { req }) => req.t('auth:validators.lastNameChars')),
 
   body('email')
     .trim()
-    .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Please provide a valid email address')
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.emailRequired'))
+    .isEmail().withMessage((value, { req }) => req.t('auth:validators.emailInvalid'))
     .normalizeEmail(),
 
   body('phone')
     .optional({ values: 'falsy' })
     .trim()
-    .matches(/^[\d\s\-\(\)\+]{7,20}$/).withMessage('Please provide a valid phone number')
-    .custom((value) => {
+    .matches(/^[\d\s\-\(\)\+]{7,20}$/).withMessage((value, { req }) => req.t('auth:validators.phoneInvalid'))
+    .custom((value, { req }) => {
       const digits = value.replace(/[\s\-\(\)\+]/g, '');
       if (digits.length < 7 || digits.length > 15) {
-        throw new Error('Phone number must be between 7 and 15 digits');
+        throw new Error(req.t('auth:validators.phoneDigits'));
       }
       return true;
     }),
 
   body('password')
-    .notEmpty().withMessage('Password is required')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
-    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
-    .matches(/[0-9]/).withMessage('Password must contain at least one number'),
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.passwordRequired'))
+    .isLength({ min: 8 }).withMessage((value, { req }) => req.t('auth:validators.passwordLength'))
+    .matches(/[a-z]/).withMessage((value, { req }) => req.t('auth:validators.passwordLowercase'))
+    .matches(/[A-Z]/).withMessage((value, { req }) => req.t('auth:validators.passwordUppercase'))
+    .matches(/[0-9]/).withMessage((value, { req }) => req.t('auth:validators.passwordNumber')),
 
   body('confirm_password')
-    .notEmpty().withMessage('Please confirm your password')
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.confirmPasswordRequired'))
     .custom((value, { req }) => {
       if (value !== req.body.password) {
-        throw new Error('Passwords do not match');
+        throw new Error(req.t('auth:validators.passwordsDoNotMatch'));
       }
       return true;
     })
@@ -51,12 +51,12 @@ const registerValidator = [
 const loginValidator = [
   body('email')
     .trim()
-    .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Please provide a valid email address')
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.emailRequired'))
+    .isEmail().withMessage((value, { req }) => req.t('auth:validators.emailInvalid'))
     .normalizeEmail(),
 
   body('password')
-    .notEmpty().withMessage('Password is required')
+    .notEmpty().withMessage((value, { req }) => req.t('auth:validators.passwordRequired'))
 ];
 
 module.exports = { registerValidator, loginValidator };

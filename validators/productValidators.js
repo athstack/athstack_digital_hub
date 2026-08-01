@@ -3,92 +3,92 @@ const { body, param } = require('express-validator');
 const createProductValidator = [
   body('name')
     .trim()
-    .notEmpty().withMessage('Product name is required')
-    .isLength({ min: 3, max: 200 }).withMessage('Product name must be between 3 and 200 characters'),
+    .notEmpty().withMessage((value, { req }) => req.t('admin:validation.productNameRequired'))
+    .isLength({ min: 3, max: 200 }).withMessage((value, { req }) => req.t('admin:validation.productNameLength')),
 
   body('description')
     .optional()
     .trim()
-    .isLength({ max: 5000 }).withMessage('Description cannot exceed 5000 characters'),
+    .isLength({ max: 5000 }).withMessage((value, { req }) => req.t('admin:validation.descriptionMax')),
 
   body('price')
-    .notEmpty().withMessage('Price is required')
-    .isFloat({ min: 0 }).withMessage('Price must be a positive number'),
+    .notEmpty().withMessage((value, { req }) => req.t('admin:validation.priceRequired'))
+    .isFloat({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.pricePositive')),
 
   body('discount_price')
     .optional({ values: 'falsy' })
     .trim()
-    .isFloat({ min: 0 }).withMessage('Discount price must be a positive number')
+    .isFloat({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.discountPositive'))
     .custom((value, { req }) => {
       if (value && req.body.price && parseFloat(value) >= parseFloat(req.body.price)) {
-        throw new Error('Discount price must be less than the original price');
+        throw new Error(req.t('admin:validation.discountLessThanPrice'));
       }
       return true;
     }),
 
   body('category_id')
-    .notEmpty().withMessage('Category is required')
-    .isInt({ min: 1 }).withMessage('Please select a valid category'),
+    .notEmpty().withMessage((value, { req }) => req.t('admin:validation.categoryRequired'))
+    .isInt({ min: 1 }).withMessage((value, { req }) => req.t('admin:validation.categoryValid')),
 
   body('stock_quantity')
     .optional()
-    .isInt({ min: 0 }).withMessage('Stock quantity must be a non-negative integer'),
+    .isInt({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.stockNonNegative')),
 
   body('sku')
     .optional()
     .trim()
-    .isLength({ max: 50 }).withMessage('SKU cannot exceed 50 characters'),
+    .isLength({ max: 50 }).withMessage((value, { req }) => req.t('admin:validation.skuMax')),
 
   body('is_active')
     .optional()
-    .isIn(['0', '1', 'true', 'false']).withMessage('Invalid active status')
+    .isIn(['0', '1', 'true', 'false']).withMessage((value, { req }) => req.t('admin:validation.invalidActiveStatus'))
 ];
 
 const updateProductValidator = [
   param('id')
-    .isInt({ min: 1 }).withMessage('Invalid product ID'),
+    .isInt({ min: 1 }).withMessage((value, { req }) => req.t('admin:validation.invalidProductId')),
 
   body('name')
     .optional()
     .trim()
-    .isLength({ min: 3, max: 200 }).withMessage('Product name must be between 3 and 200 characters'),
+    .isLength({ min: 3, max: 200 }).withMessage((value, { req }) => req.t('admin:validation.productNameLength')),
 
   body('description')
     .optional()
     .trim()
-    .isLength({ max: 5000 }).withMessage('Description cannot exceed 5000 characters'),
+    .isLength({ max: 5000 }).withMessage((value, { req }) => req.t('admin:validation.descriptionMax')),
 
   body('price')
     .optional()
-    .isFloat({ min: 0 }).withMessage('Price must be a positive number'),
+    .isFloat({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.pricePositive')),
 
   body('discount_price')
     .optional({ values: 'falsy' })
     .trim()
-    .isFloat({ min: 0 }).withMessage('Discount price must be a positive number')
+    .isFloat({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.discountPositive'))
     .custom((value, { req }) => {
       if (value && req.body.price && parseFloat(value) >= parseFloat(req.body.price)) {
-        throw new Error('Discount price must be less than the original price');
+        throw new Error(req.t('admin:validation.discountLessThanPrice'));
       }
       return true;
     }),
 
   body('category_id')
     .optional()
-    .isInt({ min: 1 }).withMessage('Please select a valid category'),
+    .isInt({ min: 1 }).withMessage((value, { req }) => req.t('admin:validation.categoryValid')),
 
   body('stock_quantity')
     .optional()
-    .isInt({ min: 0 }).withMessage('Stock quantity must be a non-negative integer'),
+    .isInt({ min: 0 }).withMessage((value, { req }) => req.t('admin:validation.stockNonNegative')),
 
   body('sku')
     .optional()
     .trim()
-    .isLength({ max: 50 }).withMessage('SKU cannot exceed 50 characters'),
+    .isLength({ max: 50 }).withMessage((value, { req }) => req.t('admin:validation.skuMax')),
 
   body('is_active')
     .optional()
-    .isIn(['0', '1', 'true', 'false']).withMessage('Invalid active status')
+    .isIn(['0', '1', 'true', 'false']).withMessage((value, { req }) => req.t('admin:validation.invalidActiveStatus'))
 ];
 
 module.exports = { createProductValidator, updateProductValidator };

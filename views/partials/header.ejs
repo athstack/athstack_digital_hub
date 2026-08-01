@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="color-scheme:dark;">
+<html lang="<%= lang %>" dir="<%= dir %>" style="color-scheme:dark;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,71 +10,84 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#050816">
+    <% if (lang === 'ar') { %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <% } %>
+    <% if (dir === 'rtl') { %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <% } else { %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <% } %>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="/assets/css/style.css" rel="stylesheet">
+    <% if (dir === 'rtl') { %>
+    <link href="/assets/css/rtl.css" rel="stylesheet">
+    <% } %>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="page-wrapper">
-<a href="#main-content" class="skip-link visually-hidden-focusable">Skip to main content</a>
+<a href="#main-content" class="skip-link visually-hidden-focusable"><%= t('common:nav.skipToContent') %></a>
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
     <div class="container">
         <a class="navbar-brand py-1 gap-1" href="/">
-            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub — Home" class="d-none d-md-block logo-full" style="height:44px;">
-            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub — Home" class="d-none d-sm-block d-md-none logo-compact" style="height:34px;">
-            <img src="/images/techbridge-icon.png" alt="TechBridge Digital Hub — Home" class="d-sm-none logo-icon" style="height:40px;">
+            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" class="d-none d-md-block logo-full" style="height:44px;">
+            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub" class="d-none d-sm-block d-md-none logo-compact" style="height:34px;">
+            <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon" style="height:40px;">
             <span class="text-white fw-bold" style="font-size:clamp(0.9rem,3.5vw,1.2rem);letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
         </a>
-        <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+        <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="<%= t('common:nav.toggleMenu') %>">
             <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
             <ul class="navbar-nav mx-auto nav-links-center gap-1">
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop">Shop</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance">Maintenance</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training">Training</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about">About Us</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><%= t('common:nav.home') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><%= t('common:nav.shop') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><%= t('common:nav.maintenance') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><%= t('common:nav.training') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><%= t('common:nav.about') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact"><%= t('common:nav.contact') %></a></li>
             </ul>
             <div class="d-flex align-items-center navbar-actions gap-4">
                 <div class="position-relative d-none d-md-block search-wrapper">
                     <i class="fa-solid fa-search search-wrapper-icon"></i>
-                    <input type="text" id="globalLiveSearch" class="form-control rounded-pill navbar-search" placeholder="Search products...">
+                    <input type="text" id="globalLiveSearch" class="form-control rounded-pill navbar-search" placeholder="<%= t('common:nav.searchPlaceholder') %>">
                     <div id="searchSuggestionsBox" class="search-results-tray"></div>
                 </div>
                 <div class="navbar-icons d-flex align-items-center gap-3">
-                    <a href="/cart" class="navbar-icon-link position-relative" id="cartLink">
+                    <%- include('../partials/languageSelector') %>
+                    <a href="/cart" class="navbar-icon-link position-relative" id="cartLink" aria-label="<%= t('common:nav.cart') %>">
                         <i class="fa-solid fa-bag-shopping fs-5"></i>
                         <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
                     </a>
                     <% if (user) { %>
                         <div class="dropdown" id="notifDropdown">
-                            <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="Notifications">
+                            <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="<%= t('common:nav.notifications') %>">
                                 <i class="fa-solid fa-bell fs-5"></i>
                                 <span class="notif-badge d-none" id="notifBadge">0</span>
                                 <span class="notif-badge d-none" id="msgUnreadBadge" style="top:16px;right:-8px;background:#ef4444;">0</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0 shadow-lg" style="width:380px;max-height:460px;overflow-y:auto;border-radius:14px;background:#0B1128;border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 60px rgba(0,0,0,0.6);">
                                 <div class="d-flex justify-content-between align-items-center px-3 py-3 dropdown-header-bar rounded-top" style="background:#10182F;border-bottom:1px solid rgba(255,255,255,0.06);">
-                                    <h6 class="mb-0 text-white fw-semibold" style="font-size:0.85rem;letter-spacing:0.02em;">Notifications</h6>
-                                    <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="markAllRead" style="font-size:0.75rem;">Mark all read</button>
+                                    <h6 class="mb-0 text-white fw-semibold" style="font-size:0.85rem;letter-spacing:0.02em;"><%= t('common:nav.notifications') %></h6>
+                                    <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="markAllRead" style="font-size:0.75rem;"><%= t('common:nav.markAllRead') %></button>
                                 </div>
                                 <div id="notifList" class="p-0" style="background:transparent;">
-                                    <div class="text-center py-4" style="color:rgba(255,255,255,0.35);font-size:0.85rem;">Loading...</div>
+                                    <div class="text-center py-4" style="color:rgba(255,255,255,0.35);font-size:0.85rem;"><%= t('common:nav.loading') %></div>
                                 </div>
                             </div>
                         </div>
-                        <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
+                        <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= t('common:nav.profile') %>">
                             <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:30px;height:30px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
                             <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= formatDisplayName(user.firstName, user.lastName) %></span>
                         </a>
                     <% } else { %>
                         <a href="/auth/login" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
                             <i class="fa-solid fa-user-circle fs-5"></i>
-                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;">Sign In</span>
+                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= t('common:nav.signIn') %></span>
                         </a>
                     <% } %>
                 </div>
@@ -87,73 +100,73 @@
 <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" aria-hidden="true"></div>
 
 <!-- Mobile Drawer -->
-<div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+<div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="<%= t('common:nav.mobileNav') %>">
     <div class="mobile-drawer-inner">
         <div class="mobile-drawer-header">
             <a href="/" class="mobile-drawer-logo">
                 <img src="/images/techbridge-icon.png" alt="TechBridge" class="mobile-drawer-logo-img">
                 <span class="mobile-drawer-brand">Tech<span class="mobile-drawer-brand-accent">Bridge</span></span>
             </a>
-            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="Close navigation menu">
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="<%= t('common:nav.closeMenu') %>">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <div class="mobile-drawer-search">
             <i class="fa-solid fa-search mobile-drawer-search-icon"></i>
-            <input type="text" class="mobile-drawer-search-input" id="mobileSearchInput" placeholder="Search products..." autocomplete="off">
+            <input type="text" class="mobile-drawer-search-input" id="mobileSearchInput" placeholder="<%= t('common:nav.searchPlaceholder') %>" autocomplete="off">
         </div>
 
-        <nav class="mobile-drawer-nav" aria-label="Mobile navigation links">
+        <nav class="mobile-drawer-nav" aria-label="<%= t('common:nav.mobileNav') %>">
             <a href="/" class="mobile-nav-item<%= currentPath === '/' ? ' active' : '' %>" data-nav-delay="0">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-house"></i></span>
-                <span class="mobile-nav-label">Home</span>
+                <span class="mobile-nav-label"><%= t('common:nav.home') %></span>
             </a>
             <a href="/shop" class="mobile-nav-item<%= currentPath.startsWith('/shop') ? ' active' : '' %>" data-nav-delay="1">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-store"></i></span>
-                <span class="mobile-nav-label">Shop</span>
+                <span class="mobile-nav-label"><%= t('common:nav.shop') %></span>
             </a>
             <a href="/maintenance" class="mobile-nav-item<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" data-nav-delay="2">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-wrench"></i></span>
-                <span class="mobile-nav-label">Maintenance</span>
+                <span class="mobile-nav-label"><%= t('common:nav.maintenance') %></span>
             </a>
             <a href="/training" class="mobile-nav-item<%= currentPath.startsWith('/training') ? ' active' : '' %>" data-nav-delay="3">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-                <span class="mobile-nav-label">Training</span>
+                <span class="mobile-nav-label"><%= t('common:nav.training') %></span>
             </a>
             <a href="/about" class="mobile-nav-item<%= currentPath === '/about' ? ' active' : '' %>" data-nav-delay="4">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-circle-info"></i></span>
-                <span class="mobile-nav-label">About Us</span>
+                <span class="mobile-nav-label"><%= t('common:nav.about') %></span>
             </a>
             <a href="/contact" class="mobile-nav-item<%= currentPath === '/contact' ? ' active' : '' %>" data-nav-delay="5">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-envelope"></i></span>
-                <span class="mobile-nav-label">Contact</span>
+                <span class="mobile-nav-label"><%= t('common:nav.contact') %></span>
             </a>
         </nav>
 
         <div class="mobile-drawer-divider"></div>
 
         <div class="mobile-drawer-actions">
-            <a href="/cart" class="mobile-action-btn" aria-label="Shopping Cart">
+            <a href="/cart" class="mobile-action-btn" aria-label="<%= t('common:nav.cart') %>">
                 <span class="mobile-action-btn-icon">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span class="mobile-action-badge" id="mobileCartBadge"><%= cartCount %></span>
                 </span>
-                <span class="mobile-action-btn-label">Cart</span>
+                <span class="mobile-action-btn-label"><%= t('common:nav.cart') %></span>
             </a>
             <% if (user) { %>
-            <a href="/dashboard/wishlist" class="mobile-action-btn" aria-label="Wishlist">
+            <a href="/dashboard/wishlist" class="mobile-action-btn" aria-label="<%= t('common:nav.wishlist') %>">
                 <span class="mobile-action-btn-icon"><i class="fa-solid fa-heart"></i></span>
-                <span class="mobile-action-btn-label">Wishlist</span>
+                <span class="mobile-action-btn-label"><%= t('common:nav.wishlist') %></span>
             </a>
-            <a href="/dashboard/orders" class="mobile-action-btn" aria-label="Orders">
+            <a href="/dashboard/orders" class="mobile-action-btn" aria-label="<%= t('common:nav.orders') %>">
                 <span class="mobile-action-btn-icon"><i class="fa-solid fa-box"></i></span>
-                <span class="mobile-action-btn-label">Orders</span>
+                <span class="mobile-action-btn-label"><%= t('common:nav.orders') %></span>
             </a>
             <% } %>
-            <a href="<%= user ? (['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard')) : '/auth/login' %>" class="mobile-action-btn" aria-label="<%= user ? 'Dashboard' : 'Sign In' %>">
+            <a href="<%= user ? (['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard')) : '/auth/login' %>" class="mobile-action-btn" aria-label="<%= user ? t('common:nav.dashboard') : t('common:nav.signIn') %>">
                 <span class="mobile-action-btn-icon"><i class="fa-solid <%= user ? 'fa-user-gear' : 'fa-arrow-right-to-bracket' %>"></i></span>
-                <span class="mobile-action-btn-label"><%= user ? 'Dashboard' : 'Sign In' %></span>
+                <span class="mobile-action-btn-label"><%= user ? t('common:nav.dashboard') : t('common:nav.signIn') %></span>
             </a>
         </div>
 
@@ -173,14 +186,18 @@
                     <span class="mobile-user-name"><%= formatDisplayName(user.firstName, user.lastName) %></span>
                     <span class="mobile-user-email"><%= user.email %></span>
                 </div>
-                <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="mobile-user-profile-btn">View Profile</a>
+                <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="mobile-user-profile-btn"><%= t('common:nav.viewProfile') %></a>
             </div>
             <% } else { %>
             <div class="mobile-user-auth">
-                <a href="/auth/login" class="mobile-user-btn mobile-user-btn-primary">Sign In</a>
-                <a href="/auth/register" class="mobile-user-btn mobile-user-btn-secondary">Create Account</a>
+                <a href="/auth/login" class="mobile-user-btn mobile-user-btn-primary"><%= t('common:nav.signIn') %></a>
+                <a href="/auth/register" class="mobile-user-btn mobile-user-btn-secondary"><%= t('common:nav.createAccount') %></a>
             </div>
             <% } %>
+            <div class="mobile-drawer-divider"></div>
+            <div class="mobile-drawer-lang">
+                <%- include('../partials/languageSelector') %>
+            </div>
         </div>
     </div>
 </div>
@@ -203,10 +220,11 @@ if (document.getElementById('msgUnreadBadge')) {
     setInterval(fetchUnreadMessageCount, 30000);
 }
 </script>
+<script src="/assets/js/i18n.js"></script>
 <% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
 <div class="bg-warning bg-opacity-10 border-bottom border-warning border-2 py-2">
     <div class="container text-center">
-        <small class="text-warning fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i>Your account is inactive. Some features are limited until activated. <a href="/contact" class="text-warning text-link">Contact support</a></small>
+        <small class="text-warning fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i><%= t('common:inactive.banner') %> <a href="/contact" class="text-warning text-link"><%= t('common:inactive.contactSupport') %></a></small>
     </div>
 </div>
 <% } %>

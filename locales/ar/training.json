@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "أكاديمية الهندسة الاحترافية - TechBridge Digital Hub",
+    "badge": "أكاديمية الهندسة الاحترافية",
+    "heading": "التدريب والشهادات",
+    "intro": "طوّر مسيرتك المهنية مع دورات تقنية بإشراف خبراء وبرامج شهادات احترافية.",
+    "levelBeginner": "مبتدئ",
+    "emptyTitle": "الدورات قريبًا",
+    "emptyText": "نقوم بإعداد برامج تدريبية جديدة مثيرة. عد قريبًا.",
+    "flashes": {
+      "courseNotFound": "الدورة غير موجودة.",
+      "invalidCourse": "دورة غير صالحة.",
+      "loginRequired": "يرجى تسجيل الدخول للتسجيل في دورة.",
+      "alreadyEnrolled": "أنت مسجل بالفعل في هذه الدورة.",
+      "courseFull": "بلغت هذه الدورة الحد الأقصى للتسجيل.",
+      "enrollSuccess": "تم تسجيلك في \"{{courseTitle}}\".",
+      "enrollFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى."
+    },
+    "notifications": {
+      "title": "التسجيل في الدورة",
+      "message": "تم تسجيلك في \"{{courseTitle}}\". ابدأ التعلم الآن!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "مبتدئ",
+    "enrolledBadge": "مسجل",
+    "enrolledCount": "{{count}} مسجل",
+    "studentsCount": "{{count}} طالب",
+    "aboutThisCourse": "حول هذه الدورة",
+    "descriptionComingSoon": "وصف الدورة قريبًا.",
+    "instructorAlt": "المدرب",
+    "goToCourse": "الانتقال إلى الدورة",
+    "enrollNow": "سجّل الآن",
+    "courseDetails": "تفاصيل الدورة"
+  },
+  "words": {
+    "duration": "المدة",
+    "level": "المستوى",
+    "instructor": "المدرب"
+  }
+}

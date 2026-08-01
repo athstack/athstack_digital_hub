@@ -2,19 +2,19 @@
   var p = product || {};
   var _imageUrl = typeof imageUrl === 'function' ? imageUrl : function(path, folder) { return path ? '/uploads/' + folder + '/' + path : ''; };
   var imgSrc = p.main_image ? _imageUrl(p.main_image, 'products') : '/uploads/products/no-image.svg';
-  var imgAlt = p.name || 'Product image';
+  var imgAlt = p.name || t('shop:words.productImage');
   var discountPct = (p.discount_price && p.price && p.discount_price < p.price) ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
   var hasDiscount = discountPct > 0;
   var stockQty = parseInt(p.stock_quantity, 10) || 0;
   var stockCls = stockQty > 10 ? 'in-stock' : (stockQty > 0 ? 'low-stock' : 'out-of-stock');
-  var stockLabel = stockQty > 10 ? 'In Stock' : (stockQty > 0 ? 'Low Stock' : 'Out of Stock');
+  var stockLabel = stockQty > 10 ? t('common:words.inStock') : (stockQty > 0 ? t('shop:words.lowStock') : t('common:words.outOfStock'));
   var isBestSeller = parseInt(p.total_sales, 10) > 100;
   var isFeatured = p.featured == 1;
   var stars = p.rating ? Math.round(p.rating) : 0;
   var hasRating = p.rating && p.rating > 0;
 %>
 <div class="product-card-wrapper">
-  <a href="/shop/<%= p.slug %>" class="product-card-link" aria-label="View <%= p.name %>">
+  <a href="/shop/<%= p.slug %>" class="product-card-link" aria-label="<%= t('shop:card.view', { name: p.name }) %>">
     <div class="product-card-inner">
       <div class="product-card-image-wrapper">
         <img class="product-card-img" src="<%= imgSrc %>"
@@ -23,23 +23,23 @@
              onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';">
         <div class="product-card-labels">
           <% if (hasDiscount) { %><span class="product-label product-label-discount">-<%= discountPct %>%</span><% } %>
-          <% if (isFeatured) { %><span class="product-label product-label-featured">Featured</span><% } %>
-          <% if (isBestSeller) { %><span class="product-label product-label-bestseller">Best Seller</span><% } %>
+          <% if (isFeatured) { %><span class="product-label product-label-featured"><%= t('shop:words.featured') %></span><% } %>
+          <% if (isBestSeller) { %><span class="product-label product-label-bestseller"><%= t('shop:words.bestSeller') %></span><% } %>
         </div>
         <form method="POST" action="/cart/add" class="product-card-add-form">
           <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
           <input type="hidden" name="product_id" value="<%= p.id %>">
-          <button type="submit" class="product-card-add-btn" title="Add to Cart" aria-label="Add <%= p.name %> to cart">
+          <button type="submit" class="product-card-add-btn" title="<%= t('shop:words.addToCart') %>" aria-label="<%= t('shop:card.addToCartAria', { name: p.name }) %>">
             <i class="fa-solid fa-cart-plus"></i>
-            <span>Add to Cart</span>
+            <span><%= t('shop:words.addToCart') %></span>
           </button>
         </form>
       </div>
       <div class="product-card-body">
-        <div class="product-card-brand"><%= p.category_name || 'General' %></div>
+        <div class="product-card-brand"><%= p.category_name || t('common:words.general') %></div>
         <h3 class="product-card-title"><%= p.name %></h3>
         <% if (hasRating) { %>
-        <div class="product-card-rating" aria-label="<%= p.rating %> out of 5 stars">
+        <div class="product-card-rating" aria-label="<%= t('shop:card.ratingAria', { rating: p.rating }) %>">
           <div class="stars-row">
             <% for (var i = 1; i <= 5; i++) { %>
               <i class="<%= i <= stars ? 'fa-solid' : 'fa-regular' %> fa-star <%= i <= stars ? 'star-filled' : 'star-empty' %>"></i>

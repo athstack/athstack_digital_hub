@@ -12,8 +12,8 @@
                         </a>
                     </div>
                     <div class="text-center mb-4">
-                        <h3 class="auth-heading">Welcome Back</h3>
-                        <p class="auth-subtext">Sign in to access your account</p>
+                        <h3 class="auth-heading"><%= t('auth:login.heading') %></h3>
+                        <p class="auth-subtext"><%= t('auth:login.subtext') %></p>
                     </div>
 
                     <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -30,29 +30,29 @@
                     <form id="loginForm" method="POST" action="/auth/login" novalidate>
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="mb-3">
-                            <label class="form-label">Email Address</label>
+                            <label class="form-label"><%= t('auth:words.emailAddress') %></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                <input type="email" name="email" class="form-control" required placeholder="your@email.com" autocomplete="email">
+                                <input type="email" name="email" class="form-control" required placeholder="<%= t('auth:login.emailPlaceholder') %>" autocomplete="email">
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Password</label>
+                            <label class="form-label"><%= t('common:words.password') %></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                <input type="password" name="password" class="form-control" required placeholder="Your password" autocomplete="current-password">
+                                <input type="password" name="password" class="form-control" required placeholder="<%= t('auth:login.passwordPlaceholder') %>" autocomplete="current-password">
                             </div>
                         </div>
                     <button type="submit" id="loginBtn" class="btn btn-premium-primary w-100 btn-lg mb-3">
-                        <i class="fa-solid fa-right-to-bracket me-2"></i><span id="loginBtnText">Sign In</span>
+                        <i class="fa-solid fa-right-to-bracket me-2"></i><span id="loginBtnText"><%= t('auth:login.submit') %></span>
                     </button>
                     </form>
 
                     <div class="auth-divider"></div>
 
                     <div class="text-center">
-                        <a href="/auth/forgot" class="text-primary small text-link">Forgot password?</a>
-                        <p class="text-muted small mt-2 mb-0">Don't have an account? <a href="/auth/register" class="text-primary text-link">Create one</a></p>
+                        <a href="/auth/forgot" class="text-primary small text-link"><%= t('auth:login.forgotPassword') %></a>
+                        <p class="text-muted small mt-2 mb-0"><%= t('auth:login.noAccount') %> <a href="/auth/register" class="text-primary text-link"><%= t('auth:login.createOne') %></a></p>
                     </div>
                 </div>
             </div>
@@ -81,10 +81,10 @@
     function setLoading(loading) {
         btn.disabled = loading;
         if (loading) {
-            btnText.textContent = 'Signing In...';
+            btnText.textContent = '<%= t('auth:login.signingIn') %>';
             btn.querySelector('i').className = 'fa-solid fa-spinner fa-spin me-2';
         } else {
-            btnText.textContent = 'Sign In';
+            btnText.textContent = '<%= t('auth:login.submit') %>';
             btn.querySelector('i').className = 'fa-solid fa-right-to-bracket me-2';
         }
     }
@@ -113,20 +113,20 @@
                 });
             }
             if (res.redirected) {
-                return { ok: false, status: res.status, data: { success: false, message: 'Session expired. Please refresh and try again.' } };
+                return { ok: false, status: res.status, data: { success: false, message: '<%= t('auth:login.sessionExpired') %>' } };
             }
-            return { ok: false, status: res.status, data: { success: false, message: 'Unexpected server response. Please try again.' } };
+            return { ok: false, status: res.status, data: { success: false, message: '<%= t('auth:login.unexpectedResponse') %>' } };
         })
         .then(function(result) {
             if (result.ok && result.data.success) {
                 window.location.href = result.data.redirect || '/dashboard';
             } else {
-                showError(result.data.message || 'Login failed. Please try again.');
+                showError(result.data.message || '<%= t('auth:login.loginFailed') %>');
                 setLoading(false);
             }
         })
         .catch(function() {
-            showError('Network error. Please check your connection and try again.');
+            showError('<%= t('auth:login.networkError') %>');
             setLoading(false);
         });
     });

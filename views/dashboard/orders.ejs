@@ -14,9 +14,10 @@
                 <%- include('../partials/sidebar') %>
             </div>
             <div class="col-lg-9">
+                <% function _tStatus(s) { var k = String(s || '').replace(/_([a-z])/g, function(m, c) { return c.toUpperCase(); }); return t('status.' + k, { defaultValue: t('dashboard:words.' + k, { defaultValue: s }) }); } %>
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Orders</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i>Order History</h2>
+                    <span class="section-badge"><%= t('dashboard:orders.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i><%= t('dashboard:orders.heading') %></h2>
                 </div>
 
                 <% if (orders && orders.length > 0) { %>
@@ -25,11 +26,11 @@
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
-                                    <th>Date</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
+                                    <th><%= t('dashboard:orders.orderId') %></th>
+                                    <th><%= t('words.date') %></th>
+                                    <th><%= t('dashboard:words.items') %></th>
+                                    <th><%= t('words.total') %></th>
+                                    <th><%= t('words.status') %></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,9 +38,9 @@
                                 <tr style="cursor:pointer;" onclick="window.location='/dashboard/orders/<%= order.id %>'">
                                     <td class="text-white fw-bold">#<%= order.id %><% if (order.order_reference) { %><br><small class="text-white-50"><%= order.order_reference %></small><% } %></td>
                                     <td class="text-white-50"><%= formatDate(order.created_at) %></td>
-                                    <td class="text-white-50"><%= order.total_items || 0 %> <%= (order.total_items || 0) === 1 ? 'item' : 'items' %></td>
+                                    <td class="text-white-50"><%= t('dashboard:orders.item', { count: order.total_items || 0 }) %></td>
                                     <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount) %></td>
-                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= order.status || order.order_status %></span></td>
+                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= _tStatus(order.status || order.order_status) %></span></td>
                                 </tr>
                                 <% }) %>
                             </tbody>
@@ -49,9 +50,9 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-receipt fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Orders Yet</h4>
-                    <p class="text-white-50">You haven't placed any orders. Start shopping to see your orders here.</p>
-                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+                    <h4 class="text-white fw-bold"><%= t('dashboard:orders.emptyTitle') %></h4>
+                    <p class="text-white-50"><%= t('dashboard:orders.emptyMessage') %></p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i><%= t('dashboard:orders.browseShop') %></a>
                 </div>
                 <% } %>
             </div>

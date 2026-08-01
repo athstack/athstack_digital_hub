@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "Professionelle Ingenieursakademie - TechBridge Digital Hub",
+    "badge": "Professionelle Ingenieursakademie",
+    "heading": "Schulung & Zertifizierung",
+    "intro": "Bringen Sie Ihre Karriere voran mit fachkundig geleiteten technischen Kursen und professionellen Zertifizierungsprogrammen.",
+    "levelBeginner": "Anfänger",
+    "emptyTitle": "Kurse in Kürze verfügbar",
+    "emptyText": "Wir bereiten spannende neue Schulungsprogramme vor. Schauen Sie bald wieder vorbei.",
+    "flashes": {
+      "courseNotFound": "Kurs nicht gefunden.",
+      "invalidCourse": "Ungültiger Kurs.",
+      "loginRequired": "Bitte melden Sie sich an, um sich für einen Kurs einzuschreiben.",
+      "alreadyEnrolled": "Sie sind bereits in diesen Kurs eingeschrieben.",
+      "courseFull": "Dieser Kurs hat die maximale Teilnehmerzahl erreicht.",
+      "enrollSuccess": "Sie wurden in \"{{courseTitle}}\" eingeschrieben.",
+      "enrollFailed": "Einschreibung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "notifications": {
+      "title": "Kurseinschreibung",
+      "message": "Sie wurden in \"{{courseTitle}}\" eingeschrieben. Starten Sie jetzt mit dem Lernen!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "Anfänger",
+    "enrolledBadge": "Eingeschrieben",
+    "enrolledCount": "{{count}} eingeschrieben",
+    "studentsCount": "{{count}} Studenten",
+    "aboutThisCourse": "Über diesen Kurs",
+    "descriptionComingSoon": "Kursbeschreibung in Kürze verfügbar.",
+    "instructorAlt": "Dozent",
+    "goToCourse": "Zum Kurs",
+    "enrollNow": "Jetzt einschreiben",
+    "courseDetails": "Kursdetails"
+  },
+  "words": {
+    "duration": "Dauer",
+    "level": "Niveau",
+    "instructor": "Dozent"
+  }
+}

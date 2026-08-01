@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "Contact Us - TechBridge Digital Hub",
+    "badge": "Get In Touch",
+    "heading": "Contact Us",
+    "intro": "Have a question or need a quote? Reach out and our team will respond promptly.",
+    "form": {
+      "title": "Send a Message",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "countryCode": "Country Code",
+      "phoneNumber": "Phone Number",
+      "subject": "Subject",
+      "message": "Message",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "How can we help?",
+      "messagePlaceholder": "Write your message here...",
+      "submit": "Send Message",
+      "countries": {
+        "TZ": "Tanzania (+255)",
+        "KE": "Kenya (+254)",
+        "UG": "Uganda (+256)",
+        "RW": "Rwanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "South Africa (+27)",
+        "US": "USA/Canada (+1)",
+        "GB": "UK (+44)",
+        "DE": "Germany (+49)",
+        "FR": "France (+33)",
+        "AU": "Australia (+61)",
+        "CN": "China (+86)",
+        "IN": "India (+91)",
+        "AE": "UAE (+971)",
+        "NG": "Nigeria (+234)"
+      }
+    },
+    "info": {
+      "title": "Contact Information",
+      "officeAddress": "Office Address",
+      "address": "Mbeya, Tanzania",
+      "businessHours": "Business Hours"
+    },
+    "social": {
+      "title": "Follow Us",
+      "intro": "Stay connected on social media for the latest updates.",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "Name, email, and message are required.",
+      "loginRequired": "Please create an account to send your message.",
+      "success": "Your message has been sent. We will get back to you shortly."
+    },
+    "notifications": {
+      "newMessage": "New Contact Message",
+      "sentMessage": "{{name}} sent a message",
+      "sentMessageWithSubject": "{{name}} sent a message: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "Name is required",
+    "nameLength": "Name must be between 2 and 100 characters",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please provide a valid email address",
+    "phoneInvalid": "Please provide a valid phone number",
+    "phoneDigits": "Phone number must be between 7 and 15 digits",
+    "subjectRequired": "Subject is required",
+    "subjectLength": "Subject must be between 3 and 200 characters",
+    "messageRequired": "Message is required",
+    "messageLength": "Message must be between 10 and 5000 characters"
+  }
+}

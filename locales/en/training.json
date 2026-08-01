@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "Professional Engineering Academy - TechBridge Digital Hub",
+    "badge": "Professional Engineering Academy",
+    "heading": "Training & Certification",
+    "intro": "Advance your career with expert-led technical courses and professional certification programs.",
+    "levelBeginner": "Beginner",
+    "emptyTitle": "Courses Coming Soon",
+    "emptyText": "We're preparing exciting new training programs. Check back shortly.",
+    "flashes": {
+      "courseNotFound": "Course not found.",
+      "invalidCourse": "Invalid course.",
+      "loginRequired": "Please log in to enroll in a course.",
+      "alreadyEnrolled": "You are already enrolled in this course.",
+      "courseFull": "This course has reached maximum enrollment.",
+      "enrollSuccess": "You have been enrolled in \"{{courseTitle}}\".",
+      "enrollFailed": "Enrollment failed. Please try again."
+    },
+    "notifications": {
+      "title": "Course Enrollment",
+      "message": "You have been enrolled in \"{{courseTitle}}\". Start learning now!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "Beginner",
+    "enrolledBadge": "Enrolled",
+    "enrolledCount": "{{count}} enrolled",
+    "studentsCount": "{{count}} students",
+    "aboutThisCourse": "About This Course",
+    "descriptionComingSoon": "Course description coming soon.",
+    "instructorAlt": "Instructor",
+    "goToCourse": "Go to Course",
+    "enrollNow": "Enroll Now",
+    "courseDetails": "Course Details"
+  },
+  "words": {
+    "duration": "Duration",
+    "level": "Level",
+    "instructor": "Instructor"
+  }
+}

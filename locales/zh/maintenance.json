@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "企业 IT 维护与设备维修 - TechBridge Digital Hub",
+    "badge": "设备维修与 IT 维护",
+    "heading": "企业维护服务",
+    "intro": "面向电脑和移动设备的专业检测、维修与 IT 维护服务。",
+    "services": {
+      "computerTitle": "电脑服务",
+      "computerSubtitle": "台式机和笔记本维修解决方案",
+      "phoneTitle": "手机服务",
+      "phoneSubtitle": "移动设备维修与检测",
+      "bookNow": "立即预约",
+      "defaultDescription": "专业服务",
+      "emptyComputer": "电脑服务正在配置中，请稍后再来。",
+      "emptyPhone": "手机服务正在配置中，请稍后再来。"
+    },
+    "form": {
+      "title": "预约维修",
+      "intro": "请填写下方表单，我们的团队将在 24 小时内与您联系。",
+      "fullName": "姓名",
+      "emailAddress": "邮箱地址",
+      "phoneNumber": "电话号码",
+      "country": "国家/地区",
+      "selectCountry": "选择您的国家/地区",
+      "appointmentDate": "预约日期",
+      "serviceType": "服务类型",
+      "selectService": "选择服务...",
+      "deviceType": "设备类型",
+      "deviceBrand": "设备品牌",
+      "deviceModel": "设备型号",
+      "issueDescription": "问题描述",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "请输入有效的电话号码",
+      "phoneNumberFallback": "电话号码",
+      "brandPlaceholder": "例如：Apple、Dell、Samsung",
+      "modelPlaceholder": "例如：MacBook Pro 14",
+      "issuePlaceholder": "请描述您的设备出现的问题（例如：屏幕无法点亮、意外关机、进水等）",
+      "submit": "提交维修请求",
+      "countries": {
+        "NG": "尼日利亚",
+        "TZ": "坦桑尼亚",
+        "KE": "肯尼亚",
+        "UG": "乌干达",
+        "ZA": "南非",
+        "GH": "加纳",
+        "EG": "埃及",
+        "RW": "卢旺达",
+        "ET": "埃塞俄比亚",
+        "CD": "刚果（金）",
+        "CM": "喀麦隆",
+        "SN": "塞内加尔",
+        "US": "美国",
+        "GB": "英国",
+        "IN": "印度",
+        "CN": "中国"
+      },
+      "deviceTypes": {
+        "laptop": "笔记本电脑",
+        "desktop": "台式电脑",
+        "smartphone": "智能手机",
+        "tablet": "平板电脑",
+        "network": "网络设备",
+        "other": "其他"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "已选择 {{count}} 项服务",
+      "servicesSelectedOther": "已选择 {{count}} 项服务",
+      "proceed": "前往预约",
+      "clear": "清除"
+    },
+    "flashes": {
+      "missingFields": "所有必填字段均为必填项。",
+      "scheduled": "您的维护请求已成功预约。",
+      "success": "维护请求提交成功。参考号：{{reference}}"
+    },
+    "notifications": {
+      "title": "维修请求已提交",
+      "message": "您的维修请求 {{reference}} 已提交，我们将尽快与您联系。"
+    },
+    "errors": {
+      "missingRef": "请填写参考号。",
+      "notFound": "未找到该参考号对应的维修请求。"
+    }
+  }
+}

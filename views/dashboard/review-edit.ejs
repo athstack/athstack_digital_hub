@@ -12,8 +12,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <a href="/dashboard/reviews" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i>Edit Review</h2>
+                    <a href="/dashboard/reviews" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i><%= t('words.back') %></a>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('dashboard:reviewEdit.title') %></h2>
                 </div>
 
                 <div class="glass-card p-4 mb-4">
@@ -26,13 +26,13 @@
                             <% } %>
                         </div>
                         <div>
-                            <h5 class="text-white mb-0"><%= product ? product.name : 'General Review' %></h5>
+                            <h5 class="text-white mb-0"><%= product ? product.name : t('dashboard:reviews.generalReview') %></h5>
                             <% if (product) { %>
-                            <a href="/shop/<%= product.slug %>#reviews" class="text-primary small text-link">View product page</a>
+                            <a href="/shop/<%= product.slug %>#reviews" class="text-primary small text-link"><%= t('dashboard:reviewEdit.viewProductPage') %></a>
                             <% } %>
                         </div>
                         <% if (review.is_verified) { %>
-                        <span class="verified-badge ms-auto"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+                        <span class="verified-badge ms-auto"><i class="fa-solid fa-circle-check"></i> <%= t('dashboard:reviews.verifiedPurchase') %></span>
                         <% } %>
                     </div>
                 </div>
@@ -42,10 +42,10 @@
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
 
                         <div class="review-write-rating mb-4">
-                            <label class="review-write-label d-block mb-2">Your Rating <span class="text-danger">*</span></label>
-                            <div class="review-stars-input" data-review-stars="<%= review.rating %>" data-rating-input="reviewEditRating" role="radiogroup" aria-label="Rating">
+                            <label class="review-write-label d-block mb-2"><%= t('dashboard:reviewEdit.yourRating') %> <span class="text-danger">*</span></label>
+                            <div class="review-stars-input" data-review-stars="<%= review.rating %>" data-rating-input="reviewEditRating" role="radiogroup" aria-label="<%= t('dashboard:reviewEdit.ratingAria') %>">
                                 <% for (let i = 1; i <= 5; i++) { %>
-                                <button type="button" class="review-star-btn" data-rating="<%= i %>" role="radio" aria-checked="<%= i <= review.rating ? 'true' : 'false' %>" aria-label="<%= i %> star<%= i > 1 ? 's' : '' %>">
+                                <button type="button" class="review-star-btn" data-rating="<%= i %>" role="radio" aria-checked="<%= i <= review.rating ? 'true' : 'false' %>" aria-label="<%= t('dashboard:reviewEdit.starAria', { count: i }) %>">
                                     <i class="fa-solid fa-star"></i>
                                 </button>
                                 <% } %>
@@ -55,50 +55,50 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="review-write-label d-block mb-2" for="reviewEditTitle">Review Title</label>
-                            <input type="text" name="title" id="reviewEditTitle" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="Great quality, fast delivery">
+                            <label class="review-write-label d-block mb-2" for="reviewEditTitle"><%= t('dashboard:reviewEdit.reviewTitle') %></label>
+                            <input type="text" name="title" id="reviewEditTitle" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="<%= t('dashboard:reviewEdit.titlePlaceholder') %>">
                         </div>
 
                         <div class="mb-4">
-                            <label class="review-write-label d-block mb-2" for="reviewEditComment">Your Review <span class="text-danger">*</span></label>
-                            <textarea name="comment" id="reviewEditComment" class="review-textarea" rows="5" maxlength="1500" placeholder="Share what you loved or how it could be better..."><%= review.comment || '' %></textarea>
+                            <label class="review-write-label d-block mb-2" for="reviewEditComment"><%= t('dashboard:reviewEdit.yourReview') %> <span class="text-danger">*</span></label>
+                            <textarea name="comment" id="reviewEditComment" class="review-textarea" rows="5" maxlength="1500" placeholder="<%= t('dashboard:reviewEdit.commentPlaceholder') %>"><%= review.comment || '' %></textarea>
                             <div class="d-flex justify-content-end mt-1">
-                                <small class="review-charcount text-white-50" id="reviewEditCommentCount"><%= (review.comment || '').length %> / 1500 (min 20)</small>
+                                <small class="review-charcount text-white-50" id="reviewEditCommentCount"><%= t('dashboard:reviewEdit.charCount', { count: (review.comment || '').length }) %></small>
                             </div>
                         </div>
 
                         <% if (review.images && review.images.length > 0) { %>
                         <div class="mb-4">
-                            <label class="review-write-label d-block mb-2">Current Photos</label>
+                            <label class="review-write-label d-block mb-2"><%= t('dashboard:reviewEdit.currentPhotos') %></label>
                             <div class="review-images-grid">
                                 <% review.images.forEach(function(url) { %>
                                 <label class="review-edit-image">
-                                    <img src="<%= reviewThumbUrl(url) %>" alt="Review photo">
+                                    <img src="<%= reviewThumbUrl(url) %>" alt="<%= t('dashboard:reviewEdit.photoAlt') %>">
                                     <input type="checkbox" name="remove_images" value="<%= url %>">
                                     <span class="review-edit-image-remove"><i class="fa-solid fa-xmark"></i></span>
                                 </label>
                                 <% }) %>
                             </div>
-                            <small class="text-white-50">Check a photo to remove it.</small>
+                            <small class="text-white-50"><%= t('dashboard:reviewEdit.removePhotoHint') %></small>
                         </div>
                         <% } %>
 
                         <div class="mb-4">
-                            <label class="review-write-label d-block mb-2">Add Photos</label>
+                            <label class="review-write-label d-block mb-2"><%= t('dashboard:reviewEdit.addPhotos') %></label>
                             <div class="review-upload-widget">
                                 <label class="review-upload-zone" for="reviewEditImagesInput">
                                     <input type="file" name="images" id="reviewEditImagesInput" class="review-upload-input" accept="image/*" multiple>
                                     <i class="fa-solid fa-camera-retro"></i>
-                                    <p class="mb-1">Tap to take a photo or upload photos</p>
-                                    <small>JPG, PNG or WebP · Max 5MB each · Up to 5 photos total</small>
+                                    <p class="mb-1"><%= t('dashboard:reviewEdit.uploadTap') %></p>
+                                    <small><%= t('dashboard:reviewEdit.uploadLimits') %></small>
                                 </label>
                                 <div class="review-upload-previews" id="reviewEditUploadPreviews"></div>
                             </div>
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end">
-                            <a href="/dashboard/reviews" class="btn btn-premium-outline rounded-pill">Cancel</a>
-                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
+                            <a href="/dashboard/reviews" class="btn btn-premium-outline rounded-pill"><%= t('words.cancel') %></a>
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('words.saveChanges') %></button>
                         </div>
                     </form>
                 </div>

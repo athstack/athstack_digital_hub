@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "संपर्क करें - TechBridge Digital Hub",
+    "badge": "संपर्क में रहें",
+    "heading": "संपर्क करें",
+    "intro": "कोई प्रश्न है या कोटेशन चाहिए? संपर्क करें और हमारी टीम तुरंत जवाब देगी।",
+    "form": {
+      "title": "संदेश भेजें",
+      "fullName": "पूरा नाम",
+      "emailAddress": "ईमेल पता",
+      "countryCode": "कंट्री कोड",
+      "phoneNumber": "फ़ोन नंबर",
+      "subject": "विषय",
+      "message": "संदेश",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "हम आपकी कैसे मदद कर सकते हैं?",
+      "messagePlaceholder": "अपना संदेश यहां लिखें...",
+      "submit": "संदेश भेजें",
+      "countries": {
+        "TZ": "Tanzania (+255)",
+        "KE": "Kenya (+254)",
+        "UG": "Uganda (+256)",
+        "RW": "Rwanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "South Africa (+27)",
+        "US": "USA/Canada (+1)",
+        "GB": "UK (+44)",
+        "DE": "Germany (+49)",
+        "FR": "France (+33)",
+        "AU": "Australia (+61)",
+        "CN": "China (+86)",
+        "IN": "India (+91)",
+        "AE": "UAE (+971)",
+        "NG": "Nigeria (+234)"
+      }
+    },
+    "info": {
+      "title": "संपर्क जानकारी",
+      "officeAddress": "कार्यालय का पता",
+      "address": "Mbeya, Tanzania",
+      "businessHours": "व्यावसायिक समय"
+    },
+    "social": {
+      "title": "हमें फॉलो करें",
+      "intro": "नवीनतम अपडेट के लिए सोशल मीडिया पर जुड़े रहें।",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "नाम, ईमेल और संदेश आवश्यक हैं।",
+      "loginRequired": "अपना संदेश भेजने के लिए कृपया खाता बनाएं।",
+      "success": "आपका संदेश भेज दिया गया है। हम जल्द ही आपसे संपर्क करेंगे।"
+    },
+    "notifications": {
+      "newMessage": "नया संपर्क संदेश",
+      "sentMessage": "{{name}} ने एक संदेश भेजा",
+      "sentMessageWithSubject": "{{name}} ने एक संदेश भेजा: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "नाम आवश्यक है",
+    "nameLength": "नाम 2 से 100 अक्षरों के बीच होना चाहिए",
+    "emailRequired": "ईमेल आवश्यक है",
+    "emailInvalid": "कृपया एक मान्य ईमेल पता दें",
+    "phoneInvalid": "कृपया एक मान्य फ़ोन नंबर दें",
+    "phoneDigits": "फ़ोन नंबर 7 से 15 अंकों का होना चाहिए",
+    "subjectRequired": "विषय आवश्यक है",
+    "subjectLength": "विषय 3 से 200 अक्षरों के बीच होना चाहिए",
+    "messageRequired": "संदेश आवश्यक है",
+    "messageLength": "संदेश 10 से 5000 अक्षरों के बीच होना चाहिए"
+  }
+}

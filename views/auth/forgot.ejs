@@ -12,8 +12,8 @@
                         </a>
                     </div>
                     <div class="text-center mb-4">
-                        <h3 class="auth-heading">Reset Password</h3>
-                        <p class="auth-subtext">Enter your email to receive a password reset link</p>
+                        <h3 class="auth-heading"><%= t('auth:forgot.heading') %></h3>
+                        <p class="auth-subtext"><%= t('auth:forgot.subtext') %></p>
                     </div>
 
                     <% if (typeof flashInfo !== 'undefined' && flashInfo && flashInfo.length > 0) { %>
@@ -29,19 +29,19 @@
                     <form method="POST" action="/auth/forgot">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="mb-4">
-                            <label class="form-label">Email Address</label>
+                            <label class="form-label"><%= t('auth:words.emailAddress') %></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                <input type="email" name="email" class="form-control" required placeholder="your@email.com">
+                                <input type="email" name="email" class="form-control" required placeholder="<%= t('auth:forgot.emailPlaceholder') %>">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 btn-lg mb-3"><i class="fa-solid fa-paper-plane me-2"></i>Send Reset Link</button>
+                        <button type="submit" class="btn btn-premium-primary w-100 btn-lg mb-3"><i class="fa-solid fa-paper-plane me-2"></i><%= t('auth:forgot.submit') %></button>
                     </form>
 
                     <div class="auth-divider"></div>
 
                     <div class="text-center">
-                        <p class="text-muted small mb-0">Remember your password? <a href="/auth/login" class="text-primary text-link">Sign in</a></p>
+                        <p class="text-muted small mb-0"><%= t('auth:forgot.rememberPassword') %> <a href="/auth/login" class="text-primary text-link"><%= t('auth:forgot.signIn') %></a></p>
                     </div>
                 </div>
             </div>

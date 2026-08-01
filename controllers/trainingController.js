@@ -1,15 +1,13 @@
 const CourseModel = require('../models/CourseModel');
 const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
-const { formatCurrency } = require('../utils/helpers');
 
 exports.getCourses = async (req, res, next) => {
   try {
     const courses = await CourseModel.getActive();
     res.render('training/index', {
-      title: 'Professional Engineering Academy - TechBridge Digital Hub',
-      courses,
-      formatCurrency
+      title: req.t('training:index.title'),
+      courses
     });
   } catch (err) {
     next(err);
@@ -21,7 +19,7 @@ exports.getCourse = async (req, res, next) => {
     const course = await CourseModel.findBySlug(req.params.slug);
 
     if (!course) {
-      req.flash('error', 'Course not found.');
+      req.flash('error', req.t('training:index.flashes.courseNotFound'));
       return res.redirect('/training');
     }
 
@@ -32,10 +30,9 @@ exports.getCourse = async (req, res, next) => {
     }
 
     res.render('training/view', {
-      title: `${course.title} - TechBridge Digital Hub`,
+      title: req.t('training:view.title', { courseTitle: course.title }),
       course,
-      isEnrolled,
-      formatCurrency
+      isEnrolled
     });
   } catch (err) {
     next(err);
@@ -45,43 +42,43 @@ exports.getCourse = async (req, res, next) => {
 exports.enrollInCourse = async (req, res, next) => {
   try {
     if (!req.session.userId) {
-      req.flash('error', 'Please log in to enroll in a course.');
+      req.flash('error', req.t('training:index.flashes.loginRequired'));
       return res.redirect('/auth/login');
     }
 
     const courseId = parseInt(req.params.id);
     if (!courseId) {
-      req.flash('error', 'Invalid course.');
+      req.flash('error', req.t('training:index.flashes.invalidCourse'));
       return res.redirect('/training');
     }
 
     const course = await CourseModel.findById(courseId);
     if (!course) {
-      req.flash('error', 'Course not found.');
+      req.flash('error', req.t('training:index.flashes.courseNotFound'));
       return res.redirect('/training');
     }
 
     const enrolled = await CourseModel.enroll(req.session.userId, courseId);
     if (enrolled) {
       await NotificationModel.create(req.session.userId, {
-        title: 'Course Enrollment',
-        message: `You have been enrolled in "${course.title}". Start learning now!`,
+        title: req.t('training:index.notifications.title'),
+        message: req.t('training:index.notifications.message', { courseTitle: course.title }),
         type: 'course',
         link: '/dashboard/training'
       });
-      req.flash('success', `You have been enrolled in "${course.title}".`);
+      req.flash('success', req.t('training:index.flashes.enrollSuccess', { courseTitle: course.title }));
     } else {
-      req.flash('error', 'Enrollment failed. Please try again.');
+      req.flash('error', req.t('training:index.flashes.enrollFailed'));
     }
 
     res.redirect(`/training/${course.slug}`);
   } catch (err) {
     if (err.message === 'Already enrolled') {
-      req.flash('error', 'You are already enrolled in this course.');
+      req.flash('error', req.t('training:index.flashes.alreadyEnrolled'));
       return res.redirect(`/training/${req.params.slug || ''}`);
     }
     if (err.message === 'Course is full') {
-      req.flash('error', 'This course has reached maximum enrollment.');
+      req.flash('error', req.t('training:index.flashes.courseFull'));
       return res.redirect('/training');
     }
     next(err);

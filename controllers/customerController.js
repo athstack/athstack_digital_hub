@@ -7,7 +7,7 @@ const ReviewModel = require('../models/ReviewModel');
 const ProductModel = require('../models/ProductModel');
 const ContactModel = require('../models/ContactModel');
 const { pool } = require('../config/db');
-const { formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
+const { formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -24,15 +24,14 @@ exports.getDashboard = async (req, res, next) => {
     const totalSpent = orders.orders ? orders.orders.reduce((sum, o) => sum + parseFloat(o.total_amount || 0), 0) : 0;
 
     res.render('dashboard/index', {
-      title: 'Your Account Dashboard - TechBridge Digital Hub',
+      title: req.t('dashboard:title.index'),
       orders: orders.orders || orders,
       bookings,
       courses: enrollments,
-      totalSpent: formatCurrency(totalSpent),
+      totalSpent: formatCurrency(totalSpent, req.language),
       orderCount: (orders.orders || []).length,
       bookingCount: bookings.length,
-      courseCount: enrollments.length,
-      formatCurrency
+      courseCount: enrollments.length
     });
   } catch (err) {
     next(err);
@@ -43,10 +42,8 @@ exports.getOrders = async (req, res, next) => {
   try {
     const result = await OrderModel.getByUser(req.session.userId);
     res.render('dashboard/orders', {
-      title: 'Order History - TechBridge Digital Hub',
+      title: req.t('dashboard:title.orders'),
       orders: result.orders || result,
-      formatDate,
-      formatCurrency,
       getStatusBadgeClass
     });
   } catch (err) {
@@ -60,7 +57,7 @@ exports.getOrderDetail = async (req, res, next) => {
     const order = await OrderModel.findById(orderId);
 
     if (!order || order.user_id !== req.session.userId) {
-      req.flash('error', 'Order not found.');
+      req.flash('error', req.t('dashboard:orders.notFound'));
       return res.redirect('/dashboard/orders');
     }
 
@@ -73,12 +70,10 @@ exports.getOrderDetail = async (req, res, next) => {
     }
 
     res.render('dashboard/order-detail', {
-      title: 'Order Details - TechBridge Digital Hub',
+      title: req.t('dashboard:title.orderDetail'),
       order,
       reviewedProductIds,
       isDelivered: (order.order_status || order.status) === 'delivered',
-      formatDate,
-      formatCurrency,
       getStatusBadgeClass
     });
   } catch (err) {
@@ -100,9 +95,8 @@ exports.getRepairs = async (req, res, next) => {
     );
 
     res.render('dashboard/repairs', {
-      title: 'Repair History - TechBridge Digital Hub',
+      title: req.t('dashboard:title.repairs'),
       bookings,
-      formatDate,
       getStatusBadgeClass
     });
   } catch (err) {
@@ -117,16 +111,14 @@ exports.getRepairDetail = async (req, res, next) => {
     const repair = await RepairModel.findById(repairId);
 
     if (!repair || repair.user_id !== req.session.userId) {
-      req.flash('error', 'Repair request not found.');
+      req.flash('error', req.t('dashboard:repairDetail.notFoundFlash'));
       return res.redirect('/dashboard/repairs');
     }
 
     res.render('dashboard/repair-detail', {
-      title: 'Repair Details - TechBridge Digital Hub',
+      title: req.t('dashboard:title.repairDetail'),
       repair,
-      formatDate,
-      getStatusBadgeClass,
-      formatCurrency
+      getStatusBadgeClass
     });
   } catch (err) {
     next(err);
@@ -138,7 +130,7 @@ exports.getTraining = async (req, res, next) => {
     const enrollments = await CourseModel.getEnrollments(req.session.userId);
 
     res.render('dashboard/training', {
-      title: 'Enrolled Courses - TechBridge Digital Hub',
+      title: req.t('dashboard:title.training'),
       courses: enrollments
     });
   } catch (err) {
@@ -150,12 +142,12 @@ exports.getProfile = async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.session.userId);
     if (!user) {
-      req.flash('error', 'User not found.');
+      req.flash('error', req.t('dashboard:profile.userNotFound'));
       return res.redirect('/dashboard');
     }
 
     res.render('dashboard/profile', {
-      title: 'Your Profile - TechBridge Digital Hub',
+      title: req.t('dashboard:title.profile'),
       profile: user
     });
   } catch (err) {
@@ -169,7 +161,7 @@ exports.updateProfile = async (req, res, next) => {
     const { first_name, last_name, email, phone } = req.body;
 
     if (!first_name || !last_name || !email) {
-      req.flash('error', 'First name, last name, and email are required.');
+      req.flash('error', req.t('dashboard:profile.requiredFields'));
       return res.redirect('/dashboard/profile');
     }
 
@@ -190,7 +182,7 @@ exports.updateProfile = async (req, res, next) => {
     req.session.userFirstName = first_name;
     req.session.userLastName = last_name;
 
-    req.flash('success', 'Profile updated successfully.');
+    req.flash('success', req.t('dashboard:profile.updated'));
     res.redirect('/dashboard/profile');
   } catch (err) {
     next(err);
@@ -202,10 +194,9 @@ exports.getWishlist = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const result = await WishlistModel.getByUser(req.session.userId, page, 12);
     res.render('dashboard/wishlist', {
-      title: 'Your Wishlist - TechBridge Digital Hub',
+      title: req.t('dashboard:title.wishlist'),
       wishlist: result.items,
-      pagination: { page: result.page, total: result.total, totalPages: Math.ceil(result.total / result.limit), hasNext: result.page < Math.ceil(result.total / result.limit), hasPrev: result.page > 1 },
-      formatCurrency
+      pagination: { page: result.page, total: result.total, totalPages: Math.ceil(result.total / result.limit), hasNext: result.page < Math.ceil(result.total / result.limit), hasPrev: result.page > 1 }
     });
   } catch (err) {
     next(err);
@@ -217,13 +208,13 @@ exports.addToWishlist = async (req, res, next) => {
     const productId = parseInt(req.body.product_id);
     const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
     if (!productId) {
-      if (isAjax) return res.status(400).json({ success: false, message: 'Product ID required.' });
-      req.flash('error', 'Invalid product.');
+      if (isAjax) return res.status(400).json({ success: false, message: req.t('dashboard:wishlist.productIdRequired') });
+      req.flash('error', req.t('dashboard:wishlist.invalidProduct'));
       return res.redirect('back');
     }
     await WishlistModel.add(req.session.userId, productId);
-    if (isAjax) return res.json({ success: true, message: 'Added to wishlist.' });
-    req.flash('success', 'Added to your wishlist.');
+    if (isAjax) return res.json({ success: true, message: req.t('dashboard:wishlist.addedToWishlistAjax') });
+    req.flash('success', req.t('dashboard:wishlist.addedToWishlist'));
     res.redirect('back');
   } catch (err) {
     next(err);
@@ -235,8 +226,8 @@ exports.removeFromWishlist = async (req, res, next) => {
     const productId = parseInt(req.body.product_id);
     const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
     await WishlistModel.remove(req.session.userId, productId);
-    if (isAjax) return res.json({ success: true, message: 'Removed from wishlist.' });
-    req.flash('success', 'Removed from wishlist.');
+    if (isAjax) return res.json({ success: true, message: req.t('dashboard:wishlist.removedFromWishlist') });
+    req.flash('success', req.t('dashboard:wishlist.removedFromWishlist'));
     res.redirect('/dashboard/wishlist');
   } catch (err) {
     next(err);
@@ -248,11 +239,9 @@ exports.getReviews = async (req, res, next) => {
     const reviews = await ReviewModel.getByUser(req.session.userId);
     const eligibleProducts = await ReviewModel.getEligibleProducts(req.session.userId);
     res.render('dashboard/reviews', {
-      title: 'Your Reviews - TechBridge Digital Hub',
+      title: req.t('dashboard:title.reviews'),
       reviews,
-      eligibleProducts,
-      formatDate,
-      formatCurrency
+      eligibleProducts
     });
   } catch (err) {
     next(err);
@@ -265,18 +254,16 @@ exports.getEditReview = async (req, res, next) => {
     const review = await ReviewModel.getOwnedById(req.session.userId, reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('dashboard:reviews.notFound'));
       return res.redirect('/dashboard/reviews');
     }
 
     const product = review.product_id ? await ProductModel.findById(review.product_id) : null;
 
     res.render('dashboard/review-edit', {
-      title: 'Edit Review - TechBridge Digital Hub',
+      title: req.t('dashboard:title.reviewEdit'),
       review,
-      product,
-      formatDate,
-      formatCurrency
+      product
     });
   } catch (err) {
     next(err);
@@ -291,22 +278,22 @@ exports.updateReview = async (req, res, next) => {
 
     const review = await ReviewModel.getOwnedById(userId, reviewId);
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('dashboard:reviews.notFound'));
       return res.redirect('/dashboard/reviews');
     }
 
     const r = parseInt(rating, 10);
     if (isNaN(r) || r < 1 || r > 5) {
-      req.flash('error', 'Please select a rating between 1 and 5.');
+      req.flash('error', req.t('dashboard:reviews.ratingInvalid'));
       return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
     }
     const text = String(comment || '').trim();
     if (text.length < ReviewModel.COMMENT_MIN || text.length > ReviewModel.COMMENT_MAX) {
-      req.flash('error', `Your review must be between ${ReviewModel.COMMENT_MIN} and ${ReviewModel.COMMENT_MAX} characters.`);
+      req.flash('error', req.t('dashboard:reviews.commentLength', { min: ReviewModel.COMMENT_MIN, max: ReviewModel.COMMENT_MAX }));
       return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
     }
     if (title && String(title).trim().length > ReviewModel.TITLE_MAX) {
-      req.flash('error', `Review title must be under ${ReviewModel.TITLE_MAX} characters.`);
+      req.flash('error', req.t('dashboard:reviews.titleTooLong', { max: ReviewModel.TITLE_MAX }));
       return res.redirect(`/dashboard/reviews/${reviewId}/edit`);
     }
 
@@ -333,7 +320,7 @@ exports.updateReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Your review has been updated.');
+    req.flash('success', req.t('dashboard:reviews.reviewUpdated'));
     res.redirect('/dashboard/reviews');
   } catch (err) {
     next(err);
@@ -346,7 +333,7 @@ exports.deleteReview = async (req, res, next) => {
     const review = await ReviewModel.getOwnedById(req.session.userId, reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('dashboard:reviews.notFound'));
       return res.redirect('/dashboard/reviews');
     }
 
@@ -356,7 +343,7 @@ exports.deleteReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Review deleted.');
+    req.flash('success', req.t('dashboard:reviews.reviewDeleted'));
     res.redirect('/dashboard/reviews');
   } catch (err) {
     next(err);
@@ -370,12 +357,11 @@ exports.getMessages = async (req, res, next) => {
     const limit = 20;
     const result = await ContactModel.getByUserId(userId, page, limit);
     res.render('dashboard/messages', {
-      title: 'My Messages - TechBridge Digital Hub',
+      title: req.t('dashboard:title.messages'),
       messages: result.messages,
       total: result.total,
       page: result.page,
-      limit: result.limit,
-      formatDate
+      limit: result.limit
     });
   } catch (err) {
     next(err);

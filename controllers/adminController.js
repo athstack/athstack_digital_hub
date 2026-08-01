@@ -8,7 +8,7 @@ const OrderModel = require('../models/OrderModel');
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
+const { generateSlug } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 
@@ -64,11 +64,10 @@ exports.getDashboard = async (req, res, next) => {
     };
 
     res.render('admin/dashboard', {
-      title: 'Admin Control Matrix - TechBridge Digital Hub',
+      title: req.t('admin:title.dashboard'),
       metrics,
       recentBookings,
-      recentOrders,
-      formatCurrency
+      recentOrders
     });
   } catch (err) {
     next(err);
@@ -85,7 +84,7 @@ exports.getUsers = async (req, res, next) => {
     const totalPages = Math.ceil(total / limit);
 
     res.render('admin/users', {
-      title: 'User Directories - TechBridge Digital Hub',
+      title: req.t('admin:title.users'),
       users,
       pagination: { page, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
       currentRole: role,
@@ -104,56 +103,56 @@ exports.updateUserRole = async (req, res, next) => {
     const respond = (status, data) => isAjax ? res.status(status).json(data) : res.redirect('/admin/users');
 
     if (isNaN(userId)) {
-      if (isAjax) return respond(400, { success: false, message: 'Invalid user ID.' });
-      req.flash('error', 'Invalid user ID.');
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidUserId') });
+      req.flash('error', req.t('admin:flash.invalidUserId'));
       return respond(400, {});
     }
 
     const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
     if (!validRoles.includes(role)) {
-      if (isAjax) return respond(400, { success: false, message: 'Invalid role.' });
-      req.flash('error', 'Invalid role.');
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidRole') });
+      req.flash('error', req.t('admin:flash.invalidRole'));
       return respond(400, {});
     }
 
     if (userId === Number(req.session.userId)) {
-      if (isAjax) return respond(403, { success: false, message: 'You cannot change your own role.' });
-      req.flash('error', 'You cannot change your own role.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotChangeOwnRole') });
+      req.flash('error', req.t('admin:flash.cannotChangeOwnRole'));
       return respond(403, {});
     }
 
     if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      if (isAjax) return respond(403, { success: false, message: 'Only super administrators can assign the super admin role.' });
-      req.flash('error', 'Only super administrators can assign the super admin role.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.superAdminRoleRestricted') });
+      req.flash('error', req.t('admin:flash.superAdminRoleRestricted'));
       return respond(403, {});
     }
 
     if (role === 'admin' && req.session.userRole !== 'super_admin') {
-      if (isAjax) return respond(403, { success: false, message: 'Only super administrators can assign the admin role.' });
-      req.flash('error', 'Only super administrators can assign the admin role.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.adminRoleRestricted') });
+      req.flash('error', req.t('admin:flash.adminRoleRestricted'));
       return respond(403, {});
     }
 
     const targetUser = await UserModel.findById(userId);
     if (!targetUser) {
-      if (isAjax) return respond(404, { success: false, message: 'User not found.' });
-      req.flash('error', 'User not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.userNotFound') });
+      req.flash('error', req.t('admin:flash.userNotFound'));
       return respond(404, {});
     }
 
     if (targetUser.role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      if (isAjax) return respond(403, { success: false, message: 'You do not have permission to modify a Super Admin account.' });
-      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotModifySuperAdmin') });
+      req.flash('error', req.t('admin:flash.cannotModifySuperAdmin'));
       return respond(403, {});
     }
 
     await UserModel.updateRole(userId, role);
-    if (isAjax) return respond(200, { success: true, message: 'Role updated.' });
-    req.flash('success', 'User role updated.');
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.roleUpdated') });
+    req.flash('success', req.t('admin:flash.userRoleUpdated'));
     respond(200, {});
   } catch (err) {
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.status(500).json({ success: false, message: 'Server error.' });
+      return res.status(500).json({ success: false, message: req.t('admin:flash.serverError') });
     }
     next(err);
   }
@@ -167,44 +166,44 @@ exports.updateUserStatus = async (req, res, next) => {
     const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/users');
 
     if (isNaN(userId)) {
-      if (isAjax) return respond(400, { success: false, message: 'Invalid user ID.' });
-      req.flash('error', 'Invalid user ID.');
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidUserId') });
+      req.flash('error', req.t('admin:flash.invalidUserId'));
       return respond(400, {});
     }
 
     const validStatuses = ['active', 'inactive', 'suspended'];
     if (!validStatuses.includes(status)) {
-      if (isAjax) return respond(400, { success: false, message: 'Invalid status.' });
-      req.flash('error', 'Invalid status.');
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidStatus') });
+      req.flash('error', req.t('admin:flash.invalidStatus'));
       return respond(400, {});
     }
 
     if (userId === Number(req.session.userId)) {
-      if (isAjax) return respond(403, { success: false, message: 'You cannot change your own status.' });
-      req.flash('error', 'You cannot change your own status.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotChangeOwnStatus') });
+      req.flash('error', req.t('admin:flash.cannotChangeOwnStatus'));
       return respond(403, {});
     }
 
     const targetUser = await UserModel.findById(userId);
     if (!targetUser) {
-      if (isAjax) return respond(404, { success: false, message: 'User not found.' });
-      req.flash('error', 'User not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.userNotFound') });
+      req.flash('error', req.t('admin:flash.userNotFound'));
       return respond(404, {});
     }
 
     if (targetUser.role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      if (isAjax) return respond(403, { success: false, message: 'You do not have permission to modify a Super Admin account.' });
-      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotModifySuperAdmin') });
+      req.flash('error', req.t('admin:flash.cannotModifySuperAdmin'));
       return respond(403, {});
     }
 
     await UserModel.updateStatus(userId, status);
-    if (isAjax) return respond(200, { success: true, message: 'Status updated.' });
-    req.flash('success', 'User status updated.');
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.statusUpdated') });
+    req.flash('success', req.t('admin:flash.userStatusUpdated'));
     respond(200, {});
   } catch (err) {
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.status(500).json({ success: false, message: 'Server error.' });
+      return res.status(500).json({ success: false, message: req.t('admin:flash.serverError') });
     }
     next(err);
   }
@@ -212,7 +211,7 @@ exports.updateUserStatus = async (req, res, next) => {
 
 exports.getCreateUser = (req, res) => {
   res.render('admin/user-form', {
-    title: 'Create User - TechBridge Digital Hub',
+    title: req.t('admin:title.createUser'),
     user: null,
     editing: false,
     isAdmin: req.session.userRole === 'admin' || req.session.userRole === 'super_admin',
@@ -225,13 +224,13 @@ exports.createUser = async (req, res, next) => {
     const { first_name, last_name, email, phone, role, status, password } = req.body;
 
     if (!first_name || !last_name || !email || !password) {
-      req.flash('error', 'First name, last name, email, and password are required.');
+      req.flash('error', req.t('admin:flash.userRequiredFields'));
       return res.redirect('/admin/users/new');
     }
 
     const existing = await UserModel.findByEmail(email);
     if (existing) {
-      req.flash('error', 'A user with that email already exists.');
+      req.flash('error', req.t('admin:flash.emailExists'));
       return res.redirect('/admin/users/new');
     }
 
@@ -241,12 +240,12 @@ exports.createUser = async (req, res, next) => {
     const userStatus = validStatuses.includes(status) ? status : 'active';
 
     if (userRole === 'admin' && req.session.userRole !== 'super_admin') {
-      req.flash('error', 'Only super administrators can create admin accounts.');
+      req.flash('error', req.t('admin:flash.createAdminRestricted'));
       return res.redirect('/admin/users/new');
     }
 
     if (userRole === 'super_admin' && req.session.userRole !== 'super_admin') {
-      req.flash('error', 'Only super administrators can create super admin accounts.');
+      req.flash('error', req.t('admin:flash.createSuperAdminRestricted'));
       return res.redirect('/admin/users/new');
     }
 
@@ -259,7 +258,7 @@ exports.createUser = async (req, res, next) => {
       if (created) await UserModel.updateStatus(created.id, userStatus);
     }
 
-    req.flash('success', `User "${first_name} ${last_name}" created successfully.`);
+    req.flash('success', req.t('admin:flash.userCreated', { name: first_name + ' ' + last_name }));
     res.redirect('/admin/users');
   } catch (err) {
     next(err);
@@ -270,24 +269,24 @@ exports.getEditUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
-      req.flash('error', 'Invalid user ID.');
+      req.flash('error', req.t('admin:flash.invalidUserId'));
       return res.redirect('/admin/users');
     }
 
     const target = await UserModel.findById(userId);
 
     if (!target) {
-      req.flash('error', 'User not found.');
+      req.flash('error', req.t('admin:flash.userNotFound'));
       return res.redirect('/admin/users');
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      req.flash('error', 'You do not have permission to edit a Super Admin account.');
+      req.flash('error', req.t('admin:flash.cannotEditSuperAdmin'));
       return res.redirect('/admin/users');
     }
 
     res.render('admin/user-form', {
-      title: 'Edit User - TechBridge Digital Hub',
+      title: req.t('admin:title.editUser'),
       user: target,
       editing: true,
       isAdmin: req.session.userRole === 'admin' || req.session.userRole === 'super_admin',
@@ -302,7 +301,7 @@ exports.updateUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
-      req.flash('error', 'Invalid user ID.');
+      req.flash('error', req.t('admin:flash.invalidUserId'));
       return res.redirect('/admin/users');
     }
 
@@ -310,42 +309,42 @@ exports.updateUser = async (req, res, next) => {
 
     const target = await UserModel.findById(userId);
     if (!target) {
-      req.flash('error', 'User not found.');
+      req.flash('error', req.t('admin:flash.userNotFound'));
       return res.redirect('/admin/users');
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      req.flash('error', 'You do not have permission to modify a Super Admin account.');
+      req.flash('error', req.t('admin:flash.cannotModifySuperAdmin'));
       return res.redirect('/admin/users');
     }
 
     if (userId === Number(req.session.userId) && role && role !== target.role) {
-      req.flash('error', 'You cannot change your own role.');
+      req.flash('error', req.t('admin:flash.cannotChangeOwnRole'));
       return res.redirect('/admin/users');
     }
 
     if (userId === Number(req.session.userId) && status && status !== target.status) {
-      req.flash('error', 'You cannot change your own status.');
+      req.flash('error', req.t('admin:flash.cannotChangeOwnStatus'));
       return res.redirect('/admin/users');
     }
 
     if (role && !['customer', 'technician', 'admin', 'super_admin'].includes(role)) {
-      req.flash('error', 'Invalid role.');
+      req.flash('error', req.t('admin:flash.invalidRole'));
       return res.redirect('/admin/users');
     }
 
     if (status && !['active', 'inactive', 'suspended'].includes(status)) {
-      req.flash('error', 'Invalid status.');
+      req.flash('error', req.t('admin:flash.invalidStatus'));
       return res.redirect('/admin/users');
     }
 
     if (role && role !== target.role) {
       if (role === 'admin' && req.session.userRole !== 'super_admin') {
-        req.flash('error', 'Only super administrators can assign the admin role.');
+        req.flash('error', req.t('admin:flash.adminRoleRestricted'));
         return res.redirect('/admin/users');
       }
       if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
-        req.flash('error', 'Only super administrators can assign the super admin role.');
+        req.flash('error', req.t('admin:flash.superAdminRoleRestricted'));
         return res.redirect('/admin/users');
       }
     }
@@ -353,7 +352,7 @@ exports.updateUser = async (req, res, next) => {
     if (email !== target.email) {
       const existing = await UserModel.findByEmail(email);
       if (existing) {
-        req.flash('error', 'A user with that email already exists.');
+        req.flash('error', req.t('admin:flash.emailExists'));
         return res.redirect('/admin/users/' + userId + '/edit');
       }
     }
@@ -368,7 +367,7 @@ exports.updateUser = async (req, res, next) => {
       password: password || null
     });
 
-    req.flash('success', 'User updated successfully.');
+    req.flash('success', req.t('admin:flash.userUpdated'));
     res.redirect('/admin/users');
   } catch (err) {
     next(err);
@@ -380,28 +379,28 @@ exports.deleteUser = async (req, res, next) => {
     const userId = parseInt(req.params.id);
 
     if (isNaN(userId)) {
-      req.flash('error', 'Invalid user ID.');
+      req.flash('error', req.t('admin:flash.invalidUserId'));
       return res.redirect('/admin/users');
     }
 
     if (userId === Number(req.session.userId)) {
-      req.flash('error', 'You cannot delete your own account.');
+      req.flash('error', req.t('admin:flash.cannotDeleteOwn'));
       return res.redirect('/admin/users');
     }
 
     const target = await UserModel.findById(userId);
     if (!target) {
-      req.flash('error', 'User not found.');
+      req.flash('error', req.t('admin:flash.userNotFound'));
       return res.redirect('/admin/users');
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
-      req.flash('error', 'You do not have permission to delete a Super Admin account.');
+      req.flash('error', req.t('admin:flash.cannotDeleteSuperAdmin'));
       return res.redirect('/admin/users');
     }
 
     await UserModel.delete(userId);
-    req.flash('success', `User "${target.first_name} ${target.last_name}" deleted.`);
+    req.flash('success', req.t('admin:flash.userDeleted', { name: target.first_name + ' ' + target.last_name }));
     res.redirect('/admin/users');
   } catch (err) {
     next(err);
@@ -414,10 +413,9 @@ exports.getProducts = async (req, res, next) => {
     const categories = await CategoryModel.getAll();
 
     res.render('admin/products', {
-      title: 'Manage Inventory - TechBridge Digital Hub',
+      title: req.t('admin:title.products'),
       products: products.products,
-      categories,
-      formatCurrency
+      categories
     });
   } catch (err) {
     next(err);
@@ -432,20 +430,21 @@ exports.toggleProductStatus = async (req, res, next) => {
     const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/products');
 
     if (!product) {
-      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
-      req.flash('error', 'Product not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.productNotFound') });
+      req.flash('error', req.t('admin:flash.productNotFound'));
       return respond(404, {});
     }
 
     const newStatus = product.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE products SET status = ? WHERE id = ?', [newStatus, productId]);
 
-    if (isAjax) return respond(200, { success: true, status: newStatus, message: `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.` });
-    req.flash('success', `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.`);
+    const statusMsg = req.t(newStatus === 'active' ? 'admin:flash.productActivated' : 'admin:flash.productDeactivated');
+    if (isAjax) return respond(200, { success: true, status: newStatus, message: statusMsg });
+    req.flash('success', statusMsg);
     respond(302, {});
   } catch (err) {
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.status(500).json({ success: false, message: 'Server error.' });
+      return res.status(500).json({ success: false, message: req.t('admin:flash.serverError') });
     }
     next(err);
   }
@@ -455,7 +454,7 @@ exports.getAddProduct = async (req, res, next) => {
   try {
     const categories = await CategoryModel.getAll();
     res.render('admin/product-form', {
-      title: 'Add Product - TechBridge Digital Hub',
+      title: req.t('admin:title.addProduct'),
       product: null,
       categories,
       editing: false
@@ -470,7 +469,7 @@ exports.createProduct = async (req, res, next) => {
     const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
 
     if (!name || !price || !category_id) {
-      req.flash('error', 'Product name, price, and category are required.');
+      req.flash('error', req.t('admin:flash.productRequiredFields'));
       return res.redirect('/admin/products/new');
     }
 
@@ -507,7 +506,7 @@ exports.createProduct = async (req, res, next) => {
       }
     }
 
-    req.flash('success', 'Product created successfully.');
+    req.flash('success', req.t('admin:flash.productCreated'));
     res.redirect('/admin/products');
   } catch (err) {
     next(err);
@@ -518,14 +517,14 @@ exports.getEditProduct = async (req, res, next) => {
   try {
     const product = await ProductModel.findById(parseInt(req.params.id));
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('admin:flash.productNotFound'));
       return res.redirect('/admin/products');
     }
 
     const categories = await CategoryModel.getAll();
     const gallery = await ProductImageModel.getByProduct(product.id);
     res.render('admin/product-form', {
-      title: 'Edit Product - TechBridge Digital Hub',
+      title: req.t('admin:title.editProduct'),
       product,
       categories,
       gallery,
@@ -542,7 +541,7 @@ exports.updateProduct = async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('admin:flash.productNotFound'));
       return res.redirect('/admin/products');
     }
 
@@ -571,7 +570,7 @@ exports.updateProduct = async (req, res, next) => {
       await ProductImageModel.addMultiple(productId, galleryPaths);
     }
 
-    req.flash('success', 'Product updated successfully.');
+    req.flash('success', req.t('admin:flash.productUpdated'));
     res.redirect('/admin/products');
   } catch (err) {
     next(err);
@@ -587,14 +586,14 @@ exports.deleteProduct = async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
-      req.flash('error', 'Product not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.productNotFound') });
+      req.flash('error', req.t('admin:flash.productNotFound'));
       return respond(404, {});
     }
 
     await ProductModel.delete(productId);
-    if (isAjax) return respond(200, { success: true, message: 'Product deleted.' });
-    req.flash('success', 'Product deleted.');
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.productDeleted') });
+    req.flash('success', req.t('admin:flash.productDeleted'));
     respond(200, {});
   } catch (err) {
     next(err);
@@ -607,11 +606,9 @@ exports.getRepairs = async (req, res, next) => {
     const technicians = await UserModel.getTechnicians();
 
     res.render('admin/repairs', {
-      title: 'Repair Requests - TechBridge Digital Hub',
+      title: req.t('admin:title.repairs'),
       repairs: result.repairs,
       technicians,
-      formatDate,
-      getStatusBadgeClass,
       isSuperAdmin: req.session.userRole === 'super_admin'
     });
   } catch (err) {
@@ -625,7 +622,7 @@ exports.assignTechnician = async (req, res, next) => {
     const { technician_id } = req.body;
 
     if (!technician_id) {
-      req.flash('error', 'Please select a technician.');
+      req.flash('error', req.t('admin:flash.selectTechnician'));
       return res.redirect('/admin/repairs');
     }
 
@@ -635,7 +632,7 @@ exports.assignTechnician = async (req, res, next) => {
     );
     if (existing.length > 0 && existing[0].technician_id) {
       if (req.session.userRole !== 'super_admin') {
-        req.flash('error', 'Only super admin can reassign a technician.');
+        req.flash('error', req.t('admin:flash.reassignRestricted'));
         return res.redirect('/admin/repairs');
       }
     }
@@ -653,8 +650,8 @@ exports.assignTechnician = async (req, res, next) => {
 
     if (repairData && repairData.user_id) {
       await NotificationModel.create(repairData.user_id, {
-        title: 'Repair Assigned',
-        message: 'Your repair request ' + repairData.reference_number + ' has been assigned to a technician.',
+        title: req.t('admin:flash.repairAssignedTitle'),
+        message: req.t('admin:flash.repairAssignedMessage', { ref: repairData.reference_number }),
         type: 'repair',
         link: '/dashboard/repairs'
       });
@@ -666,14 +663,14 @@ exports.assignTechnician = async (req, res, next) => {
     );
     if (techUser.length > 0) {
       await NotificationModel.create(techUser[0].id, {
-        title: 'New Assignment',
-        message: 'You have been assigned to repair ' + repairData.reference_number + '.',
+        title: req.t('admin:flash.newAssignmentTitle'),
+        message: req.t('admin:flash.newAssignmentMessage', { ref: repairData.reference_number }),
         type: 'repair',
         link: '/technician/repairs'
       });
     }
 
-    req.flash('success', 'Technician assigned to repair request.');
+    req.flash('success', req.t('admin:flash.technicianAssigned'));
     res.redirect('/admin/repairs');
   } catch (err) {
     next(err);
@@ -690,11 +687,8 @@ exports.getOrders = async (req, res, next) => {
     );
 
     res.render('admin/orders', {
-      title: 'All Orders - TechBridge Digital Hub',
-      orders,
-      formatDate,
-      formatCurrency,
-      getStatusBadgeClass
+      title: req.t('admin:title.orders'),
+      orders
     });
   } catch (err) {
     next(err);
@@ -708,13 +702,13 @@ exports.updateOrderStatus = async (req, res, next) => {
 
     const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      req.flash('error', 'Invalid status.');
+      req.flash('error', req.t('admin:flash.invalidStatus'));
       return res.redirect('/admin/orders');
     }
 
     const order = await OrderModel.findById(orderId);
     if (!order) {
-      req.flash('error', 'Order not found.');
+      req.flash('error', req.t('admin:flash.orderNotFound'));
       return res.redirect('/admin/orders');
     }
 
@@ -722,14 +716,14 @@ exports.updateOrderStatus = async (req, res, next) => {
 
     if (status === 'delivered' && order.user_id) {
       await NotificationModel.create(order.user_id, {
-        title: 'Order Delivered',
-        message: `Your order #${order.order_reference || orderId} has been delivered. We hope you love it! Share your experience with a verified review.`,
+        title: req.t('admin:flash.orderDeliveredTitle'),
+        message: req.t('admin:flash.orderDeliveredMessage', { ref: order.order_reference || orderId }),
         type: 'order',
         link: `/dashboard/orders/${orderId}`
       });
     }
 
-    req.flash('success', 'Order status updated.');
+    req.flash('success', req.t('admin:flash.orderStatusUpdated'));
     res.redirect('/admin/orders');
   } catch (err) {
     next(err);
@@ -740,10 +734,8 @@ exports.getCourses = async (req, res, next) => {
   try {
     const modules = await CourseModel.getAll();
     res.render('admin/training', {
-      title: 'Training Academy Modules - TechBridge Digital Hub',
-      modules,
-      formatDate,
-      formatCurrency
+      title: req.t('admin:title.training'),
+      modules
     });
   } catch (err) {
     next(err);
@@ -755,7 +747,7 @@ exports.createCourse = async (req, res, next) => {
     const { title, description, duration, level, price, instructor } = req.body;
 
     if (!title) {
-      req.flash('error', 'Course title is required.');
+      req.flash('error', req.t('admin:flash.courseTitleRequired'));
       return res.redirect('/admin/training');
     }
 
@@ -774,7 +766,7 @@ exports.createCourse = async (req, res, next) => {
       image_path: courseImage
     });
 
-    req.flash('success', 'Course created successfully.');
+    req.flash('success', req.t('admin:flash.courseCreated'));
     res.redirect('/admin/training');
   } catch (err) {
     next(err);
@@ -787,7 +779,7 @@ exports.updateCourse = async (req, res, next) => {
     const course = await CourseModel.findById(courseId);
 
     if (!course) {
-      req.flash('error', 'Course not found.');
+      req.flash('error', req.t('admin:flash.courseNotFound'));
       return res.redirect('/admin/training');
     }
 
@@ -802,7 +794,7 @@ exports.updateCourse = async (req, res, next) => {
       price: parseFloat(price) || course.price
     });
 
-    req.flash('success', 'Course updated successfully.');
+    req.flash('success', req.t('admin:flash.courseUpdated'));
     res.redirect('/admin/training');
   } catch (err) {
     next(err);
@@ -815,12 +807,12 @@ exports.deleteCourse = async (req, res, next) => {
     const course = await CourseModel.findById(courseId);
 
     if (!course) {
-      req.flash('error', 'Course not found.');
+      req.flash('error', req.t('admin:flash.courseNotFound'));
       return res.redirect('/admin/training');
     }
 
     await CourseModel.delete(courseId);
-    req.flash('success', 'Course deleted.');
+    req.flash('success', req.t('admin:flash.courseDeleted'));
     res.redirect('/admin/training');
   } catch (err) {
     next(err);
@@ -831,9 +823,8 @@ exports.getInbox = async (req, res, next) => {
   try {
     const { messages } = await ContactModel.getAll({});
     res.render('admin/inbox', {
-      title: 'Contact Inbox - TechBridge Digital Hub',
-      messages,
-      formatDate
+      title: req.t('admin:title.inbox'),
+      messages
     });
   } catch (err) {
     next(err);
@@ -844,7 +835,7 @@ exports.markAsRead = async (req, res, next) => {
   try {
     const messageId = parseInt(req.params.id);
     await pool.execute("UPDATE contact_messages SET status = 'read' WHERE id = ?", [messageId]);
-    req.flash('success', 'Message marked as read.');
+    req.flash('success', req.t('admin:flash.messageMarkedRead'));
     res.redirect('/admin/inbox');
   } catch (err) {
     next(err);
@@ -856,7 +847,7 @@ exports.deleteMessage = async (req, res, next) => {
     const messageId = parseInt(req.params.id);
     const ContactModel = require('../models/ContactModel');
     await ContactModel.delete(messageId);
-    req.flash('success', 'Message deleted.');
+    req.flash('success', req.t('admin:flash.messageDeleted'));
     res.redirect('/admin/inbox');
   } catch (err) {
     next(err);
@@ -871,7 +862,7 @@ exports.replyToMessage = async (req, res, next) => {
     const ContactModel = require('../models/ContactModel');
 
     if (!to || !reply_text) {
-      return res.status(400).json({ success: false, message: 'Recipient and reply text are required.' });
+      return res.status(400).json({ success: false, message: req.t('admin:flash.replyRequired') });
     }
 
     const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
@@ -886,14 +877,14 @@ exports.replyToMessage = async (req, res, next) => {
       </div>
     </div>`;
 
-    await sendReply({ to, subject: subject || 'Re: Contact Inquiry', text: reply_text, html });
+    await sendReply({ to, subject: subject || req.t('admin:flash.replySubject'), text: reply_text, html });
 
     await ContactModel.addReply(messageId, reply_text, req.session.userId);
 
-    return res.status(200).json({ success: true, message: 'Reply sent successfully.' });
+    return res.status(200).json({ success: true, message: req.t('admin:flash.replySent') });
   } catch (err) {
     console.error('Reply error:', err);
-    return res.status(500).json({ success: false, message: 'Failed to send reply. Please try again.' });
+    return res.status(500).json({ success: false, message: req.t('admin:flash.replyFailed') });
   }
 };
 
@@ -902,7 +893,7 @@ exports.getSettings = async (req, res, next) => {
     const SettingModel = require('../models/SettingModel');
     const settings = await SettingModel.getGroup('general');
     res.render('admin/settings', {
-      title: 'System Settings - TechBridge Digital Hub',
+      title: req.t('admin:title.settings'),
       settings
     });
   } catch (err) {
@@ -920,7 +911,7 @@ exports.updateSettings = async (req, res, next) => {
       contact_email: contact_email || '',
       site_description: site_description || ''
     });
-    req.flash('success', 'Settings updated successfully.');
+    req.flash('success', req.t('admin:flash.settingsUpdated'));
     res.redirect('/admin/settings');
   } catch (err) {
     next(err);
@@ -931,9 +922,8 @@ exports.getServices = async (req, res, next) => {
   try {
     const services = await ServiceModel.getAllAdmin();
     res.render('admin/services', {
-      title: 'Manage Services - TechBridge Digital Hub',
-      services,
-      formatDate
+      title: req.t('admin:title.services'),
+      services
     });
   } catch (err) {
     next(err);
@@ -944,14 +934,14 @@ exports.createService = async (req, res, next) => {
   try {
     const { title, category, description, base_price, icon_class, status } = req.body;
     if (!title || !category || !base_price) {
-      req.flash('error', 'Title, category, and price are required.');
+      req.flash('error', req.t('admin:flash.serviceRequiredFields'));
       return res.redirect('/admin/services');
     }
     const slug = generateSlug(title);
     await ServiceModel.create({
       title, slug, category, description, base_price: parseFloat(base_price), icon_class: icon_class || 'fa-tools', status: status || 'active'
     });
-    req.flash('success', 'Service created.');
+    req.flash('success', req.t('admin:flash.serviceCreated'));
     res.redirect('/admin/services');
   } catch (err) {
     next(err);
@@ -963,7 +953,7 @@ exports.updateService = async (req, res, next) => {
     const serviceId = parseInt(req.params.id);
     const service = await ServiceModel.findById(serviceId);
     if (!service) {
-      req.flash('error', 'Service not found.');
+      req.flash('error', req.t('admin:flash.serviceNotFound'));
       return res.redirect('/admin/services');
     }
     const { title, category, description, base_price, icon_class, status } = req.body;
@@ -976,7 +966,7 @@ exports.updateService = async (req, res, next) => {
       icon_class: icon_class || service.icon_class,
       status: status || service.status
     });
-    req.flash('success', 'Service updated.');
+    req.flash('success', req.t('admin:flash.serviceUpdated'));
     res.redirect('/admin/services');
   } catch (err) {
     next(err);
@@ -987,7 +977,7 @@ exports.deleteService = async (req, res, next) => {
   try {
     const serviceId = parseInt(req.params.id);
     await ServiceModel.delete(serviceId);
-    req.flash('success', 'Service deleted.');
+    req.flash('success', req.t('admin:flash.serviceDeleted'));
     res.redirect('/admin/services');
   } catch (err) {
     next(err);
@@ -1007,16 +997,14 @@ exports.getReviews = async (req, res, next) => {
     const reportedCount = await ReviewModel.getReportedCount();
 
     res.render('admin/reviews', {
-      title: 'Review Moderation - TechBridge Digital Hub',
+      title: req.t('admin:title.reviews'),
       reviews: result.reviews,
       pagination: { page, totalPages, total: result.total, hasNext: page < totalPages, hasPrev: page > 1 },
       currentStatus: status,
       currentSearch: search,
       isReportedFilter: reported,
       pendingCount,
-      reportedCount,
-      formatDate,
-      formatCurrency
+      reportedCount
     });
   } catch (err) {
     next(err);
@@ -1031,17 +1019,17 @@ exports.replyToReview = async (req, res, next) => {
     const reply = String(req.body.reply || '').trim();
 
     if (!reply) {
-      req.flash('error', 'Reply text is required.');
+      req.flash('error', req.t('admin:flash.replyTextRequired'));
       return res.redirect('/admin/reviews');
     }
     if (reply.length > 2000) {
-      req.flash('error', 'Reply must be under 2000 characters.');
+      req.flash('error', req.t('admin:flash.replyTooLong'));
       return res.redirect('/admin/reviews');
     }
 
     const review = await ReviewModel.getById(reviewId);
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1049,14 +1037,14 @@ exports.replyToReview = async (req, res, next) => {
 
     if (review.user_id) {
       await NotificationModel.create(review.user_id, {
-        title: 'Seller Replied to Your Review',
-        message: 'The TechBridge team replied to your review.',
+        title: req.t('admin:flash.reviewReplyTitle'),
+        message: req.t('admin:flash.reviewReplyMessage'),
         type: 'review',
         link: review.product_id ? `/shop/${review.product_slug || ''}#reviews` : '/dashboard/reviews'
       });
     }
 
-    req.flash('success', 'Reply posted to the review.');
+    req.flash('success', req.t('admin:flash.reviewReplied'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1070,7 +1058,7 @@ exports.toggleReviewHidden = async (req, res, next) => {
     const review = await ReviewModel.getById(reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1080,7 +1068,7 @@ exports.toggleReviewHidden = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', review.is_hidden ? 'Review unhidden.' : 'Review hidden from public view.');
+    req.flash('success', req.t(review.is_hidden ? 'admin:flash.reviewUnhidden' : 'admin:flash.reviewHidden'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1095,7 +1083,7 @@ exports.resolveReviewReport = async (req, res, next) => {
 
     await ReviewModel.resolveReport(reportId, action);
 
-    req.flash('success', action === 'dismissed' ? 'Report dismissed.' : 'Report resolved.');
+    req.flash('success', req.t(action === 'dismissed' ? 'admin:flash.reportDismissed' : 'admin:flash.reportResolved'));
     res.redirect('/admin/reviews?reported=1');
   } catch (err) {
     next(err);
@@ -1109,7 +1097,7 @@ exports.approveReview = async (req, res, next) => {
     const review = await ReviewModel.getById(reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1119,7 +1107,7 @@ exports.approveReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Review approved.');
+    req.flash('success', req.t('admin:flash.reviewApproved'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1133,7 +1121,7 @@ exports.rejectReview = async (req, res, next) => {
     const review = await ReviewModel.getById(reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1143,7 +1131,7 @@ exports.rejectReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Review rejected.');
+    req.flash('success', req.t('admin:flash.reviewRejected'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1158,17 +1146,16 @@ exports.getEditReview = async (req, res, next) => {
     const review = await ReviewModel.getById(reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
     const products = await Products.getFiltered({ allStatuses: true });
 
     res.render('admin/review-form', {
-      title: 'Edit Review - TechBridge Digital Hub',
+      title: req.t('admin:title.reviewForm'),
       review,
-      products: products.products || [],
-      formatDate
+      products: products.products || []
     });
   } catch (err) {
     next(err);
@@ -1184,12 +1171,12 @@ exports.updateReview = async (req, res, next) => {
 
     const review = await ReviewModel.getById(reviewId);
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
     if (!rating || rating < 1 || rating > 5) {
-      req.flash('error', 'Rating must be between 1 and 5.');
+      req.flash('error', req.t('admin:flash.ratingOutOfRange'));
       return res.redirect('/admin/reviews/' + reviewId + '/edit');
     }
 
@@ -1210,7 +1197,7 @@ exports.updateReview = async (req, res, next) => {
       await ReviewModel.approve(reviewId, req.session.userId);
     }
 
-    req.flash('success', 'Review updated.');
+    req.flash('success', req.t('admin:flash.reviewUpdated'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1223,7 +1210,7 @@ exports.createReview = async (req, res, next) => {
     const { user_id, product_id, rating, comment, type, status } = req.body;
 
     if (!user_id || !product_id || !rating || rating < 1 || rating > 5) {
-      req.flash('error', 'User, product, and a rating between 1 and 5 are required.');
+      req.flash('error', req.t('admin:flash.reviewRequiredFields'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1242,7 +1229,7 @@ exports.createReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(created.product_id);
     }
 
-    req.flash('success', 'Review created.');
+    req.flash('success', req.t('admin:flash.reviewCreated'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1256,7 +1243,7 @@ exports.deleteReview = async (req, res, next) => {
     const review = await ReviewModel.getById(reviewId);
 
     if (!review) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
       return res.redirect('/admin/reviews');
     }
 
@@ -1266,7 +1253,7 @@ exports.deleteReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Review deleted.');
+    req.flash('success', req.t('admin:flash.reviewDeleted'));
     res.redirect('/admin/reviews');
   } catch (err) {
     next(err);
@@ -1367,7 +1354,7 @@ exports.getAnalytics = async (req, res, next) => {
     }
 
     res.render('admin/analytics', {
-      title: 'Analytics - TechBridge Digital Hub',
+      title: req.t('admin:title.analytics'),
       repairStats,
       totalRepairs,
       pendingRepairs,
@@ -1377,7 +1364,6 @@ exports.getAnalytics = async (req, res, next) => {
       avgTurnaround,
       serviceStats,
       topService,
-      formatCurrency,
       range: range || '7days',
       start_date: start_date || '',
       end_date: end_date || '',

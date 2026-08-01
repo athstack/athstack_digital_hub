@@ -1,0 +1,29 @@
+<%# Language selector dropdown. Accessible: keyboard-operable via Bootstrap
+    dropdown, ARIA labelled, screen readers announce the active language. %>
+<div class="dropdown language-selector" id="languageSelector">
+    <button class="btn language-selector-btn" type="button" id="languageSelectorToggle"
+            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"
+            aria-haspopup="true" aria-label="<%= t('common:language.select') %>">
+        <i class="fa-solid fa-globe" aria-hidden="true"></i>
+        <span class="language-selector-label d-none d-md-inline"><%= t('common:language.label') %></span>
+        <span class="language-selector-current d-md-none"><%= currentLang.nativeName %></span>
+        <i class="fa-solid fa-chevron-down language-selector-caret" aria-hidden="true"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end language-selector-menu" aria-labelledby="languageSelectorToggle" role="listbox" aria-label="<%= t('common:language.select') %>">
+        <% LANGUAGES.forEach((l) => {
+            const selected = l.code === lang; %>
+        <li role="presentation">
+            <button type="button" class="dropdown-item language-option<%= selected ? ' active' : '' %>"
+                    data-lang="<%= l.code %>" data-native-name="<%= l.nativeName %>"
+                    role="option" aria-selected="<%= selected ? 'true' : 'false' %>">
+                <span class="language-option-flag" aria-hidden="true"><%= l.flag %></span>
+                <span class="language-option-name"><%= l.nativeName %></span>
+                <% if (selected) { %>
+                <span class="language-option-check ms-auto" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                <% } %>
+            </button>
+        </li>
+        <% }) %>
+    </ul>
+    <span class="visually-hidden" id="languageAnnounce" aria-live="polite" aria-atomic="true"><%= t('common:language.current', { name: currentLang.nativeName }) %></span>
+</div>

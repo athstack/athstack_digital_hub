@@ -1,0 +1,34 @@
+{
+  "index": {
+    "title": "Kuhusu Sisi - TechBridge Digital Hub",
+    "heading": "Kuunda Mustakabali wa Suluhu za Teknolojia",
+    "intro": "Sisi ni kampuni ya teknolojia inayoendelea iliyojitolea kutoa suluhu bora za vifaa, huduma za kitaalamu za matengenezo, na mafunzo ya kitaalamu ya uhandisi.",
+    "mission": {
+      "title": "Dhamira Yetu",
+      "text": "Kutoa suluhu za teknolojia za kiwango cha mashirika zinazowawezesha wafanyabiashara na watu binafsi kote Afrika, kuziba pengo kati ya uvumbuzi na utekelezaji wa vitendo."
+    },
+    "vision": {
+      "title": "Maono Yetu",
+      "text": "Kuwa kitovu cha teknolojia kinachoongoza Afrika Mashariki, kinachojulikana kwa bidhaa zetu bora, huduma za matengenezo zinazotegemeka, na programu za mafunzo ya kiufundi za kiwango cha kimataifa."
+    },
+    "values": {
+      "title": "Maadili Yetu",
+      "text": "Uadilifu, ubora, na kumweka mteja kwanza vinaongoza kila tunachofanya. Tunaamini katika kujenga uhusiano wa kudumu kupitia huduma bora na utendakazi wazi."
+    },
+    "whoWeAre": {
+      "badge": "Sisi ni Nani",
+      "heading": "Kuunda Mustakabali wa Utoaji wa Teknolojia",
+      "paragraph1": "TechBridge Digital Hub ilianzishwa kwa maono moja: kuunda jukwaa la pamoja ambapo wafanyabiashara na watu binafsi wanaweza kufikia bidhaa bora za teknolojia, huduma za matengenezo zinazotegemeka, na mafunzo kamili ya kiufundi.",
+      "paragraph2": "Timu yetu ya wahandisi walioidhinishwa na wataalamu wa kiufundi ina uzoefu wa miongo kadhaa katika ununuzi wa vifaa, uchunguzi wa mifumo, miundombinu ya IT ya mashirika, na mafunzo ya kitaalamu.",
+      "paragraph3": "Kutoka ununuzi wa vifaa vya mashirika hadi mafunzo ya kiufundi ya vitendo, tunatoa suluhu zinazoiwezesha shughuli zako kufanya kazi kwa kiwango bora zaidi.",
+      "visitShop": "Tembelea Duka",
+      "contactUs": "Wasiliana Nasi"
+    },
+    "stats": {
+      "clientsServed": "Wateja Waliotumiwa",
+      "repairsCompleted": "Matengenezo Yaliyokamilika",
+      "trainingGraduates": "Wahitimu wa Mafunzo",
+      "yearsExperience": "Miaka ya Uzoefu"
+    }
+  }
+}

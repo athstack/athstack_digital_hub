@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "سلة التسوق الخاصة بك - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "المنتج",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "remove": "إزالة"
+  },
+  "index": {
+    "badge": "سلة التسوق",
+    "heading": "سلتك",
+    "orderSummary": "ملخص الطلب",
+    "subtotalItems": "المجموع الفرعي ({{count}} عنصر)",
+    "calculatedAtCheckout": "يُحتسب عند إتمام الشراء",
+    "checkout": "متابعة إلى الدفع",
+    "continueShopping": "متابعة التسوق"
+  },
+  "empty": {
+    "heading": "سلتك فارغة",
+    "message": "يبدو أنك لم تضف أي منتجات بعد. تصفح متجرنا للعثور على عتاد تقني فاخر.",
+    "browseShop": "تصفح المتجر"
+  },
+  "flash": {
+    "invalidProduct": "منتج غير صالح.",
+    "productNotFound": "المنتج غير موجود أو غير متوفر.",
+    "itemAdded": "تمت إضافة العنصر إلى السلة.",
+    "itemNotFound": "العنصر غير موجود في السلة.",
+    "cartUpdated": "تم تحديث السلة.",
+    "itemRemoved": "تمت إزالة العنصر من السلة.",
+    "emptyCart": "سلتك فارغة.",
+    "noValidProducts": "لا توجد منتجات صالحة في السلة.",
+    "insufficientStock": "المخزون غير كافٍ لـ \"{{name}}\". المتاح {{stock}} فقط.",
+    "orderPlaced": "تم تقديم الطلب رقم #{{id}} بنجاح!"
+  },
+  "notification": {
+    "orderPlacedTitle": "تم تقديم الطلب",
+    "orderPlacedMessage": "تم تقديم طلبك رقم #{{id}} بقيمة {{total}} بنجاح.",
+    "newOrderTitle": "تم استلام طلب جديد",
+    "newOrderMessage": "الطلب رقم #{{id}} بقيمة {{total}} يحتاج إلى المعالجة."
+  }
+}

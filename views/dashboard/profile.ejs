@@ -15,8 +15,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Profile</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-user-pen me-2 text-primary"></i>Your Profile</h2>
+                    <span class="section-badge"><%= t('dashboard:profile.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-user-pen me-2 text-primary"></i><%= t('dashboard:profile.heading') %></h2>
                 </div>
 
                 <div class="glass-card p-5">
@@ -25,7 +25,7 @@
                             <div class="text-center mb-4">
                                 <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
                                     <% if (profile && profile.avatar) { %>
-                                         <img src="<%= imageUrl(profile.avatar, 'profiles') %>" alt="Avatar" class="rounded-circle" style="width:80px;height:80px;object-fit:cover;" onerror="this.onerror=null;this.src='/uploads/products/product-placeholder.svg';this.style.borderRadius='50%';">
+                                         <img src="<%= imageUrl(profile.avatar, 'profiles') %>" alt="<%= t('dashboard:profile.avatarAlt') %>" class="rounded-circle" style="width:80px;height:80px;object-fit:cover;" onerror="this.onerror=null;this.src='/uploads/products/product-placeholder.svg';this.style.borderRadius='50%';">
                                     <% } else { %>
                                         <i class="fa-solid fa-user fa-2x text-white"></i>
                                     <% } %>
@@ -38,33 +38,33 @@
                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">First Name *</label>
+                                        <label class="form-label"><%= t('dashboard:profile.firstName') %> *</label>
                                         <input type="text" name="first_name" class="form-control" value="<%= profile ? profile.first_name : '' %>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Last Name *</label>
+                                        <label class="form-label"><%= t('dashboard:profile.lastName') %> *</label>
                                         <input type="text" name="last_name" class="form-control" value="<%= profile ? profile.last_name : '' %>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Email Address *</label>
+                                        <label class="form-label"><%= t('dashboard:profile.emailAddress') %> *</label>
                                         <input type="email" name="email" class="form-control" value="<%= profile ? profile.email : '' %>" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Phone Number</label>
+                                        <label class="form-label"><%= t('dashboard:profile.phoneNumber') %></label>
                                         <input type="tel" name="phone" class="form-control" value="<%= profile ? (profile.phone || '') : '' %>">
                                     </div>
                                     <div class="col-12">
                                         <%- include('../partials/fileUpload', {
                                             name: 'avatar',
-                                            label: 'Profile Picture',
-                                            hint: 'PNG, JPG, WEBP up to 5MB',
+                                            label: t('dashboard:profile.profilePicture'),
+                                            hint: t('dashboard:profile.fileHint'),
                                             accept: 'image/*',
                                             currentImage: profile ? profile.avatar : null,
                                             currentFolder: 'profiles'
                                         }) %>
                                     </div>
                                     <div class="col-12 text-center mt-3">
-                                        <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
+                                        <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i><%= t('words.saveChanges') %></button>
                                     </div>
                                 </div>
                             </form>

@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "Contacte-nos - TechBridge Digital Hub",
+    "badge": "Fale Connosco",
+    "heading": "Contacte-nos",
+    "intro": "Tem uma pergunta ou precisa de um orçamento? Fale connosco e a nossa equipa responderá prontamente.",
+    "form": {
+      "title": "Enviar uma Mensagem",
+      "fullName": "Nome Completo",
+      "emailAddress": "Endereço de Email",
+      "countryCode": "Código do País",
+      "phoneNumber": "Número de Telefone",
+      "subject": "Assunto",
+      "message": "Mensagem",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "o.seu@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "Como podemos ajudar?",
+      "messagePlaceholder": "Escreva a sua mensagem aqui...",
+      "submit": "Enviar Mensagem",
+      "countries": {
+        "TZ": "Tanzânia (+255)",
+        "KE": "Quénia (+254)",
+        "UG": "Uganda (+256)",
+        "RW": "Ruanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "África do Sul (+27)",
+        "US": "EUA/Canadá (+1)",
+        "GB": "Reino Unido (+44)",
+        "DE": "Alemanha (+49)",
+        "FR": "França (+33)",
+        "AU": "Austrália (+61)",
+        "CN": "China (+86)",
+        "IN": "Índia (+91)",
+        "AE": "EAU (+971)",
+        "NG": "Nigéria (+234)"
+      }
+    },
+    "info": {
+      "title": "Informações de Contacto",
+      "officeAddress": "Morada do Escritório",
+      "address": "Mbeya, Tanzânia",
+      "businessHours": "Horário de Funcionamento"
+    },
+    "social": {
+      "title": "Siga-nos",
+      "intro": "Mantenha-se ligado nas redes sociais para as novidades mais recentes.",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "Nome, email e mensagem são obrigatórios.",
+      "loginRequired": "Crie uma conta para enviar a sua mensagem.",
+      "success": "A sua mensagem foi enviada. Responderemos em breve."
+    },
+    "notifications": {
+      "newMessage": "Nova Mensagem de Contacto",
+      "sentMessage": "{{name}} enviou uma mensagem",
+      "sentMessageWithSubject": "{{name}} enviou uma mensagem: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "O nome é obrigatório",
+    "nameLength": "O nome deve ter entre 2 e 100 caracteres",
+    "emailRequired": "O email é obrigatório",
+    "emailInvalid": "Indique um endereço de email válido",
+    "phoneInvalid": "Indique um número de telefone válido",
+    "phoneDigits": "O número de telefone deve ter entre 7 e 15 dígitos",
+    "subjectRequired": "O assunto é obrigatório",
+    "subjectLength": "O assunto deve ter entre 3 e 200 caracteres",
+    "messageRequired": "A mensagem é obrigatória",
+    "messageLength": "A mensagem deve ter entre 10 e 5000 caracteres"
+  }
+}

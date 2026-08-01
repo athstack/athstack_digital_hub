@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "एंटरप्राइज़ आईटी रखरखाव और डिवाइस मरम्मत - TechBridge Digital Hub",
+    "badge": "डिवाइस मरम्मत और आईटी रखरखाव",
+    "heading": "एंटरप्राइज़ रखरखाव सेवाएं",
+    "intro": "कंप्यूटर और मोबाइल उपकरणों के लिए पेशेवर डायग्नोस्टिक्स, मरम्मत और आईटी रखरखाव।",
+    "services": {
+      "computerTitle": "कंप्यूटर सेवाएं",
+      "computerSubtitle": "डेस्कटॉप और लैपटॉप मरम्मत समाधान",
+      "phoneTitle": "फ़ोन सेवाएं",
+      "phoneSubtitle": "मोबाइल डिवाइस मरम्मत और डायग्नोस्टिक्स",
+      "bookNow": "अभी बुक करें",
+      "defaultDescription": "पेशेवर सेवा",
+      "emptyComputer": "कंप्यूटर सेवाओं को कॉन्फ़िगर किया जा रहा है। जल्द वापस आएं।",
+      "emptyPhone": "फ़ोन सेवाओं को कॉन्फ़िगर किया जा रहा है। जल्द वापस आएं।"
+    },
+    "form": {
+      "title": "मरम्मत बुक करें",
+      "intro": "नीचे दिया गया फ़ॉर्म भरें और हमारी टीम 24 घंटे के भीतर आपसे संपर्क करेगी।",
+      "fullName": "पूरा नाम",
+      "emailAddress": "ईमेल पता",
+      "phoneNumber": "फ़ोन नंबर",
+      "country": "देश",
+      "selectCountry": "अपना देश चुनें",
+      "appointmentDate": "अपॉइंटमेंट तिथि",
+      "serviceType": "सेवा प्रकार",
+      "selectService": "एक सेवा चुनें...",
+      "deviceType": "डिवाइस प्रकार",
+      "deviceBrand": "डिवाइस ब्रांड",
+      "deviceModel": "डिवाइस मॉडल",
+      "issueDescription": "समस्या विवरण",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "एक मान्य फ़ोन नंबर दर्ज करें",
+      "phoneNumberFallback": "फ़ोन नंबर",
+      "brandPlaceholder": "जैसे Apple, Dell, Samsung",
+      "modelPlaceholder": "जैसे MacBook Pro 14",
+      "issuePlaceholder": "बताएं कि आपके डिवाइस में क्या समस्या है (जैसे, स्क्रीन चालू नहीं हो रही, अचानक बंद हो जाना, पानी गिरना...)",
+      "submit": "मरम्मत अनुरोध जमा करें",
+      "countries": {
+        "NG": "Nigeria",
+        "TZ": "Tanzania",
+        "KE": "Kenya",
+        "UG": "Uganda",
+        "ZA": "South Africa",
+        "GH": "Ghana",
+        "EG": "Egypt",
+        "RW": "Rwanda",
+        "ET": "Ethiopia",
+        "CD": "DR Congo",
+        "CM": "Cameroon",
+        "SN": "Senegal",
+        "US": "United States",
+        "GB": "United Kingdom",
+        "IN": "India",
+        "CN": "China"
+      },
+      "deviceTypes": {
+        "laptop": "लैपटॉप",
+        "desktop": "डेस्कटॉप",
+        "smartphone": "स्मार्टफ़ोन",
+        "tablet": "टैबलेट",
+        "network": "नेटवर्क उपकरण",
+        "other": "अन्य"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "{{count}} सेवा चयनित",
+      "servicesSelectedOther": "{{count}} सेवाएं चयनित",
+      "proceed": "बुकिंग के लिए आगे बढ़ें",
+      "clear": "साफ़ करें"
+    },
+    "flashes": {
+      "missingFields": "सभी अनिवार्य फ़ील्ड आवश्यक हैं।",
+      "scheduled": "आपका रखरखाव अनुरोध सफलतापूर्वक निर्धारित हो गया है।",
+      "success": "रखरखाव अनुरोध सफलतापूर्वक दर्ज किया गया। संदर्भ: {{reference}}"
+    },
+    "notifications": {
+      "title": "मरम्मत अनुरोध दर्ज किया गया",
+      "message": "आपका मरम्मत अनुरोध {{reference}} जमा कर दिया गया है। हम जल्द ही आपसे संपर्क करेंगे।"
+    },
+    "errors": {
+      "missingRef": "संदर्भ संख्या आवश्यक है।",
+      "notFound": "उस संदर्भ के साथ कोई मरम्मत अनुरोध नहीं मिला।"
+    }
+  }
+}

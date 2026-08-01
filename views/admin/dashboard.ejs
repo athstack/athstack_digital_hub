@@ -16,8 +16,8 @@
 
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Admin</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gauge-high me-2 text-primary"></i>Admin Control Matrix</h2>
+                    <span class="section-badge"><%= t('admin:words.admin') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gauge-high me-2 text-primary"></i><%= t('admin:dashboard.heading') %></h2>
                 </div>
 
                 <% if (typeof metrics === 'undefined' || !metrics) { metrics = { revenue: 0, total_clients: 0, total_products: 0, pending_bookings: 0, total_orders: 0, pending_orders: 0, unread_messages: 0, pending_reviews: 0, recent_orders: [], recent_bookings: [] }; } %>
@@ -26,28 +26,28 @@
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-dollar-sign fa-2x text-success mb-2"></i>
                             <h4 class="text-white fw-bold mb-0"><%= formatCurrency(metrics.revenue) %></h4>
-                            <p class="text-white-50 small mb-0">Revenue</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.revenue') %></p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.total_clients %></h3>
-                            <p class="text-white-50 small mb-0">Customers</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.customers') %></p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-box-open fa-2x text-info mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.total_products %></h3>
-                            <p class="text-white-50 small mb-0">Products</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.products') %></p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-4 text-center">
                             <i class="fa-solid fa-wrench fa-2x text-warning mb-2"></i>
                             <h3 class="text-white fw-bold mb-0"><%= metrics.pending_bookings %></h3>
-                            <p class="text-white-50 small mb-0">Pending Repairs</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.pendingRepairs') %></p>
                         </div>
                     </div>
                 </div>
@@ -55,25 +55,25 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-white-50">Total Orders</small>
+                            <small class="text-white-50"><%= t('admin:words.totalOrders') %></small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.total_orders %></h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-white-50">Pending Orders</small>
+                            <small class="text-white-50"><%= t('admin:words.pendingOrders') %></small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.pending_orders %></h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-white-50">Unread Messages</small>
+                            <small class="text-white-50"><%= t('admin:words.unreadMessages') %></small>
                             <h5 class="text-white fw-bold mb-0"><%= metrics.unread_messages %></h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="glass-card p-3 text-center">
-                            <small class="text-white-50">Pending Reviews</small>
+                            <small class="text-white-50"><%= t('admin:words.pendingReviews') %></small>
                             <h5 class="text-warning fw-bold mb-0"><%= metrics.pending_reviews %></h5>
                         </div>
                     </div>
@@ -83,26 +83,26 @@
                     <div class="col-lg-6">
                         <div class="glass-card p-4 h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-wrench me-2 text-primary"></i>Recent Repairs</h5>
-                                <a href="/admin/repairs" class="btn btn-premium-outline btn-sm rounded-pill">View All</a>
+                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-wrench me-2 text-primary"></i><%= t('admin:dashboard.recentRepairs') %></h5>
+                                <a href="/admin/repairs" class="btn btn-premium-outline btn-sm rounded-pill"><%= t('common:words.viewAll') %></a>
                             </div>
                             <% if (recentBookings && recentBookings.length > 0) { %>
                             <div class="table-responsive">
                                 <table class="table table-dark table-sm align-middle mb-0 premium-table">
-                                    <thead><tr><th>Ref</th><th>Customer</th><th>Status</th></tr></thead>
+                                    <thead><tr><th><%= t('admin:dashboard.colRef') %></th><th><%= t('admin:words.customer') %></th><th><%= t('common:words.status') %></th></tr></thead>
                                     <tbody>
                                         <% recentBookings.forEach(b => { %>
                                         <tr>
                                             <td class="text-white"><%= b.reference_number || 'N/A' %></td>
                                             <td class="text-white-50"><%= b.customer_name %></td>
-                                            <td><span class="badge <%= b.status === 'completed' ? 'bg-success' : (b.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary') %>"><%= b.status %></span></td>
+                                            <td><span class="badge <%= b.status === 'completed' ? 'bg-success' : (b.status === 'pending' ? 'bg-warning text-dark' : 'bg-primary') %>"><%= t('admin:status.' + (b.status||'').toLowerCase(), {defaultValue: b.status}) %></span></td>
                                         </tr>
                                         <% }) %>
                                     </tbody>
                                 </table>
                             </div>
                             <% } else { %>
-                            <p class="text-white-50 text-center mb-0">No recent repairs.</p>
+                            <p class="text-white-50 text-center mb-0"><%= t('admin:dashboard.noRecentRepairs') %></p>
                             <% } %>
                         </div>
                     </div>
@@ -110,13 +110,13 @@
                     <div class="col-lg-6">
                         <div class="glass-card p-4 h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-receipt me-2 text-info"></i>Recent Orders</h5>
-                                <a href="/admin/orders" class="btn btn-premium-outline btn-sm rounded-pill">View All</a>
+                                <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-receipt me-2 text-info"></i><%= t('admin:dashboard.recentOrders') %></h5>
+                                <a href="/admin/orders" class="btn btn-premium-outline btn-sm rounded-pill"><%= t('common:words.viewAll') %></a>
                             </div>
                             <% if (recentOrders && recentOrders.length > 0) { %>
                             <div class="table-responsive">
                                 <table class="table table-dark table-sm align-middle mb-0 premium-table">
-                                    <thead><tr><th>Order</th><th>Customer</th><th>Amount</th></tr></thead>
+                                    <thead><tr><th><%= t('admin:words.order') %></th><th><%= t('admin:words.customer') %></th><th><%= t('admin:words.amount') %></th></tr></thead>
                                     <tbody>
                                         <% recentOrders.forEach(o => { %>
                                         <tr>
@@ -129,7 +129,7 @@
                                 </table>
                             </div>
                             <% } else { %>
-                            <p class="text-white-50 text-center mb-0">No recent orders.</p>
+                            <p class="text-white-50 text-center mb-0"><%= t('admin:dashboard.noRecentOrders') %></p>
                             <% } %>
                         </div>
                     </div>

@@ -3,8 +3,8 @@
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge"><i class="fa-solid fa-bag-shopping me-2"></i>Shopping Cart</span>
-            <h1 class="display-4 text-white fw-bold mt-3">Your Cart</h1>
+            <span class="section-badge"><i class="fa-solid fa-bag-shopping me-2"></i><%= t('cart:index.badge') %></span>
+            <h1 class="display-4 text-white fw-bold mt-3"><%= t('cart:index.heading') %></h1>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -28,10 +28,10 @@
                         <table class="table table-dark align-middle mb-0">
                             <thead class="text-white-50 small text-uppercase tracking-widest">
                                 <tr>
-                                    <th class="border-0">Product</th>
-                                    <th class="border-0">Price</th>
-                                    <th class="border-0" style="width:160px;">Quantity</th>
-                                    <th class="border-0">Subtotal</th>
+                                    <th class="border-0"><%= t('cart:words.product') %></th>
+                                    <th class="border-0"><%= t('common:words.price') %></th>
+                                    <th class="border-0" style="width:160px;"><%= t('common:words.quantity') %></th>
+                                    <th class="border-0"><%= t('cart:words.subtotal') %></th>
                                     <th class="border-0"></th>
                                 </tr>
                             </thead>
@@ -67,7 +67,7 @@
                                     <td>
                                         <form method="POST" action="/cart/remove/<%= item.id %>">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="<%= t('cart:words.remove') %>"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
@@ -80,34 +80,34 @@
 
             <div class="col-lg-4">
                 <div class="glass-card p-4 sticky-top" style="top:100px;">
-                    <h5 class="text-white fw-bold mb-4 pb-3 border-bottom border-secondary border-opacity-25">Order Summary</h5>
+                    <h5 class="text-white fw-bold mb-4 pb-3 border-bottom border-secondary border-opacity-25"><%= t('cart:index.orderSummary') %></h5>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-white-50">Subtotal (<%= cartItems.length %> items)</span>
+                        <span class="text-white-50"><%= t('cart:index.subtotalItems', { count: cartItems.length }) %></span>
                          <span class="text-white fw-bold fs-5"><%= formatCurrency(cartTotal) %></span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-white-50">Shipping</span>
-                        <span class="text-success fw-bold">Calculated at checkout</span>
+                        <span class="text-white-50"><%= t('cart:words.shipping') %></span>
+                        <span class="text-success fw-bold"><%= t('cart:index.calculatedAtCheckout') %></span>
                     </div>
                     <hr class="border-secondary opacity-25">
                     <div class="d-flex justify-content-between mb-4">
-                        <span class="text-white fw-bold fs-4">Total</span>
+                        <span class="text-white fw-bold fs-4"><%= t('common:words.total') %></span>
                          <span class="text-primary fw-bold fs-4"><%= formatCurrency(cartTotal) %></span>
                     </div>
                     <form method="POST" action="/cart/checkout">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-lock me-2"></i>Proceed to Checkout</button>
+                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill btn-lg mb-3"><i class="fa-solid fa-lock me-2"></i><%= t('cart:index.checkout') %></button>
                     </form>
-                    <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i>Continue Shopping</a>
+                    <a href="/shop" class="btn btn-premium-outline w-100 rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i><%= t('cart:index.continueShopping') %></a>
                 </div>
             </div>
         </div>
         <% } else { %>
         <div class="empty-state">
             <i class="fa-solid fa-cart-shopping fa-4x mb-4"></i>
-            <h4 class="text-white fw-bold">Your Cart is Empty</h4>
-            <p class="text-white-50">Looks like you haven't added any products yet. Browse our shop to find premium tech hardware.</p>
-            <a href="/shop" class="btn btn-premium-primary rounded-pill px-5 btn-lg"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+            <h4 class="text-white fw-bold"><%= t('cart:empty.heading') %></h4>
+            <p class="text-white-50"><%= t('cart:empty.message') %></p>
+            <a href="/shop" class="btn btn-premium-primary rounded-pill px-5 btn-lg"><i class="fa-solid fa-bag-shopping me-2"></i><%= t('cart:empty.browseShop') %></a>
         </div>
         <% } %>
     </div>

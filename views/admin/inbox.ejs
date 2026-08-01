@@ -132,8 +132,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Inbox</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope me-2 text-primary"></i>Contact Inbox</h2>
+                    <span class="section-badge"><%= t('admin:words.inbox') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope me-2 text-primary"></i><%= t('admin:inbox.heading') %></h2>
                 </div>
 
                 <% if (messages && messages.length > 0) { %>
@@ -141,7 +141,7 @@
                     <div class="table-responsive">
                         <table class="table table-dark align-middle mb-0 premium-table" id="inboxTable">
                             <thead>
-                                <tr><th>From</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr>
+                                <tr><th><%= t('admin:inbox.from') %></th><th><%= t('common:words.subject') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:words.action') %></th></tr>
                             </thead>
                             <tbody>
                                 <% messages.forEach(msg => { %>
@@ -152,18 +152,18 @@
                                             <small class="text-white-50"><%= msg.email %></small>
                                         </div>
                                     </td>
-                                    <td class="text-white-50"><%= msg.subject || 'No Subject' %></td>
+                                    <td class="text-white-50"><%= msg.subject || t('admin:inbox.noSubject') %></td>
                                     <td class="text-white-50"><%= formatDate(msg.created_at) %></td>
-                                    <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? 'New' : (msg.status === 'replied' ? 'Replied' : 'Read') %></span></td>
+                                    <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? t('admin:inbox.new') : (msg.status === 'replied' ? t('admin:status.replied') : t('admin:status.read')) %></span></td>
                                     <td>
                                         <button type="button"
                                             class="btn btn-premium-outline btn-sm rounded-pill view-msg"
-                                            title="View"
+                                            title="<%= t('common:words.view') %>"
                                             data-id="<%= msg.id %>"
                                             data-name="<%= msg.name %>"
                                             data-email="<%= msg.email %>"
                                             data-phone="<%= msg.phone || '' %>"
-                                            data-subject="<%= (msg.subject || 'No Subject').replace(/"/g, '&quot;') %>"
+                                            data-subject="<%= (msg.subject || t('admin:inbox.noSubject')).replace(/"/g, '&quot;') %>"
                                             data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
                                             data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
                                             data-replied-by="<%= msg.replied_first_name ? (msg.replied_first_name + ' ' + msg.replied_last_name) : '' %>"
@@ -182,8 +182,8 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-envelope fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">Inbox Empty</h4>
-                    <p class="text-white-50">No contact messages have been received yet.</p>
+                    <h4 class="text-white fw-bold"><%= t('admin:inbox.empty') %></h4>
+                    <p class="text-white-50"><%= t('admin:inbox.emptyHint') %></p>
                 </div>
                 <% } %>
             </div>
@@ -199,11 +199,11 @@
                 <div class="mb-3" style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto;">
                     <i class="fa-solid fa-trash-can" style="color:#ef4444;font-size:1.25rem;"></i>
                 </div>
-                <h6 class="text-white fw-bold mb-2" style="font-size:1.05rem;">Delete Message</h6>
-                <p class="mb-4" style="color:var(--text-muted);font-size:var(--font-sm);line-height:1.5;">Are you sure? This action cannot be undone.</p>
+                <h6 class="text-white fw-bold mb-2" style="font-size:1.05rem;"><%= t('admin:inbox.deleteMessage') %></h6>
+                <p class="mb-4" style="color:var(--text-muted);font-size:var(--font-sm);line-height:1.5;"><%= t('admin:inbox.deleteConfirm') %></p>
                 <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal" style="min-width:80px;">Cancel</button>
-                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="confirmDeleteBtn" style="min-width:80px;"><i class="fa-solid fa-trash-can me-1"></i>Delete</button>
+                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal" style="min-width:80px;"><%= t('common:words.cancel') %></button>
+                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="confirmDeleteBtn" style="min-width:80px;"><i class="fa-solid fa-trash-can me-1"></i><%= t('common:words.delete') %></button>
                 </div>
             </div>
         </div>
@@ -215,50 +215,50 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center justify-content-between">
-                <h5 class="modal-title" id="msgModalTitle">Message from —</h5>
+                <h5 class="modal-title" id="msgModalTitle"><%= t('admin:inbox.messageFrom') %> —</h5>
                 <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-danger rounded-pill" id="msgDeleteHeaderBtn" title="Delete">
+                    <button type="button" class="btn btn-sm btn-danger rounded-pill" id="msgDeleteHeaderBtn" title="<%= t('common:words.delete') %>">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="contact-grid" id="msgContactGrid">
                     <div class="contact-item">
-                        <div class="label">Email</div>
+                        <div class="label"><%= t('common:words.email') %></div>
                         <div class="value" id="msgEmail">—</div>
                     </div>
                     <div class="contact-item">
-                        <div class="label">Phone</div>
+                        <div class="label"><%= t('common:words.phone') %></div>
                         <div class="value" id="msgPhone">—</div>
                     </div>
                 </div>
                 <div class="subject-line" id="msgSubject">—</div>
-                <div class="label" style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Message Content</div>
+                <div class="label" style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;"><%= t('admin:inbox.messageContent') %></div>
                 <div class="message-box" id="msgBody">—</div>
                 <div id="replyDisplay" class="hidden" style="margin-top:1rem;padding:1rem 1.25rem;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:10px;">
-                    <div style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">Your Reply</div>
+                    <div style="font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;"><%= t('admin:inbox.yourReply') %></div>
                     <div id="replyBody" style="color:var(--text-secondary);font-size:var(--font-base);line-height:var(--leading-body);white-space:pre-wrap;"></div>
                     <div id="replyMeta" style="color:rgba(255,255,255,0.3);font-size:0.7rem;margin-top:0.5rem;"></div>
                 </div>
                 <div class="reply-form hidden" id="replyForm">
                     <div class="mb-2">
-                        <label>To</label>
+                        <label><%= t('admin:inbox.to') %></label>
                         <input type="text" class="form-control-plaintext" id="replyTo" readonly>
                     </div>
                     <div class="mb-2">
-                        <label>Subject</label>
+                        <label><%= t('common:words.subject') %></label>
                         <input type="text" class="form-control" id="replySubject">
                     </div>
                     <div class="mb-2">
-                        <label>Your Reply</label>
-                        <textarea class="form-control" id="replyText" placeholder="Type your reply…"></textarea>
+                        <label><%= t('admin:inbox.yourReply') %></label>
+                        <textarea class="form-control" id="replyText" placeholder="<%= t('admin:inbox.replyPlaceholder') %>"></textarea>
                     </div>
                     <div id="replyStatus" class="mb-2 hidden"></div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-sm btn-premium-outline rounded-pill" id="replyCancelBtn">Cancel</button>
-                        <button type="button" class="btn btn-sm btn-premium-primary rounded-pill" id="replySendBtn"><i class="fa-solid fa-paper-plane me-1"></i>Send Reply</button>
+                        <button type="button" class="btn btn-sm btn-premium-outline rounded-pill" id="replyCancelBtn"><%= t('common:words.cancel') %></button>
+                        <button type="button" class="btn btn-sm btn-premium-primary rounded-pill" id="replySendBtn"><i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %></button>
                     </div>
                 </div>
             </div>
@@ -266,9 +266,9 @@
                 <span class="text-muted small" id="msgMeta"></span>
                 <div class="d-flex flex-wrap gap-2">
                     <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgReplyBtn" style="display:none;">
-                        <i class="fa-solid fa-reply me-1"></i>Reply
+                        <i class="fa-solid fa-reply me-1"></i><%= t('admin:inbox.reply') %>
                     </button>
-                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
                 </div>
             </div>
         </div>
@@ -333,7 +333,7 @@
         currentCsrf = csrf;
         currentEmail = email;
         currentSubject = subject;
-        title.textContent = 'Message from ' + name;
+        title.textContent = '<%= t('admin:inbox.messageFrom') %> ' + name;
         emailEl.textContent = email;
         phoneEl.textContent = phone || '—';
         subjectEl.textContent = subject;
@@ -347,7 +347,7 @@
         if (replyTextVal) {
             replyBody.textContent = replyTextVal;
             var metaParts = [];
-            if (repliedByName) metaParts.push('By ' + repliedByName);
+            if (repliedByName) metaParts.push('<%= t('admin:inbox.by') %> ' + repliedByName);
             if (repliedAt) metaParts.push(new Date(repliedAt).toLocaleString());
             replyMeta.textContent = metaParts.join(' — ');
             replyDisplay.classList.remove('hidden');
@@ -368,7 +368,7 @@
                 body: 'csrf_token=' + encodeURIComponent(csrf)
             }).then(function(r) { return r.json(); }).then(function(data) {
                 if (data.success) {
-                    updateRowBadge(id, 'Read', 'bg-secondary');
+                    updateRowBadge(id, '<%= t('admin:status.read') %>', 'bg-secondary');
                 }
             }).catch(function() {});
         }
@@ -377,15 +377,15 @@
     replyBtn.addEventListener('click', function() {
         replyTo.value = currentEmail;
         var subj = currentSubject;
-        if (!subj || subj === 'No Subject' || subj.toLowerCase() === 'product') {
-            subj = 'General Inquiry';
+        if (!subj || subj === '<%= t('admin:inbox.noSubject') %>' || subj.toLowerCase() === 'product') {
+            subj = '<%= t('admin:inbox.generalInquiry') %>';
         }
         replySubject.value = 'Re: ' + subj;
         replyText.value = '';
         replyStatus.classList.add('hidden');
         replyStatus.className = 'mb-2 hidden';
         replySendBtn.disabled = false;
-        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
         replyForm.classList.remove('hidden');
     });
 
@@ -397,7 +397,7 @@
         var text = replyText.value.trim();
         if (!text) { replyText.focus(); return; }
         replySendBtn.disabled = true;
-        replySendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending…';
+        replySendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span><%= t('admin:inbox.sending') %>';
         replyStatus.className = 'mb-2 hidden';
 
         var params = new URLSearchParams();
@@ -412,27 +412,27 @@
             body: params.toString()
         }).then(function(r) { return r.json(); }).then(function(data) {
             if (data.success) {
-                replyStatus.textContent = 'Reply sent successfully.';
+                replyStatus.textContent = '<%= t('admin:inbox.replySent') %>';
                 replyStatus.className = 'mb-2 success';
                 replyStatus.classList.remove('hidden');
-                replySendBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i>Sent';
+                replySendBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i><%= t('admin:inbox.sent') %>';
                 setTimeout(function() {
                     modalInstance.hide();
                 }, 1200);
-                updateRowBadge(currentId, 'Replied', 'bg-secondary');
+                updateRowBadge(currentId, '<%= t('admin:status.replied') %>', 'bg-secondary');
             } else {
-                replyStatus.textContent = data.message || 'Failed to send reply.';
+                replyStatus.textContent = data.message || '<%= t('admin:inbox.sendReplyFailed') %>';
                 replyStatus.className = 'mb-2 error';
                 replyStatus.classList.remove('hidden');
                 replySendBtn.disabled = false;
-                replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+                replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
             }
         }).catch(function() {
-            replyStatus.textContent = 'Network error. Please try again.';
+            replyStatus.textContent = '<%= t('admin:inbox.networkError') %>';
             replyStatus.className = 'mb-2 error';
             replyStatus.classList.remove('hidden');
             replySendBtn.disabled = false;
-            replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+            replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
         });
     });
 
@@ -456,7 +456,7 @@
     confirmDeleteBtn.addEventListener('click', function() {
         if (!pendingDeleteId || !pendingDeleteCsrf) return;
         confirmDeleteBtn.disabled = true;
-        confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Deleting…';
+        confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span><%= t('admin:inbox.deleting') %>';
 
         var form = document.createElement('form');
         form.method = 'POST';
@@ -496,7 +496,7 @@
         replyDisplay.classList.add('hidden');
         replyStatus.className = 'mb-2 hidden';
         replySendBtn.disabled = false;
-        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>Send Reply';
+        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
     });
 })();
 </script>

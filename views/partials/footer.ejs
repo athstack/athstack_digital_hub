@@ -7,26 +7,26 @@
                     <img src="/images/techbridge-logo.png" alt="TechBridge" class="mb-2" style="height:54px;width:auto;background:transparent;padding:0;border:none;">
                     <span class="text-white fw-bold" style="font-size:1.35rem;letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
                 </div>
-                <p class="text-muted small mb-1" style="letter-spacing:0.3px;text-transform:uppercase;">by Athstack Technologies</p>
-                <p>Your trusted partner for premium tech hardware, expert device repairs &amp; maintenance, and professional IT training programs.</p>
+                <p class="text-muted small mb-1" style="letter-spacing:0.3px;text-transform:uppercase;"><%= t('common:footer.by') %></p>
+                <p><%= t('common:footer.tagline') %></p>
             </div>
             <div class="col-md-3 offset-md-1">
-                <h6 class="text-white fw-bold mb-3">Support Desks</h6>
+                <h6 class="text-white fw-bold mb-3"><%= t('common:footer.supportDesks') %></h6>
                 <p><i class="fa-solid fa-envelope text-primary me-2"></i> info@athstack.com</p>
                 <p><i class="fa-solid fa-phone text-primary me-2"></i> +255 782 303 971</p>
             </div>
             <div class="col-md-3">
-                <h6 class="text-white fw-bold mb-3">Operating Hours</h6>
-                <p>Monday - Friday: 08:00 AM - 06:00 PM</p>
-                <p>Saturday: 09:00 AM - 02:00 PM</p>
+                <h6 class="text-white fw-bold mb-3"><%= t('common:footer.operatingHours') %></h6>
+                <p><%= t('common:footer.weekdays') %></p>
+                <p><%= t('common:footer.saturday') %></p>
             </div>
         </div>
         <hr class="mt-4 border-secondary opacity-25">
-        <p class="text-center mb-0 text-muted">&copy; <%= new Date().getFullYear() %> TechBridge Digital Hub. All engineering rights reserved.</p>
+        <p class="text-center mb-0 text-muted">&copy; <%= new Date().getFullYear() %> TechBridge Digital Hub. <%= t('common:footer.rights') %></p>
     </div>
 </footer>
 
-<a href="https://wa.me/255782303971" class="whatsapp-float" target="_blank">
+<a href="https://wa.me/255782303971" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
 </a>
 
@@ -38,6 +38,35 @@
 <script src="/assets/js/reviews.js"></script>
 <script>
 (function() {
+    var i18nStrings = {
+        justNow: '<%= t('common:notifications.justNow') %>',
+        minutesAgo: '<%= t('common:notifications.minutesAgo') %>',
+        hoursAgo: '<%= t('common:notifications.hoursAgo') %>',
+        noNotifications: '<%= t('common:notifications.noNotifications') %>',
+        failedToLoad: '<%= t('common:notifications.failedToLoad') %>',
+        noFileSelected: '<%= t('common:words.noFileSelected') %>',
+        areYouSure: '<%= t('common:confirm.areYouSure') %>',
+        searchLoading: '<%= t('common:nav.loading') %>',
+        reviewLoading: '<%= t('shop:reviews.loading') %>',
+        reviewLoadingMore: '<%= t('shop:reviews.loadingMore') %>',
+        reviewNoMatch: '<%= t('shop:reviews.noMatch') %>',
+        reviewEmpty: '<%= t('shop:reviews.empty') %>',
+        reviewFound_one: '<%= t('shop:reviews.found_one') %>',
+        reviewFound_other: '<%= t('shop:reviews.found_other') %>',
+        reviewLoadFailed: '<%= t('shop:reviews.loadFailed') %>',
+        reviewRequestFailed: '<%= t('shop:reviews.requestFailed') %>',
+        reviewRatingHint: '<%= t('shop:reviews.ratingHint') %>',
+        reviewMinLength: '<%= t('shop:reviews.minLength') %>',
+        reviewInvalidImageType: '<%= t('shop:reviews.invalidImageType') %>',
+        reviewPhotoTooLarge: '<%= t('shop:reviews.photoTooLarge') %>',
+        reviewMaxPhotos: '<%= t('shop:reviews.maxPhotos') %>',
+        reviewRemovePhoto: '<%= t('shop:reviews.removePhoto') %>',
+        reviewReported: '<%= t('shop:reviews.reported') %>',
+        reviewSelectReason: '<%= t('shop:reviews.selectReason') %>',
+        locale: '<%= currentLang.locale %>',
+        currency: '<%= currentLang.currency %>'
+    };
+    window.i18nStrings = i18nStrings;
     const bell = document.getElementById('notifBell');
     if (!bell) return;
     const badge = document.getElementById('notifBadge');
@@ -71,9 +100,9 @@
                         var d = new Date(n.created_at);
                         var now = new Date();
                         var diff = (now - d) / 1000;
-                        if (diff < 60) time = 'just now';
-                        else if (diff < 3600) time = Math.floor(diff / 60) + 'm ago';
-                        else if (diff < 86400) time = Math.floor(diff / 3600) + 'h ago';
+                        if (diff < 60) time = i18nStrings.justNow;
+                        else if (diff < 3600) time = i18nStrings.minutesAgo.replace('{{count}}', Math.floor(diff / 60));
+                        else if (diff < 86400) time = i18nStrings.hoursAgo.replace('{{count}}', Math.floor(diff / 3600));
                         else time = d.toLocaleDateString();
                     }
                     var unreadStyle = n.is_read ? '' : 'background:rgba(37,99,235,0.12);border-left:3px solid var(--bs-primary);';
@@ -84,10 +113,10 @@
                         '</a>';
                 }).join('');
             } else {
-                list.innerHTML = '<div class="text-center text-muted py-4">No notifications</div>';
+                list.innerHTML = '<div class="text-center text-muted py-4">' + esc(i18nStrings.noNotifications) + '</div>';
             }
         } catch(e) {
-            list.innerHTML = '<div class="text-center text-muted py-4">Failed to load</div>';
+            list.innerHTML = '<div class="text-center text-muted py-4">' + esc(i18nStrings.failedToLoad) + '</div>';
         }
     }
 

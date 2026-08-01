@@ -3,9 +3,9 @@
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge"><i class="fa-solid fa-screwdriver-wrench me-2"></i>Device Repair & IT Maintenance</span>
-            <h1 class="display-4 text-white fw-bold mt-3">Enterprise Maintenance Services</h1>
-            <p class="text-white-50 fs-5">Professional diagnostics, repair, and IT maintenance for computers and mobile devices.</p>
+            <span class="section-badge"><i class="fa-solid fa-screwdriver-wrench me-2"></i><%= t('maintenance:index.badge') %></span>
+            <h1 class="display-4 text-white fw-bold mt-3"><%= t('maintenance:index.heading') %></h1>
+            <p class="text-white-50 fs-5"><%= t('maintenance:index.intro') %></p>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -29,8 +29,8 @@
                             <i class="fa-solid fa-desktop fa-2x text-primary"></i>
                         </div>
                         <div class="ms-3">
-                            <h3 class="text-white fw-bold mb-1">Computer Services</h3>
-                            <small class="text-white-50">Desktop & laptop repair solutions</small>
+                            <h3 class="text-white fw-bold mb-1"><%= t('maintenance:index.services.computerTitle') %></h3>
+                            <small class="text-white-50"><%= t('maintenance:index.services.computerSubtitle') %></small>
                         </div>
                     </div>
                     <div class="row g-3">
@@ -41,13 +41,13 @@
                                     <div class="d-flex align-items-start mb-2">
                                         <div class="flex-grow-1">
                                             <h6 class="text-white fw-bold mb-0"><%= service.title %></h6>
-                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || 'Professional service' %></p>
+                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || t('maintenance:index.services.defaultDescription') %></p>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2" style="border-top:1px solid rgba(255,255,255,0.06);">
                                         <span class="text-primary fw-bold"><%= formatCurrency(service.base_price || 0) %></span>
                                         <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-book-now" type="button">
-                                            Book Now <i class="fa-solid fa-arrow-right ms-1"></i>
+                                            <%= t('maintenance:index.services.bookNow') %> <i class="fa-solid fa-arrow-right ms-1"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                         <% } else { %>
                         <div class="col-12 text-center py-4">
                             <i class="fa-solid fa-tools fa-3x text-white-50 mb-3"></i>
-                            <p class="text-white-50">Computer services are being configured. Check back soon.</p>
+                            <p class="text-white-50"><%= t('maintenance:index.services.emptyComputer') %></p>
                         </div>
                         <% } %>
                     </div>
@@ -70,8 +70,8 @@
                             <i class="fa-solid fa-mobile-screen-button fa-2x text-info"></i>
                         </div>
                         <div class="ms-3">
-                            <h3 class="text-white fw-bold mb-1">Phone Services</h3>
-                            <small class="text-white-50">Mobile device repair & diagnostics</small>
+                            <h3 class="text-white fw-bold mb-1"><%= t('maintenance:index.services.phoneTitle') %></h3>
+                            <small class="text-white-50"><%= t('maintenance:index.services.phoneSubtitle') %></small>
                         </div>
                     </div>
                     <div class="row g-3">
@@ -82,13 +82,13 @@
                                     <div class="d-flex align-items-start mb-2">
                                         <div class="flex-grow-1">
                                             <h6 class="text-white fw-bold mb-0"><%= service.title %></h6>
-                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || 'Professional service' %></p>
+                                            <p class="text-white-50 small mb-0 mt-1"><%= service.description || t('maintenance:index.services.defaultDescription') %></p>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2" style="border-top:1px solid rgba(255,255,255,0.06);">
                                         <span class="text-primary fw-bold"><%= formatCurrency(service.base_price || 0) %></span>
                                         <button class="btn btn-sm btn-outline-primary rounded-pill px-3 btn-book-now" type="button">
-                                            Book Now <i class="fa-solid fa-arrow-right ms-1"></i>
+                                            <%= t('maintenance:index.services.bookNow') %> <i class="fa-solid fa-arrow-right ms-1"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -97,7 +97,7 @@
                         <% } else { %>
                         <div class="col-12 text-center py-4">
                             <i class="fa-solid fa-mobile-screen-button fa-3x text-white-50 mb-3"></i>
-                            <p class="text-white-50">Phone services are being configured. Check back soon.</p>
+                            <p class="text-white-50"><%= t('maintenance:index.services.emptyPhone') %></p>
                         </div>
                         <% } %>
                     </div>
@@ -110,8 +110,8 @@
                 <div class="glass-card p-5">
                     <div class="text-center mb-4">
                         <i class="fa-solid fa-calendar-check text-primary fa-3x mb-3"></i>
-                        <h3 class="text-white fw-bold">Book a Repair</h3>
-                        <p class="text-white-50">Fill out the form below and our team will get back to you within 24 hours.</p>
+                        <h3 class="text-white fw-bold"><%= t('maintenance:index.form.title') %></h3>
+                        <p class="text-white-50"><%= t('maintenance:index.form.intro') %></p>
                     </div>
                     <form method="POST" action="/maintenance/book">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
@@ -124,50 +124,50 @@
                         <% } %>
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Full Name <span class="text-primary">*</span></label>
-                                <input type="text" name="name" id="userName" class="form-control" required placeholder="Version John">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.fullName') %> <span class="text-primary">*</span></label>
+                                <input type="text" name="name" id="userName" class="form-control" required placeholder="<%= t('maintenance:index.form.namePlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Email Address <span class="text-primary">*</span></label>
-                                <input type="email" name="email" id="userEmail" class="form-control" required placeholder="john@example.com">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.emailAddress') %> <span class="text-primary">*</span></label>
+                                <input type="email" name="email" id="userEmail" class="form-control" required placeholder="<%= t('maintenance:index.form.emailPlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Phone Number <span class="text-primary">*</span></label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.phoneNumber') %> <span class="text-primary">*</span></label>
                                 <div class="input-group">
                                     <input type="text" id="phoneCode" class="form-control" value="+255" readonly style="max-width:90px;text-align:center;font-weight:600;border-right:none;border-radius:var(--radius-md) 0 0 var(--radius-md);background:var(--bg-elevated) !important;color:var(--text-main) !important;">
-                                    <input type="tel" name="phone" id="phoneInput" class="form-control" required placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
+                                    <input type="tel" name="phone" id="phoneInput" class="form-control" required placeholder="<%= t('maintenance:index.form.phonePlaceholder') %>" pattern="[0-9\s\-\+\(\)]*" title="<%= t('maintenance:index.form.phoneTitle') %>" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Country <span class="text-primary">*</span></label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.country') %> <span class="text-primary">*</span></label>
                                 <select name="customer_country" id="countrySelect" class="form-select" required>
-                                    <option value="">Select your country</option>
-                                    <option value="NG" data-code="+234" data-placeholder="801 234 5678">Nigeria</option>
-                                    <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX">Tanzania</option>
-                                    <option value="KE" data-code="+254" data-placeholder="7XX XXX XXX">Kenya</option>
-                                    <option value="UG" data-code="+256" data-placeholder="7XX XXX XXX">Uganda</option>
-                                    <option value="ZA" data-code="+27" data-placeholder="8X XXX XXXX">South Africa</option>
-                                    <option value="GH" data-code="+233" data-placeholder="2X XXX XXXX">Ghana</option>
-                                    <option value="EG" data-code="+20" data-placeholder="1X XXX XXXX">Egypt</option>
-                                    <option value="RW" data-code="+250" data-placeholder="7XX XXX XXX">Rwanda</option>
-                                    <option value="ET" data-code="+251" data-placeholder="9XX XXX XXXX">Ethiopia</option>
-                                    <option value="CD" data-code="+243" data-placeholder="8X XXX XXXX">DR Congo</option>
-                                    <option value="CM" data-code="+237" data-placeholder="6XX XXX XXX">Cameroon</option>
-                                    <option value="SN" data-code="+221" data-placeholder="7X XXX XX XX">Senegal</option>
-                                    <option value="US" data-code="+1" data-placeholder="(XXX) XXX-XXXX">United States</option>
-                                    <option value="GB" data-code="+44" data-placeholder="7XXX XXXXXX">United Kingdom</option>
-                                    <option value="IN" data-code="+91" data-placeholder="XXXXX XXXXX">India</option>
-                                    <option value="CN" data-code="+86" data-placeholder="1XX XXXX XXXX">China</option>
+                                    <option value=""><%= t('maintenance:index.form.selectCountry') %></option>
+                                    <option value="NG" data-code="+234" data-placeholder="801 234 5678"><%= t('maintenance:index.form.countries.NG') %></option>
+                                    <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX"><%= t('maintenance:index.form.countries.TZ') %></option>
+                                    <option value="KE" data-code="+254" data-placeholder="7XX XXX XXX"><%= t('maintenance:index.form.countries.KE') %></option>
+                                    <option value="UG" data-code="+256" data-placeholder="7XX XXX XXX"><%= t('maintenance:index.form.countries.UG') %></option>
+                                    <option value="ZA" data-code="+27" data-placeholder="8X XXX XXXX"><%= t('maintenance:index.form.countries.ZA') %></option>
+                                    <option value="GH" data-code="+233" data-placeholder="2X XXX XXXX"><%= t('maintenance:index.form.countries.GH') %></option>
+                                    <option value="EG" data-code="+20" data-placeholder="1X XXX XXXX"><%= t('maintenance:index.form.countries.EG') %></option>
+                                    <option value="RW" data-code="+250" data-placeholder="7XX XXX XXX"><%= t('maintenance:index.form.countries.RW') %></option>
+                                    <option value="ET" data-code="+251" data-placeholder="9XX XXX XXXX"><%= t('maintenance:index.form.countries.ET') %></option>
+                                    <option value="CD" data-code="+243" data-placeholder="8X XXX XXXX"><%= t('maintenance:index.form.countries.CD') %></option>
+                                    <option value="CM" data-code="+237" data-placeholder="6XX XXX XXX"><%= t('maintenance:index.form.countries.CM') %></option>
+                                    <option value="SN" data-code="+221" data-placeholder="7X XXX XX XX"><%= t('maintenance:index.form.countries.SN') %></option>
+                                    <option value="US" data-code="+1" data-placeholder="(XXX) XXX-XXXX"><%= t('maintenance:index.form.countries.US') %></option>
+                                    <option value="GB" data-code="+44" data-placeholder="7XXX XXXXXX"><%= t('maintenance:index.form.countries.GB') %></option>
+                                    <option value="IN" data-code="+91" data-placeholder="XXXXX XXXXX"><%= t('maintenance:index.form.countries.IN') %></option>
+                                    <option value="CN" data-code="+86" data-placeholder="1XX XXXX XXXX"><%= t('maintenance:index.form.countries.CN') %></option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Appointment Date <span class="text-primary">*</span></label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.appointmentDate') %> <span class="text-primary">*</span></label>
                                 <input type="date" name="appointment_date" id="appointmentDate" class="form-control" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Service Type <span class="text-primary">*</span></label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.serviceType') %> <span class="text-primary">*</span></label>
                                 <select name="service_id" class="form-select" required>
-                                    <option value="">Select a service...</option>
+                                    <option value=""><%= t('maintenance:index.form.selectService') %></option>
                                     <% if (services && services.length > 0) { %>
                                         <% services.forEach(svc => { %>
                                          <option value="<%= svc.id %>"><%= svc.title %> (<%= formatCurrency(svc.base_price || 0) %>)</option>
@@ -176,30 +176,30 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Type</label>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.deviceType') %></label>
                                 <select name="device_type" class="form-select">
-                                    <option value="laptop">Laptop</option>
-                                    <option value="desktop">Desktop</option>
-                                    <option value="smartphone">Smartphone</option>
-                                    <option value="tablet">Tablet</option>
-                                    <option value="network">Network Equipment</option>
-                                    <option value="other">Other</option>
+                                    <option value="laptop"><%= t('maintenance:index.form.deviceTypes.laptop') %></option>
+                                    <option value="desktop"><%= t('maintenance:index.form.deviceTypes.desktop') %></option>
+                                    <option value="smartphone"><%= t('maintenance:index.form.deviceTypes.smartphone') %></option>
+                                    <option value="tablet"><%= t('maintenance:index.form.deviceTypes.tablet') %></option>
+                                    <option value="network"><%= t('maintenance:index.form.deviceTypes.network') %></option>
+                                    <option value="other"><%= t('maintenance:index.form.deviceTypes.other') %></option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Brand</label>
-                                <input type="text" name="device_brand" class="form-control" placeholder="e.g. Apple, Dell, Samsung">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.deviceBrand') %></label>
+                                <input type="text" name="device_brand" class="form-control" placeholder="<%= t('maintenance:index.form.brandPlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Device Model</label>
-                                <input type="text" name="device_model" class="form-control" placeholder="e.g. MacBook Pro 14">
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.deviceModel') %></label>
+                                <input type="text" name="device_model" class="form-control" placeholder="<%= t('maintenance:index.form.modelPlaceholder') %>">
                             </div>
                             <div class="col-12">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest">Issue Description</label>
-                                <textarea name="issue_description" class="form-control" rows="4" placeholder="Describe what is wrong with your device (e.g., screen won't turn on, unexpected shut downs, water spill...)"></textarea>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('maintenance:index.form.issueDescription') %></label>
+                                <textarea name="issue_description" class="form-control" rows="4" placeholder="<%= t('maintenance:index.form.issuePlaceholder') %>"></textarea>
                             </div>
                             <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-premium-primary btn-lg rounded-pill px-5"><i class="fa-solid fa-paper-plane me-2"></i>Submit Repair Request</button>
+                                <button type="submit" class="btn btn-premium-primary btn-lg rounded-pill px-5"><i class="fa-solid fa-paper-plane me-2"></i><%= t('maintenance:index.form.submit') %></button>
                             </div>
                         </div>
                     </form>
@@ -210,12 +210,12 @@
 </section>
 
 <div id="selectionStickyBar" class="selection-sticky-bar">
-    <div class="bar-count" id="selectedCount">0 services selected</div>
+    <div class="bar-count" id="selectedCount"><%= t('maintenance:index.sticky.servicesSelectedOther', { count: 0 }) %></div>
     <div class="bar-actions">
         <button id="proceedBookingBtn" class="btn btn-premium-primary rounded-pill px-3" type="button" style="font-size:0.85rem;">
-            Proceed to Booking <i class="fa-solid fa-arrow-right ms-1"></i>
+            <%= t('maintenance:index.sticky.proceed') %> <i class="fa-solid fa-arrow-right ms-1"></i>
         </button>
-        <button id="clearSelectionBtn" class="btn btn-sm btn-outline-light rounded-pill" type="button" style="font-size:0.8rem;">Clear</button>
+        <button id="clearSelectionBtn" class="btn btn-sm btn-outline-light rounded-pill" type="button" style="font-size:0.8rem;"><%= t('maintenance:index.sticky.clear') %></button>
     </div>
 </div>
 
@@ -233,7 +233,8 @@ function updateStickyBar() {
     var selected = getSelected();
     if (selected.length > 0) {
         bar.classList.add('visible');
-        count.textContent = selected.length + ' service' + (selected.length > 1 ? 's' : '') + ' selected';
+        var servicesSelectedLabel = selected.length === 1 ? '<%= t('maintenance:index.sticky.servicesSelectedOne') %>' : '<%= t('maintenance:index.sticky.servicesSelectedOther') %>';
+        count.textContent = servicesSelectedLabel.replace('{{count}}', selected.length);
         selectedCardIds = Array.from(selected).map(function(c) { return c.dataset.serviceId; });
     } else {
         bar.classList.remove('visible');
@@ -394,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (opt.value) {
                 countryMap[opt.value] = {
                     code: opt.getAttribute('data-code') || '+255',
-                    placeholder: opt.getAttribute('data-placeholder') || 'phone number'
+                    placeholder: opt.getAttribute('data-placeholder') || '<%= t('maintenance:index.form.phoneNumberFallback') %>'
                 };
             }
         });
@@ -403,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
             maxItems: 1,
             searchField: ['text'],
             sortField: [{field: 'text', direction: 'asc'}],
-            placeholder: 'Select your country',
+            placeholder: '<%= t('maintenance:index.form.selectCountry') %>',
             allowEmptyOption: false,
             onItemAdd: function(value) {
                 var info = countryMap[value];
@@ -416,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
             onItemRemove: function() {
                 if (phoneCode && phoneInput) {
                     phoneCode.value = '+255';
-                    phoneInput.placeholder = '7XX XXX XXX';
+                    phoneInput.placeholder = '<%= t('maintenance:index.form.phonePlaceholder') %>';
                 }
             }
         });

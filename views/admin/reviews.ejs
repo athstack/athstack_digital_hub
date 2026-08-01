@@ -8,16 +8,16 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
-                    <span class="section-badge">Reviews</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i>Review Moderation</h2>
+                    <span class="section-badge"><%= t('admin:words.reviews') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('admin:reviews.heading') %></h2>
                     <div class="ms-auto d-flex gap-2 align-items-center">
                         <% if (pendingCount > 0) { %>
-                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><%= pendingCount %> pending</span>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><%= pendingCount %> <%= t('admin:words.pending') %></span>
                         <% } %>
                         <% if (reportedCount > 0) { %>
-                        <span class="badge bg-danger rounded-pill px-3 py-2"><%= reportedCount %> reported</span>
+                        <span class="badge bg-danger rounded-pill px-3 py-2"><%= reportedCount %> <%= t('admin:words.reported') %></span>
                         <% } %>
-                        <button type="button" class="btn btn-premium-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#addReviewModal"><i class="fa-solid fa-plus me-1"></i>Add Review</button>
+                        <button type="button" class="btn btn-premium-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#addReviewModal"><i class="fa-solid fa-plus me-1"></i><%= t('admin:reviews.addReview') %></button>
                     </div>
                 </div>
 
@@ -29,16 +29,16 @@
                 <% } %>
 
                 <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
-                    <a href="/admin/reviews" class="btn btn-sm rounded-pill<%= !currentStatus && !isReportedFilter ? ' btn-primary' : ' btn-outline-secondary' %>">All</a>
-                    <a href="/admin/reviews?status=pending" class="btn btn-sm rounded-pill<%= currentStatus === 'pending' ? ' btn-warning text-dark' : ' btn-outline-secondary' %>">Pending <% if (pendingCount > 0) { %>(<%= pendingCount %>)<% } %></a>
-                    <a href="/admin/reviews?status=approved" class="btn btn-sm rounded-pill<%= currentStatus === 'approved' ? ' btn-success' : ' btn-outline-secondary' %>">Approved</a>
-                    <a href="/admin/reviews?status=rejected" class="btn btn-sm rounded-pill<%= currentStatus === 'rejected' ? ' btn-danger' : ' btn-outline-secondary' %>">Rejected</a>
-                    <a href="/admin/reviews?reported=1" class="btn btn-sm rounded-pill<%= isReportedFilter ? ' btn-danger' : ' btn-outline-secondary' %>">Reported <% if (reportedCount > 0) { %>(<%= reportedCount %>)<% } %></a>
+                    <a href="/admin/reviews" class="btn btn-sm rounded-pill<%= !currentStatus && !isReportedFilter ? ' btn-primary' : ' btn-outline-secondary' %>"><%= t('common:words.all') %></a>
+                    <a href="/admin/reviews?status=pending" class="btn btn-sm rounded-pill<%= currentStatus === 'pending' ? ' btn-warning text-dark' : ' btn-outline-secondary' %>"><%= t('admin:status.pending') %> <% if (pendingCount > 0) { %>(<%= pendingCount %>)<% } %></a>
+                    <a href="/admin/reviews?status=approved" class="btn btn-sm rounded-pill<%= currentStatus === 'approved' ? ' btn-success' : ' btn-outline-secondary' %>"><%= t('admin:status.approved') %></a>
+                    <a href="/admin/reviews?status=rejected" class="btn btn-sm rounded-pill<%= currentStatus === 'rejected' ? ' btn-danger' : ' btn-outline-secondary' %>"><%= t('admin:status.rejected') %></a>
+                    <a href="/admin/reviews?reported=1" class="btn btn-sm rounded-pill<%= isReportedFilter ? ' btn-danger' : ' btn-outline-secondary' %>"><%= t('admin:reviews.reportedFilter') %> <% if (reportedCount > 0) { %>(<%= reportedCount %>)<% } %></a>
                 </div>
 
                 <form method="GET" action="/admin/reviews" class="mb-4">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search by user, product, or review text..." value="<%= currentSearch || '' %>">
+                        <input type="text" name="search" class="form-control" placeholder="<%= t('admin:reviews.searchPlaceholder') %>" value="<%= currentSearch || '' %>">
                         <button class="btn btn-premium-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </div>
                 </form>
@@ -49,16 +49,16 @@
                         <table class="table table-dark align-middle mb-0 premium-table">
                             <thead>
                                 <tr>
-                                    <th>User</th>
-                                    <th>Review</th>
-                                    <th>Rating</th>
-                                    <th>Verified</th>
-                                    <th>Photos</th>
-                                    <th>Helpful</th>
-                                    <th>Reports</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
+                                    <th><%= t('admin:words.user') %></th>
+                                    <th><%= t('admin:words.review') %></th>
+                                    <th><%= t('admin:words.rating') %></th>
+                                    <th><%= t('admin:words.verified') %></th>
+                                    <th><%= t('admin:words.photos') %></th>
+                                    <th><%= t('admin:words.helpful') %></th>
+                                    <th><%= t('admin:words.reports') %></th>
+                                    <th><%= t('common:words.status') %></th>
+                                    <th><%= t('common:words.date') %></th>
+                                    <th><%= t('common:words.actions') %></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,10 +78,10 @@
                                         <% if (review.comment) { %>
                                         <p class="text-white-50 mb-0 small" style="max-width:280px;"><%= review.comment %></p>
                                         <% } else { %>
-                                        <span class="text-white-50 small fst-italic">No comment</span>
+                                        <span class="text-white-50 small fst-italic"><%= t('admin:reviews.noComment') %></span>
                                         <% } %>
                                         <% if (review.pending_reports > 0) { %>
-                                        <span class="badge bg-danger mt-1"><i class="fa-regular fa-flag me-1"></i><%= review.pending_reports %> open report<%= review.pending_reports !== 1 ? 's' : '' %></span>
+                                        <span class="badge bg-danger mt-1"><i class="fa-regular fa-flag me-1"></i><%= t('admin:reviews.openReport', {count: review.pending_reports}) %></span>
                                         <% } %>
                                     </td>
                                     <td>
@@ -115,37 +115,37 @@
                                     </td>
                                     <td>
                                         <% if (review.status === 'pending') { %>
-                                        <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                                        <span class="badge bg-warning text-dark rounded-pill"><%= t('admin:status.pending') %></span>
                                         <% } else if (review.status === 'approved') { %>
-                                        <span class="badge bg-success rounded-pill">Approved</span>
+                                        <span class="badge bg-success rounded-pill"><%= t('admin:status.approved') %></span>
                                         <% } else { %>
-                                        <span class="badge bg-danger rounded-pill">Rejected</span>
+                                        <span class="badge bg-danger rounded-pill"><%= t('admin:status.rejected') %></span>
                                         <% } %>
                                         <% if (review.is_hidden) { %>
-                                        <span class="badge bg-secondary rounded-pill mt-1 d-block">Hidden</span>
+                                        <span class="badge bg-secondary rounded-pill mt-1 d-block"><%= t('admin:status.hidden') %></span>
                                         <% } %>
                                     </td>
                                     <td><small class="text-white-50"><%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %></small></td>
                                     <td>
                                         <div class="review-actions">
-                                            <button type="button" class="btn-action btn-action-edit" title="Reply to review" data-bs-toggle="modal" data-bs-target="#replyReviewModal" data-review-id="<%= review.id %>" data-review-name="<%= review.product_name || '' %>"><i class="fa-solid fa-reply"></i></button>
-                                            <a href="/admin/reviews/<%= review.id %>/edit" class="btn-action btn-action-edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                            <button type="button" class="btn-action btn-action-edit" title="<%= t('admin:reviews.replyToReview') %>" data-bs-toggle="modal" data-bs-target="#replyReviewModal" data-review-id="<%= review.id %>" data-review-name="<%= review.product_name || '' %>"><i class="fa-solid fa-reply"></i></button>
+                                            <a href="/admin/reviews/<%= review.id %>/edit" class="btn-action btn-action-edit" title="<%= t('common:words.edit') %>"><i class="fa-solid fa-pen"></i></a>
                                             <form method="POST" action="/admin/reviews/<%= review.id %>/hide" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-hide" title="<%= review.is_hidden ? 'Unhide' : 'Hide' %>"><i class="fa-solid <%= review.is_hidden ? 'fa-eye' : 'fa-eye-slash' %>"></i></button>
+                                                <button type="submit" class="btn-action btn-action-hide" title="<%= review.is_hidden ? t('admin:reviews.unhide') : t('admin:reviews.hide') %>"><i class="fa-solid <%= review.is_hidden ? 'fa-eye' : 'fa-eye-slash' %>"></i></button>
                                             </form>
-                                            <form method="POST" action="/admin/reviews/<%= review.id %>/delete" class="d-inline" data-confirm="Delete this review?">
+                                            <form method="POST" action="/admin/reviews/<%= review.id %>/delete" class="d-inline" data-confirm="<%= t('admin:reviews.deleteConfirm') %>">
                                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-delete" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                                                <button type="submit" class="btn-action btn-action-delete" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash-can"></i></button>
                                             </form>
                                             <% if (review.status === 'pending') { %>
                                             <form method="POST" action="/admin/reviews/<%= review.id %>/approve" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                                <button type="submit" class="btn-action btn-action-approve" title="<%= t('admin:reviews.approve') %>"><i class="fa-solid fa-check"></i></button>
                                             </form>
                                             <form method="POST" action="/admin/reviews/<%= review.id %>/reject" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                                <button type="submit" class="btn-action btn-action-reject" title="<%= t('admin:reviews.reject') %>"><i class="fa-solid fa-xmark"></i></button>
                                             </form>
                                             <% } else if (review.approver_first_name) { %>
                                             <span class="approver-label"><%= formatDisplayName(review.approver_first_name, review.approver_last_name) %></span>
@@ -163,7 +163,7 @@
                 <nav class="mt-4">
                     <ul class="pagination justify-content-center">
                         <li class="page-item<%= pagination.hasPrev ? '' : ' disabled' %>">
-                            <a class="page-link" href="?page=<%= pagination.page - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>">Prev</a>
+                            <a class="page-link" href="?page=<%= pagination.page - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>"><%= t('common:words.previous') %></a>
                         </li>
                         <% for (let i = 1; i <= pagination.totalPages; i++) { %>
                         <li class="page-item<%= i === pagination.page ? ' active' : '' %>">
@@ -171,7 +171,7 @@
                         </li>
                         <% } %>
                         <li class="page-item<%= pagination.hasNext ? '' : ' disabled' %>">
-                            <a class="page-link" href="?page=<%= pagination.page + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>">Next</a>
+                            <a class="page-link" href="?page=<%= pagination.page + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>"><%= t('common:words.next') %></a>
                         </li>
                     </ul>
                 </nav>
@@ -180,8 +180,8 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-star fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Reviews</h4>
-                    <p class="text-white-50">No reviews found<%= currentStatus ? ' with status "' + currentStatus + '"' : '' %><%= isReportedFilter ? ' with open reports' : '' %>.</p>
+                    <h4 class="text-white fw-bold"><%= t('admin:reviews.noReviews') %></h4>
+                    <p class="text-white-50"><%= t('admin:reviews.noReviewsFound') %><%= currentStatus ? t('admin:reviews.withStatus', {status: currentStatus}) : '' %><%= isReportedFilter ? t('admin:reviews.withOpenReports') : '' %>.</p>
                 </div>
                 <% } %>
             </div>
@@ -194,7 +194,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
             <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-reply me-2 text-primary"></i>Reply to Review</h5>
+                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-reply me-2 text-primary"></i><%= t('admin:reviews.replyModalTitle') %></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="/admin/reviews/0/reply" id="replyReviewForm">
@@ -202,13 +202,13 @@
                 <div class="modal-body">
                     <p class="text-white-50 small" id="replyReviewProductName"></p>
                     <div class="mb-0">
-                        <label class="form-label">Response</label>
-                        <textarea name="reply" class="form-control" rows="4" maxlength="2000" placeholder="Write a helpful response to this reviewer..."></textarea>
+                        <label class="form-label"><%= t('admin:reviews.response') %></label>
+                        <textarea name="reply" class="form-control" rows="4" maxlength="2000" placeholder="<%= t('admin:reviews.responsePlaceholder') %>"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i>Post Reply</button>
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i><%= t('admin:reviews.postReply') %></button>
                 </div>
             </form>
         </div>
@@ -220,56 +220,56 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
             <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-star me-2 text-warning"></i>Add Review</h5>
+                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('admin:reviews.addReview') %></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="/admin/reviews/add">
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">User ID</label>
-                        <input type="number" name="user_id" class="form-control" placeholder="Enter user ID" required>
+                        <label class="form-label"><%= t('admin:reviews.userId') %></label>
+                        <input type="number" name="user_id" class="form-control" placeholder="<%= t('admin:reviews.enterUserId') %>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Product ID</label>
-                        <input type="number" name="product_id" class="form-control" placeholder="Enter product ID" required>
+                        <label class="form-label"><%= t('admin:reviews.productId') %></label>
+                        <input type="number" name="product_id" class="form-control" placeholder="<%= t('admin:reviews.enterProductId') %>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Rating</label>
+                        <label class="form-label"><%= t('admin:words.rating') %></label>
                         <select name="rating" class="form-select" required>
                             <% for (let i = 1; i <= 5; i++) { %>
-                            <option value="<%= i %>"><%= i %> Star<%= i > 1 ? 's' : '' %></option>
+                            <option value="<%= i %>"><%= t('admin:reviews.stars', {count: i}) %></option>
                             <% } %>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Type</label>
+                        <label class="form-label"><%= t('admin:words.type') %></label>
                         <select name="type" class="form-select">
-                            <option value="product">Product</option>
-                            <option value="technician">Technician</option>
-                            <option value="service">Service</option>
+                            <option value="product"><%= t('admin:reviews.typeProduct') %></option>
+                            <option value="technician"><%= t('admin:reviews.typeTechnician') %></option>
+                            <option value="service"><%= t('admin:reviews.typeService') %></option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Status</label>
+                        <label class="form-label"><%= t('common:words.status') %></label>
                         <select name="status" class="form-select">
-                            <option value="pending">Pending</option>
-                            <option value="approved" selected>Approved</option>
-                            <option value="rejected">Rejected</option>
+                            <option value="pending"><%= t('admin:status.pending') %></option>
+                            <option value="approved" selected><%= t('admin:status.approved') %></option>
+                            <option value="rejected"><%= t('admin:status.rejected') %></option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input type="text" name="title" class="form-control" maxlength="120" placeholder="Review title (optional)">
+                        <label class="form-label"><%= t('admin:words.title') %></label>
+                        <input type="text" name="title" class="form-control" maxlength="120" placeholder="<%= t('admin:reviews.titleOptional') %>">
                     </div>
                     <div class="mb-0">
-                        <label class="form-label">Comment</label>
-                        <textarea name="comment" class="form-control" rows="3" placeholder="Review comment..."></textarea>
+                        <label class="form-label"><%= t('admin:words.comment') %></label>
+                        <textarea name="comment" class="form-control" rows="3" placeholder="<%= t('admin:reviews.commentPlaceholder') %>"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i>Create Review</button>
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('admin:reviews.createReview') %></button>
                 </div>
             </form>
         </div>
@@ -287,7 +287,7 @@
             var id = btn.getAttribute('data-review-id');
             var name = btn.getAttribute('data-review-name');
             replyForm.setAttribute('action', '/admin/reviews/' + id + '/reply');
-            if (productName) productName.textContent = name ? ('Responding to review on: ' + name) : 'Responding to review';
+            if (productName) productName.textContent = name ? ('<%= t('admin:reviews.respondingToOn') %> ' + name) : '<%= t('admin:reviews.respondingTo') %>';
         });
     }
 })();

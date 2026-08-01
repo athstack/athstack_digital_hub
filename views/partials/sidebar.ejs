@@ -9,41 +9,41 @@
             <% } %>
         </div>
         <div class="ms-3">
-            <h6 class="mb-0 text-white"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'User' %></h6>
-            <small class="text-white-50">Customer Account</small>
+            <h6 class="mb-0 text-white"><%= user ? formatDisplayName(user.firstName, user.lastName) : t('dashboard:sidebar.defaultUser') %></h6>
+            <small class="text-white-50"><%= t('dashboard:sidebar.accountType') %></small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
         <a class="nav-link rounded<%= currentPath === '/dashboard' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard">
-            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+            <i class="fa-solid fa-gauge-high me-2"></i> <%= t('dashboard:sidebar.dashboard') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/orders">
-            <i class="fa-solid fa-receipt me-2"></i> My Orders
+            <i class="fa-solid fa-receipt me-2"></i> <%= t('dashboard:sidebar.orders') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/repairs">
-            <i class="fa-solid fa-wrench me-2"></i> My Repairs
+            <i class="fa-solid fa-wrench me-2"></i> <%= t('dashboard:sidebar.repairs') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/training">
-            <i class="fa-solid fa-graduation-cap me-2"></i> My Courses
+            <i class="fa-solid fa-graduation-cap me-2"></i> <%= t('dashboard:sidebar.training') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/wishlist' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/wishlist">
-            <i class="fa-solid fa-heart me-2"></i> Wishlist
+            <i class="fa-solid fa-heart me-2"></i> <%= t('dashboard:sidebar.wishlist') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/reviews' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/reviews">
-            <i class="fa-solid fa-star me-2"></i> My Reviews
+            <i class="fa-solid fa-star me-2"></i> <%= t('dashboard:sidebar.reviews') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/messages' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/messages">
-            <i class="fa-solid fa-envelope me-2"></i> My Messages
+            <i class="fa-solid fa-envelope me-2"></i> <%= t('dashboard:sidebar.messages') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/dashboard/profile' ? ' text-primary bg-primary bg-opacity-10' : ' text-muted' %>" href="/dashboard/profile">
-            <i class="fa-solid fa-user-pen me-2"></i> Profile
+            <i class="fa-solid fa-user-pen me-2"></i> <%= t('dashboard:sidebar.profile') %>
         </a>
         <hr class="border-secondary opacity-25 my-2">
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
             <button type="submit" class="nav-link rounded text-muted w-100 text-start border-0 bg-transparent">
-                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                <i class="fa-solid fa-right-from-bracket me-2"></i> <%= t('dashboard:sidebar.logout') %>
             </button>
         </form>
     </nav>

@@ -1,0 +1,34 @@
+{
+  "index": {
+    "title": "About Us - TechBridge Digital Hub",
+    "heading": "Engineering the Future of Tech Solutions",
+    "intro": "We are a forward-thinking technology company dedicated to providing premium hardware solutions, expert maintenance services, and professional engineering training.",
+    "mission": {
+      "title": "Our Mission",
+      "text": "To deliver enterprise-grade technology solutions that empower businesses and individuals across Africa, bridging the gap between innovation and practical implementation."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "text": "To be East Africa's leading technology hub, known for our quality products, reliable maintenance services, and world-class technical training programs."
+    },
+    "values": {
+      "title": "Our Values",
+      "text": "Integrity, excellence, and customer-centricity drive everything we do. We believe in building lasting relationships through quality service and transparent operations."
+    },
+    "whoWeAre": {
+      "badge": "Who We Are",
+      "heading": "Engineering the Future of Tech Provisioning",
+      "paragraph1": "TechBridge Digital Hub was founded with a singular vision: to create a unified platform where businesses and individuals can access premium technology products, reliable maintenance services, and comprehensive technical training.",
+      "paragraph2": "Our team of certified engineers and technical specialists brings decades of combined experience in hardware procurement, system diagnostics, enterprise IT infrastructure, and professional training.",
+      "paragraph3": "From corporate device procurement to hands-on technical training, we deliver solutions that keep your operations running at peak performance.",
+      "visitShop": "Visit Shop",
+      "contactUs": "Contact Us"
+    },
+    "stats": {
+      "clientsServed": "Clients Served",
+      "repairsCompleted": "Repairs Completed",
+      "trainingGraduates": "Training Graduates",
+      "yearsExperience": "Years Experience"
+    }
+  }
+}

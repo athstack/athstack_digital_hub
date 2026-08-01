@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "您的购物车 - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "商品",
+    "subtotal": "小计",
+    "shipping": "运费",
+    "remove": "移除"
+  },
+  "index": {
+    "badge": "购物车",
+    "heading": "您的购物车",
+    "orderSummary": "订单摘要",
+    "subtotalItems": "小计（{{count}} 件商品）",
+    "calculatedAtCheckout": "在结账时计算",
+    "checkout": "去结算",
+    "continueShopping": "继续购物"
+  },
+  "empty": {
+    "heading": "您的购物车是空的",
+    "message": "您似乎还没有添加任何商品。浏览我们的商店，发现高端科技硬件吧。",
+    "browseShop": "浏览商店"
+  },
+  "flash": {
+    "invalidProduct": "无效的商品。",
+    "productNotFound": "商品未找到或已下架。",
+    "itemAdded": "商品已加入购物车。",
+    "itemNotFound": "购物车中未找到该商品。",
+    "cartUpdated": "购物车已更新。",
+    "itemRemoved": "商品已从购物车中移除。",
+    "emptyCart": "您的购物车是空的。",
+    "noValidProducts": "购物车中没有有效商品。",
+    "insufficientStock": "\"{{name}}\" 库存不足，仅剩 {{stock}} 件。",
+    "orderPlaced": "订单 #{{id}} 已成功提交！"
+  },
+  "notification": {
+    "orderPlacedTitle": "订单已提交",
+    "orderPlacedMessage": "您的订单 #{{id}}，金额 {{total}}，已成功提交。",
+    "newOrderTitle": "收到新订单",
+    "newOrderMessage": "订单 #{{id}}，金额 {{total}}，需要处理。"
+  }
+}

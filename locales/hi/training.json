@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "पेशेवर इंजीनियरिंग अकादमी - TechBridge Digital Hub",
+    "badge": "पेशेवर इंजीनियरिंग अकादमी",
+    "heading": "प्रशिक्षण और प्रमाणन",
+    "intro": "विशेषज्ञ-नेतृत्व वाले तकनीकी कोर्स और पेशेवर प्रमाणन कार्यक्रमों के साथ अपने करियर को आगे बढ़ाएं।",
+    "levelBeginner": "शुरुआती",
+    "emptyTitle": "कोर्स जल्द आ रहे हैं",
+    "emptyText": "हम रोमांचक नए प्रशिक्षण कार्यक्रम तैयार कर रहे हैं। जल्द वापस आएं।",
+    "flashes": {
+      "courseNotFound": "कोर्स नहीं मिला।",
+      "invalidCourse": "अमान्य कोर्स।",
+      "loginRequired": "कोर्स में नामांकन के लिए कृपया लॉगिन करें।",
+      "alreadyEnrolled": "आप पहले से ही इस कोर्स में नामांकित हैं।",
+      "courseFull": "इस कोर्स में अधिकतम नामांकन हो चुका है।",
+      "enrollSuccess": "आप \"{{courseTitle}}\" में नामांकित हो गए हैं।",
+      "enrollFailed": "नामांकन विफल। कृपया पुनः प्रयास करें।"
+    },
+    "notifications": {
+      "title": "कोर्स नामांकन",
+      "message": "आप \"{{courseTitle}}\" में नामांकित हो गए हैं। अभी सीखना शुरू करें!"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "शुरुआती",
+    "enrolledBadge": "नामांकित",
+    "enrolledCount": "{{count}} नामांकित",
+    "studentsCount": "{{count}} छात्र",
+    "aboutThisCourse": "इस कोर्स के बारे में",
+    "descriptionComingSoon": "कोर्स विवरण जल्द उपलब्ध होगा।",
+    "instructorAlt": "प्रशिक्षक",
+    "goToCourse": "कोर्स पर जाएं",
+    "enrollNow": "अभी नामांकन करें",
+    "courseDetails": "कोर्स विवरण"
+  },
+  "words": {
+    "duration": "अवधि",
+    "level": "स्तर",
+    "instructor": "प्रशिक्षक"
+  }
+}

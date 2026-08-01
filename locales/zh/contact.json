@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "联系我们 - TechBridge Digital Hub",
+    "badge": "与我们联系",
+    "heading": "联系我们",
+    "intro": "有问题或需要报价？欢迎联系我们，我们的团队将尽快回复。",
+    "form": {
+      "title": "发送消息",
+      "fullName": "姓名",
+      "emailAddress": "邮箱地址",
+      "countryCode": "国家区号",
+      "phoneNumber": "电话号码",
+      "subject": "主题",
+      "message": "消息内容",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "我们能为您提供什么帮助？",
+      "messagePlaceholder": "请在此处输入您的消息...",
+      "submit": "发送消息",
+      "countries": {
+        "TZ": "坦桑尼亚 (+255)",
+        "KE": "肯尼亚 (+254)",
+        "UG": "乌干达 (+256)",
+        "RW": "卢旺达 (+250)",
+        "BI": "布隆迪 (+257)",
+        "ZA": "南非 (+27)",
+        "US": "美国/加拿大 (+1)",
+        "GB": "英国 (+44)",
+        "DE": "德国 (+49)",
+        "FR": "法国 (+33)",
+        "AU": "澳大利亚 (+61)",
+        "CN": "中国 (+86)",
+        "IN": "印度 (+91)",
+        "AE": "阿联酋 (+971)",
+        "NG": "尼日利亚 (+234)"
+      }
+    },
+    "info": {
+      "title": "联系信息",
+      "officeAddress": "办公地址",
+      "address": "坦桑尼亚姆贝亚",
+      "businessHours": "营业时间"
+    },
+    "social": {
+      "title": "关注我们",
+      "intro": "在社交媒体上关注我们，获取最新动态。",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "姓名、邮箱和消息内容为必填项。",
+      "loginRequired": "请先创建账户再发送您的消息。",
+      "success": "您的消息已发送，我们将尽快回复您。"
+    },
+    "notifications": {
+      "newMessage": "新的联系消息",
+      "sentMessage": "{{name}} 发送了一条消息",
+      "sentMessageWithSubject": "{{name}} 发送了一条消息：{{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "请填写姓名",
+    "nameLength": "姓名必须为 2 到 100 个字符",
+    "emailRequired": "请填写邮箱",
+    "emailInvalid": "请输入有效的邮箱地址",
+    "phoneInvalid": "请输入有效的电话号码",
+    "phoneDigits": "电话号码必须为 7 到 15 位数字",
+    "subjectRequired": "请填写主题",
+    "subjectLength": "主题必须为 3 到 200 个字符",
+    "messageRequired": "请填写消息内容",
+    "messageLength": "消息内容必须为 10 到 5000 个字符"
+  }
+}

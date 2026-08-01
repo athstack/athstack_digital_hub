@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "Enterprise IT Maintenance & Device Repair - TechBridge Digital Hub",
+    "badge": "Device Repair & IT Maintenance",
+    "heading": "Enterprise Maintenance Services",
+    "intro": "Professional diagnostics, repair, and IT maintenance for computers and mobile devices.",
+    "services": {
+      "computerTitle": "Computer Services",
+      "computerSubtitle": "Desktop & laptop repair solutions",
+      "phoneTitle": "Phone Services",
+      "phoneSubtitle": "Mobile device repair & diagnostics",
+      "bookNow": "Book Now",
+      "defaultDescription": "Professional service",
+      "emptyComputer": "Computer services are being configured. Check back soon.",
+      "emptyPhone": "Phone services are being configured. Check back soon."
+    },
+    "form": {
+      "title": "Book a Repair",
+      "intro": "Fill out the form below and our team will get back to you within 24 hours.",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "country": "Country",
+      "selectCountry": "Select your country",
+      "appointmentDate": "Appointment Date",
+      "serviceType": "Service Type",
+      "selectService": "Select a service...",
+      "deviceType": "Device Type",
+      "deviceBrand": "Device Brand",
+      "deviceModel": "Device Model",
+      "issueDescription": "Issue Description",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "Enter a valid phone number",
+      "phoneNumberFallback": "phone number",
+      "brandPlaceholder": "e.g. Apple, Dell, Samsung",
+      "modelPlaceholder": "e.g. MacBook Pro 14",
+      "issuePlaceholder": "Describe what is wrong with your device (e.g., screen won't turn on, unexpected shut downs, water spill...)",
+      "submit": "Submit Repair Request",
+      "countries": {
+        "NG": "Nigeria",
+        "TZ": "Tanzania",
+        "KE": "Kenya",
+        "UG": "Uganda",
+        "ZA": "South Africa",
+        "GH": "Ghana",
+        "EG": "Egypt",
+        "RW": "Rwanda",
+        "ET": "Ethiopia",
+        "CD": "DR Congo",
+        "CM": "Cameroon",
+        "SN": "Senegal",
+        "US": "United States",
+        "GB": "United Kingdom",
+        "IN": "India",
+        "CN": "China"
+      },
+      "deviceTypes": {
+        "laptop": "Laptop",
+        "desktop": "Desktop",
+        "smartphone": "Smartphone",
+        "tablet": "Tablet",
+        "network": "Network Equipment",
+        "other": "Other"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "{{count}} service selected",
+      "servicesSelectedOther": "{{count}} services selected",
+      "proceed": "Proceed to Booking",
+      "clear": "Clear"
+    },
+    "flashes": {
+      "missingFields": "All mandatory fields are required.",
+      "scheduled": "Your maintenance request has been scheduled successfully.",
+      "success": "Maintenance request filed successfully. Reference: {{reference}}"
+    },
+    "notifications": {
+      "title": "Repair Request Filed",
+      "message": "Your repair request {{reference}} has been submitted. We'll get back to you soon."
+    },
+    "errors": {
+      "missingRef": "Reference number is required.",
+      "notFound": "No repair request found with that reference."
+    }
+  }
+}

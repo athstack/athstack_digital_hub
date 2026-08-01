@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "اتصل بنا - TechBridge Digital Hub",
+    "badge": "تواصل معنا",
+    "heading": "اتصل بنا",
+    "intro": "هل لديك سؤال أو تحتاج إلى عرض سعر؟ تواصل معنا وسيرد عليك فريقنا فورًا.",
+    "form": {
+      "title": "أرسل رسالة",
+      "fullName": "الاسم الكامل",
+      "emailAddress": "البريد الإلكتروني",
+      "countryCode": "رمز الدولة",
+      "phoneNumber": "رقم الهاتف",
+      "subject": "الموضوع",
+      "message": "الرسالة",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "كيف يمكننا مساعدتك؟",
+      "messagePlaceholder": "اكتب رسالتك هنا...",
+      "submit": "إرسال الرسالة",
+      "countries": {
+        "TZ": "تنزانيا (+255)",
+        "KE": "كينيا (+254)",
+        "UG": "أوغندا (+256)",
+        "RW": "رواندا (+250)",
+        "BI": "بوروندي (+257)",
+        "ZA": "جنوب أفريقيا (+27)",
+        "US": "الولايات المتحدة/كندا (+1)",
+        "GB": "المملكة المتحدة (+44)",
+        "DE": "ألمانيا (+49)",
+        "FR": "فرنسا (+33)",
+        "AU": "أستراليا (+61)",
+        "CN": "الصين (+86)",
+        "IN": "الهند (+91)",
+        "AE": "الإمارات (+971)",
+        "NG": "نيجيريا (+234)"
+      }
+    },
+    "info": {
+      "title": "معلومات التواصل",
+      "officeAddress": "عنوان المكتب",
+      "address": "مبييا، تنزانيا",
+      "businessHours": "ساعات العمل"
+    },
+    "social": {
+      "title": "تابعنا",
+      "intro": "ابقَ على اتصال عبر وسائل التواصل الاجتماعي لآخر التحديثات.",
+      "facebook": "فيسبوك",
+      "twitter": "تويتر",
+      "instagram": "إنستغرام",
+      "linkedin": "لينكدإن"
+    },
+    "flashes": {
+      "missingFields": "الاسم والبريد الإلكتروني والرسالة مطلوبة.",
+      "loginRequired": "يرجى إنشاء حساب لإرسال رسالتك.",
+      "success": "تم إرسال رسالتك. سوف نعاود التواصل معك قريبًا."
+    },
+    "notifications": {
+      "newMessage": "رسالة تواصل جديدة",
+      "sentMessage": "{{name}} أرسل رسالة",
+      "sentMessageWithSubject": "{{name}} أرسل رسالة: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "الاسم مطلوب",
+    "nameLength": "يجب أن يتراوح الاسم بين 2 و100 حرف",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "يرجى تقديم عنوان بريد إلكتروني صالح",
+    "phoneInvalid": "يرجى تقديم رقم هاتف صالح",
+    "phoneDigits": "يجب أن يتكون رقم الهاتف من 7 إلى 15 رقمًا",
+    "subjectRequired": "الموضوع مطلوب",
+    "subjectLength": "يجب أن يتراوح الموضوع بين 3 و200 حرف",
+    "messageRequired": "الرسالة مطلوبة",
+    "messageLength": "يجب أن يتراوح طول الرسالة بين 10 و5000 حرف"
+  }
+}

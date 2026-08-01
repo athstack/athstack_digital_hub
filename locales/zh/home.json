@@ -1,0 +1,43 @@
+{
+  "index": {
+    "title": "首页 - TechBridge Digital Hub",
+    "heroBadge": "欢迎来到 TechBridge Digital Hub",
+    "heroTitle1": "先进工程与",
+    "heroTitle2": "硬件解决方案",
+    "heroSubtitle": "为高端科技硬件采购、企业设备诊断和精英技术系统教学提供的一站式管道。",
+    "exploreShop": "浏览商店",
+    "bookDiagnostic": "预约检测",
+    "trainingAcademy": "培训学院",
+    "stats": {
+      "customers": "活跃客户",
+      "products": "科技产品",
+      "courses": "培训课程",
+      "repairs": "已完成维修"
+    },
+    "services": {
+      "badge": "我们的服务",
+      "title": "端到端科技解决方案",
+      "desc": "以性能、可靠性和增长为导向打造的综合性技术服务。",
+      "shopTitle": "科技商店",
+      "shopDesc": "精选高性能高端硬件、配件和企业级设备。",
+      "browseProducts": "浏览产品",
+      "maintenanceTitle": "维护与维修",
+      "maintenanceDesc": "专业的设备检测、系统维修和企业级 IT 维护管道。",
+      "bookRepair": "预约维修",
+      "trainingDesc": "专业的工程课程和技术认证项目。",
+      "exploreCourses": "浏览课程"
+    },
+    "featured": {
+      "badge": "精选产品",
+      "title": "高端科技硬件"
+    },
+    "courses": {
+      "title": "最新课程"
+    },
+    "cta": {
+      "title": "准备好开始了吗？",
+      "desc": "加入 TechBridge Digital Hub，畅享高端科技产品、专业维修和职业培训服务。",
+      "contactSales": "联系销售"
+    }
+  }
+}

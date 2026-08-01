@@ -1,0 +1,42 @@
+{
+  "index": {
+    "title": "专业工程培训学院 - TechBridge Digital Hub",
+    "badge": "专业工程培训学院",
+    "heading": "培训与认证",
+    "intro": "通过专家授课的技术课程和专业认证项目，助力您的职业发展。",
+    "levelBeginner": "入门",
+    "emptyTitle": "课程即将上线",
+    "emptyText": "我们正在筹备令人期待的全新培训项目，请稍后再来。",
+    "flashes": {
+      "courseNotFound": "课程未找到。",
+      "invalidCourse": "无效的课程。",
+      "loginRequired": "请登录后再报名课程。",
+      "alreadyEnrolled": "您已报名此课程。",
+      "courseFull": "此课程已达到报名人数上限。",
+      "enrollSuccess": "您已成功报名 \"{{courseTitle}}\"。",
+      "enrollFailed": "报名失败，请重试。"
+    },
+    "notifications": {
+      "title": "课程报名",
+      "message": "您已成功报名 \"{{courseTitle}}\"。立即开始学习吧！"
+    }
+  },
+  "view": {
+    "title": "{{courseTitle}} - TechBridge Digital Hub",
+    "levelBeginner": "入门",
+    "enrolledBadge": "已报名",
+    "enrolledCount": "{{count}} 人已报名",
+    "studentsCount": "{{count}} 名学员",
+    "aboutThisCourse": "关于本课程",
+    "descriptionComingSoon": "课程描述即将上线。",
+    "instructorAlt": "讲师",
+    "goToCourse": "进入课程",
+    "enrollNow": "立即报名",
+    "courseDetails": "课程详情"
+  },
+  "words": {
+    "duration": "时长",
+    "level": "难度",
+    "instructor": "讲师"
+  }
+}

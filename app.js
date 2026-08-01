@@ -150,6 +150,12 @@ app.use(session({
 app.use(flash());
 
 // ---------------------------------------------------------------------------
+// Internationalization (language detection + template locals)
+// ---------------------------------------------------------------------------
+const { i18nMiddleware } = require('./middleware/i18n');
+app.use(i18nMiddleware);
+
+// ---------------------------------------------------------------------------
 // Global template variables + CSRF + user attachment
 // ---------------------------------------------------------------------------
 app.use(attachUser);
@@ -210,6 +216,7 @@ app.use((req, res, next) => {
 // ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
+app.use('/', require('./routes/language'));
 app.use('/', require('./routes/home'));
 app.use('/about', require('./routes/about'));
 app.use('/contact', require('./routes/contact'));
@@ -230,7 +237,7 @@ app.use('/user', (req, res) => res.redirect('/dashboard'));
 // ---------------------------------------------------------------------------
 app.use((req, res) => {
   res.status(404).render('404', {
-    title: '404 - Page Not Found'
+    title: req.t('common:notFound.title')
   });
 });
 

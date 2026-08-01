@@ -22,7 +22,7 @@ exports.getContact = async (req, res, next) => {
       }
     }
     res.render('contact/index', {
-      title: 'Contact Us - TechBridge Digital Hub',
+      title: req.t('contact:index.title'),
       status,
       userPhone,
       userPhoneCode,
@@ -50,14 +50,14 @@ exports.sendMessage = async (req, res, next) => {
     };
 
     if (!data.name || !data.email || !data.message) {
-      req.flash('error', 'Name, email, and message are required.');
+      req.flash('error', req.t('contact:index.flashes.missingFields'));
       return res.redirect('/contact');
     }
 
     if (!req.session.userId) {
       req.session.pendingMessage = data;
       req.session.returnTo = '/contact?status=pending';
-      req.flash('info', 'Please create an account to send your message.');
+      req.flash('info', req.t('contact:index.flashes.loginRequired'));
       return res.redirect('/auth/register');
     }
 
@@ -65,12 +65,14 @@ exports.sendMessage = async (req, res, next) => {
 
     const msg = await ContactModel.create(data);
     NotificationModel.notifyAdmins({
-      title: 'New Contact Message',
-      message: `${data.name} sent a message${data.subject ? ': ' + data.subject : ''}`,
+      title: req.t('contact:index.notifications.newMessage'),
+      message: data.subject
+        ? req.t('contact:index.notifications.sentMessageWithSubject', { name: data.name, subject: data.subject })
+        : req.t('contact:index.notifications.sentMessage', { name: data.name }),
       type: 'contact',
       link: '/admin/inbox'
     }).catch(() => {});
-    req.flash('success', 'Your message has been sent. We will get back to you shortly.');
+    req.flash('success', req.t('contact:index.flashes.success'));
     res.redirect('/contact?status=success');
   } catch (err) {
     next(err);

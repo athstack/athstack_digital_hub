@@ -5,17 +5,17 @@ const { processReviewImages } = require('../helpers/reviewImages');
 
 const { MAX_REVIEW_IMAGES, COMMENT_MIN, COMMENT_MAX, TITLE_MAX } = ReviewModel;
 
-function validateReviewFields({ rating, title, comment }) {
+function validateReviewFields({ rating, title, comment }, t) {
   const errors = [];
   if (rating !== undefined && rating !== null) {
     const r = parseInt(rating, 10);
-    if (isNaN(r) || r < 1 || r > 5) errors.push('Please select a rating between 1 and 5.');
+    if (isNaN(r) || r < 1 || r > 5) errors.push(t('shop:reviewValidation.ratingRange'));
   }
   const text = String(comment === undefined || comment === null ? '' : comment).trim();
-  if (text.length < COMMENT_MIN) errors.push(`Your review must be at least ${COMMENT_MIN} characters.`);
-  if (text.length > COMMENT_MAX) errors.push(`Your review must be under ${COMMENT_MAX} characters.`);
+  if (text.length < COMMENT_MIN) errors.push(t('shop:reviewValidation.minChars', { min: COMMENT_MIN }));
+  if (text.length > COMMENT_MAX) errors.push(t('shop:reviewValidation.maxChars', { max: COMMENT_MAX }));
   if (title !== undefined && title !== null && String(title).trim().length > TITLE_MAX) {
-    errors.push(`Review title must be under ${TITLE_MAX} characters.`);
+    errors.push(t('shop:reviewValidation.titleMax', { max: TITLE_MAX }));
   }
   return { rating: r, errors };
 }
@@ -26,7 +26,7 @@ exports.submitProductReview = async (req, res, next) => {
     const userId = req.session.userId;
     const { rating, title, comment } = req.body;
 
-    const { errors } = validateReviewFields({ rating, title, comment });
+    const { errors } = validateReviewFields({ rating, title, comment }, req.t);
     if (errors.length) {
       req.flash('error', errors[0]);
       return res.redirect(req.get('Referrer') || `/shop/${req.query.slug || ''}`);
@@ -34,17 +34,17 @@ exports.submitProductReview = async (req, res, next) => {
 
     const product = await ProductModel.findById(productId);
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('shop:flash.productNotFound'));
       return res.redirect('/shop');
     }
 
     const eligibility = await ReviewModel.getEligibilityForProduct(userId, productId);
     if (!eligibility.hasPurchased) {
-      req.flash('error', 'You can only review products you have purchased and received. Please shop with us first!');
+      req.flash('error', req.t('shop:flash.notPurchased'));
       return res.redirect(`/shop/${product.slug}#reviews`);
     }
     if (eligibility.hasReviewed) {
-      req.flash('info', 'You have already reviewed this product. You can edit your existing review.');
+      req.flash('info', req.t('shop:flash.alreadyReviewed'));
       return res.redirect(`/dashboard/reviews/${eligibility.review.id}/edit`);
     }
 
@@ -70,7 +70,7 @@ exports.submitProductReview = async (req, res, next) => {
       link: '/admin/reviews?status=pending'
     });
 
-    req.flash('success', 'Thank you! Your review has been submitted and is pending approval.');
+    req.flash('success', req.t('shop:flash.submitted'));
     res.redirect(`/shop/${product.slug}#reviews`);
   } catch (err) {
     next(err);
@@ -83,7 +83,7 @@ exports.editProductReview = async (req, res, next) => {
     const userId = req.session.userId;
     const { rating, title, comment, remove_images } = req.body;
 
-    const { rating: safeRating, errors } = validateReviewFields({ rating, title, comment });
+    const { rating: safeRating, errors } = validateReviewFields({ rating, title, comment }, req.t);
     if (errors.length) {
       req.flash('error', errors[0]);
       return res.redirect(req.get('Referrer') || '/dashboard/reviews');
@@ -91,7 +91,7 @@ exports.editProductReview = async (req, res, next) => {
 
     const review = await ReviewModel.getOwnedById(userId, parseInt(req.params.reviewId || 0));
     if (!review || review.product_id !== productId) {
-      req.flash('error', 'Review not found.');
+      req.flash('error', req.t('shop:flash.reviewNotFound'));
       return res.redirect('/dashboard/reviews');
     }
 
@@ -117,7 +117,7 @@ exports.editProductReview = async (req, res, next) => {
       await ReviewModel.updateProductRating(review.product_id);
     }
 
-    req.flash('success', 'Your review has been updated.');
+    req.flash('success', req.t('shop:flash.updated'));
     res.redirect('/dashboard/reviews');
   } catch (err) {
     next(err);
@@ -128,7 +128,7 @@ exports.toggleHelpful = async (req, res, next) => {
   try {
     const reviewId = parseInt(req.params.id);
     const userId = req.session.userId;
-    if (!userId) return res.status(401).json({ error: 'Please log in to mark reviews as helpful.' });
+    if (!userId) return res.status(401).json({ error: req.t('shop:flash.loginHelpful') });
 
     const result = await ReviewModel.toggleHelpful(reviewId, userId);
     res.json({ success: true, ...result });
@@ -141,12 +141,12 @@ exports.reportReview = async (req, res, next) => {
   try {
     const reviewId = parseInt(req.params.id);
     const userId = req.session.userId || null;
-    const reason = String(req.body.reason || '').trim().slice(0, 255) || 'Inappropriate content';
+    const reason = String(req.body.reason || '').trim().slice(0, 255) || req.t('shop:flash.defaultReportReason');
 
-    if (!userId) return res.status(401).json({ error: 'Please log in to report a review.' });
+    if (!userId) return res.status(401).json({ error: req.t('shop:flash.loginReport') });
 
     const review = await ReviewModel.getById(reviewId);
-    if (!review) return res.status(404).json({ error: 'Review not found.' });
+    if (!review) return res.status(404).json({ error: req.t('shop:flash.reviewNotFound') });
 
     await ReviewModel.report(reviewId, userId, reason);
 
@@ -157,7 +157,7 @@ exports.reportReview = async (req, res, next) => {
       link: '/admin/reviews?reported=1'
     });
 
-    res.json({ success: true, message: 'Thank you. This review has been flagged for review.' });
+    res.json({ success: true, message: req.t('shop:flash.reportSubmitted') });
   } catch (err) {
     next(err);
   }
@@ -215,7 +215,7 @@ exports.submitTechReview = async (req, res, next) => {
     const userId = req.session.userId;
     const { rating, comment } = req.body;
 
-    const { errors } = validateReviewFields({ rating, title: null, comment });
+    const { errors } = validateReviewFields({ rating, title: null, comment }, req.t);
     if (errors.length) {
       req.flash('error', errors[0]);
       return res.redirect('back');
@@ -230,7 +230,7 @@ exports.submitTechReview = async (req, res, next) => {
       status: 'pending'
     });
 
-    req.flash('success', 'Thank you! Your review has been submitted and is pending approval.');
+    req.flash('success', req.t('shop:flash.submitted'));
     res.redirect('back');
   } catch (err) {
     next(err);
@@ -243,7 +243,7 @@ exports.submitServiceReview = async (req, res, next) => {
     const userId = req.session.userId;
     const { rating, comment } = req.body;
 
-    const { errors } = validateReviewFields({ rating, title: null, comment });
+    const { errors } = validateReviewFields({ rating, title: null, comment }, req.t);
     if (errors.length) {
       req.flash('error', errors[0]);
       return res.redirect('back');
@@ -258,7 +258,7 @@ exports.submitServiceReview = async (req, res, next) => {
       status: 'pending'
     });
 
-    req.flash('success', 'Thank you! Your review has been submitted and is pending approval.');
+    req.flash('success', req.t('shop:flash.submitted'));
     res.redirect('/dashboard/repairs');
   } catch (err) {
     next(err);

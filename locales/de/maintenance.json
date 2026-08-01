@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "Unternehmens-IT-Wartung & Gerätereparatur - TechBridge Digital Hub",
+    "badge": "Gerätereparatur & IT-Wartung",
+    "heading": "Wartungsdienste für Unternehmen",
+    "intro": "Professionelle Diagnose, Reparatur und IT-Wartung für Computer und Mobilgeräte.",
+    "services": {
+      "computerTitle": "Computerdienste",
+      "computerSubtitle": "Desktop- & Laptop-Reparaturservices",
+      "phoneTitle": "Telefondienste",
+      "phoneSubtitle": "Reparatur & Diagnose für Mobilgeräte",
+      "bookNow": "Jetzt buchen",
+      "defaultDescription": "Professioneller Service",
+      "emptyComputer": "Computerdienste werden derzeit eingerichtet. Schauen Sie bald wieder vorbei.",
+      "emptyPhone": "Telefondienste werden derzeit eingerichtet. Schauen Sie bald wieder vorbei."
+    },
+    "form": {
+      "title": "Reparatur buchen",
+      "intro": "Füllen Sie das untenstehende Formular aus – unser Team meldet sich innerhalb von 24 Stunden bei Ihnen.",
+      "fullName": "Vollständiger Name",
+      "emailAddress": "E-Mail-Adresse",
+      "phoneNumber": "Telefonnummer",
+      "country": "Land",
+      "selectCountry": "Land auswählen",
+      "appointmentDate": "Termindatum",
+      "serviceType": "Leistungsart",
+      "selectService": "Leistung auswählen...",
+      "deviceType": "Gerätetyp",
+      "deviceBrand": "Gerätemarke",
+      "deviceModel": "Gerätemodell",
+      "issueDescription": "Problembeschreibung",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "Geben Sie eine gültige Telefonnummer ein",
+      "phoneNumberFallback": "Telefonnummer",
+      "brandPlaceholder": "z. B. Apple, Dell, Samsung",
+      "modelPlaceholder": "z. B. MacBook Pro 14",
+      "issuePlaceholder": "Beschreiben Sie, was mit Ihrem Gerät nicht stimmt (z. B. Bildschirm schaltet sich nicht ein, unerwartete Abschaltungen, Wasserschaden...)",
+      "submit": "Reparaturanfrage absenden",
+      "countries": {
+        "NG": "Nigeria",
+        "TZ": "Tansania",
+        "KE": "Kenia",
+        "UG": "Uganda",
+        "ZA": "Südafrika",
+        "GH": "Ghana",
+        "EG": "Ägypten",
+        "RW": "Ruanda",
+        "ET": "Äthiopien",
+        "CD": "DR Kongo",
+        "CM": "Kamerun",
+        "SN": "Senegal",
+        "US": "Vereinigte Staaten",
+        "GB": "Vereinigtes Königreich",
+        "IN": "Indien",
+        "CN": "China"
+      },
+      "deviceTypes": {
+        "laptop": "Laptop",
+        "desktop": "Desktop",
+        "smartphone": "Smartphone",
+        "tablet": "Tablet",
+        "network": "Netzwerkausrüstung",
+        "other": "Sonstiges"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "{{count}} Dienst ausgewählt",
+      "servicesSelectedOther": "{{count}} Dienste ausgewählt",
+      "proceed": "Zur Buchung",
+      "clear": "Löschen"
+    },
+    "flashes": {
+      "missingFields": "Alle Pflichtfelder sind erforderlich.",
+      "scheduled": "Ihre Wartungsanfrage wurde erfolgreich geplant.",
+      "success": "Wartungsanfrage erfolgreich eingereicht. Referenz: {{reference}}"
+    },
+    "notifications": {
+      "title": "Reparaturanfrage eingereicht",
+      "message": "Ihre Reparaturanfrage {{reference}} wurde übermittelt. Wir melden uns in Kürze bei Ihnen."
+    },
+    "errors": {
+      "missingRef": "Referenznummer ist erforderlich.",
+      "notFound": "Keine Reparaturanfrage mit dieser Referenz gefunden."
+    }
+  }
+}

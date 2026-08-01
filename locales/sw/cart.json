@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "Kikapu Chako cha Ununuzi - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "Bidhaa",
+    "subtotal": "Jumla Ndogo",
+    "shipping": "Usafirishaji",
+    "remove": "Ondoa"
+  },
+  "index": {
+    "badge": "Kikapu cha Ununuzi",
+    "heading": "Kikapu Chako",
+    "orderSummary": "Muhtasari wa Oda",
+    "subtotalItems": "Jumla Ndogo (vitu {{count}})",
+    "calculatedAtCheckout": "Inakokotolewa wakati wa malipo",
+    "checkout": "Endelea na Malipo",
+    "continueShopping": "Endelea Kununua"
+  },
+  "empty": {
+    "heading": "Kikapu Chako Kiko Tupu",
+    "message": "Inaonekana hujaongeza bidhaa zozote bado. Vinjari duka letu kupata vifaa bora vya teknolojia.",
+    "browseShop": "Vinjari Duka"
+  },
+  "flash": {
+    "invalidProduct": "Bidhaa batili.",
+    "productNotFound": "Bidhaa haipatikani au haipo.",
+    "itemAdded": "Bidhaa imeongezwa kwenye kikapu.",
+    "itemNotFound": "Bidhaa haipatikani kwenye kikapu.",
+    "cartUpdated": "Kikapu kimesasishwa.",
+    "itemRemoved": "Bidhaa imeondolewa kwenye kikapu.",
+    "emptyCart": "Kikapu chako kiko tupu.",
+    "noValidProducts": "Hakuna bidhaa halali kwenye kikapu.",
+    "insufficientStock": "Hisa haitoshi kwa \"{{name}}\". Zipo {{stock}} tu.",
+    "orderPlaced": "Oda #{{id}} imewekwa kwa mafanikio!"
+  },
+  "notification": {
+    "orderPlacedTitle": "Oda Imewekwa",
+    "orderPlacedMessage": "Oda yako #{{id}} ya {{total}} imewekwa kwa mafanikio.",
+    "newOrderTitle": "Oda Mpya Imepokelewa",
+    "newOrderMessage": "Oda #{{id}} ya {{total}} inahitaji kuchakatwa."
+  }
+}

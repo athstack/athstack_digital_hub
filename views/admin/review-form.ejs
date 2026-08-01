@@ -8,8 +8,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <a href="/admin/reviews" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-star me-2 text-warning"></i>Edit Review</h2>
+                    <a href="/admin/reviews" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-arrow-left me-1"></i><%= t('common:words.back') %></a>
+                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('admin:reviewForm.heading') %></h2>
                 </div>
 
                 <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
@@ -43,11 +43,11 @@
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">User ID</label>
+                                <label class="form-label"><%= t('admin:reviews.userId') %></label>
                                 <input type="number" name="user_id" class="form-control" value="<%= review.user_id %>" readonly>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Product</label>
+                                <label class="form-label"><%= t('admin:words.product') %></label>
                                 <select name="product_id" class="form-select">
                                     <% if (products && products.length > 0) { %>
                                     <% products.forEach(p => { %>
@@ -57,50 +57,50 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Rating</label>
+                                <label class="form-label"><%= t('admin:words.rating') %></label>
                                 <select name="rating" class="form-select">
                                     <% for (let i = 1; i <= 5; i++) { %>
-                                    <option value="<%= i %>"<%= i === review.rating ? ' selected' : '' %>><%= i %> Star<%= i > 1 ? 's' : '' %></option>
+                                    <option value="<%= i %>"<%= i === review.rating ? ' selected' : '' %>><%= t('admin:reviews.stars', {count: i}) %></option>
                                     <% } %>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Type</label>
+                                <label class="form-label"><%= t('admin:words.type') %></label>
                                 <select name="type" class="form-select">
-                                    <option value="product"<%= review.type === 'product' ? ' selected' : '' %>>Product</option>
-                                    <option value="technician"<%= review.type === 'technician' ? ' selected' : '' %>>Technician</option>
-                                    <option value="service"<%= review.type === 'service' ? ' selected' : '' %>>Service</option>
+                                    <option value="product"<%= review.type === 'product' ? ' selected' : '' %>><%= t('admin:reviews.typeProduct') %></option>
+                                    <option value="technician"<%= review.type === 'technician' ? ' selected' : '' %>><%= t('admin:reviews.typeTechnician') %></option>
+                                    <option value="service"<%= review.type === 'service' ? ' selected' : '' %>><%= t('admin:reviews.typeService') %></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Status</label>
+                                <label class="form-label"><%= t('common:words.status') %></label>
                                 <select name="status" class="form-select">
-                                    <option value="pending"<%= review.status === 'pending' ? ' selected' : '' %>>Pending</option>
-                                    <option value="approved"<%= review.status === 'approved' ? ' selected' : '' %>>Approved</option>
-                                    <option value="rejected"<%= review.status === 'rejected' ? ' selected' : '' %>>Rejected</option>
+                                    <option value="pending"<%= review.status === 'pending' ? ' selected' : '' %>><%= t('admin:status.pending') %></option>
+                                    <option value="approved"<%= review.status === 'approved' ? ' selected' : '' %>><%= t('admin:status.approved') %></option>
+                                    <option value="rejected"<%= review.status === 'rejected' ? ' selected' : '' %>><%= t('admin:status.rejected') %></option>
                                 </select>
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Title</label>
-                                <input type="text" name="title" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="Review title (optional)">
+                                <label class="form-label"><%= t('admin:words.title') %></label>
+                                <input type="text" name="title" class="form-control" maxlength="120" value="<%= review.title || '' %>" placeholder="<%= t('admin:reviews.titleOptional') %>">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Comment</label>
+                                <label class="form-label"><%= t('admin:words.comment') %></label>
                                 <textarea name="comment" class="form-control" rows="4"><%= review.comment || '' %></textarea>
                             </div>
 
                             <div class="col-12">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="is_verified" id="isVerifiedToggle" value="1"<%= review.is_verified ? ' checked' : '' %>>
-                                    <label class="form-check-label text-white-50" for="isVerifiedToggle"><i class="fa-solid fa-circle-check me-1 text-success"></i>Verified Purchase</label>
+                                    <label class="form-check-label text-white-50" for="isVerifiedToggle"><i class="fa-solid fa-circle-check me-1 text-success"></i><%= t('admin:reviewForm.verifiedPurchase') %></label>
                                 </div>
                             </div>
 
                             <div class="col-12 d-flex gap-2 justify-content-end">
-                                <a href="/admin/reviews" class="btn btn-premium-outline rounded-pill">Cancel</a>
-                                <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i>Save Changes</button>
+                                <a href="/admin/reviews" class="btn btn-premium-outline rounded-pill"><%= t('common:words.cancel') %></a>
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('common:words.saveChanges') %></button>
                             </div>
                         </div>
                     </form>

@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "Your Shopping Cart - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "Product",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "remove": "Remove"
+  },
+  "index": {
+    "badge": "Shopping Cart",
+    "heading": "Your Cart",
+    "orderSummary": "Order Summary",
+    "subtotalItems": "Subtotal ({{count}} items)",
+    "calculatedAtCheckout": "Calculated at checkout",
+    "checkout": "Proceed to Checkout",
+    "continueShopping": "Continue Shopping"
+  },
+  "empty": {
+    "heading": "Your Cart is Empty",
+    "message": "Looks like you haven't added any products yet. Browse our shop to find premium tech hardware.",
+    "browseShop": "Browse Shop"
+  },
+  "flash": {
+    "invalidProduct": "Invalid product.",
+    "productNotFound": "Product not found or unavailable.",
+    "itemAdded": "Item added to cart.",
+    "itemNotFound": "Item not found in cart.",
+    "cartUpdated": "Cart updated.",
+    "itemRemoved": "Item removed from cart.",
+    "emptyCart": "Your cart is empty.",
+    "noValidProducts": "No valid products in cart.",
+    "insufficientStock": "Insufficient stock for \"{{name}}\". Only {{stock}} available.",
+    "orderPlaced": "Order #{{id}} placed successfully!"
+  },
+  "notification": {
+    "orderPlacedTitle": "Order Placed",
+    "orderPlacedMessage": "Your order #{{id}} for {{total}} has been placed successfully.",
+    "newOrderTitle": "New Order Received",
+    "newOrderMessage": "Order #{{id}} for {{total}} needs processing."
+  }
+}

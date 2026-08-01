@@ -16,29 +16,29 @@
     </div>
     <div class="d-flex align-items-center px-2 mb-2">
         <div>
-            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'Technician' %></h6>
-            <small class="text-white-50" style="font-size:11px;">Technician Panel</small>
+            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : t('technician:sidebar.technician') %></h6>
+            <small class="text-white-50" style="font-size:11px;"><%= t('technician:sidebar.panel') %></small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
         <a class="nav-link rounded<%= currentPath === '/technician' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician">
-            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+            <i class="fa-solid fa-gauge-high me-2"></i> <%= t('technician:sidebar.dashboard') %>
         </a>
         <a class="nav-link rounded<%= currentPath.startsWith('/technician/products') ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/products">
-            <i class="fa-solid fa-box-open me-2"></i> My Products
+            <i class="fa-solid fa-box-open me-2"></i> <%= t('technician:sidebar.products') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/technician/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/repairs">
-            <i class="fa-solid fa-wrench me-2"></i> Repairs
+            <i class="fa-solid fa-wrench me-2"></i> <%= t('technician:sidebar.repairs') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/technician/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/technician/orders">
-            <i class="fa-solid fa-receipt me-2"></i> Orders
+            <i class="fa-solid fa-receipt me-2"></i> <%= t('technician:sidebar.orders') %>
         </a>
         <hr class="border-secondary opacity-25 my-2">
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
             <button type="submit" class="nav-link rounded text-white-50 w-100 text-start border-0 bg-transparent">
-                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                <i class="fa-solid fa-right-from-bracket me-2"></i> <%= t('technician:sidebar.logout') %>
             </button>
         </form>
     </nav>

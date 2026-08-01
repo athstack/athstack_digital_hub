@@ -15,10 +15,10 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Services</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-screwdriver-wrench me-2 text-primary"></i>Manage Services</h2>
+                    <span class="section-badge"><%= t('admin:words.services') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-screwdriver-wrench me-2 text-primary"></i><%= t('admin:services.heading') %></h2>
                     <div class="ms-auto">
-                        <button class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fa-solid fa-plus me-2"></i>Add Service</button>
+                        <button class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fa-solid fa-plus me-2"></i><%= t('admin:services.addService') %></button>
                     </div>
                 </div>
 
@@ -27,18 +27,18 @@
                     <div class="table-responsive">
                         <table class="table table-dark table-hover align-middle mb-0 premium-table">
                             <thead>
-                                <tr><th>Title</th><th>Category</th><th>Price</th><th>Status</th><th class="text-end">Actions</th></tr>
+                                <tr><th><%= t('admin:words.title') %></th><th><%= t('common:words.category') %></th><th><%= t('common:words.price') %></th><th><%= t('common:words.status') %></th><th class="text-end"><%= t('common:words.actions') %></th></tr>
                             </thead>
                             <tbody>
                                 <% services.forEach(service => { %>
                                 <tr>
                                     <td class="text-white fw-bold"><i class="fa-solid <%= service.icon_class || 'fa-tools' %> me-2 text-primary"></i><%= service.title %></td>
-                                    <td><span class="badge bg-secondary rounded-pill"><%= service.category %></span></td>
-                                    <td class="text-white">$<%= parseFloat(service.base_price).toFixed(2) %></td>
-                                    <td><span class="badge bg-<%= service.status === 'active' ? 'success' : 'secondary' %>"><%= service.status %></span></td>
+                                    <td><span class="badge bg-secondary rounded-pill"><%= service.category === 'computer' ? t('admin:words.computer') : t('admin:words.phone') %></span></td>
+                                    <td class="text-white"><%= formatCurrency(service.base_price) %></td>
+                                    <td><span class="badge bg-<%= service.status === 'active' ? 'success' : 'secondary' %>"><%= t('admin:status.' + (service.status||'').toLowerCase(), {defaultValue: service.status}) %></span></td>
                                     <td class="text-end">
                                         <button class="btn btn-sm btn-outline-primary rounded-pill me-1" data-bs-toggle="modal" data-bs-target="#editService<%= service.id %>"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <form method="POST" action="/admin/services/delete/<%= service.id %>" class="d-inline" data-confirm="Delete this service?">
+                                        <form method="POST" action="/admin/services/delete/<%= service.id %>" class="d-inline" data-confirm="<%= t('admin:services.deleteConfirm') %>">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash-can"></i></button>
                                         </form>
@@ -52,8 +52,8 @@
                 <% } else { %>
                 <div class="empty-state glass-card p-5">
                     <i class="fa-solid fa-screwdriver-wrench fa-3x mb-3"></i>
-                    <h5 class="text-white fw-bold">No Services</h5>
-                    <p class="text-white-50">Add repair services to get started.</p>
+                    <h5 class="text-white fw-bold"><%= t('admin:services.noServices') %></h5>
+                    <p class="text-white-50"><%= t('admin:services.noServicesHint') %></p>
                 </div>
                 <% } %>
             </div>
@@ -67,16 +67,16 @@
         <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
             <form method="POST" action="/admin/services/edit/<%= service.id %>">
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Edit Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold"><%= t('admin:services.editService') %></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
-                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>>Computer</option><option value="phone" <%= service.category==='phone'?'selected':'' %>>Phone</option></select></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
-                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
-                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
-                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>>Active</option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>>Inactive</option></select></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:words.title') %></label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.category') %></label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>><%= t('admin:words.computer') %></option><option value="phone" <%= service.category==='phone'?'selected':'' %>><%= t('admin:words.phone') %></option></select></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.description') %></label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:services.basePrice') %></label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:services.iconClass') %></label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.status') %></label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>><%= t('admin:status.active') %></option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>><%= t('admin:status.inactive') %></option></select></div>
                 </div>
-                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Save Changes</button></div>
+                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('common:words.saveChanges') %></button></div>
             </form>
         </div>
     </div>
@@ -88,16 +88,16 @@
         <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
             <form method="POST" action="/admin/services/add">
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold">Add Service</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold"><%= t('admin:services.addService') %></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="computer">Computer</option><option value="phone">Phone</option></select></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
-                    <div class="mb-3"><label class="form-label">Base Price</label><input type="number" name="base_price" class="form-control" step="0.01" required></div>
-                    <div class="mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon_class" class="form-control" value="fa-tools"></div>
-                    <div class="mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:words.title') %></label><input type="text" name="title" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.category') %></label><select name="category" class="form-select"><option value="computer"><%= t('admin:words.computer') %></option><option value="phone"><%= t('admin:words.phone') %></option></select></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.description') %></label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:services.basePrice') %></label><input type="number" name="base_price" class="form-control" step="0.01" required></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:services.iconClass') %></label><input type="text" name="icon_class" class="form-control" value="fa-tools"></div>
+                    <div class="mb-3"><label class="form-label"><%= t('common:words.status') %></label><select name="status" class="form-select"><option value="active"><%= t('admin:status.active') %></option><option value="inactive"><%= t('admin:status.inactive') %></option></select></div>
                 </div>
-                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill">Create Service</button></div>
+                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:services.createService') %></button></div>
             </form>
         </div>
     </div>

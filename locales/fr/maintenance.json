@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "Maintenance informatique d'entreprise et réparation d'appareils - TechBridge Digital Hub",
+    "badge": "Réparation d'appareils et maintenance informatique",
+    "heading": "Services de maintenance d'entreprise",
+    "intro": "Diagnostic professionnel, réparation et maintenance informatique pour ordinateurs et appareils mobiles.",
+    "services": {
+      "computerTitle": "Services informatiques",
+      "computerSubtitle": "Solutions de réparation pour ordinateurs de bureau et portables",
+      "phoneTitle": "Services téléphoniques",
+      "phoneSubtitle": "Réparation et diagnostic d'appareils mobiles",
+      "bookNow": "Réserver maintenant",
+      "defaultDescription": "Service professionnel",
+      "emptyComputer": "Les services informatiques sont en cours de configuration. Revenez bientôt.",
+      "emptyPhone": "Les services téléphoniques sont en cours de configuration. Revenez bientôt."
+    },
+    "form": {
+      "title": "Réserver une réparation",
+      "intro": "Remplissez le formulaire ci-dessous et notre équipe vous répondra sous 24 heures.",
+      "fullName": "Nom complet",
+      "emailAddress": "Adresse e-mail",
+      "phoneNumber": "Numéro de téléphone",
+      "country": "Pays",
+      "selectCountry": "Sélectionnez votre pays",
+      "appointmentDate": "Date de rendez-vous",
+      "serviceType": "Type de service",
+      "selectService": "Sélectionnez un service...",
+      "deviceType": "Type d'appareil",
+      "deviceBrand": "Marque de l'appareil",
+      "deviceModel": "Modèle de l'appareil",
+      "issueDescription": "Description du problème",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "Saisissez un numéro de téléphone valide",
+      "phoneNumberFallback": "numéro de téléphone",
+      "brandPlaceholder": "ex. Apple, Dell, Samsung",
+      "modelPlaceholder": "ex. MacBook Pro 14",
+      "issuePlaceholder": "Décrivez ce qui ne va pas avec votre appareil (ex. écran qui ne s'allume pas, arrêts inattendus, dégât des eaux...)",
+      "submit": "Envoyer la demande de réparation",
+      "countries": {
+        "NG": "Nigeria",
+        "TZ": "Tanzanie",
+        "KE": "Kenya",
+        "UG": "Ouganda",
+        "ZA": "Afrique du Sud",
+        "GH": "Ghana",
+        "EG": "Égypte",
+        "RW": "Rwanda",
+        "ET": "Éthiopie",
+        "CD": "RD Congo",
+        "CM": "Cameroun",
+        "SN": "Sénégal",
+        "US": "États-Unis",
+        "GB": "Royaume-Uni",
+        "IN": "Inde",
+        "CN": "Chine"
+      },
+      "deviceTypes": {
+        "laptop": "Ordinateur portable",
+        "desktop": "Ordinateur de bureau",
+        "smartphone": "Smartphone",
+        "tablet": "Tablette",
+        "network": "Équipement réseau",
+        "other": "Autre"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "{{count}} service sélectionné",
+      "servicesSelectedOther": "{{count}} services sélectionnés",
+      "proceed": "Passer à la réservation",
+      "clear": "Effacer"
+    },
+    "flashes": {
+      "missingFields": "Tous les champs obligatoires sont requis.",
+      "scheduled": "Votre demande de maintenance a été planifiée avec succès.",
+      "success": "Demande de maintenance enregistrée avec succès. Référence : {{reference}}"
+    },
+    "notifications": {
+      "title": "Demande de réparation enregistrée",
+      "message": "Votre demande de réparation {{reference}} a été soumise. Nous vous répondrons bientôt."
+    },
+    "errors": {
+      "missingRef": "Le numéro de référence est requis.",
+      "notFound": "Aucune demande de réparation trouvée avec cette référence."
+    }
+  }
+}

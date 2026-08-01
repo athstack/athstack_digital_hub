@@ -19,8 +19,8 @@
 
     <nav aria-label="breadcrumb" class="product-breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+        <li class="breadcrumb-item"><a href="/"><%= t('common:words.home') %></a></li>
+        <li class="breadcrumb-item"><a href="/shop"><%= t('common:nav.shop') %></a></li>
         <% if (product.category_slug) { %>
         <li class="breadcrumb-item"><a href="/shop?category=<%= product.category_slug %>"><%= product.category_name %></a></li>
         <% } %>
@@ -43,7 +43,7 @@
                  onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';">
             <div class="gallery-zoom-lens" id="galleryZoomLens"></div>
             <div class="gallery-zoom-result" id="galleryZoomResult"></div>
-            <div class="gallery-fullscreen-btn" id="galleryFullscreenBtn" title="View full size" aria-label="Open image fullscreen">
+            <div class="gallery-fullscreen-btn" id="galleryFullscreenBtn" title="<%= t('shop:words.viewFullSize') %>" aria-label="<%= t('shop:words.openFullscreen') %>">
               <i class="fa-solid fa-expand"></i>
             </div>
           </div>
@@ -52,8 +52,8 @@
           </div>
         </div>
 
-        <div class="gallery-thumbnails" id="galleryThumbnails" role="tablist" aria-label="Product image thumbnails">
-          <button class="gallery-thumb active" role="tab" aria-selected="true" aria-label="Main image" data-src="<%= mainImg %>">
+        <div class="gallery-thumbnails" id="galleryThumbnails" role="tablist" aria-label="<%= t('shop:words.imageThumbnails') %>">
+          <button class="gallery-thumb active" role="tab" aria-selected="true" aria-label="<%= t('shop:words.mainImage') %>" data-src="<%= mainImg %>">
             <img src="<%= mainImg %>" alt="" onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';">
           </button>
           <% if (gallery && gallery.length > 0) {
@@ -61,7 +61,7 @@
               var imgSrc = img.image_path ? imageUrl(img.image_path, 'products') : '';
               if (!imgSrc) return;
           %>
-          <button class="gallery-thumb" role="tab" aria-selected="false" aria-label="Gallery image" data-src="<%= imgSrc %>">
+          <button class="gallery-thumb" role="tab" aria-selected="false" aria-label="<%= t('shop:words.galleryImage') %>" data-src="<%= imgSrc %>">
             <img src="<%= imgSrc %>" alt="" loading="lazy" onerror="this.onerror=null;this.src='/uploads/products/no-image.svg';">
           </button>
           <% }); } %>
@@ -70,7 +70,7 @@
 
       <div class="product-detail-info" data-aos="fade-up" data-aos-delay="100">
         <div class="info-meta">
-          <span class="info-category-badge"><%= product.category_name || 'General' %></span>
+          <span class="info-category-badge"><%= product.category_name || t('common:words.general') %></span>
           <span class="info-brand">TechBridge</span>
         </div>
 
@@ -78,21 +78,21 @@
 
         <div class="info-sku-row">
           <% if (product.sku) { %>
-          <span class="info-sku">SKU: <strong><%= product.sku %></strong></span>
+          <span class="info-sku"><%= t('shop:details.sku') %> <strong><%= product.sku %></strong></span>
           <% } %>
         </div>
 
         <div class="info-rating-row">
           <% if (avgRating > 0) { %>
-          <div class="info-rating-stars" aria-label="<%= avgRating.toFixed(1) %> out of 5 stars">
+          <div class="info-rating-stars" aria-label="<%= t('shop:details.ratingAria', { rating: avgRating.toFixed(1) }) %>">
             <% for (var i = 1; i <= 5; i++) { %>
               <i class="<%= i <= Math.round(avgRating) ? 'fa-solid' : 'fa-regular' %> fa-star <%= i <= Math.round(avgRating) ? 'star-filled' : '' %>"></i>
             <% } %>
           </div>
           <span class="info-rating-value"><%= avgRating.toFixed(1) %></span>
-          <span class="info-rating-count">(<%= reviewCount %> Review<%= reviewCount !== 1 ? 's' : '' %>)</span>
+          <span class="info-rating-count">(<%= t('shop:reviews.reviewCount', { count: reviewCount }) %>)</span>
           <% } else if (product.rating && Number(product.rating) > 0) { %>
-          <div class="info-rating-stars" aria-label="<%= Number(product.rating).toFixed(1) %> out of 5 stars">
+          <div class="info-rating-stars" aria-label="<%= t('shop:details.ratingAria', { rating: Number(product.rating).toFixed(1) }) %>">
             <% for (var i = 1; i <= 5; i++) { %>
               <i class="<%= i <= Math.round(Number(product.rating)) ? 'fa-solid' : 'fa-regular' %> fa-star <%= i <= Math.round(Number(product.rating)) ? 'star-filled' : '' %>"></i>
             <% } %>
@@ -100,7 +100,7 @@
           <span class="info-rating-value"><%= Number(product.rating).toFixed(1) %></span>
           <% } %>
           <% if (product.total_sales && product.total_sales > 10) { %>
-          <span class="info-sold"><i class="fa-solid fa-fire"></i> <%= product.total_sales %> sold</span>
+          <span class="info-sold"><i class="fa-solid fa-fire"></i> <%= t('shop:details.sold', { count: product.total_sales }) %></span>
           <% } %>
         </div>
 
@@ -118,7 +118,7 @@
             <span class="info-price-current"><%= formatCurrency(product.discount_price) %></span>
             <span class="info-price-original"><%= formatCurrency(product.price) %></span>
             <span class="info-price-badge">-<%= pctSaved %>%</span>
-            <span class="info-price-save">Save <%= formatCurrency(parseFloat(product.price) - parseFloat(product.discount_price)) %></span>
+            <span class="info-price-save"><%= t('shop:details.save', { amount: formatCurrency(parseFloat(product.price) - parseFloat(product.discount_price)) }) %></span>
           <% } else { %>
             <span class="info-price-current"><%= formatCurrency(product.price) %></span>
           <% } %>
@@ -126,26 +126,26 @@
 
         <div class="info-stock-row">
           <% if (product.stock_quantity > 10) { %>
-          <span class="stock-badge in-stock"><span class="stock-dot"></span> In Stock</span>
+          <span class="stock-badge in-stock"><span class="stock-dot"></span> <%= t('common:words.inStock') %></span>
           <% } else if (product.stock_quantity > 0) { %>
-          <span class="stock-badge low-stock"><span class="stock-dot"></span> Only <%= product.stock_quantity %> left in stock</span>
+          <span class="stock-badge low-stock"><span class="stock-dot"></span> <%= t('shop:details.lowStock', { count: product.stock_quantity }) %></span>
           <% } else { %>
-          <span class="stock-badge out-of-stock"><span class="stock-dot"></span> Out of Stock</span>
+          <span class="stock-badge out-of-stock"><span class="stock-dot"></span> <%= t('common:words.outOfStock') %></span>
           <% } %>
         </div>
 
         <div class="info-meta-row">
           <div class="info-meta-item">
             <i class="fa-solid fa-truck"></i>
-            <span>Free delivery <strong>by <%= deliveryDate ? new Date(deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : 'order now' %></strong></span>
+            <span><%= t('shop:words.freeDelivery') %> <strong><%= deliveryDate ? t('shop:words.deliveryBy', { date: formatDate(deliveryDate, { weekday: 'long', month: 'short', day: 'numeric' }) }) : t('shop:words.orderNow') %></strong></span>
           </div>
           <div class="info-meta-item">
             <i class="fa-solid fa-shield-halved"></i>
-            <span><strong>1-Year</strong> Warranty</span>
+            <span><strong><%= t('shop:words.warrantyShort') %></strong> <%= t('shop:words.warranty') %></span>
           </div>
           <div class="info-meta-item">
             <i class="fa-solid fa-rotate-left"></i>
-            <span><strong>30-Day</strong> Easy Returns</span>
+            <span><strong><%= t('shop:words.returns30') %></strong> <%= t('shop:words.easyReturns') %></span>
           </div>
         </div>
 
@@ -153,13 +153,13 @@
 
         <div class="info-quantity-actions">
           <div class="info-quantity">
-            <label class="quantity-label" for="qtyInput">Quantity</label>
+            <label class="quantity-label" for="qtyInput"><%= t('common:words.quantity') %></label>
             <div class="quantity-stepper">
-              <button type="button" class="qty-btn qty-minus" id="qtyMinus" aria-label="Decrease quantity" <%= product.stock_quantity <= 0 ? 'disabled' : '' %>>
+              <button type="button" class="qty-btn qty-minus" id="qtyMinus" aria-label="<%= t('shop:details.decreaseQty') %>" <%= product.stock_quantity <= 0 ? 'disabled' : '' %>>
                 <i class="fa-solid fa-minus"></i>
               </button>
               <input type="number" id="qtyInput" class="qty-input" value="1" min="1" max="<%= product.stock_quantity || 1 %>" readonly aria-live="polite">
-              <button type="button" class="qty-btn qty-plus" id="qtyPlus" aria-label="Increase quantity" <%= product.stock_quantity <= 0 ? 'disabled' : '' %>>
+              <button type="button" class="qty-btn qty-plus" id="qtyPlus" aria-label="<%= t('shop:details.increaseQty') %>" <%= product.stock_quantity <= 0 ? 'disabled' : '' %>>
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
@@ -171,9 +171,9 @@
               <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
               <input type="hidden" name="product_id" value="<%= product.id %>">
               <input type="hidden" name="quantity" id="cartQtyInput" value="1">
-              <button type="submit" class="btn-action btn-add-to-cart" id="addToCartBtn" aria-label="Add to Cart">
+              <button type="submit" class="btn-action btn-add-to-cart" id="addToCartBtn" aria-label="<%= t('shop:words.addToCart') %>">
                 <i class="fa-solid fa-cart-plus"></i>
-                <span>Add to Cart</span>
+                <span><%= t('shop:words.addToCart') %></span>
               </button>
             </form>
             <form method="POST" action="/cart/add" class="info-action-form buy-now-form" id="buyNowForm">
@@ -181,9 +181,9 @@
               <input type="hidden" name="product_id" value="<%= product.id %>">
               <input type="hidden" name="quantity" id="buyNowQtyInput" value="1">
               <input type="hidden" name="redirect" value="/checkout">
-              <button type="submit" class="btn-action btn-buy-now" id="buyNowBtn" aria-label="Buy Now">
+              <button type="submit" class="btn-action btn-buy-now" id="buyNowBtn" aria-label="<%= t('shop:words.buyNow') %>">
                 <i class="fa-solid fa-bolt"></i>
-                <span>Buy Now</span>
+                <span><%= t('shop:words.buyNow') %></span>
               </button>
             </form>
             <% } %>
@@ -192,12 +192,12 @@
               <form method="POST" action="/dashboard/wishlist/<%= isWishlisted ? 'remove' : 'add' %>" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                 <input type="hidden" name="product_id" value="<%= product.id %>">
-                <button type="submit" class="btn-icon <%= isWishlisted ? 'active' : '' %>" id="wishlistBtn" title="<%= isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist' %>" aria-label="<%= isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist' %>">
+                <button type="submit" class="btn-icon <%= isWishlisted ? 'active' : '' %>" id="wishlistBtn" title="<%= isWishlisted ? t('shop:details.removeWishlist') : t('shop:details.addWishlist') %>" aria-label="<%= isWishlisted ? t('shop:details.removeWishlist') : t('shop:details.addWishlist') %>">
                   <i class="fa-solid fa-heart"></i>
                 </button>
               </form>
               <% } %>
-              <button type="button" class="btn-icon" id="shareBtn" title="Share this product" aria-label="Share this product">
+              <button type="button" class="btn-icon" id="shareBtn" title="<%= t('shop:details.shareProduct') %>" aria-label="<%= t('shop:details.shareProduct') %>">
                 <i class="fa-solid fa-share-nodes"></i>
               </button>
             </div>
@@ -205,12 +205,12 @@
         </div>
 
         <div class="info-trust-badges">
-          <div class="trust-badge"><i class="fa-solid fa-shield-check"></i> Genuine Product</div>
-          <div class="trust-badge"><i class="fa-solid fa-lock"></i> Secure Payment</div>
-          <div class="trust-badge"><i class="fa-solid fa-rocket"></i> Fast Delivery</div>
-          <div class="trust-badge"><i class="fa-solid fa-arrow-rotate-left"></i> Easy Returns</div>
-          <div class="trust-badge"><i class="fa-solid fa-award"></i> Warranty</div>
-          <div class="trust-badge"><i class="fa-solid fa-headset"></i> 24/7 Support</div>
+          <div class="trust-badge"><i class="fa-solid fa-shield-check"></i> <%= t('shop:words.genuineProduct') %></div>
+          <div class="trust-badge"><i class="fa-solid fa-lock"></i> <%= t('shop:words.securePayment') %></div>
+          <div class="trust-badge"><i class="fa-solid fa-rocket"></i> <%= t('shop:words.fastDelivery') %></div>
+          <div class="trust-badge"><i class="fa-solid fa-arrow-rotate-left"></i> <%= t('shop:words.easyReturnsShort') %></div>
+          <div class="trust-badge"><i class="fa-solid fa-award"></i> <%= t('shop:words.warrantySupport') %></div>
+          <div class="trust-badge"><i class="fa-solid fa-headset"></i> <%= t('shop:words.support247') %></div>
         </div>
 
         <div class="info-seller-card">
@@ -220,7 +220,7 @@
           <div class="seller-info">
             <div class="seller-name-row">
               <span class="seller-name">TechBridge Digital Hub</span>
-              <span class="seller-badge verified">Verified</span>
+              <span class="seller-badge verified"><%= t('shop:words.verified') %></span>
             </div>
             <div class="seller-meta">
               <span class="seller-rating">
@@ -228,35 +228,35 @@
                 <span>4.9</span>
               </span>
               <span class="seller-response">
-                <i class="fa-regular fa-clock"></i> Responds in &lt; 1hr
+                <i class="fa-regular fa-clock"></i> <%= t('shop:words.respondsIn') %>
               </span>
               <span class="seller-products">
-                <i class="fa-solid fa-cube"></i> 12 Products
+                <i class="fa-solid fa-cube"></i> <%= t('shop:details.sellerProducts', { count: 12 }) %>
               </span>
             </div>
           </div>
-          <a href="/shop" class="seller-visit-btn">Visit Store</a>
+          <a href="/shop" class="seller-visit-btn"><%= t('shop:words.visitStore') %></a>
         </div>
       </div>
     </div>
 
     <div class="product-detail-sections" data-aos="fade-up" data-aos-delay="50">
       <div class="product-detail-tabs">
-        <button class="detail-tab active" data-tab="specs" role="tab" aria-selected="true">Specifications</button>
-        <button class="detail-tab" data-tab="description" role="tab" aria-selected="false">Description</button>
-        <button class="detail-tab" data-tab="reviews" role="tab" aria-selected="false">Reviews (<%= reviewCount %>)</button>
+        <button class="detail-tab active" data-tab="specs" role="tab" aria-selected="true"><%= t('shop:details.tabs.specs') %></button>
+        <button class="detail-tab" data-tab="description" role="tab" aria-selected="false"><%= t('shop:details.tabs.description') %></button>
+        <button class="detail-tab" data-tab="reviews" role="tab" aria-selected="false"><%= t('shop:details.tabs.reviews', { count: reviewCount }) %></button>
       </div>
 
       <div class="detail-tab-content active" id="tab-specs" role="tabpanel">
         <div class="specs-grid">
-          <div class="spec-item"><span class="spec-label">Brand</span><span class="spec-value">TechBridge</span></div>
-          <div class="spec-item"><span class="spec-label">Model</span><span class="spec-value"><%= product.sku || product.name %></span></div>
-          <div class="spec-item"><span class="spec-label">Category</span><span class="spec-value"><%= product.category_name || 'General' %></span></div>
-          <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">1 Year</span></div>
-          <div class="spec-item"><span class="spec-label">Material</span><span class="spec-value">Premium Quality</span></div>
-          <div class="spec-item"><span class="spec-label">Compatibility</span><span class="spec-value">Windows, macOS, Linux</span></div>
-          <div class="spec-item"><span class="spec-label">Returns</span><span class="spec-value">30-Day Easy Returns</span></div>
-          <div class="spec-item"><span class="spec-label">Shipping</span><span class="spec-value">Free Worldwide</span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.brand') %></span><span class="spec-value">TechBridge</span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.model') %></span><span class="spec-value"><%= product.sku || product.name %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('common:words.category') %></span><span class="spec-value"><%= product.category_name || t('common:words.general') %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.warranty') %></span><span class="spec-value"><%= t('shop:words.warranty1Year') %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.material') %></span><span class="spec-value"><%= t('shop:words.premiumQuality') %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.compatibility') %></span><span class="spec-value"><%= t('shop:words.compatSystems') %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.returns') %></span><span class="spec-value"><%= t('shop:words.returns30Day') %></span></div>
+          <div class="spec-item"><span class="spec-label"><%= t('shop:details.specs.shipping') %></span><span class="spec-value"><%= t('shop:words.freeWorldwide') %></span></div>
         </div>
       </div>
 
@@ -276,21 +276,17 @@
           </ul>
           <% } else { %>
           <ul class="description-features">
-            <li>Premium quality product from TechBridge Digital Hub</li>
-            <li>Rigorously tested for performance and reliability</li>
-            <li>Comes with full manufacturer warranty</li>
-            <li>Free shipping and easy returns</li>
-            <li>24/7 customer support</li>
+            <% t('shop:details.features.defaults', { returnObjects: true }).forEach(function(f) { %>
+            <li><%= f %></li>
+            <% }); %>
           </ul>
           <% } %>
           <% } else { %>
-          <p class="description-intro">Premium product from TechBridge Digital Hub.</p>
+          <p class="description-intro"><%= t('shop:details.fallback.intro') %></p>
           <ul class="description-features">
-            <li>Highest quality standards</li>
-            <li>Tested for performance and durability</li>
-            <li>Full manufacturer warranty included</li>
-            <li>Free shipping worldwide</li>
-            <li>24/7 dedicated customer support</li>
+            <% t('shop:details.fallback.defaults', { returnObjects: true }).forEach(function(f) { %>
+            <li><%= f %></li>
+            <% }); %>
           </ul>
           <% } %>
         </div>
@@ -301,13 +297,13 @@
         <!-- Customer Photo Gallery -->
         <div class="review-gallery-section" data-aos="fade-up">
           <div class="review-gallery-head">
-            <h3 class="review-write-title mb-0"><i class="fa-solid fa-images me-2 text-primary"></i>Customer Photos</h3>
-            <span class="review-gallery-meta"><%= reviewStats.photoCount || reviewGallery.length %> photo<%= (reviewStats.photoCount || reviewGallery.length) !== 1 ? 's' : '' %> from customers</span>
+            <h3 class="review-write-title mb-0"><i class="fa-solid fa-images me-2 text-primary"></i><%= t('shop:reviews.customerPhotos') %></h3>
+            <span class="review-gallery-meta"><%= t('shop:reviews.photosFromCustomers', { count: reviewStats.photoCount || reviewGallery.length }) %></span>
           </div>
           <div class="review-gallery-carousel" id="reviewGalleryCarousel">
             <% reviewGallery.forEach(function(photo, pi) { %>
-            <button type="button" class="review-gallery-thumb" data-gallery-index="<%= pi %>" data-full="<%= photo.url %>" aria-label="Open customer photo <%= pi + 1 %>">
-              <img src="<%= reviewThumbUrl(photo.url) %>" alt="Customer photo" loading="lazy">
+            <button type="button" class="review-gallery-thumb" data-gallery-index="<%= pi %>" data-full="<%= photo.url %>" aria-label="<%= t('shop:reviews.openPhoto', { count: pi + 1 }) %>">
+              <img src="<%= reviewThumbUrl(photo.url) %>" alt="<%= t('shop:reviews.customerPhotoAlt') %>" loading="lazy">
             </button>
             <% }) %>
           </div>
@@ -324,9 +320,9 @@
                 <i class="<%= i <= Math.round(avgR) ? 'fa-solid' : 'fa-regular' %> fa-star star-filled"></i>
               <% } %>
             </div>
-            <div class="review-summary-count"><%= reviewStats.count %> Review<%= reviewStats.count !== 1 ? 's' : '' %></div>
+            <div class="review-summary-count"><%= t('shop:reviews.reviewCount', { count: reviewStats.count }) %></div>
             <% if (reviewStats.verifiedCount > 0) { %>
-            <div class="review-summary-verified"><i class="fa-solid fa-circle-check"></i> <%= reviewStats.verifiedCount %> Verified Purchase<%= reviewStats.verifiedCount !== 1 ? 's' : '' %></div>
+            <div class="review-summary-verified"><i class="fa-solid fa-circle-check"></i> <%= t('shop:reviews.verifiedPurchaseCount', { count: reviewStats.verifiedCount }) %></div>
             <% } %>
           </div>
           <div class="review-summary-bars">
@@ -334,7 +330,7 @@
                var maxBar = Math.max.apply(null, [dist[5], dist[4], dist[3], dist[2], dist[1], 1]); %>
             <% [5,4,3,2,1].forEach(function(star) { %>
             <div class="review-bar-row">
-              <button type="button" class="review-bar-filter" data-rating="<%= star %>" aria-label="Filter reviews with <%= star %> stars">
+              <button type="button" class="review-bar-filter" data-rating="<%= star %>" aria-label="<%= t('shop:reviews.filterStars', { star }) %>">
                 <span class="review-bar-label"><%= star %> <i class="fa-solid fa-star" style="font-size:0.6rem;"></i></span>
                 <span class="review-bar-track"><span class="review-bar-fill" style="width:<%= Math.round((dist[star] / maxBar) * 100) %>%"></span></span>
                 <span class="review-bar-count"><%= dist[star] %></span>
@@ -350,47 +346,47 @@
             <% if (reviewEligibility.hasReviewed) { %>
             <div class="review-login-card review-written-card">
               <div>
-                <p class="mb-0 text-white"><i class="fa-solid fa-circle-check me-2 text-success"></i>You've reviewed this product.</p>
-                <small class="text-white-50">Status: <%= reviewEligibility.review.status === 'approved' ? 'Approved' : (reviewEligibility.review.status === 'rejected' ? 'Rejected' : 'Pending approval') %></small>
+                <p class="mb-0 text-white"><i class="fa-solid fa-circle-check me-2 text-success"></i><%= t('shop:reviews.youReviewed') %></p>
+                <small class="text-white-50"><%= t('shop:reviews.statusLabel', { status: t('shop:reviews.reviewStatus.' + (reviewEligibility.review.status === 'approved' ? 'approved' : reviewEligibility.review.status === 'rejected' ? 'rejected' : 'pending')) }) %></small>
               </div>
-              <a href="/dashboard/reviews/<%= reviewEligibility.review.id %>/edit" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i>Edit Review</a>
+              <a href="/dashboard/reviews/<%= reviewEligibility.review.id %>/edit" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i><%= t('shop:words.editReview') %></a>
             </div>
             <% } else { %>
             <div class="review-write-card">
               <div class="d-flex align-items-center gap-3">
-                <h3 class="review-write-title mb-0"><i class="fa-solid fa-pen me-2 text-primary"></i>Write a Review</h3>
-                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+                <h3 class="review-write-title mb-0"><i class="fa-solid fa-pen me-2 text-primary"></i><%= t('shop:reviews.writeTitle') %></h3>
+                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> <%= t('shop:words.verifiedPurchase') %></span>
               </div>
-              <p class="text-white-50 mt-2">You purchased this product. Share your experience with the community.</p>
-              <button type="button" class="btn-action btn-submit-review" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fa-solid fa-paper-plane me-2"></i>Write Your Review</button>
+              <p class="text-white-50 mt-2"><%= t('shop:reviews.writePrompt') %></p>
+              <button type="button" class="btn-action btn-submit-review" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fa-solid fa-paper-plane me-2"></i><%= t('shop:reviews.writeYourReview') %></button>
             </div>
             <% } %>
           <% } else { %>
           <div class="review-login-card">
-            <p class="mb-0"><i class="fa-solid fa-lock me-2 text-warning"></i>Only verified customers can review this product. <a href="/shop" class="text-primary fw-bold text-link">Shop now</a> and get an invite to review after your order is delivered.</p>
+            <p class="mb-0"><i class="fa-solid fa-lock me-2 text-warning"></i><%= t('shop:reviews.onlyVerified') %> <a href="/shop" class="text-primary fw-bold text-link"><%= t('shop:words.shopNow') %></a><%= t('shop:reviews.getInvite') %></p>
           </div>
           <% } %>
         <% } else { %>
         <div class="review-login-card">
-          <p class="mb-0"><a href="/auth/login" class="text-primary fw-bold text-link">Login</a> to write a review and share your experience.</p>
+          <p class="mb-0"><a href="/auth/login" class="text-primary fw-bold text-link"><%= t('shop:words.login') %></a> <%= t('shop:reviews.loginPrompt') %></p>
         </div>
         <% } %>
 
         <!-- Review Filters -->
         <div class="review-filter-bar" data-aos="fade-up">
-          <div class="review-filter-chips" role="group" aria-label="Sort reviews">
-            <button type="button" class="review-chip active" data-sort="recent">Most Recent</button>
-            <button type="button" class="review-chip" data-sort="highest">Highest Rated</button>
-            <button type="button" class="review-chip" data-sort="lowest">Lowest Rated</button>
-            <button type="button" class="review-chip" data-sort="helpful">Most Helpful</button>
+          <div class="review-filter-chips" role="group" aria-label="<%= t('shop:reviews.sortAria') %>">
+            <button type="button" class="review-chip active" data-sort="recent"><%= t('shop:reviews.sortRecent') %></button>
+            <button type="button" class="review-chip" data-sort="highest"><%= t('shop:reviews.sortHighest') %></button>
+            <button type="button" class="review-chip" data-sort="lowest"><%= t('shop:reviews.sortLowest') %></button>
+            <button type="button" class="review-chip" data-sort="helpful"><%= t('shop:reviews.sortHelpful') %></button>
           </div>
           <div class="review-filter-toggles">
-            <button type="button" class="review-chip" data-has-photos="1"><i class="fa-solid fa-camera me-1"></i>With Photos</button>
-            <button type="button" class="review-chip" data-verified="1"><i class="fa-solid fa-circle-check me-1"></i>Verified</button>
+            <button type="button" class="review-chip" data-has-photos="1"><i class="fa-solid fa-camera me-1"></i><%= t('shop:reviews.withPhotos') %></button>
+            <button type="button" class="review-chip" data-verified="1"><i class="fa-solid fa-circle-check me-1"></i><%= t('shop:words.verified') %></button>
           </div>
           <div class="review-filter-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="reviewSearchInput" class="form-control" placeholder="Search reviews..." aria-label="Search reviews">
+            <input type="search" id="reviewSearchInput" class="form-control" placeholder="<%= t('shop:reviews.searchPlaceholder') %>" aria-label="<%= t('shop:reviews.searchAria') %>">
           </div>
         </div>
 
@@ -403,12 +399,12 @@
             <% }) %>
           </div>
           <div class="review-load-more text-center mt-4" style="<%= hasMoreReviews ? '' : 'display:none;' %>">
-            <button type="button" class="btn btn-premium-outline rounded-pill px-4" id="reviewLoadMoreBtn">Load More Reviews</button>
+            <button type="button" class="btn btn-premium-outline rounded-pill px-4" id="reviewLoadMoreBtn"><%= t('shop:reviews.loadMore') %></button>
           </div>
           <% } else { %>
           <div class="review-empty" id="reviewEmptyState">
             <i class="fa-regular fa-comments"></i>
-            <p>No reviews yet. Be the first to review this product!</p>
+            <p><%= t('shop:reviews.empty') %></p>
           </div>
           <% } %>
         </div>
@@ -418,8 +414,8 @@
     <% if (relatedProducts && relatedProducts.length > 0) { %>
     <div class="related-section" data-aos="fade-up">
       <div class="related-header">
-        <h2 class="related-title">Related Products</h2>
-        <a href="/shop" class="related-view-all">View All <i class="fa-solid fa-arrow-right"></i></a>
+        <h2 class="related-title"><%= t('shop:details.related.title') %></h2>
+        <a href="/shop" class="related-view-all"><%= t('common:words.viewAll') %> <i class="fa-solid fa-arrow-right"></i></a>
       </div>
       <div class="product-grid-enhanced">
         <% relatedProducts.forEach(function(rp) { %>
@@ -432,36 +428,36 @@
     <% } else { %>
     <div class="empty-state">
       <i class="fa-solid fa-exclamation-triangle fa-4x mb-4"></i>
-      <h4 class="text-white fw-bold">Product Not Found</h4>
-      <p class="text-white-50">The product you're looking for doesn't exist or has been removed.</p>
-      <a href="/shop" class="btn btn-premium-primary rounded-pill px-5">Back to Shop</a>
+      <h4 class="text-white fw-bold"><%= t('shop:details.notFound.title') %></h4>
+      <p class="text-white-50"><%= t('shop:details.notFound.message') %></p>
+      <a href="/shop" class="btn btn-premium-primary rounded-pill px-5"><%= t('shop:details.notFound.backToShop') %></a>
     </div>
     <% } %>
   </div>
 </section>
 
 <!-- Fullscreen Lightbox -->
-<div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="Image fullscreen viewer">
+<div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-modal="true" aria-label="<%= t('shop:words.fullscreenViewer') %>">
   <div class="lightbox-content">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Close fullscreen viewer">&times;</button>
-    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="lightbox-close" id="lightboxClose" aria-label="<%= t('shop:words.closeFullscreen') %>">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="<%= t('shop:words.previousImage') %>"><i class="fa-solid fa-chevron-left"></i></button>
     <div class="lightbox-image-wrapper">
       <img id="lightboxImage" src="" alt="">
     </div>
-    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="<%= t('shop:words.nextImage') %>"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="lightbox-counter" id="lightboxCounter"></div>
   </div>
 </div>
 
 <!-- Review Photo Lightbox -->
-<div class="lightbox-overlay" id="reviewLightbox" role="dialog" aria-modal="true" aria-label="Review photo viewer">
+<div class="lightbox-overlay" id="reviewLightbox" role="dialog" aria-modal="true" aria-label="<%= t('shop:words.reviewPhotoViewer') %>">
   <div class="lightbox-content">
-    <button class="lightbox-close" id="reviewLightboxClose" aria-label="Close review photo viewer">&times;</button>
-    <button class="lightbox-nav lightbox-prev" id="reviewLightboxPrev" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="lightbox-close" id="reviewLightboxClose" aria-label="<%= t('shop:words.closeReviewViewer') %>">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="reviewLightboxPrev" aria-label="<%= t('shop:words.previousPhoto') %>"><i class="fa-solid fa-chevron-left"></i></button>
     <div class="lightbox-image-wrapper">
       <img id="reviewLightboxImage" src="" alt="">
     </div>
-    <button class="lightbox-nav lightbox-next" id="reviewLightboxNext" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>
+    <button class="lightbox-nav lightbox-next" id="reviewLightboxNext" aria-label="<%= t('shop:words.nextPhoto') %>"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="lightbox-counter" id="reviewLightboxCounter"></div>
   </div>
 </div>
@@ -473,24 +469,24 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
       <div class="modal-header border-secondary">
-        <h5 class="modal-title text-white fw-bold"><i class="fa-regular fa-flag me-2 text-warning"></i>Report Review</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title text-white fw-bold"><i class="fa-regular fa-flag me-2 text-warning"></i><%= t('shop:details.report.title') %></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>
       </div>
       <div class="modal-body">
-        <p class="text-white-50 mb-3">Help us keep TechBridge reviews genuine. Why are you reporting this review?</p>
+        <p class="text-white-50 mb-3"><%= t('shop:details.report.prompt') %></p>
         <div class="report-reasons">
-          <% ['Spam or advertising', 'Fake review', 'Inappropriate content', 'Conflict of interest', 'Off-topic'].forEach(function(reason) { %>
+          <% ['spam', 'fake', 'inappropriate', 'conflict', 'offtopic'].forEach(function(key) { %>
           <label class="report-reason-option">
-            <input type="radio" name="reportReason" value="<%= reason %>">
-            <span><%= reason %></span>
+            <input type="radio" name="reportReason" value="<%= t('shop:details.report.reasons.' + key) %>">
+            <span><%= t('shop:details.report.reasons.' + key) %></span>
           </label>
           <% }) %>
         </div>
         <div class="form-text text-white-50 mt-2" id="reportFormError"></div>
       </div>
       <div class="modal-footer border-secondary">
-        <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger rounded-pill" id="reportSubmitBtn"><i class="fa-solid fa-flag me-2"></i>Report Review</button>
+        <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+        <button type="button" class="btn btn-danger rounded-pill" id="reportSubmitBtn"><i class="fa-solid fa-flag me-2"></i><%= t('shop:details.report.title') %></button>
       </div>
     </div>
   </div>
@@ -716,7 +712,7 @@
       FORM.addEventListener('submit', function(e) {
         if (selectedRating < 1 || selectedRating > 5) {
           e.preventDefault();
-          if (HINT) HINT.textContent = 'Please select a rating between 1 and 5.';
+          if (HINT) HINT.textContent = '<%= t('shop:reviews.ratingHint') %>';
           return;
         }
         if (HINT) HINT.textContent = '';

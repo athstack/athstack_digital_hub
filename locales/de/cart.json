@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "Ihr Warenkorb - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "Produkt",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versand",
+    "remove": "Entfernen"
+  },
+  "index": {
+    "badge": "Warenkorb",
+    "heading": "Ihr Warenkorb",
+    "orderSummary": "Bestellübersicht",
+    "subtotalItems": "Zwischensumme ({{count}} Artikel)",
+    "calculatedAtCheckout": "Wird an der Kasse berechnet",
+    "checkout": "Zur Kasse",
+    "continueShopping": "Weiter einkaufen"
+  },
+  "empty": {
+    "heading": "Ihr Warenkorb ist leer",
+    "message": "Sieht so aus, als hätten Sie noch keine Produkte hinzugefügt. Durchstöbern Sie unseren Shop für Premium-Tech-Hardware.",
+    "browseShop": "Shop durchstöbern"
+  },
+  "flash": {
+    "invalidProduct": "Ungültiges Produkt.",
+    "productNotFound": "Produkt nicht gefunden oder nicht verfügbar.",
+    "itemAdded": "Artikel zum Warenkorb hinzugefügt.",
+    "itemNotFound": "Artikel nicht im Warenkorb gefunden.",
+    "cartUpdated": "Warenkorb aktualisiert.",
+    "itemRemoved": "Artikel aus dem Warenkorb entfernt.",
+    "emptyCart": "Ihr Warenkorb ist leer.",
+    "noValidProducts": "Keine gültigen Produkte im Warenkorb.",
+    "insufficientStock": "Nicht genügend Lagerbestand für \"{{name}}\". Nur noch {{stock}} verfügbar.",
+    "orderPlaced": "Bestellung Nr. {{id}} erfolgreich aufgegeben!"
+  },
+  "notification": {
+    "orderPlacedTitle": "Bestellung aufgegeben",
+    "orderPlacedMessage": "Ihre Bestellung Nr. {{id}} über {{total}} wurde erfolgreich aufgegeben.",
+    "newOrderTitle": "Neue Bestellung eingegangen",
+    "newOrderMessage": "Bestellung Nr. {{id}} über {{total}} muss verarbeitet werden."
+  }
+}

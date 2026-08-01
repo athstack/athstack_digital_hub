@@ -28,11 +28,10 @@ exports.getCart = async (req, res, next) => {
     }
 
     res.render('cart/index', {
-      title: 'Your Shopping Cart - TechBridge Digital Hub',
+      title: req.t('cart:title.index'),
       cart: req.session.cart || {},
       cartItems,
-      cartTotal,
-      formatCurrency
+      cartTotal
     });
   } catch (err) {
     next(err);
@@ -45,20 +44,20 @@ exports.addItem = async (req, res, next) => {
     const quantity = parseInt(req.body.quantity) || 1;
 
     if (!productId || productId <= 0) {
-      req.flash('error', 'Invalid product.');
+      req.flash('error', req.t('cart:flash.invalidProduct'));
       return res.redirect('/shop');
     }
 
     const product = await ProductModel.findById(productId);
     if (!product || product.status !== 'active') {
-      req.flash('error', 'Product not found or unavailable.');
+      req.flash('error', req.t('cart:flash.productNotFound'));
       return res.redirect('/shop');
     }
 
     if (!req.session.cart) req.session.cart = {};
     req.session.cart[productId] = (req.session.cart[productId] || 0) + quantity;
 
-    req.flash('success', 'Item added to cart.');
+    req.flash('success', req.t('cart:flash.itemAdded'));
     res.redirect(req.get('Referrer') || '/shop');
   } catch (err) {
     next(err);
@@ -71,7 +70,7 @@ exports.updateItem = (req, res, next) => {
     const quantity = parseInt(req.body.quantity);
 
     if (!productId || !req.session.cart || !req.session.cart[productId]) {
-      req.flash('error', 'Item not found in cart.');
+      req.flash('error', req.t('cart:flash.itemNotFound'));
       return res.redirect('/cart');
     }
 
@@ -81,7 +80,7 @@ exports.updateItem = (req, res, next) => {
       req.session.cart[productId] = quantity;
     }
 
-    req.flash('success', 'Cart updated.');
+    req.flash('success', req.t('cart:flash.cartUpdated'));
     res.redirect('/cart');
   } catch (err) {
     next(err);
@@ -94,14 +93,14 @@ exports.removeItem = (req, res, next) => {
     const cart = req.session.cart || {};
 
     if (!productId || !cart[productId]) {
-      req.flash('error', 'Item not found in cart.');
+      req.flash('error', req.t('cart:flash.itemNotFound'));
       return res.redirect('/cart');
     }
 
     delete cart[productId];
     req.session.cart = cart;
 
-    req.flash('success', 'Item removed from cart.');
+    req.flash('success', req.t('cart:flash.itemRemoved'));
     res.redirect('/cart');
   } catch (err) {
     next(err);
@@ -114,7 +113,7 @@ exports.checkout = async (req, res, next) => {
     const productIds = Object.keys(cart).map(Number);
 
     if (productIds.length === 0) {
-      req.flash('error', 'Your cart is empty.');
+      req.flash('error', req.t('cart:flash.emptyCart'));
       return res.redirect('/cart');
     }
 
@@ -125,7 +124,7 @@ exports.checkout = async (req, res, next) => {
     );
 
     if (products.length === 0) {
-      req.flash('error', 'No valid products in cart.');
+      req.flash('error', req.t('cart:flash.noValidProducts'));
       return res.redirect('/cart');
     }
 
@@ -134,7 +133,7 @@ exports.checkout = async (req, res, next) => {
     for (const product of products) {
       const quantity = cart[product.id] || 1;
       if (quantity > product.stock_quantity) {
-        req.flash('error', `Insufficient stock for "${product.name}". Only ${product.stock_quantity} available.`);
+        req.flash('error', req.t('cart:flash.insufficientStock', { name: product.name, stock: product.stock_quantity }));
         return res.redirect('/cart');
       }
       const itemTotal = product.price * quantity;
@@ -157,20 +156,20 @@ exports.checkout = async (req, res, next) => {
     req.session.cart = {};
 
     await NotificationModel.create(req.session.userId, {
-      title: 'Order Placed',
-      message: `Your order #${order.id} for ${formatCurrency(totalAmount)} has been placed successfully.`,
+      title: req.t('cart:notification.orderPlacedTitle'),
+      message: req.t('cart:notification.orderPlacedMessage', { id: order.id, total: formatCurrency(totalAmount, req.language) }),
       type: 'order',
       link: `/dashboard/orders/${order.id}`
     });
 
     NotificationModel.notifyAdmins({
-      title: 'New Order Received',
-      message: `Order #${order.id} for ${formatCurrency(totalAmount)} needs processing.`,
+      title: req.t('cart:notification.newOrderTitle'),
+      message: req.t('cart:notification.newOrderMessage', { id: order.id, total: formatCurrency(totalAmount, req.language) }),
       type: 'order',
       link: '/admin/orders'
     }).catch(() => {});
 
-    req.flash('success', `Order #${order.id} placed successfully!`);
+    req.flash('success', req.t('cart:flash.orderPlaced', { id: order.id }));
     res.redirect('/dashboard/orders');
   } catch (err) {
     next(err);

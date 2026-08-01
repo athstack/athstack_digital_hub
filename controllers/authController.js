@@ -12,12 +12,12 @@ const COUNTRY_DIAL_CODES = {
 exports.getLogin = (req, res) => {
   let error = null;
   if (req.query.error === 'rate_limited') {
-    error = 'Too many login attempts. Please try again in 15 minutes.';
+    error = req.t('auth:messages.rateLimited');
   } else if (req.query.error === 'suspended') {
-    error = 'Your account has been suspended. Please contact support.';
+    error = req.t('auth:messages.suspended');
   }
   res.render('auth/login', {
-    title: 'Access Authorization - TechBridge Digital Hub',
+    title: req.t('auth:title.login'),
     error
   });
 };
@@ -29,9 +29,9 @@ exports.postLogin = async (req, res, next) => {
     const respond = (status, data) => res.status(status).json(data);
 
     if (!email || !password) {
-      const msg = 'Please fill out all fields.';
+      const msg = req.t('auth:messages.fillOutAllFields');
       if (isAjax) return respond(400, { success: false, message: msg });
-      return res.render('auth/login', { title: 'Access Authorization - TechBridge Digital Hub', error: msg });
+      return res.render('auth/login', { title: req.t('auth:title.login'), error: msg });
     }
 
     const user = await UserModel.findByEmail(email);
@@ -40,19 +40,19 @@ exports.postLogin = async (req, res, next) => {
     const passwordMatch = await bcrypt.compare(password, hashToCheck);
 
     if (!user || !passwordMatch) {
-      const msg = 'Invalid email or password.';
+      const msg = req.t('auth:messages.invalidCredentials');
       if (isAjax) return respond(401, { success: false, message: msg });
-      return res.render('auth/login', { title: 'Access Authorization - TechBridge Digital Hub', error: msg });
+      return res.render('auth/login', { title: req.t('auth:title.login'), error: msg });
     }
 
     if (user.status === 'suspended') {
-      const msg = 'Your account has been suspended. Please contact support.';
+      const msg = req.t('auth:messages.suspended');
       if (isAjax) return respond(403, { success: false, message: msg });
-      return res.render('auth/login', { title: 'Access Authorization - TechBridge Digital Hub', error: msg });
+      return res.render('auth/login', { title: req.t('auth:title.login'), error: msg });
     }
 
     if (user.status === 'inactive') {
-      const msg = 'Your account is inactive. Some features may be limited until your account is activated.';
+      const msg = req.t('auth:messages.inactive');
       if (isAjax) return respond(403, { success: false, message: msg });
     }
 
@@ -87,7 +87,7 @@ exports.postLogin = async (req, res, next) => {
     });
   } catch (err) {
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.status(500).json({ success: false, message: 'An unexpected error occurred. Please try again.' });
+      return res.status(500).json({ success: false, message: req.t('common:errors.serverError') });
     }
     next(err);
   }
@@ -96,7 +96,7 @@ exports.postLogin = async (req, res, next) => {
 exports.getRegister = (req, res) => {
   var pending = req.session.pendingMessage || null;
   res.render('auth/register', {
-    title: 'Initialize Profile Node - TechBridge Digital Hub',
+    title: req.t('auth:title.register'),
     error: null,
     pendingMessage: pending
   });
@@ -108,30 +108,30 @@ exports.postRegister = async (req, res, next) => {
 
     if (!first_name || !last_name || !email || !password || !country) {
       return res.render('auth/register', {
-        title: 'Initialize Profile Node - TechBridge Digital Hub',
-        error: 'All required fields must be filled out.'
+        title: req.t('auth:title.register'),
+        error: req.t('common:errors.requiredFields')
       });
     }
 
     if (password !== confirm_password) {
       return res.render('auth/register', {
-        title: 'Initialize Profile Node - TechBridge Digital Hub',
-        error: 'Passwords do not match.'
+        title: req.t('auth:title.register'),
+        error: req.t('common:errors.passwordMismatch')
       });
     }
 
     if (password.length < 8) {
       return res.render('auth/register', {
-        title: 'Initialize Profile Node - TechBridge Digital Hub',
-        error: 'Password must be at least 8 characters.'
+        title: req.t('auth:title.register'),
+        error: req.t('common:errors.passwordTooShort')
       });
     }
 
     const existing = await UserModel.findByEmail(email);
     if (existing) {
       return res.render('auth/register', {
-        title: 'Initialize Profile Node - TechBridge Digital Hub',
-        error: 'An account with this email already exists.'
+        title: req.t('auth:title.register'),
+        error: req.t('auth:messages.emailExists')
       });
     }
 
@@ -173,15 +173,15 @@ exports.postRegister = async (req, res, next) => {
           ContactModel.create(pendingMsg).then(function() {
             var NotificationModel = require('../models/NotificationModel');
             NotificationModel.notifyAdmins({
-              title: 'New Contact Message',
-              message: (pendingMsg.name || 'Someone') + ' sent a message' + (pendingMsg.subject ? ': ' + pendingMsg.subject : ''),
+              title: req.t('auth:register.contactMessageTitle'),
+              message: (pendingMsg.name || req.t('auth:register.someone')) + ' ' + req.t('auth:register.sentMessage') + (pendingMsg.subject ? ': ' + pendingMsg.subject : ''),
               type: 'contact',
               link: '/admin/inbox'
             }).catch(function(){});
           }).catch(function(err){ console.error('Pending message failed:', err); });
         }
 
-        req.flash('success', 'Account created successfully. Welcome to TechBridge Digital Hub!');
+        req.flash('success', req.t('auth:messages.accountCreated'));
         res.redirect(returnTo || '/dashboard');
       });
     });
@@ -192,7 +192,7 @@ exports.postRegister = async (req, res, next) => {
 
 exports.getForgot = (req, res) => {
   res.render('auth/forgot', {
-    title: 'Credential Reset - TechBridge Digital Hub'
+    title: req.t('auth:title.forgot')
   });
 };
 
@@ -205,14 +205,14 @@ exports.postForgot = async (req, res, next) => {
         const { token } = await PasswordResetModel.create(user.id);
         console.log(`[PASSWORD RESET] ${user.email}: /auth/reset/${token}`);
         await NotificationModel.create(user.id, {
-          title: 'Password Reset Request',
-          message: 'A password reset was requested. Check the server console for the reset link (or use /auth/reset/TOKEN).',
+          title: req.t('auth:forgot.notificationTitle'),
+          message: req.t('auth:forgot.notificationMessage'),
           type: 'auth',
           link: `/auth/reset/${token}`
         });
       }
     }
-    req.flash('info', 'If an account exists with that email, a reset link has been generated.');
+    req.flash('info', req.t('auth:messages.resetSentInfo'));
     res.redirect('/auth/forgot');
   } catch (err) {
     next(err);
@@ -223,11 +223,11 @@ exports.getReset = async (req, res, next) => {
   try {
     const tokenData = await PasswordResetModel.findByToken(req.params.token);
     if (!tokenData) {
-      req.flash('error', 'This reset link is invalid or has expired.');
+      req.flash('error', req.t('auth:messages.invalidLink'));
       return res.redirect('/auth/forgot');
     }
     res.render('auth/reset', {
-      title: 'Reset Password - TechBridge Digital Hub',
+      title: req.t('auth:title.reset'),
       token: req.params.token,
       email: tokenData.email
     });
@@ -241,23 +241,23 @@ exports.postReset = async (req, res, next) => {
     const { token, password, confirm_password } = req.body;
 
     if (!password || !confirm_password) {
-      req.flash('error', 'Please fill out all fields.');
+      req.flash('error', req.t('auth:messages.fillOutAllFields'));
       return res.redirect(`/auth/reset/${token}`);
     }
 
     if (password !== confirm_password) {
-      req.flash('error', 'Passwords do not match.');
+      req.flash('error', req.t('common:errors.passwordMismatch'));
       return res.redirect(`/auth/reset/${token}`);
     }
 
     if (password.length < 8) {
-      req.flash('error', 'Password must be at least 8 characters.');
+      req.flash('error', req.t('common:errors.passwordTooShort'));
       return res.redirect(`/auth/reset/${token}`);
     }
 
     const tokenData = await PasswordResetModel.findByToken(token);
     if (!tokenData) {
-      req.flash('error', 'This reset link is invalid or has expired.');
+      req.flash('error', req.t('auth:messages.invalidLink'));
       return res.redirect('/auth/forgot');
     }
 
@@ -266,13 +266,13 @@ exports.postReset = async (req, res, next) => {
     await PasswordResetModel.markUsed(token);
 
     await NotificationModel.create(tokenData.user_id, {
-      title: 'Password Changed',
-      message: 'Your password has been successfully changed.',
+      title: req.t('auth:reset.notificationTitle'),
+      message: req.t('auth:reset.notificationMessage'),
       type: 'auth',
       link: '/auth/login'
     });
 
-    req.flash('success', 'Password reset successful. Please log in.');
+    req.flash('success', req.t('auth:messages.passwordResetSuccess'));
     res.redirect('/auth/login');
   } catch (err) {
     next(err);

@@ -12,13 +12,13 @@
                         </a>
                     </div>
                     <div class="text-center mb-4">
-                        <h3 class="auth-heading">Create Account</h3>
-                        <p class="auth-subtext">Join TechBridge Digital Hub today</p>
+                        <h3 class="auth-heading"><%= t('auth:register.heading') %></h3>
+                        <p class="auth-subtext"><%= t('auth:register.subtext') %></p>
                     </div>
 
                     <% if (typeof pendingMessage !== 'undefined' && pendingMessage) { %>
                     <div class="alert alert-info" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);color:#7DD3FC;">
-                        <i class="fa-solid fa-pen me-2"></i>You have a pending message. Create an account to send it.
+                        <i class="fa-solid fa-pen me-2"></i><%= t('auth:register.pendingMessage') %>
                     </div>
                     <% } %>
                     <% if (error) { %>
@@ -32,32 +32,32 @@
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">First Name *</label>
+                                <label class="form-label"><%= t('auth:words.firstName') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" name="first_name" class="form-control" required placeholder="First name" pattern="[A-Za-z\s'-]{2,50}" title="2-50 characters, letters only">
+                                    <input type="text" name="first_name" class="form-control" required placeholder="<%= t('auth:register.firstNamePlaceholder') %>" pattern="[A-Za-z\s'-]{2,50}" title="<%= t('auth:register.namePatternHint') %>">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Last Name *</label>
+                                <label class="form-label"><%= t('auth:words.lastName') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" name="last_name" class="form-control" required placeholder="Last name" pattern="[A-Za-z\s'-]{2,50}" title="2-50 characters, letters only">
+                                    <input type="text" name="last_name" class="form-control" required placeholder="<%= t('auth:register.lastNamePlaceholder') %>" pattern="[A-Za-z\s'-]{2,50}" title="<%= t('auth:register.namePatternHint') %>">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Email Address *</label>
+                                <label class="form-label"><%= t('auth:words.emailAddress') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                    <input type="email" name="email" class="form-control" required placeholder="your@email.com" value="<%= typeof pendingMessage !== 'undefined' && pendingMessage ? pendingMessage.email : '' %>">
+                                    <input type="email" name="email" class="form-control" required placeholder="<%= t('auth:register.emailPlaceholder') %>" value="<%= typeof pendingMessage !== 'undefined' && pendingMessage ? pendingMessage.email : '' %>">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Country *</label>
+                                <label class="form-label"><%= t('auth:words.country') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
-                                    <select name="country" id="countrySelect" class="form-select" placeholder="Select your country" required>
-                                        <option value="">Select your country</option>
+                                    <select name="country" id="countrySelect" class="form-select" placeholder="<%= t('auth:register.countryPlaceholder') %>" required>
+                                        <option value=""><%= t('auth:register.countryPlaceholder') %></option>
                                         <option value="NG" data-code="+234" data-placeholder="801 234 5678">Nigeria</option>
                                         <option value="TZ" data-code="+255" data-placeholder="7XX XXX XXX">Tanzania</option>
                                         <option value="KE" data-code="+254" data-placeholder="7XX XXX XXX">Kenya</option>
@@ -78,29 +78,29 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Phone Number</label>
+                                <label class="form-label"><%= t('auth:words.phoneNumber') %></label>
                                 <div class="input-group">
                                     <input type="text" id="phoneCode" class="form-control" value="+255" readonly style="max-width:90px;text-align:center;font-weight:600;border-right:none;border-radius:var(--radius-md) 0 0 var(--radius-md);background:var(--bg-elevated) !important;color:var(--text-main) !important;">
-                                    <input type="tel" name="phone" id="phoneInput" class="form-control" placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="Enter a valid phone number" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
+                                    <input type="tel" name="phone" id="phoneInput" class="form-control" placeholder="7XX XXX XXX" pattern="[0-9\s\-\+\(\)]*" title="<%= t('auth:register.phoneTitle') %>" style="border-left:none;border-radius:0 var(--radius-md) var(--radius-md) 0;">
                                 </div>
-                                <div class="form-text text-muted small">Enter your phone number without the country code</div>
+                                <div class="form-text text-muted small"><%= t('auth:register.phoneWithoutCode') %></div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Password *</label>
+                                <label class="form-label"><%= t('common:words.password') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                    <input type="password" name="password" id="regPassword" class="form-control" required placeholder="Min 8 characters" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Minimum 8 characters with at least one uppercase, one lowercase, and one number" autocomplete="new-password">
+                                    <input type="password" name="password" id="regPassword" class="form-control" required placeholder="<%= t('auth:register.passwordPlaceholder') %>" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="<%= t('auth:register.passwordHint') %>" autocomplete="new-password">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Confirm Password *</label>
+                                <label class="form-label"><%= t('common:words.confirmPassword') %> *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                    <input type="password" name="confirm_password" id="regConfirmPwd" class="form-control" required placeholder="Re-enter password" autocomplete="new-password">
+                                    <input type="password" name="confirm_password" id="regConfirmPwd" class="form-control" required placeholder="<%= t('auth:register.confirmPasswordPlaceholder') %>" autocomplete="new-password">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-premium-primary w-100 btn-lg"><i class="fa-solid fa-user-plus me-2"></i>Create Account</button>
+                                <button type="submit" class="btn btn-premium-primary w-100 btn-lg"><i class="fa-solid fa-user-plus me-2"></i><%= t('auth:register.submit') %></button>
                             </div>
                         </div>
                     </form>
@@ -108,7 +108,7 @@
                     <div class="auth-divider"></div>
 
                     <div class="text-center">
-                        <p class="text-muted small mb-0">Already have an account? <a href="/auth/login" class="text-primary text-link">Sign in</a></p>
+                        <p class="text-muted small mb-0"><%= t('auth:register.alreadyHaveAccount') %> <a href="/auth/login" class="text-primary text-link"><%= t('auth:register.signIn') %></a></p>
                     </div>
                 </div>
             </div>
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (opt.value) {
             countryMap[opt.value] = {
                 code: opt.getAttribute('data-code') || '+255',
-                placeholder: opt.getAttribute('data-placeholder') || 'phone number'
+                placeholder: opt.getAttribute('data-placeholder') || '<%= t('auth:register.phonePlaceholder') %>'
             };
         }
     });
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         maxItems: 1,
         searchField: ['text'],
         sortField: [{field: 'text', direction: 'asc'}],
-        placeholder: 'Select your country',
+        placeholder: '<%= t('auth:register.countryPlaceholder') %>',
         allowEmptyOption: false,
         onItemAdd: function(value) {
             const info = countryMap[value];
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             if (pwd && confirmPwd && pwd.value !== confirmPwd.value) {
                 e.preventDefault();
-                confirmPwd.setCustomValidity('Passwords do not match');
+                confirmPwd.setCustomValidity('<%= t('auth:validators.passwordsDoNotMatch') %>');
                 confirmPwd.reportValidity();
             } else if (confirmPwd) {
                 confirmPwd.setCustomValidity('');

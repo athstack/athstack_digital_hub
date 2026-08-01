@@ -1,0 +1,43 @@
+{
+  "title": {
+    "index": "आपका शॉपिंग कार्ट - TechBridge Digital Hub"
+  },
+  "words": {
+    "product": "प्रोडक्ट",
+    "subtotal": "उप-योग",
+    "shipping": "शिपिंग",
+    "remove": "हटाएं"
+  },
+  "index": {
+    "badge": "शॉपिंग कार्ट",
+    "heading": "आपका कार्ट",
+    "orderSummary": "ऑर्डर सारांश",
+    "subtotalItems": "उप-योग ({{count}} आइटम)",
+    "calculatedAtCheckout": "चेकआउट पर गणना की जाएगी",
+    "checkout": "चेकआउट के लिए आगे बढ़ें",
+    "continueShopping": "खरीदारी जारी रखें"
+  },
+  "empty": {
+    "heading": "आपका कार्ट खाली है",
+    "message": "लगता है आपने अभी तक कोई प्रोडक्ट नहीं जोड़ा है। प्रीमियम टेक हार्डवेयर खोजने के लिए हमारी दुकान देखें।",
+    "browseShop": "दुकान देखें"
+  },
+  "flash": {
+    "invalidProduct": "अमान्य प्रोडक्ट।",
+    "productNotFound": "प्रोडक्ट नहीं मिला या उपलब्ध नहीं है।",
+    "itemAdded": "आइटम कार्ट में जोड़ दिया गया।",
+    "itemNotFound": "कार्ट में आइटम नहीं मिला।",
+    "cartUpdated": "कार्ट अपडेट हो गया।",
+    "itemRemoved": "आइटम कार्ट से हटा दिया गया।",
+    "emptyCart": "आपका कार्ट खाली है।",
+    "noValidProducts": "कार्ट में कोई मान्य प्रोडक्ट नहीं है।",
+    "insufficientStock": "\"{{name}}\" के लिए स्टॉक अपर्याप्त है। केवल {{stock}} उपलब्ध हैं।",
+    "orderPlaced": "ऑर्डर #{{id}} सफलतापूर्वक दिया गया!"
+  },
+  "notification": {
+    "orderPlacedTitle": "ऑर्डर दिया गया",
+    "orderPlacedMessage": "{{total}} के लिए आपका ऑर्डर #{{id}} सफलतापूर्वक दिया गया है।",
+    "newOrderTitle": "नया ऑर्डर प्राप्त हुआ",
+    "newOrderMessage": "{{total}} के ऑर्डर #{{id}} को प्रोसेसिंग की आवश्यकता है।"
+  }
+}

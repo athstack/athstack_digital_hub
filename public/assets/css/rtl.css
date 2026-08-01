@@ -1,0 +1,121 @@
+/* ============================================================
+   Right-to-Left (RTL) overrides for the custom theme.
+   Loaded only when the active language is RTL (e.g. Arabic).
+   Bootstrap's RTL build handles the bulk of logical-property
+   mirroring; these rules fix custom component specifics.
+   ============================================================ */
+
+/* --- Fonts for non-Latin scripts ---------------------------- */
+html[lang="ar"] body,
+html[lang="ar"] button,
+html[lang="ar"] input,
+html[lang="ar"] select,
+html[lang="ar"] textarea {
+    font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', 'Inter', Tahoma, Arial, sans-serif;
+}
+
+html[lang="zh"] body,
+html[lang="zh"] button,
+html[lang="zh"] input,
+html[lang="zh"] select,
+html[lang="zh"] textarea {
+    font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+}
+
+html[lang="hi"] body,
+html[lang="hi"] button,
+html[lang="hi"] input,
+html[lang="hi"] select,
+html[lang="hi"] textarea {
+    font-family: 'Inter', 'Noto Sans Devanagari', 'Mukta', sans-serif;
+}
+
+/* letter-spacing is meaningless (and ugly) for Arabic script */
+html[lang="ar"] * {
+    letter-spacing: 0 !important;
+}
+
+/* --- Mobile drawer: slide in from the opposite side --------- */
+[dir="rtl"] .mobile-drawer {
+    right: auto;
+    left: 0;
+    border-left: none;
+    border-right: 1px solid var(--border-glass);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.4);
+    transform: translateX(-100%);
+}
+[dir="rtl"] .mobile-drawer.open {
+    transform: translateX(0);
+}
+
+/* --- Floating elements that are physically anchored --------- */
+[dir="rtl"] .whatsapp-float {
+    right: auto;
+    left: 30px;
+}
+
+[dir="rtl"] .skip-link {
+    left: auto;
+    right: 0;
+    border-radius: 0 0 0 var(--radius-sm);
+}
+
+[dir="rtl"] .cart-badge,
+[dir="rtl"] .notif-badge {
+    right: auto;
+    left: -8px;
+}
+
+[dir="rtl"] .msg-unread-badge,
+[dir="rtl"] #msgUnreadBadge {
+    right: auto;
+    left: -8px;
+}
+
+/* --- Directional icons should be mirrored in RTL ------------ */
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-chevron-right,
+[dir="rtl"] .fa-chevron-left,
+[dir="rtl"] .fa-angle-right,
+[dir="rtl"] .fa-angle-left,
+[dir="rtl"] .fa-caret-right,
+[dir="rtl"] .fa-caret-left,
+[dir="rtl"] .fa-arrow-right-long,
+[dir="rtl"] .fa-arrow-left-long,
+[dir="rtl"] .fa-arrow-right-to-bracket,
+[dir="rtl"] .fa-arrow-left-from-bracket,
+[dir="rtl"] .fa-hand-point-right,
+[dir="rtl"] .fa-hand-point-left,
+[dir="rtl"] .fa-share,
+[dir="rtl"] .fa-reply,
+[dir="rtl"] .fa-redo,
+[dir="rtl"] .fa-undo {
+    transform: scaleX(-1);
+}
+
+/* --- Chevron caret inside the language selector ------------- */
+[dir="rtl"] .language-selector-caret {
+    margin-right: 4px;
+    margin-left: 0;
+}
+
+/* --- Minor fixes for table/text flows in RTL ---------------- */
+[dir="rtl"] .table {
+    --bs-table-bg: transparent;
+}
+
+[dir="rtl"] .dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+/* --- Numeric formatting looks better with tabular layout ---- */
+[dir="rtl"] .product-price,
+[dir="rtl"] .course-price,
+[dir="rtl"] .stat-number,
+[dir="rtl"] .cart-total,
+[dir="rtl"] td,
+[dir="rtl"] th {
+    font-feature-settings: 'tnum';
+}

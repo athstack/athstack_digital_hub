@@ -10,8 +10,8 @@
             <div class="col-lg-9">
                 <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
                     <div class="d-flex align-items-center gap-3">
-                        <span class="section-badge"><i class="fa-solid fa-chart-bar me-1"></i>Analytics</span>
-                        <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-magnifying-glass-chart me-2 text-primary"></i>Data Analysis</h2>
+                        <span class="section-badge"><i class="fa-solid fa-chart-bar me-1"></i><%= t('admin:analytics.badge') %></span>
+                        <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-magnifying-glass-chart me-2 text-primary"></i><%= t('admin:analytics.heading') %></h2>
                     </div>
                 </div>
 
@@ -21,20 +21,20 @@
                         <div class="glass-card p-3 text-center">
                             <i class="fa-solid fa-dollar-sign fa-xl text-success mb-2"></i>
                             <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= formatCurrency(repairRevenue) %></h4>
-                            <p class="text-white-50 small mb-0">Service Earnings</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.serviceEarnings') %></p>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="glass-card p-3 text-center">
                             <i class="fa-solid fa-wrench fa-xl text-primary mb-2"></i>
                             <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= totalRepairs %></h4>
-                            <p class="text-white-50 small mb-0">Total Repairs</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.totalRepairs') %></p>
                             <div class="mt-1" style="font-size:0.6rem;line-height:1.4;">
-                                <span class="text-warning"><%= pendingRepairs %> pending</span>
+                                <span class="text-warning"><%= pendingRepairs %> <%= t('admin:words.pending') %></span>
                                 <span class="text-white-50 mx-1">|</span>
-                                <span class="text-info"><%= inProgress %> active</span>
+                                <span class="text-info"><%= inProgress %> <%= t('admin:words.active') %></span>
                                 <span class="text-white-50 mx-1">|</span>
-                                <span class="text-success"><%= completedRepairs %> done</span>
+                                <span class="text-success"><%= completedRepairs %> <%= t('admin:words.done') %></span>
                             </div>
                         </div>
                     </div>
@@ -43,12 +43,12 @@
                             <i class="fa-solid fa-clock fa-xl text-info mb-2"></i>
                             <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;">
                                 <% if (avgTurnaround !== null) { %>
-                                    <%= avgTurnaround %> <small style="font-size:0.65rem;">hrs</small>
+                                    <%= avgTurnaround %> <small style="font-size:0.65rem;"><%= t('admin:words.hours') %></small>
                                 <% } else { %>
                                     <small style="font-size:0.8rem;">N/A</small>
                                 <% } %>
                             </h4>
-                            <p class="text-white-50 small mb-0">Avg Turnaround</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.avgTurnaround') %></p>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -57,9 +57,9 @@
                             <h4 class="text-white fw-bold mb-0" style="font-size:0.95rem;line-height:1.3;">
                                 <%= topService ? topService.title : 'N/A' %>
                             </h4>
-                            <p class="text-white-50 small mb-0">Top Service</p>
+                            <p class="text-white-50 small mb-0"><%= t('admin:words.topService') %></p>
                             <% if (topService) { %>
-                            <div style="font-size:0.6rem;color:rgba(255,255,255,0.35);"><%= topService.total_bookings %> bookings</div>
+                            <div style="font-size:0.6rem;color:rgba(255,255,255,0.35);"><%= topService.total_bookings %> <%= t('admin:words.bookings') %></div>
                             <% } %>
                         </div>
                     </div>
@@ -70,33 +70,33 @@
                     <form method="GET" action="/admin/analytics" class="row g-2 align-items-end" id="filterForm">
                         <input type="hidden" name="search" id="searchHidden" value="<%= search %>">
                         <div class="col-md-2">
-                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;">Date Range</label>
+                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;"><%= t('admin:analytics.dateRange') %></label>
                             <select name="range" class="form-select form-select-sm" onchange="toggleCustomDates();this.form.submit();">
-                                <option value="7days" <%= range === '7days' ? 'selected' : '' %>>Last 7 Days</option>
-                                <option value="30days" <%= range === '30days' ? 'selected' : '' %>>This Month</option>
-                                <option value="90days" <%= range === '90days' ? 'selected' : '' %>>Last 90 Days</option>
-                                <option value="year" <%= range === 'year' ? 'selected' : '' %>>This Year</option>
-                                <option value="custom" <%= range === 'custom' ? 'selected' : '' %>>Custom Range</option>
+                                <option value="7days" <%= range === '7days' ? 'selected' : '' %>><%= t('admin:analytics.last7Days') %></option>
+                                <option value="30days" <%= range === '30days' ? 'selected' : '' %>><%= t('admin:analytics.thisMonth') %></option>
+                                <option value="90days" <%= range === '90days' ? 'selected' : '' %>><%= t('admin:analytics.last90Days') %></option>
+                                <option value="year" <%= range === 'year' ? 'selected' : '' %>><%= t('admin:analytics.thisYear') %></option>
+                                <option value="custom" <%= range === 'custom' ? 'selected' : '' %>><%= t('admin:analytics.customRange') %></option>
                             </select>
                         </div>
                         <div class="col-md-2" id="customStartWrap" style="<%= range === 'custom' ? '' : 'display:none;' %>">
-                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;">From</label>
+                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;"><%= t('admin:analytics.from') %></label>
                             <input type="date" name="start_date" class="form-control form-control-sm" value="<%= start_date %>">
                         </div>
                         <div class="col-md-2" id="customEndWrap" style="<%= range === 'custom' ? '' : 'display:none;' %>">
-                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;">To</label>
+                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;"><%= t('admin:analytics.to') %></label>
                             <input type="date" name="end_date" class="form-control form-control-sm" value="<%= end_date %>">
                         </div>
                         <div class="col-md-2">
-                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;">Category</label>
+                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;"><%= t('common:words.category') %></label>
                             <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="all" <%= category === 'all' ? 'selected' : '' %>>All Categories</option>
-                                <option value="computer" <%= category === 'computer' ? 'selected' : '' %>>Computer Services</option>
-                                <option value="phone" <%= category === 'phone' ? 'selected' : '' %>>Phone Services</option>
+                                <option value="all" <%= category === 'all' ? 'selected' : '' %>><%= t('admin:analytics.allCategories') %></option>
+                                <option value="computer" <%= category === 'computer' ? 'selected' : '' %>><%= t('admin:analytics.computerServices') %></option>
+                                <option value="phone" <%= category === 'phone' ? 'selected' : '' %>><%= t('admin:analytics.phoneServices') %></option>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex gap-2">
-                            <button type="submit" class="btn btn-sm btn-premium-primary rounded-pill flex-grow-1"><i class="fa-solid fa-filter me-1"></i>Filter</button>
+                            <button type="submit" class="btn btn-sm btn-premium-primary rounded-pill flex-grow-1"><i class="fa-solid fa-filter me-1"></i><%= t('admin:words.filter') %></button>
                             <a href="/admin/analytics" class="btn btn-sm btn-premium-outline rounded-pill"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </form>
@@ -105,7 +105,7 @@
                 <!-- Search + Export Bar -->
                 <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
                     <div style="flex:1;max-width:320px;">
-                        <input type="text" class="form-control form-control-sm" placeholder="Search services..." value="<%= search %>" id="searchInput" style="background:var(--bg-input);border-color:var(--border-glass);color:var(--text-main);">
+                        <input type="text" class="form-control form-control-sm" placeholder="<%= t('admin:analytics.searchPlaceholder') %>" value="<%= search %>" id="searchInput" style="background:var(--bg-input);border-color:var(--border-glass);color:var(--text-main);">
                     </div>
                     <div class="d-flex gap-2 flex-shrink-0">
                         <button class="btn btn-sm btn-premium-outline rounded-pill" onclick="exportCSV()"><i class="fa-solid fa-file-csv me-1"></i>CSV</button>
@@ -119,12 +119,12 @@
                         <table class="table table-dark align-middle mb-0" id="analyticsTable" style="min-width:700px;">
                             <thead>
                                 <tr>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(0)">Service <i class="fa-solid fa-sort ms-1"></i></th>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(1)">Category <i class="fa-solid fa-sort ms-1"></i></th>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(2)">Bookings <i class="fa-solid fa-sort ms-1"></i></th>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;letter-spacing:0.06em;">Rate</th>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(4)">Revenue <i class="fa-solid fa-sort ms-1"></i></th>
-                                    <th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;letter-spacing:0.06em;">Avg Time</th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(0)"><%= t('admin:words.service') %> <i class="fa-solid fa-sort ms-1"></i></th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(1)"><%= t('common:words.category') %> <i class="fa-solid fa-sort ms-1"></i></th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(2)"><%= t('admin:words.bookings') %> <i class="fa-solid fa-sort ms-1"></i></th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;letter-spacing:0.06em;"><%= t('admin:words.rate') %></th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;letter-spacing:0.06em;cursor:pointer;" onclick="sortTable(4)"><%= t('admin:words.revenue') %> <i class="fa-solid fa-sort ms-1"></i></th>
+                                    <th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;letter-spacing:0.06em;"><%= t('admin:words.avgTime') %></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,15 +134,15 @@
                                     <tr style="transition:background 0.15s;cursor:default;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=''">
                                         <td class="py-3 px-4 text-white fw-medium"><%= svc.title %></td>
                                         <td class="py-3 px-4">
-                                            <span class="badge <%= svc.category === 'computer' ? 'bg-primary' : 'bg-info' %>" style="font-size:0.6rem;"><%= svc.category === 'computer' ? 'Computer' : 'Phone' %></span>
+                                            <span class="badge <%= svc.category === 'computer' ? 'bg-primary' : 'bg-info' %>" style="font-size:0.6rem;"><%= svc.category === 'computer' ? t('admin:words.computer') : t('admin:words.phone') %></span>
                                         </td>
                                         <td class="py-3 px-4 text-white text-center fw-medium"><%= svc.total_bookings %></td>
                                         <td class="py-3 px-4 text-center">
                                             <% if (svc.total_bookings > 0) { %>
                                             <div class="d-flex align-items-center gap-2 justify-content-center">
-                                                <span class="badge bg-success" style="font-size:0.6rem;"><%= svc.completed_count %> done</span>
+                                                <span class="badge bg-success" style="font-size:0.6rem;"><%= svc.completed_count %> <%= t('admin:words.done') %></span>
                                                 <% if (svc.pending_count > 0) { %>
-                                                <span class="badge bg-warning text-dark" style="font-size:0.6rem;"><%= svc.pending_count %> pending</span>
+                                                <span class="badge bg-warning text-dark" style="font-size:0.6rem;"><%= svc.pending_count %> <%= t('admin:words.pending') %></span>
                                                 <% } %>
                                             </div>
                                             <div class="mt-1" style="width:80px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin:0 auto;overflow:hidden;">
@@ -155,7 +155,7 @@
                                         <td class="py-3 px-4 text-end"><span style="color:#10B981;font-weight:500;"><%= formatCurrency(svc.total_revenue) %></span></td>
                                         <td class="py-3 px-4 text-end" style="color:rgba(255,255,255,0.6);">
                                             <% if (svc.avg_completion_hours) { %>
-                                                <%= Math.round(svc.avg_completion_hours) %> hrs
+                                                <%= Math.round(svc.avg_completion_hours) %> <%= t('admin:words.hours') %>
                                             <% } else { %>
                                                 <span style="color:rgba(255,255,255,0.25);">—</span>
                                             <% } %>
@@ -166,7 +166,7 @@
                                 <tr>
                                     <td colspan="6" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
                                         <i class="fa-solid fa-chart-simple fa-2x mb-2"></i><br>
-                                        No data found for the selected filters.
+                                        <%= t('admin:analytics.noDataFound') %>
                                     </td>
                                 </tr>
                                 <% } %>
@@ -210,7 +210,7 @@ function exportCSV() {
     if (!tbody) return;
     var rows = tbody.querySelectorAll('tr');
     if (rows.length === 0 || (rows.length === 1 && rows[0].querySelector('td[colspan]'))) return;
-    var csv = '\uFEFFService,Category,Bookings,Completed,Pending,Revenue,Avg Time\n';
+    var csv = '\uFEFF<%= t('admin:words.service') %>,<%= t('common:words.category') %>,<%= t('admin:words.bookings') %>,<%= t('admin:words.done') %>,<%= t('admin:words.pending') %>,<%= t('admin:words.revenue') %>,<%= t('admin:words.avgTime') %>\n';
     rows.forEach(function(row) {
         if (row.querySelector('td[colspan]')) return;
         var cells = row.querySelectorAll('td');
@@ -240,8 +240,8 @@ function exportCSV() {
 
 function exportPDF() {
     var el = document.querySelector('.glass-card.p-0');
-    if (!el) { alert('No data table found.'); return; }
-    if (typeof html2pdf === 'undefined') { alert('PDF library not loaded. Please try again.'); return; }
+    if (!el) { alert('<%= t('admin:analytics.exportNoData') %>'); return; }
+    if (typeof html2pdf === 'undefined') { alert('<%= t('admin:analytics.pdfLibNotLoaded') %>'); return; }
     el.querySelectorAll('.fa-sort').forEach(function(i) { i.remove(); });
     var opt = {
         margin: [0.4, 0.4, 0.4, 0.4],

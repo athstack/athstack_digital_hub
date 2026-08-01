@@ -1,0 +1,34 @@
+{
+  "index": {
+    "title": "Über uns - TechBridge Digital Hub",
+    "heading": "Die Zukunft der Tech-Lösungen gestalten",
+    "intro": "Wir sind ein zukunftsorientiertes Technologieunternehmen, das sich der Bereitstellung von Premium-Hardware-Lösungen, professionellen Wartungsdiensten und professioneller Ingenieursausbildung verschrieben hat.",
+    "mission": {
+      "title": "Unsere Mission",
+      "text": "Unternehmensgerechte Technologielösungen zu liefern, die Unternehmen und Privatpersonen in ganz Afrika stärken und die Lücke zwischen Innovation und praktischer Umsetzung schließen."
+    },
+    "vision": {
+      "title": "Unsere Vision",
+      "text": "Das führende Technologiezentrum Ostafrikas zu sein, bekannt für unsere Qualitätsprodukte, zuverlässigen Wartungsdienste und erstklassigen technischen Schulungsprogramme."
+    },
+    "values": {
+      "title": "Unsere Werte",
+      "text": "Integrität, Exzellenz und Kundenorientierung bestimmen alles, was wir tun. Wir glauben an langfristige Beziehungen durch Qualitätsservice und transparente Abläufe."
+    },
+    "whoWeAre": {
+      "badge": "Wer wir sind",
+      "heading": "Die Zukunft der Technologiebeschaffung gestalten",
+      "paragraph1": "TechBridge Digital Hub wurde mit einer einzigen Vision gegründet: eine einheitliche Plattform zu schaffen, auf der Unternehmen und Privatpersonen Zugang zu Premium-Technologieprodukten, zuverlässigen Wartungsdiensten und umfassender technischer Ausbildung erhalten.",
+      "paragraph2": "Unser Team aus zertifizierten Ingenieuren und technischen Spezialisten bringt jahrzehntelange kombinierte Erfahrung in Hardware-Beschaffung, Systemdiagnose, Unternehmens-IT-Infrastruktur und professioneller Ausbildung mit.",
+      "paragraph3": "Von der Beschaffung von Unternehmensgeräten bis hin zur praktischen technischen Ausbildung liefern wir Lösungen, die Ihren Betrieb auf Spitzenniveau halten.",
+      "visitShop": "Shop besuchen",
+      "contactUs": "Kontaktieren Sie uns"
+    },
+    "stats": {
+      "clientsServed": "Betreute Kunden",
+      "repairsCompleted": "Abgeschlossene Reparaturen",
+      "trainingGraduates": "Schulungsabsolventen",
+      "yearsExperience": "Jahre Erfahrung"
+    }
+  }
+}

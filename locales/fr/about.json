@@ -1,0 +1,34 @@
+{
+  "index": {
+    "title": "À propos - TechBridge Digital Hub",
+    "heading": "Construire l'avenir des solutions technologiques",
+    "intro": "Nous sommes une entreprise technologique tournée vers l'avenir, dédiée à la fourniture de solutions matérielles premium, de services de maintenance experts et de formations d'ingénierie professionnelles.",
+    "mission": {
+      "title": "Notre mission",
+      "text": "Fournir des solutions technologiques de niveau entreprise qui renforcent les entreprises et les particuliers à travers l'Afrique, en comblant le fossé entre l'innovation et la mise en œuvre pratique."
+    },
+    "vision": {
+      "title": "Notre vision",
+      "text": "Devenir le pôle technologique de référence de l'Afrique de l'Est, reconnu pour la qualité de nos produits, la fiabilité de nos services de maintenance et l'excellence de nos programmes de formation technique."
+    },
+    "values": {
+      "title": "Nos valeurs",
+      "text": "L'intégrité, l'excellence et la satisfaction client guident chacune de nos actions. Nous croyons en l'établissement de relations durables grâce à un service de qualité et à des opérations transparentes."
+    },
+    "whoWeAre": {
+      "badge": "Qui nous sommes",
+      "heading": "Construire l'avenir de la fourniture technologique",
+      "paragraph1": "TechBridge Digital Hub a été fondé avec une vision singulière : créer une plateforme unifiée où les entreprises et les particuliers peuvent accéder à des produits technologiques premium, à des services de maintenance fiables et à une formation technique complète.",
+      "paragraph2": "Notre équipe d'ingénieurs certifiés et de spécialistes techniques cumule des décennies d'expérience combinée dans l'approvisionnement en matériel, le diagnostic de systèmes, l'infrastructure informatique d'entreprise et la formation professionnelle.",
+      "paragraph3": "De l'approvisionnement en appareils d'entreprise à la formation technique pratique, nous fournissons des solutions qui maintiennent vos opérations à un niveau de performance optimal.",
+      "visitShop": "Visiter la boutique",
+      "contactUs": "Contactez-nous"
+    },
+    "stats": {
+      "clientsServed": "Clients servis",
+      "repairsCompleted": "Réparations effectuées",
+      "trainingGraduates": "Diplômés de la formation",
+      "yearsExperience": "Années d'expérience"
+    }
+  }
+}

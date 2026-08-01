@@ -1,4 +1,5 @@
 const slugify = require('slugify');
+const { LANG_MAP, DEFAULT_LANG } = require('../config/languages');
 
 /**
  * Generate a URL-friendly slug from text
@@ -14,35 +15,64 @@ function generateSlug(text) {
 }
 
 /**
- * Format a number as USD currency
+ * Locale-aware currency formatter.
+ *
+ * Formatting follows the selected language/locale, e.g.:
+ *   English:  $25,000.00
+ *   French:   25 000,00 €
+ *   German:   25.000,00 €
+ *   Swahili:  TZS 25,000
  * @param {number} amount
+ * @param {string} [lang] - Language code (defaults to English)
  * @returns {string}
  */
-function formatCurrency(amount) {
-  if (amount === null || amount === undefined) return '$0.00';
-  return '$' + Number(amount).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+function formatCurrency(amount, lang = DEFAULT_LANG) {
+  const conf = LANG_MAP[lang] || LANG_MAP[DEFAULT_LANG];
+  const value = amount === null || amount === undefined ? 0 : Number(amount);
+  try {
+    if (conf.currency === 'TZS') {
+      return new Intl.NumberFormat(conf.locale, {
+        style: 'currency',
+        currency: 'TZS',
+        currencyDisplay: 'code',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+    return new Intl.NumberFormat(conf.locale, {
+      style: 'currency',
+      currency: conf.currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  } catch (e) {
+    return '$' + value.toFixed(2);
+  }
 }
 
 /**
- * Format a date to a readable string
+ * Locale-aware date formatter.
  * @param {Date|string} date
+ * @param {string} [lang] - Language code (defaults to English)
  * @param {Object} options - Intl.DateTimeFormat options
  * @returns {string}
  */
-function formatDate(date, options = {}) {
+function formatDate(date, lang = DEFAULT_LANG, options = {}) {
   if (!date) return '';
   const d = new Date(date);
   if (isNaN(d.getTime())) return '';
+  const conf = LANG_MAP[lang] || LANG_MAP[DEFAULT_LANG];
   const defaults = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     ...options
   };
-  return d.toLocaleDateString('en-NG', defaults);
+  try {
+    return d.toLocaleDateString(conf.locale, defaults);
+  } catch (e) {
+    return d.toLocaleDateString(LANG_MAP[DEFAULT_LANG].locale, defaults);
+  }
 }
 
 /**

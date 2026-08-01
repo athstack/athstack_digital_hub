@@ -1,11 +1,10 @@
 const ProductModel = require('../models/ProductModel');
 const RepairModel = require('../models/RepairModel');
-const UserModel = require('../models/UserModel');
 const OrderModel = require('../models/OrderModel');
 const NotificationModel = require('../models/NotificationModel');
 const CategoryModel = require('../models/CategoryModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug, formatDate, formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
+const { generateSlug } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 
@@ -52,7 +51,7 @@ exports.getDashboard = async (req, res, next) => {
     };
 
     res.render('technician/dashboard', {
-      title: 'Technician Dashboard - TechBridge Digital Hub',
+      title: req.t('technician:title.dashboard'),
       metrics,
       recentRepairs: assignedRepairs.slice(0, 5)
     });
@@ -66,9 +65,8 @@ exports.getProducts = async (req, res, next) => {
     const result = await ProductModel.getByTechnician(req.session.userId);
 
     res.render('technician/products', {
-      title: 'My Products - TechBridge Digital Hub',
-      products: result.products,
-      formatCurrency
+      title: req.t('technician:title.products'),
+      products: result.products
     });
   } catch (err) {
     next(err);
@@ -79,7 +77,7 @@ exports.getAddProduct = async (req, res, next) => {
   try {
     const categories = await CategoryModel.getAll();
     res.render('technician/products-add', {
-      title: 'Add Product - TechBridge Digital Hub',
+      title: req.t('technician:title.addProduct'),
       categories,
       product: null
     });
@@ -93,7 +91,7 @@ exports.createProduct = async (req, res, next) => {
     const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
 
     if (!name || !price || !category_id) {
-      req.flash('error', 'Product name, price, and category are required.');
+      req.flash('error', req.t('technician:flash.productRequiredFields'));
       return res.redirect('/technician/products/add');
     }
 
@@ -130,7 +128,7 @@ exports.createProduct = async (req, res, next) => {
       }
     }
 
-    req.flash('success', 'Product created successfully.');
+    req.flash('success', req.t('technician:flash.productCreated'));
     res.redirect('/technician/products');
   } catch (err) {
     next(err);
@@ -141,19 +139,19 @@ exports.getEditProduct = async (req, res, next) => {
   try {
     const product = await ProductModel.findById(parseInt(req.params.id));
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('technician:flash.productNotFound'));
       return res.redirect('/technician/products');
     }
 
     if (product.technician_id !== req.session.userId) {
-      req.flash('error', 'You can only edit your own products.');
+      req.flash('error', req.t('technician:flash.editOwnOnly'));
       return res.redirect('/technician/products');
     }
 
     const categories = await CategoryModel.getAll();
     const gallery = await ProductImageModel.getByProduct(product.id);
     res.render('technician/products-edit', {
-      title: 'Edit Product - TechBridge Digital Hub',
+      title: req.t('technician:title.editProduct'),
       product,
       categories,
       gallery
@@ -169,12 +167,12 @@ exports.updateProduct = async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('technician:flash.productNotFound'));
       return res.redirect('/technician/products');
     }
 
     if (product.technician_id !== req.session.userId) {
-      req.flash('error', 'You can only edit your own products.');
+      req.flash('error', req.t('technician:flash.editOwnOnly'));
       return res.redirect('/technician/products');
     }
 
@@ -203,7 +201,7 @@ exports.updateProduct = async (req, res, next) => {
       await ProductImageModel.addMultiple(productId, galleryPaths);
     }
 
-    req.flash('success', 'Product updated successfully.');
+    req.flash('success', req.t('technician:flash.productUpdated'));
     res.redirect('/technician/products');
   } catch (err) {
     next(err);
@@ -219,20 +217,20 @@ exports.deleteProduct = async (req, res, next) => {
     const product = await ProductModel.findById(productId);
 
     if (!product) {
-      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
-      req.flash('error', 'Product not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('technician:flash.productNotFound') });
+      req.flash('error', req.t('technician:flash.productNotFound'));
       return respond(404, {});
     }
 
     if (product.technician_id !== req.session.userId) {
-      if (isAjax) return respond(403, { success: false, message: 'You can only delete your own products.' });
-      req.flash('error', 'You can only delete your own products.');
+      if (isAjax) return respond(403, { success: false, message: req.t('technician:flash.deleteOwnOnly') });
+      req.flash('error', req.t('technician:flash.deleteOwnOnly'));
       return respond(403, {});
     }
 
     await ProductModel.delete(productId);
-    if (isAjax) return respond(200, { success: true, message: 'Product deleted.' });
-    req.flash('success', 'Product deleted.');
+    if (isAjax) return respond(200, { success: true, message: req.t('technician:flash.productDeleted') });
+    req.flash('success', req.t('technician:flash.productDeleted'));
     respond(200, {});
   } catch (err) {
     next(err);
@@ -246,33 +244,34 @@ exports.toggleProductStatus = async (req, res, next) => {
     const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/technician/products');
 
     if (isNaN(productId)) {
-      if (isAjax) return respond(400, { success: false, message: 'Invalid product ID.' });
-      req.flash('error', 'Invalid product ID.');
+      if (isAjax) return respond(400, { success: false, message: req.t('technician:flash.invalidProductId') });
+      req.flash('error', req.t('technician:flash.invalidProductId'));
       return respond(400, {});
     }
 
     const product = await ProductModel.findById(productId);
     if (!product) {
-      if (isAjax) return respond(404, { success: false, message: 'Product not found.' });
-      req.flash('error', 'Product not found.');
+      if (isAjax) return respond(404, { success: false, message: req.t('technician:flash.productNotFound') });
+      req.flash('error', req.t('technician:flash.productNotFound'));
       return respond(404, {});
     }
 
     if (product.technician_id !== req.session.userId) {
-      if (isAjax) return respond(403, { success: false, message: 'You can only modify your own products.' });
-      req.flash('error', 'You can only modify your own products.');
+      if (isAjax) return respond(403, { success: false, message: req.t('technician:flash.modifyOwnOnly') });
+      req.flash('error', req.t('technician:flash.modifyOwnOnly'));
       return respond(403, {});
     }
 
     const newStatus = product.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE products SET status = ? WHERE id = ?', [newStatus, productId]);
 
-    if (isAjax) return respond(200, { success: true, status: newStatus, message: `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.` });
-    req.flash('success', `Product ${newStatus === 'active' ? 'activated' : 'deactivated'}.`);
+    const statusMsg = req.t(newStatus === 'active' ? 'technician:flash.productActivated' : 'technician:flash.productDeactivated');
+    if (isAjax) return respond(200, { success: true, status: newStatus, message: statusMsg });
+    req.flash('success', statusMsg);
     respond(302, {});
   } catch (err) {
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
-      return res.status(500).json({ success: false, message: 'Server error.' });
+      return res.status(500).json({ success: false, message: req.t('technician:flash.serverError') });
     }
     next(err);
   }
@@ -293,10 +292,8 @@ exports.getRepairs = async (req, res, next) => {
     );
 
     res.render('technician/repairs', {
-      title: 'Assigned Repairs - TechBridge Digital Hub',
-      repairs,
-      formatDate,
-      getStatusBadgeClass
+      title: req.t('technician:title.repairs'),
+      repairs
     });
   } catch (err) {
     next(err);
@@ -310,7 +307,7 @@ exports.updateRepairStatus = async (req, res, next) => {
 
     const validStatuses = ['pending', 'assigned', 'diagnosing', 'in_repair', 'awaiting_parts', 'completed', 'cancelled'];
     if (!validStatuses.includes(status)) {
-      req.flash('error', 'Invalid status.');
+      req.flash('error', req.t('technician:flash.invalidStatus'));
       return res.redirect('/technician/repairs');
     }
 
@@ -320,7 +317,7 @@ exports.updateRepairStatus = async (req, res, next) => {
     );
 
     if (existing.length === 0) {
-      req.flash('error', 'Repair not found or not assigned to you.');
+      req.flash('error', req.t('technician:flash.repairNotFound'));
       return res.redirect('/technician/repairs');
     }
 
@@ -333,14 +330,14 @@ exports.updateRepairStatus = async (req, res, next) => {
     if (repair.length > 0 && repair[0].user_id) {
       var statusLabel = status.replace(/_/g, ' ');
       await NotificationModel.create(repair[0].user_id, {
-        title: 'Repair Status Updated',
-        message: 'Your repair ' + repair[0].reference_number + ' is now: ' + statusLabel + (notes ? '. Notes: ' + notes : ''),
+        title: req.t('technician:flash.repairStatusUpdatedTitle'),
+        message: req.t('technician:flash.repairStatusMessage', { ref: repair[0].reference_number, status: statusLabel }) + (notes ? '. ' + req.t('technician:flash.notesSuffix', { notes: notes }) : ''),
         type: 'repair',
         link: '/dashboard/repairs'
       });
     }
 
-    req.flash('success', 'Repair status updated.');
+    req.flash('success', req.t('technician:flash.repairStatusUpdated'));
     res.redirect('/technician/repairs');
   } catch (err) {
     next(err);
@@ -352,11 +349,8 @@ exports.getOrders = async (req, res, next) => {
     const result = await OrderModel.getByTechnician(req.session.userId);
 
     res.render('technician/orders', {
-      title: 'Product Orders - TechBridge Digital Hub',
-      orders: result.orders,
-      formatDate,
-      formatCurrency,
-      getStatusBadgeClass
+      title: req.t('technician:title.orders'),
+      orders: result.orders
     });
   } catch (err) {
     next(err);

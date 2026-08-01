@@ -3,7 +3,7 @@ const CategoryModel = require('../models/CategoryModel');
 const WishlistModel = require('../models/WishlistModel');
 const ReviewModel = require('../models/ReviewModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { paginate, formatCurrency, calculateDiscount } = require('../utils/helpers');
+const { calculateDiscount } = require('../utils/helpers');
 
 exports.getShop = async (req, res, next) => {
   try {
@@ -26,15 +26,14 @@ exports.getShop = async (req, res, next) => {
     const totalPages = Math.ceil(result.total / result.limit);
 
     res.render('shop/index', {
-      title: 'Shop Premium Accessories - TechBridge Digital Hub',
+      title: req.t('shop:index.title'),
       products: result.products,
       categories,
       activeCategory: category,
       searchQuery: search,
       pagination: { page: result.page, totalPages, total: result.total, hasNext: result.page < totalPages, hasPrev: result.page > 1 },
       minPrice: req.query.min_price || '',
-      maxPrice: req.query.max_price || '',
-      formatCurrency
+      maxPrice: req.query.max_price || ''
     });
   } catch (err) {
     next(err);
@@ -45,7 +44,7 @@ exports.getProduct = async (req, res, next) => {
   try {
     const product = await ProductModel.findBySlug(req.params.slug);
     if (!product) {
-      req.flash('error', 'Product not found.');
+      req.flash('error', req.t('shop:flash.productNotFound'));
       return res.redirect('/shop');
     }
 
@@ -74,7 +73,7 @@ exports.getProduct = async (req, res, next) => {
     deliveryDate.setDate(deliveryDate.getDate() + (product.stock_quantity > 0 ? 3 : 7));
 
     res.render('shop/details', {
-      title: `${product.name} - TechBridge Digital Hub`,
+      title: req.t('shop:details.title', { name: product.name }),
       product,
       gallery,
       isWishlisted,
@@ -87,7 +86,6 @@ exports.getProduct = async (req, res, next) => {
       hasMoreReviews: reviewData.hasMore,
       relatedProducts,
       deliveryDate,
-      formatCurrency,
       calculateDiscount,
       formatDisplayName: res.locals.formatDisplayName,
       reviewThumbUrl: res.locals.reviewThumbUrl

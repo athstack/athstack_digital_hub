@@ -8,8 +8,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Reviews</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i>Your Reviews</h2>
+                    <span class="section-badge"><%= t('dashboard:reviews.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('dashboard:reviews.heading') %></h2>
                 </div>
 
                 <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -23,9 +23,9 @@
                 <div class="glass-card p-4 mb-4">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fa-solid fa-circle-check text-success me-2"></i>
-                        <h5 class="text-white fw-bold mb-0">Products You Can Review</h5>
+                        <h5 class="text-white fw-bold mb-0"><%= t('dashboard:reviews.eligibleTitle') %></h5>
                     </div>
-                    <p class="text-white-50 small mb-3">Your orders have been delivered. Share your experience with a verified review!</p>
+                    <p class="text-white-50 small mb-3"><%= t('dashboard:reviews.eligibleMessage') %></p>
                     <div class="row g-3">
                         <% eligibleProducts.forEach(function(item) { %>
                         <div class="col-md-6">
@@ -35,9 +35,9 @@
                                 </div>
                                 <div class="flex-grow-1 min-width-0">
                                     <div class="text-white fw-bold small text-truncate"><%= item.product_name %></div>
-                                    <small class="text-white-50">Order #<%= item.order_reference || item.order_id %> · Delivered <%= item.delivered_at ? new Date(item.delivered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '' %></small>
+                                    <small class="text-white-50"><%= t('dashboard:reviews.orderMeta', { ref: item.order_reference || item.order_id, date: formatDate(item.delivered_at, { month: 'short', day: 'numeric' }) }) %></small>
                                 </div>
-                                <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i>Review</a>
+                                <a href="/shop/<%= item.product_slug %>#reviews" class="btn btn-sm btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i><%= t('dashboard:reviews.reviewButton') %></a>
                             </div>
                         </div>
                         <% }) %>
@@ -57,25 +57,26 @@
                                     <% } %>
                                 </div>
                                 <% if (review.is_verified) { %>
-                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> <%= t('dashboard:reviews.verifiedPurchase') %></span>
                                 <% } %>
                             </div>
                             <h6 class="text-white mb-1">
                                 <% if (review.product_name) { %>
                                 <a href="/shop/<%= review.product_slug || '' %>" class="text-primary text-link"><%= review.product_name %></a>
                                 <% } else { %>
-                                General Review
+                                <%= t('dashboard:reviews.generalReview') %>
                                 <% } %>
                             </h6>
                             <small class="text-white-50">
-                                <%= review.type ? review.type.charAt(0).toUpperCase() + review.type.slice(1) : 'Product' %> review
-                                - <%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %>
+                                <% var reviewType = review.type ? t('dashboard:reviews.type.' + String(review.type).toLowerCase(), { defaultValue: String(review.type).charAt(0).toUpperCase() + String(review.type).slice(1) }) : t('dashboard:reviews.type.product'); %>
+                                <%= t('dashboard:reviews.reviewTypeLabel', { type: reviewType }) %>
+                                - <%= formatDate(review.created_at, { year:'numeric', month:'short', day:'numeric' }) %>
                                 <% if (review.status === 'pending') { %>
-                                <span class="badge bg-warning text-dark rounded-pill ms-2">Pending Approval</span>
+                                <span class="badge bg-warning text-dark rounded-pill ms-2"><%= t('dashboard:reviews.status.pending') %></span>
                                 <% } else if (review.status === 'approved') { %>
-                                <span class="badge bg-success rounded-pill ms-2">Approved</span>
+                                <span class="badge bg-success rounded-pill ms-2"><%= t('dashboard:reviews.status.approved') %></span>
                                 <% } else if (review.status === 'rejected') { %>
-                                <span class="badge bg-danger rounded-pill ms-2">Rejected</span>
+                                <span class="badge bg-danger rounded-pill ms-2"><%= t('dashboard:reviews.status.rejected') %></span>
                                 <% } %>
                             </small>
                             <% if (review.title) { %>
@@ -87,27 +88,27 @@
                             <% if (review.images && review.images.length > 0) { %>
                             <div class="review-images-grid review-images-grid-sm mt-2">
                                 <% review.images.slice(0, 5).forEach(function(url) { %>
-                                <img src="<%= reviewThumbUrl(url) %>" alt="Review photo" loading="lazy">
+                                <img src="<%= reviewThumbUrl(url) %>" alt="<%= t('dashboard:reviews.photoAlt') %>" loading="lazy">
                                 <% }) %>
                             </div>
                             <% } %>
                             <% if (review.seller_reply) { %>
                             <div class="seller-reply mt-3">
                                 <div class="seller-reply-head">
-                                    <span class="seller-reply-badge"><i class="fa-solid fa-headset"></i> TechBridge Response</span>
+                                    <span class="seller-reply-badge"><i class="fa-solid fa-headset"></i> <%= t('dashboard:reviews.sellerReply') %></span>
                                 </div>
                                 <p class="seller-reply-text mb-0"><%= review.seller_reply %></p>
                             </div>
                             <% } %>
                             <small class="text-white-50 d-inline-flex align-items-center mt-2">
-                                <i class="fa-solid fa-thumbs-up me-1"></i> <%= review.helpful_count || 0 %> found this helpful
+                                <i class="fa-solid fa-thumbs-up me-1"></i> <%= t('dashboard:reviews.helpfulCount', { count: review.helpful_count || 0 }) %>
                             </small>
                         </div>
                         <div class="d-flex flex-column gap-2 flex-shrink-0">
-                            <a href="/dashboard/reviews/<%= review.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill"><i class="fa-solid fa-pen me-1"></i>Edit</a>
-                            <form method="POST" action="/dashboard/reviews/<%= review.id %>/delete" data-confirm="Delete this review?">
+                            <a href="/dashboard/reviews/<%= review.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill"><i class="fa-solid fa-pen me-1"></i><%= t('words.edit') %></a>
+                            <form method="POST" action="/dashboard/reviews/<%= review.id %>/delete" data-confirm="<%= t('dashboard:reviews.deleteConfirm') %>">
                                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100"><i class="fa-solid fa-trash-can me-1"></i>Delete</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100"><i class="fa-solid fa-trash-can me-1"></i><%= t('words.delete') %></button>
                             </form>
                         </div>
                     </div>
@@ -116,9 +117,9 @@
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-star fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold">No Reviews Yet</h4>
-                    <p class="text-white-50">You haven't written any reviews. Share your experience with products you've purchased!</p>
-                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i>Browse Shop</a>
+                    <h4 class="text-white fw-bold"><%= t('dashboard:reviews.emptyTitle') %></h4>
+                    <p class="text-white-50"><%= t('dashboard:reviews.emptyMessage') %></p>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-bag-shopping me-2"></i><%= t('dashboard:reviews.browseShop') %></a>
                 </div>
                 <% } %>
             </div>

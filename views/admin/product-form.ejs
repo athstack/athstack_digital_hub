@@ -13,7 +13,7 @@
             <div class="col-lg-9">
                 <h2 class="text-white fw-bold mb-4">
                     <i class="fa-solid fa-<%= editing ? 'pencil' : 'plus-circle' %> me-2 text-primary"></i>
-                    <%= editing ? 'Edit Product' : 'Add New Product' %>
+                    <%= editing ? t('admin:productForm.headingEdit') : t('admin:productForm.headingAdd') %>
                 </h2>
 
                 <div class="glass-card no-lift p-5">
@@ -24,33 +24,33 @@
                         <% } %>
                         <div class="row g-3">
                             <div class="col-md-8">
-                                <label class="form-label">Product Name *</label>
-                                <input type="text" name="name" class="form-control" required placeholder="e.g. Dell XPS 15 Laptop" value="<%= editing && product ? product.name : '' %>">
+                                <label class="form-label"><%= t('admin:productForm.name') %> *</label>
+                                <input type="text" name="name" class="form-control" required placeholder="<%= t('admin:productForm.namePlaceholder') %>" value="<%= editing && product ? product.name : '' %>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">SKU</label>
-                                <input type="text" name="sku" class="form-control" placeholder="e.g. DELL-XPS-15" value="<%= editing && product ? (product.sku || '') : '' %>">
+                                <label class="form-label"><%= t('admin:productForm.sku') %></label>
+                                <input type="text" name="sku" class="form-control" placeholder="<%= t('admin:productForm.skuPlaceholder') %>" value="<%= editing && product ? (product.sku || '') : '' %>">
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4" placeholder="Product description..."><%= editing && product ? (product.description || '') : '' %></textarea>
+                                <label class="form-label"><%= t('common:words.description') %></label>
+                                <textarea name="description" class="form-control" rows="4" placeholder="<%= t('admin:productForm.descriptionPlaceholder') %>"><%= editing && product ? (product.description || '') : '' %></textarea>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Price ($) *</label>
+                                <label class="form-label"><%= t('admin:productForm.price') %> *</label>
                                 <input type="number" name="price" class="form-control" required min="0" step="0.01" placeholder="0.00" value="<%= editing && product ? product.price : '' %>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Discount Price ($)</label>
+                                <label class="form-label"><%= t('admin:productForm.discountPrice') %></label>
                                 <input type="number" name="discount_price" class="form-control" min="0" step="0.01" placeholder="0.00" value="<%= editing && product ? (product.discount_price || '') : '' %>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Stock Quantity</label>
+                                <label class="form-label"><%= t('admin:productForm.stockQuantity') %></label>
                                 <input type="number" name="stock_quantity" class="form-control" min="0" value="<%= editing && product ? (product.stock_quantity || 0) : '0' %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Category *</label>
+                                <label class="form-label"><%= t('common:words.category') %> *</label>
                                 <select name="category_id" class="form-select" required>
-                                    <option value="">Select category...</option>
+                                    <option value=""><%= t('admin:productForm.selectCategory') %></option>
                                     <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
                                     <option value="<%= cat.id %>" <%= editing && product && product.category_id == cat.id ? 'selected' : '' %>><%= cat.name %></option>
                                     <% }) } %>
@@ -59,8 +59,8 @@
                             <div class="col-md-6">
                                 <%- include('../partials/fileUpload', {
                                     name: 'product_image',
-                                    label: editing ? 'New Image (optional)' : 'Product Image',
-                                    hint: 'PNG, JPG, WEBP up to 5MB',
+                                    label: editing ? t('admin:productForm.newImageOptional') : t('admin:productForm.productImage'),
+                                    hint: t('admin:fileUpload.hint'),
                                     accept: 'image/*',
                                     currentImage: editing && product ? product.main_image : null,
                                     currentFolder: 'products'
@@ -69,8 +69,8 @@
                             <div class="col-12">
                                 <%- include('../partials/fileUpload', {
                                     name: 'gallery_images',
-                                    label: 'Gallery Images (optional, max 8)',
-                                    hint: 'Select additional product images. Hold Ctrl/Cmd to select multiple.',
+                                    label: t('admin:productForm.galleryImages'),
+                                    hint: t('admin:fileUpload.galleryHint'),
                                     accept: 'image/*',
                                     multiple: true
                                 }) %>
@@ -78,15 +78,15 @@
                                 <div class="file-upload-gallery">
                                     <% gallery.forEach(img => { %>
                                     <div class="file-upload-gallery-item">
-                                        <img src="<%= imageUrl(img.image_path, 'products') %>" alt="Gallery">
+                                        <img src="<%= imageUrl(img.image_path, 'products') %>" alt="<%= t('admin:productForm.galleryAlt') %>">
                                     </div>
                                     <% }) %>
                                 </div>
                                 <% } %>
                             </div>
                             <div class="col-12 text-center mt-3">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i><%= editing ? 'Update Product' : 'Create Product' %></button>
-                                <a href="/admin/products" class="btn btn-premium-outline rounded-pill px-4 ms-2">Cancel</a>
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i><%= editing ? t('admin:productForm.updateProduct') : t('admin:productForm.createProduct') %></button>
+                                <a href="/admin/products" class="btn btn-premium-outline rounded-pill px-4 ms-2"><%= t('common:words.cancel') %></a>
                             </div>
                         </div>
                     </form>

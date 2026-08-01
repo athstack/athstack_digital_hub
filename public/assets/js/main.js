@@ -50,8 +50,8 @@ function initLiveSearch() {
 
           data.forEach(item => {
             const price = item.discount_price && parseFloat(item.discount_price) < parseFloat(item.price)
-              ? '<span class="text-primary fw-bold">$' + Number(item.discount_price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span> <small class="text-muted text-decoration-line-through">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</small>'
-              : '<span class="text-primary fw-bold">$' + Number(item.price).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span>';
+              ? '<span class="text-primary fw-bold">' + formatMoney(item.discount_price) + '</span> <small class="text-muted text-decoration-line-through">' + formatMoney(item.price) + '</small>'
+              : '<span class="text-primary fw-bold">' + formatMoney(item.price) + '</span>';
 
             // TODO: Replace with imageUrl() helper when available client-side
             const imgSrc = item.main_image ? '/uploads/products/' + item.main_image : '/uploads/products/product-placeholder.svg';
@@ -247,7 +247,7 @@ function initFileUpload() {
     function resetUpload() {
       input.value = '';
       if (previewImg) previewImg.src = '';
-      if (filenameEl) filenameEl.textContent = 'No file selected';
+      if (filenameEl) filenameEl.textContent = (window.i18nStrings && window.i18nStrings.noFileSelected) || 'No file selected';
       if (filesizeEl) filesizeEl.textContent = '';
 
       zone?.classList.remove('d-none');
@@ -267,16 +267,17 @@ function initFileUpload() {
 // Confirm dialogs for destructive actions
 // ---------------------------------------------------------------------------
 function initConfirmDialogs() {
+  const defaultMsg = (window.i18nStrings && window.i18nStrings.areYouSure) || 'Are you sure?';
   document.querySelectorAll('[data-confirm]').forEach(el => {
     if (el.tagName === 'FORM') {
       el.addEventListener('submit', (e) => {
-        if (!confirm(el.dataset.confirm || 'Are you sure?')) {
+        if (!confirm(el.dataset.confirm || defaultMsg)) {
           e.preventDefault();
         }
       });
     } else {
       el.addEventListener('click', (e) => {
-        if (!confirm(el.dataset.confirm || 'Are you sure?')) {
+        if (!confirm(el.dataset.confirm || defaultMsg)) {
           e.preventDefault();
         }
       });
@@ -318,6 +319,20 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(text));
   return div.innerHTML;
+}
+
+// ---------------------------------------------------------------------------
+// Locale-aware currency formatting (client-side live search prices)
+// ---------------------------------------------------------------------------
+function formatMoney(value) {
+  const s = window.i18nStrings || {};
+  let nf;
+  try {
+    nf = new Intl.NumberFormat(s.locale || 'en-US', { style: 'currency', currency: s.currency || 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  } catch (e) {
+    nf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return nf.format(Number(value) || 0);
 }
 
 // ---------------------------------------------------------------------------

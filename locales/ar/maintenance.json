@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "صيانة تقنية المؤسسات وإصلاح الأجهزة - TechBridge Digital Hub",
+    "badge": "إصلاح الأجهزة وصيانة تقنية المعلومات",
+    "heading": "خدمات صيانة المؤسسات",
+    "intro": "تشخيص وإصلاح وصيانة تقنية احترافية لأجهزة الكمبيوتر والأجهزة المحمولة.",
+    "services": {
+      "computerTitle": "خدمات الكمبيوتر",
+      "computerSubtitle": "حلول إصلاح أجهزة المكتب والمحمول",
+      "phoneTitle": "خدمات الهواتف",
+      "phoneSubtitle": "إصلاح وتشخيص الأجهزة المحمولة",
+      "bookNow": "احجز الآن",
+      "defaultDescription": "خدمة احترافية",
+      "emptyComputer": "يتم إعداد خدمات الكمبيوتر حاليًا. عد لاحقًا.",
+      "emptyPhone": "يتم إعداد خدمات الهواتف حاليًا. عد لاحقًا."
+    },
+    "form": {
+      "title": "احجز موعد إصلاح",
+      "intro": "املأ النموذج أدناه وسيعود فريقنا للتواصل معك خلال 24 ساعة.",
+      "fullName": "الاسم الكامل",
+      "emailAddress": "البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "country": "البلد",
+      "selectCountry": "اختر بلدك",
+      "appointmentDate": "تاريخ الموعد",
+      "serviceType": "نوع الخدمة",
+      "selectService": "اختر خدمة...",
+      "deviceType": "نوع الجهاز",
+      "deviceBrand": "العلامة التجارية للجهاز",
+      "deviceModel": "طراز الجهاز",
+      "issueDescription": "وصف المشكلة",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "أدخل رقم هاتف صالحًا",
+      "phoneNumberFallback": "رقم الهاتف",
+      "brandPlaceholder": "مثال: Apple, Dell, Samsung",
+      "modelPlaceholder": "مثال: MacBook Pro 14",
+      "issuePlaceholder": "صف ما يعاني منه جهازك (مثال: الشاشة لا تعمل، إغلاق غير متوقع، انسكاب ماء...)",
+      "submit": "إرسال طلب الإصلاح",
+      "countries": {
+        "NG": "نيجيريا",
+        "TZ": "تنزانيا",
+        "KE": "كينيا",
+        "UG": "أوغندا",
+        "ZA": "جنوب أفريقيا",
+        "GH": "غانا",
+        "EG": "مصر",
+        "RW": "رواندا",
+        "ET": "إثيوبيا",
+        "CD": "الكونغو الديمقراطية",
+        "CM": "الكاميرون",
+        "SN": "السنغال",
+        "US": "الولايات المتحدة",
+        "GB": "المملكة المتحدة",
+        "IN": "الهند",
+        "CN": "الصين"
+      },
+      "deviceTypes": {
+        "laptop": "كمبيوتر محمول",
+        "desktop": "كمبيوتر مكتبي",
+        "smartphone": "هاتف ذكي",
+        "tablet": "جهاز لوحي",
+        "network": "معدات الشبكات",
+        "other": "أخرى"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "تم اختيار {{count}} خدمة",
+      "servicesSelectedOther": "تم اختيار {{count}} خدمات",
+      "proceed": "المتابعة إلى الحجز",
+      "clear": "مسح"
+    },
+    "flashes": {
+      "missingFields": "جميع الحقول الإلزامية مطلوبة.",
+      "scheduled": "تمت جدولة طلب الصيانة الخاص بك بنجاح.",
+      "success": "تم تقديم طلب الصيانة بنجاح. المرجع: {{reference}}"
+    },
+    "notifications": {
+      "title": "تم تقديم طلب الإصلاح",
+      "message": "تم إرسال طلب الإصلاح الخاص بك {{reference}}. سنعاود التواصل معك قريبًا."
+    },
+    "errors": {
+      "missingRef": "رقم المرجع مطلوب.",
+      "notFound": "لا يوجد طلب إصلاح بهذا المرجع."
+    }
+  }
+}

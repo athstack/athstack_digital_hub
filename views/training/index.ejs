@@ -3,9 +3,9 @@
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge"><i class="fa-solid fa-graduation-cap me-2"></i>Professional Engineering Academy</span>
-            <h1 class="display-4 text-white fw-bold mt-3">Training & Certification</h1>
-            <p class="text-white-50 fs-5">Advance your career with expert-led technical courses and professional certification programs.</p>
+            <span class="section-badge"><i class="fa-solid fa-graduation-cap me-2"></i><%= t('training:index.badge') %></span>
+            <h1 class="display-4 text-white fw-bold mt-3"><%= t('training:index.heading') %></h1>
+            <p class="text-white-50 fs-5"><%= t('training:index.intro') %></p>
         </div>
 
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -32,7 +32,7 @@
                         </div>
                         <div class="p-4">
                             <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
-                                <span class="badge bg-primary fw-normal"><%= course.level || 'Beginner' %></span>
+                                <span class="badge bg-primary fw-normal"><%= course.level || t('training:index.levelBeginner') %></span>
                                 <% if (course.duration) { %>
                                     <small class="text-white-50"><i class="fa-regular fa-clock me-1"></i><%= course.duration %></small>
                                 <% } %>
@@ -44,7 +44,7 @@
                                     <% if (course.price > 0) { %>
                                     <span class="text-primary fw-bold fs-5"><%= formatCurrency(course.price) %></span>
                                 <% } else { %>
-                                    <span class="text-success fw-bold fs-5"><i class="fa-solid fa-circle-check me-1"></i>Free</span>
+                                    <span class="text-success fw-bold fs-5"><i class="fa-solid fa-circle-check me-1"></i><%= t('common:words.free') %></span>
                                 <% } %>
                                 </div>
                                 <span class="text-white-50 small"><i class="fa-solid fa-user-tie me-1"></i><%= formatDisplayName(course.instructor_first_name || 'TechBridge', course.instructor_last_name) %></span>
@@ -58,8 +58,8 @@
         <% } else { %>
         <div class="empty-state">
             <i class="fa-solid fa-graduation-cap fa-4x mb-4"></i>
-            <h4 class="text-white fw-bold">Courses Coming Soon</h4>
-            <p class="text-white-50">We're preparing exciting new training programs. Check back shortly.</p>
+            <h4 class="text-white fw-bold"><%= t('training:index.emptyTitle') %></h4>
+            <p class="text-white-50"><%= t('training:index.emptyText') %></p>
         </div>
         <% } %>
     </div>

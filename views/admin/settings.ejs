@@ -15,8 +15,8 @@
             </div>
             <div class="col-lg-9">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Settings</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gear me-2 text-primary"></i>System Settings</h2>
+                    <span class="section-badge"><%= t('admin:words.settings') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-gear me-2 text-primary"></i><%= t('admin:settings.heading') %></h2>
                 </div>
 
                 <div class="glass-card p-5">
@@ -24,46 +24,46 @@
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Site Name</label>
-                                <input type="text" name="site_name" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.site_name) || 'TechBridge Digital Hub' %>" placeholder="Site name">
+                                <label class="form-label"><%= t('admin:settings.siteName') %></label>
+                                <input type="text" name="site_name" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.site_name) || 'TechBridge Digital Hub' %>" placeholder="<%= t('admin:settings.siteNamePlaceholder') %>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Site URL</label>
+                                <label class="form-label"><%= t('admin:settings.siteUrl') %></label>
                                 <input type="url" name="site_url" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.site_url) || 'https://athstack.com' %>" placeholder="https://example.com">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Contact Email</label>
+                                <label class="form-label"><%= t('admin:settings.contactEmail') %></label>
                                 <input type="email" name="contact_email" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.contact_email) || 'info@athstack.com' %>" placeholder="admin@example.com">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Site Description</label>
-                                <input type="text" name="site_description" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.site_description) || '' %>" placeholder="Short description">
+                                <label class="form-label"><%= t('admin:settings.siteDescription') %></label>
+                                <input type="text" name="site_description" class="form-control" value="<%= (typeof settings !== 'undefined' && settings.site_description) || '' %>" placeholder="<%= t('admin:settings.siteDescriptionPlaceholder') %>">
                             </div>
                             <div class="col-12 text-center mt-4">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i>Save Settings</button>
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-5"><i class="fa-solid fa-save me-2"></i><%= t('admin:settings.saveSettings') %></button>
                             </div>
                         </div>
                     </form>
                 </div>
 
                 <div class="glass-card p-4 mt-4">
-                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i>System Information</h5>
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i><%= t('admin:settings.systemInfo') %></h5>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
-                                <span class="text-white-50">Application</span>
+                                <span class="text-white-50"><%= t('admin:settings.application') %></span>
                                 <span class="text-white">TechBridge Digital Hub</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
-                                <span class="text-white-50">Version</span>
+                                <span class="text-white-50"><%= t('admin:settings.version') %></span>
                                 <span class="text-white">1.0.0</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25">
-                                <span class="text-white-50">Environment</span>
+                                <span class="text-white-50"><%= t('admin:settings.environment') %></span>
                                 <span class="text-white"><%= process.env.NODE_ENV || 'development' %></span>
                             </div>
                         </div>

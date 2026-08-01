@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "Kontakt - TechBridge Digital Hub",
+    "badge": "Kontakt aufnehmen",
+    "heading": "Kontaktieren Sie uns",
+    "intro": "Sie haben eine Frage oder benötigen ein Angebot? Setzen Sie sich mit uns in Verbindung – unser Team antwortet umgehend.",
+    "form": {
+      "title": "Nachricht senden",
+      "fullName": "Vollständiger Name",
+      "emailAddress": "E-Mail-Adresse",
+      "countryCode": "Ländervorwahl",
+      "phoneNumber": "Telefonnummer",
+      "subject": "Betreff",
+      "message": "Nachricht",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "Wie können wir helfen?",
+      "messagePlaceholder": "Schreiben Sie Ihre Nachricht hier...",
+      "submit": "Nachricht senden",
+      "countries": {
+        "TZ": "Tansania (+255)",
+        "KE": "Kenia (+254)",
+        "UG": "Uganda (+256)",
+        "RW": "Ruanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "Südafrika (+27)",
+        "US": "USA/Kanada (+1)",
+        "GB": "Großbritannien (+44)",
+        "DE": "Deutschland (+49)",
+        "FR": "Frankreich (+33)",
+        "AU": "Australien (+61)",
+        "CN": "China (+86)",
+        "IN": "Indien (+91)",
+        "AE": "VAE (+971)",
+        "NG": "Nigeria (+234)"
+      }
+    },
+    "info": {
+      "title": "Kontaktinformationen",
+      "officeAddress": "Büroanschrift",
+      "address": "Mbeya, Tansania",
+      "businessHours": "Geschäftszeiten"
+    },
+    "social": {
+      "title": "Folgen Sie uns",
+      "intro": "Bleiben Sie über die sozialen Medien auf dem Laufenden.",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "Name, E-Mail und Nachricht sind erforderlich.",
+      "loginRequired": "Bitte erstellen Sie ein Konto, um Ihre Nachricht zu senden.",
+      "success": "Ihre Nachricht wurde gesendet. Wir melden uns in Kürze bei Ihnen."
+    },
+    "notifications": {
+      "newMessage": "Neue Kontaktnachricht",
+      "sentMessage": "{{name}} hat eine Nachricht gesendet",
+      "sentMessageWithSubject": "{{name}} hat eine Nachricht gesendet: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "Name ist erforderlich",
+    "nameLength": "Der Name muss zwischen 2 und 100 Zeichen lang sein",
+    "emailRequired": "E-Mail ist erforderlich",
+    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse an",
+    "phoneInvalid": "Bitte geben Sie eine gültige Telefonnummer an",
+    "phoneDigits": "Die Telefonnummer muss zwischen 7 und 15 Ziffern haben",
+    "subjectRequired": "Betreff ist erforderlich",
+    "subjectLength": "Der Betreff muss zwischen 3 und 200 Zeichen lang sein",
+    "messageRequired": "Nachricht ist erforderlich",
+    "messageLength": "Die Nachricht muss zwischen 10 und 5000 Zeichen lang sein"
+  }
+}

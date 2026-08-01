@@ -4,9 +4,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center mb-5">
-                <span class="section-badge"><i class="fa-solid fa-info-circle me-2"></i>About Us</span>
-                <h1 class="display-4 text-white fw-bold mt-3 mb-4">Engineering the Future of Tech Solutions</h1>
-                <p class="lead text-white-50">We are a forward-thinking technology company dedicated to providing premium hardware solutions, expert maintenance services, and professional engineering training.</p>
+                <span class="section-badge"><i class="fa-solid fa-info-circle me-2"></i><%= t('common:nav.about') %></span>
+                <h1 class="display-4 text-white fw-bold mt-3 mb-4"><%= t('about:index.heading') %></h1>
+                <p class="lead text-white-50"><%= t('about:index.intro') %></p>
             </div>
         </div>
 
@@ -16,8 +16,8 @@
                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
                         <i class="fa-solid fa-bullseye fa-2x text-primary"></i>
                     </div>
-                    <h5 class="text-white fw-bold mb-3">Our Mission</h5>
-                    <p class="text-white-50">To deliver enterprise-grade technology solutions that empower businesses and individuals across Africa, bridging the gap between innovation and practical implementation.</p>
+                    <h5 class="text-white fw-bold mb-3"><%= t('about:index.mission.title') %></h5>
+                    <p class="text-white-50"><%= t('about:index.mission.text') %></p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -25,8 +25,8 @@
                     <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
                         <i class="fa-solid fa-eye fa-2x text-info"></i>
                     </div>
-                    <h5 class="text-white fw-bold mb-3">Our Vision</h5>
-                    <p class="text-white-50">To be East Africa's leading technology hub, known for our quality products, reliable maintenance services, and world-class technical training programs.</p>
+                    <h5 class="text-white fw-bold mb-3"><%= t('about:index.vision.title') %></h5>
+                    <p class="text-white-50"><%= t('about:index.vision.text') %></p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -34,22 +34,22 @@
                     <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
                         <i class="fa-solid fa-heart fa-2x text-success"></i>
                     </div>
-                    <h5 class="text-white fw-bold mb-3">Our Values</h5>
-                    <p class="text-white-50">Integrity, excellence, and customer-centricity drive everything we do. We believe in building lasting relationships through quality service and transparent operations.</p>
+                    <h5 class="text-white fw-bold mb-3"><%= t('about:index.values.title') %></h5>
+                    <p class="text-white-50"><%= t('about:index.values.text') %></p>
                 </div>
             </div>
         </div>
 
         <div class="row g-5 align-items-center mb-5">
             <div class="col-lg-6">
-                <span class="section-badge"><i class="fa-solid fa-building me-2"></i>Who We Are</span>
-                <h2 class="display-5 text-white fw-bold mt-3 mb-4">Engineering the Future of Tech Provisioning</h2>
-                <p class="text-white-50 mb-3 fs-5">TechBridge Digital Hub was founded with a singular vision: to create a unified platform where businesses and individuals can access premium technology products, reliable maintenance services, and comprehensive technical training.</p>
-                <p class="text-white-50 mb-3">Our team of certified engineers and technical specialists brings decades of combined experience in hardware procurement, system diagnostics, enterprise IT infrastructure, and professional training.</p>
-                <p class="text-white-50 mb-4">From corporate device procurement to hands-on technical training, we deliver solutions that keep your operations running at peak performance.</p>
+                <span class="section-badge"><i class="fa-solid fa-building me-2"></i><%= t('about:index.whoWeAre.badge') %></span>
+                <h2 class="display-5 text-white fw-bold mt-3 mb-4"><%= t('about:index.whoWeAre.heading') %></h2>
+                <p class="text-white-50 mb-3 fs-5"><%= t('about:index.whoWeAre.paragraph1') %></p>
+                <p class="text-white-50 mb-3"><%= t('about:index.whoWeAre.paragraph2') %></p>
+                <p class="text-white-50 mb-4"><%= t('about:index.whoWeAre.paragraph3') %></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="/shop" class="btn btn-premium-primary rounded-pill btn-lg px-4"><i class="fa-solid fa-bag-shopping me-2"></i>Visit Shop</a>
-                    <a href="/contact" class="btn btn-premium-outline rounded-pill btn-lg px-4"><i class="fa-solid fa-envelope me-2"></i>Contact Us</a>
+                    <a href="/shop" class="btn btn-premium-primary rounded-pill btn-lg px-4"><i class="fa-solid fa-bag-shopping me-2"></i><%= t('about:index.whoWeAre.visitShop') %></a>
+                    <a href="/contact" class="btn btn-premium-outline rounded-pill btn-lg px-4"><i class="fa-solid fa-envelope me-2"></i><%= t('about:index.whoWeAre.contactUs') %></a>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -58,25 +58,25 @@
                         <div class="col-6">
                             <div class="py-3">
                                 <h2 class="text-primary fw-bold mb-1">500+</h2>
-                                <p class="text-white-50 small mb-0">Clients Served</p>
+                                <p class="text-white-50 small mb-0"><%= t('about:index.stats.clientsServed') %></p>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="py-3">
                                 <h2 class="text-primary fw-bold mb-1">1000+</h2>
-                                <p class="text-white-50 small mb-0">Repairs Completed</p>
+                                <p class="text-white-50 small mb-0"><%= t('about:index.stats.repairsCompleted') %></p>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="py-3">
                                 <h2 class="text-primary fw-bold mb-1">50+</h2>
-                                <p class="text-white-50 small mb-0">Training Graduates</p>
+                                <p class="text-white-50 small mb-0"><%= t('about:index.stats.trainingGraduates') %></p>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="py-3">
                                 <h2 class="text-primary fw-bold mb-1">10+</h2>
-                                <p class="text-white-50 small mb-0">Years Experience</p>
+                                <p class="text-white-50 small mb-0"><%= t('about:index.stats.yearsExperience') %></p>
                             </div>
                         </div>
                     </div>

@@ -3,36 +3,36 @@ const { body } = require('express-validator');
 const contactValidator = [
   body('name')
     .trim()
-    .notEmpty().withMessage('Name is required')
-    .isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
+    .notEmpty().withMessage((value, { req }) => req.t('contact:errors.nameRequired'))
+    .isLength({ min: 2, max: 100 }).withMessage((value, { req }) => req.t('contact:errors.nameLength')),
 
   body('email')
     .trim()
-    .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Please provide a valid email address')
+    .notEmpty().withMessage((value, { req }) => req.t('contact:errors.emailRequired'))
+    .isEmail().withMessage((value, { req }) => req.t('contact:errors.emailInvalid'))
     .normalizeEmail(),
 
   body('phone')
     .optional({ values: 'falsy' })
     .trim()
-    .matches(/^[\d\s\-\(\)\+]{7,20}$/).withMessage('Please provide a valid phone number')
-    .custom((value) => {
+    .matches(/^[\d\s\-\(\)\+]{7,20}$/).withMessage((value, { req }) => req.t('contact:errors.phoneInvalid'))
+    .custom((value, { req }) => {
       const digits = value.replace(/[\s\-\(\)\+]/g, '');
       if (digits.length < 7 || digits.length > 15) {
-        throw new Error('Phone number must be between 7 and 15 digits');
+        throw new Error(req.t('contact:errors.phoneDigits'));
       }
       return true;
     }),
 
   body('subject')
     .trim()
-    .notEmpty().withMessage('Subject is required')
-    .isLength({ min: 3, max: 200 }).withMessage('Subject must be between 3 and 200 characters'),
+    .notEmpty().withMessage((value, { req }) => req.t('contact:errors.subjectRequired'))
+    .isLength({ min: 3, max: 200 }).withMessage((value, { req }) => req.t('contact:errors.subjectLength')),
 
   body('message')
     .trim()
-    .notEmpty().withMessage('Message is required')
-    .isLength({ min: 10, max: 5000 }).withMessage('Message must be between 10 and 5000 characters')
+    .notEmpty().withMessage((value, { req }) => req.t('contact:errors.messageRequired'))
+    .isLength({ min: 10, max: 5000 }).withMessage((value, { req }) => req.t('contact:errors.messageLength'))
 ];
 
 module.exports = { contactValidator };

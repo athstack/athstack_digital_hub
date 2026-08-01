@@ -1,0 +1,88 @@
+{
+  "index": {
+    "title": "Matengenezo ya IT ya Mashirika na Urekebishaji wa Vifaa - TechBridge Digital Hub",
+    "badge": "Urekebishaji wa Vifaa na Matengenezo ya IT",
+    "heading": "Huduma za Matengenezo ya Mashirika",
+    "intro": "Uchunguzi wa kitaalamu, urekebishaji, na matengenezo ya IT kwa kompyuta na vifaa vya mkononi.",
+    "services": {
+      "computerTitle": "Huduma za Kompyuta",
+      "computerSubtitle": "Suluhu za urekebishaji wa kompyuta za mezani na kompyuta mpakato",
+      "phoneTitle": "Huduma za Simu",
+      "phoneSubtitle": "Urekebishaji na uchunguzi wa vifaa vya mkononi",
+      "bookNow": "Weka Sasa",
+      "defaultDescription": "Huduma ya kitaalamu",
+      "emptyComputer": "Huduma za kompyuta zinaandaliwa. Rudi tena hivi karibuni.",
+      "emptyPhone": "Huduma za simu zinaandaliwa. Rudi tena hivi karibuni."
+    },
+    "form": {
+      "title": "Weka Urekebishaji",
+      "intro": "Jaza fomu iliyo hapa chini na timu yetu itakujibu ndani ya saa 24.",
+      "fullName": "Jina Kamili",
+      "emailAddress": "Anwani ya Barua Pepe",
+      "phoneNumber": "Nambari ya Simu",
+      "country": "Nchi",
+      "selectCountry": "Chagua nchi yako",
+      "appointmentDate": "Tarehe ya Uteuzi",
+      "serviceType": "Aina ya Huduma",
+      "selectService": "Chagua huduma...",
+      "deviceType": "Aina ya Kifaa",
+      "deviceBrand": "Chapa ya Kifaa",
+      "deviceModel": "Muundo wa Kifaa",
+      "issueDescription": "Maelezo ya Tatizo",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "john@example.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "phoneTitle": "Weka nambari sahihi ya simu",
+      "phoneNumberFallback": "nambari ya simu",
+      "brandPlaceholder": "mf. Apple, Dell, Samsung",
+      "modelPlaceholder": "mf. MacBook Pro 14",
+      "issuePlaceholder": "Eleza tatizo la kifaa chako (mf., skrini haiwashi, kuzimika ghafla, kumwagika kwa maji...)",
+      "submit": "Wasilisha Ombi la Urekebishaji",
+      "countries": {
+        "NG": "Nigeria",
+        "TZ": "Tanzania",
+        "KE": "Kenya",
+        "UG": "Uganda",
+        "ZA": "Afrika Kusini",
+        "GH": "Ghana",
+        "EG": "Misri",
+        "RW": "Rwanda",
+        "ET": "Ethiopia",
+        "CD": "DR Congo",
+        "CM": "Cameroon",
+        "SN": "Senegal",
+        "US": "Marekani",
+        "GB": "Uingereza",
+        "IN": "India",
+        "CN": "China"
+      },
+      "deviceTypes": {
+        "laptop": "Kompyuta Mpakato",
+        "desktop": "Kompyuta ya Mezani",
+        "smartphone": "Simu mahiri",
+        "tablet": "Kompyuta Kibao",
+        "network": "Vifaa vya Mtandao",
+        "other": "Nyingine"
+      }
+    },
+    "sticky": {
+      "servicesSelectedOne": "huduma {{count}} imechaguliwa",
+      "servicesSelectedOther": "huduma {{count}} zimechaguliwa",
+      "proceed": "Endelea na Uhifadhi",
+      "clear": "Futa"
+    },
+    "flashes": {
+      "missingFields": "Sehemu zote za lazima zinahitajika.",
+      "scheduled": "Ombi lako la matengenezo limepangwa kwa mafanikio.",
+      "success": "Ombi la matengenezo limewasilishwa kwa mafanikio. Rejeleo: {{reference}}"
+    },
+    "notifications": {
+      "title": "Ombi la Urekebishaji Limewasilishwa",
+      "message": "Ombi lako la urekebishaji {{reference}} limewasilishwa. Tutakujibu hivi karibuni."
+    },
+    "errors": {
+      "missingRef": "Nambari ya rejeleo inahitajika.",
+      "notFound": "Hakuna ombi la urekebishaji linalopatikana na rejeleo hilo."
+    }
+  }
+}

@@ -6,10 +6,11 @@
         <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
         <% } %>
 
+        <% function _tStatus(s) { var k = String(s || '').replace(/_([a-z])/g, function(m, c) { return c.toUpperCase(); }); return t('status.' + k, { defaultValue: t('dashboard:words.' + k, { defaultValue: s }) }); } %>
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="/dashboard/repairs">Repairs</a></li>
+                <li class="breadcrumb-item"><a href="/dashboard"><%= t('dashboard:repairDetail.dashboard') %></a></li>
+                <li class="breadcrumb-item"><a href="/dashboard/repairs"><%= t('dashboard:repairDetail.repairs') %></a></li>
                 <li class="breadcrumb-item active text-primary"><%= repair.reference_number %></li>
             </ol>
         </nav>
@@ -18,14 +19,14 @@
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <span class="section-badge">Detail</span>
-                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-wrench me-2 text-info"></i>Repair <%= repair.reference_number %></h2>
+                    <span class="section-badge"><%= t('dashboard:repairDetail.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-wrench me-2 text-info"></i><%= t('dashboard:repairDetail.title', { reference: repair.reference_number }) %></h2>
                 </div>
 
                 <div class="glass-card p-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="text-white fw-bold mb-0">Repair Timeline</h5>
-                        <span class="badge <%= getStatusBadgeClass(repair.status) %> fs-6"><%= repair.status.replace('_', ' ') %></span>
+                        <h5 class="text-white fw-bold mb-0"><%= t('dashboard:repairDetail.timeline') %></h5>
+                        <span class="badge <%= getStatusBadgeClass(repair.status) %> fs-6"><%= _tStatus(repair.status) %></span>
                     </div>
 
                     <% if (repair.updates && repair.updates.length > 0) { %>
@@ -42,7 +43,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between">
-                                    <h6 class="text-white fw-bold mb-0"><%= update.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) %></h6>
+                                    <h6 class="text-white fw-bold mb-0"><%= _tStatus(update.status) %></h6>
                                     <small class="text-white-50"><%= update.created_at ? new Date(update.created_at).toLocaleString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '' %></small>
                                 </div>
                                 <% if (update.notes) { %>
@@ -58,7 +59,7 @@
                     <% } else { %>
                     <div class="text-center py-4">
                         <i class="fa-solid fa-clock-rotate-left fa-2x text-white-50 mb-2"></i>
-                        <p class="text-white-50 mb-0">No updates yet. Check back later.</p>
+                        <p class="text-white-50 mb-0"><%= t('dashboard:repairDetail.noUpdates') %></p>
                     </div>
                     <% } %>
                 </div>
@@ -66,34 +67,34 @@
 
             <div class="col-lg-4">
                 <div class="glass-card p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i>Repair Details</h6>
-                    <div class="mb-2"><small class="text-white-50">Service:</small><br><span class="text-white"><%= repair.service_title || 'General Repair' %></span></div>
-                    <div class="mb-2"><small class="text-white-50">Device:</small><br><span class="text-white"><%= repair.device_type || 'N/A' %> <%= repair.device_brand || '' %> <%= repair.device_model || '' %></span></div>
-                    <div class="mb-2"><small class="text-white-50">Serial:</small><br><span class="text-white"><%= repair.device_serial || 'N/A' %></span></div>
-                    <div class="mb-2"><small class="text-white-50">Appointment:</small><br><span class="text-white"><%= formatDate(repair.appointment_date) %></span></div>
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-info-circle me-2 text-primary"></i><%= t('dashboard:repairDetail.detailsTitle') %></h6>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:words.service') %>:</small><br><span class="text-white"><%= repair.service_title || t('dashboard:words.generalRepair') %></span></div>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:words.device') %>:</small><br><span class="text-white"><%= repair.device_type || t('dashboard:words.na') %> <%= repair.device_brand || '' %> <%= repair.device_model || '' %></span></div>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:words.serial') %>:</small><br><span class="text-white"><%= repair.device_serial || t('dashboard:words.na') %></span></div>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:words.appointment') %>:</small><br><span class="text-white"><%= formatDate(repair.appointment_date) %></span></div>
                     <% if (repair.estimated_cost) { %>
-                    <div class="mb-2"><small class="text-white-50">Estimated Cost:</small><br><span class="text-white"><%= formatCurrency(repair.estimated_cost) %></span></div>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:repairDetail.estimatedCost') %></small><br><span class="text-white"><%= formatCurrency(repair.estimated_cost) %></span></div>
                     <% } %>
                     <% if (repair.actual_cost) { %>
-                    <div class="mb-2"><small class="text-white-50">Actual Cost:</small><br><span class="text-white"><%= formatCurrency(repair.actual_cost) %></span></div>
+                    <div class="mb-2"><small class="text-white-50"><%= t('dashboard:repairDetail.actualCost') %></small><br><span class="text-white"><%= formatCurrency(repair.actual_cost) %></span></div>
                     <% } %>
                 </div>
 
                 <div class="glass-card p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-comment me-2 text-primary"></i>Issue Description</h6>
-                    <p class="text-white-50 mb-0"><%= repair.issue_description || 'No description provided.' %></p>
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-comment me-2 text-primary"></i><%= t('dashboard:repairDetail.issueTitle') %></h6>
+                    <p class="text-white-50 mb-0"><%= repair.issue_description || t('dashboard:repairDetail.noDescription') %></p>
                 </div>
 
                 <% if (repair.diagnostic_notes) { %>
                 <div class="glass-card p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-stethoscope me-2 text-primary"></i>Diagnostic Notes</h6>
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-stethoscope me-2 text-primary"></i><%= t('dashboard:repairDetail.diagnosticTitle') %></h6>
                     <p class="text-white-50 mb-0"><%= repair.diagnostic_notes %></p>
                 </div>
                 <% } %>
 
                 <% if (repair.technician_first_name) { %>
                 <div class="glass-card p-4">
-                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-gear me-2 text-primary"></i>Technician</h6>
+                    <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-gear me-2 text-primary"></i><%= t('dashboard:repairDetail.technicianTitle') %></h6>
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
                             <% if (repair.technician_avatar) { %>
@@ -114,8 +115,8 @@
         <% } else { %>
         <div class="empty-state">
             <i class="fa-solid fa-exclamation-triangle fa-4x mb-3"></i>
-            <h4 class="text-white fw-bold">Repair Not Found</h4>
-            <a href="/dashboard/repairs" class="btn btn-premium-primary rounded-pill">Back to Repairs</a>
+            <h4 class="text-white fw-bold"><%= t('dashboard:repairDetail.notFound') %></h4>
+            <a href="/dashboard/repairs" class="btn btn-premium-primary rounded-pill"><%= t('dashboard:repairDetail.backToRepairs') %></a>
         </div>
         <% } %>
     </div>

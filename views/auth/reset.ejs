@@ -12,8 +12,8 @@
                         </a>
                     </div>
                     <div class="text-center mb-4">
-                        <h3 class="auth-heading">Reset Password</h3>
-                        <p class="auth-subtext">Enter your new password for <strong><%= email %></strong></p>
+                        <h3 class="auth-heading"><%= t('auth:reset.heading') %></h3>
+                        <p class="auth-subtext"><%= t('auth:reset.subtext') %> <strong><%= email %></strong></p>
                     </div>
 
                     <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -27,26 +27,26 @@
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <input type="hidden" name="token" value="<%= token %>">
                         <div class="mb-3">
-                            <label class="form-label">New Password</label>
+                            <label class="form-label"><%= t('auth:words.newPassword') %></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                <input type="password" name="password" class="form-control" required minlength="8" placeholder="Min. 8 characters">
+                                <input type="password" name="password" class="form-control" required minlength="8" placeholder="<%= t('auth:reset.minPlaceholder') %>">
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">Confirm Password</label>
+                            <label class="form-label"><%= t('auth:words.confirmPassword') %></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                                <input type="password" name="confirm_password" class="form-control" required minlength="8" placeholder="Repeat password">
+                                <input type="password" name="confirm_password" class="form-control" required minlength="8" placeholder="<%= t('auth:reset.repeatPlaceholder') %>">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 btn-lg mb-3"><i class="fa-solid fa-check me-2"></i>Reset Password</button>
+                        <button type="submit" class="btn btn-premium-primary w-100 btn-lg mb-3"><i class="fa-solid fa-check me-2"></i><%= t('auth:reset.submit') %></button>
                     </form>
 
                     <div class="auth-divider"></div>
 
                     <div class="text-center">
-                        <p class="text-muted small mb-0"><a href="/auth/login" class="text-primary text-link">Back to Login</a></p>
+                        <p class="text-muted small mb-0"><a href="/auth/login" class="text-primary text-link"><%= t('auth:reset.backToLogin') %></a></p>
                     </div>
                 </div>
             </div>

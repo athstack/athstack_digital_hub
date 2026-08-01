@@ -1,7 +1,6 @@
 const ProductModel = require('../models/ProductModel');
 const CourseModel = require('../models/CourseModel');
 const { pool } = require('../config/db');
-const { formatCurrency } = require('../utils/helpers');
 
 exports.getHome = async (req, res, next) => {
   try {
@@ -32,11 +31,10 @@ exports.getHome = async (req, res, next) => {
     };
 
     res.render('home/index', {
-      title: 'Home - TechBridge Digital Hub',
+      title: req.t('home:index.title'),
       featured,
       recentCourses,
-      stats,
-      formatCurrency
+      stats
     });
   } catch (err) {
     next(err);

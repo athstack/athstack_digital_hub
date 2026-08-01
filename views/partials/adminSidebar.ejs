@@ -16,50 +16,50 @@
     </div>
     <div class="d-flex align-items-center px-2 mb-2">
         <div>
-            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : 'Admin' %></h6>
-            <small class="text-white-50" style="font-size:11px;">Admin Panel</small>
+            <h6 class="mb-0 text-white small"><%= user ? formatDisplayName(user.firstName, user.lastName) : t('admin:sidebar.admin') %></h6>
+            <small class="text-white-50" style="font-size:11px;"><%= t('admin:sidebar.panel') %></small>
         </div>
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
         <a class="nav-link rounded<%= currentPath === '/admin' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin">
-            <i class="fa-solid fa-gauge-high me-2"></i> Dashboard
+            <i class="fa-solid fa-gauge-high me-2"></i> <%= t('admin:sidebar.dashboard') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/users' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/users">
-            <i class="fa-solid fa-users me-2"></i> Users
+            <i class="fa-solid fa-users me-2"></i> <%= t('admin:sidebar.users') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/products' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/products">
-            <i class="fa-solid fa-box-open me-2"></i> Products
+            <i class="fa-solid fa-box-open me-2"></i> <%= t('admin:sidebar.products') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/repairs' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/repairs">
-            <i class="fa-solid fa-wrench me-2"></i> Repairs
+            <i class="fa-solid fa-wrench me-2"></i> <%= t('admin:sidebar.repairs') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/orders' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/orders">
-            <i class="fa-solid fa-receipt me-2"></i> Orders
+            <i class="fa-solid fa-receipt me-2"></i> <%= t('admin:sidebar.orders') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/training' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/training">
-            <i class="fa-solid fa-graduation-cap me-2"></i> Training
+            <i class="fa-solid fa-graduation-cap me-2"></i> <%= t('admin:sidebar.training') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/services' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/services">
-            <i class="fa-solid fa-screwdriver-wrench me-2"></i> Services
+            <i class="fa-solid fa-screwdriver-wrench me-2"></i> <%= t('admin:sidebar.services') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/reviews' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/reviews">
-            <i class="fa-solid fa-star me-2"></i> Reviews
+            <i class="fa-solid fa-star me-2"></i> <%= t('admin:sidebar.reviews') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/analytics' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/analytics">
-            <i class="fa-solid fa-chart-bar me-2"></i> Analytics
+            <i class="fa-solid fa-chart-bar me-2"></i> <%= t('admin:sidebar.analytics') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/inbox' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/inbox">
-            <i class="fa-solid fa-envelope me-2"></i> Inbox
+            <i class="fa-solid fa-envelope me-2"></i> <%= t('admin:sidebar.inbox') %>
         </a>
         <a class="nav-link rounded<%= currentPath === '/admin/settings' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/settings">
-            <i class="fa-solid fa-gear me-2"></i> Settings
+            <i class="fa-solid fa-gear me-2"></i> <%= t('admin:sidebar.settings') %>
         </a>
         <hr class="border-secondary opacity-25 my-2">
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
             <button type="submit" class="nav-link rounded text-white-50 w-100 text-start border-0 bg-transparent">
-                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                <i class="fa-solid fa-right-from-bracket me-2"></i> <%= t('admin:sidebar.logout') %>
             </button>
         </form>
     </nav>

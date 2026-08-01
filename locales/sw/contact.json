@@ -1,0 +1,76 @@
+{
+  "index": {
+    "title": "Wasiliana Nasi - TechBridge Digital Hub",
+    "badge": "Wasiliana Nasi",
+    "heading": "Wasiliana Nasi",
+    "intro": "Una swali au unahitaji bei? Wasiliana nasi na timu yetu itajibu haraka.",
+    "form": {
+      "title": "Tuma Ujumbe",
+      "fullName": "Jina Kamili",
+      "emailAddress": "Anwani ya Barua Pepe",
+      "countryCode": "Msimbo wa Nchi",
+      "phoneNumber": "Nambari ya Simu",
+      "subject": "Mada",
+      "message": "Ujumbe",
+      "namePlaceholder": "Version John",
+      "emailPlaceholder": "your@email.com",
+      "phonePlaceholder": "7XX XXX XXX",
+      "subjectPlaceholder": "Tunaweza kukusaidiaje?",
+      "messagePlaceholder": "Andika ujumbe wako hapa...",
+      "submit": "Tuma Ujumbe",
+      "countries": {
+        "TZ": "Tanzania (+255)",
+        "KE": "Kenya (+254)",
+        "UG": "Uganda (+256)",
+        "RW": "Rwanda (+250)",
+        "BI": "Burundi (+257)",
+        "ZA": "Afrika Kusini (+27)",
+        "US": "USA/Canada (+1)",
+        "GB": "Uingereza (+44)",
+        "DE": "Ujerumani (+49)",
+        "FR": "Ufaransa (+33)",
+        "AU": "Australia (+61)",
+        "CN": "China (+86)",
+        "IN": "India (+91)",
+        "AE": "UAE (+971)",
+        "NG": "Nigeria (+234)"
+      }
+    },
+    "info": {
+      "title": "Taarifa za Mawasiliano",
+      "officeAddress": "Anwani ya Ofisi",
+      "address": "Mbeya, Tanzania",
+      "businessHours": "Saa za Biashara"
+    },
+    "social": {
+      "title": "Tufuate",
+      "intro": "Endelea kuwasiliana kwenye mitandao ya kijamii kwa taarifa za hivi karibuni.",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    },
+    "flashes": {
+      "missingFields": "Jina, barua pepe, na ujumbe vinahitajika.",
+      "loginRequired": "Tafadhali fungua akaunti kutuma ujumbe wako.",
+      "success": "Ujumbe wako umetumwa. Tutakujibu hivi karibuni."
+    },
+    "notifications": {
+      "newMessage": "Ujumbe Mpya wa Mawasiliano",
+      "sentMessage": "{{name}} alituma ujumbe",
+      "sentMessageWithSubject": "{{name}} alituma ujumbe: {{subject}}"
+    }
+  },
+  "errors": {
+    "nameRequired": "Jina linahitajika",
+    "nameLength": "Jina lazima liwe kati ya herufi 2 na 100",
+    "emailRequired": "Barua pepe inahitajika",
+    "emailInvalid": "Tafadhali toa anwani sahihi ya barua pepe",
+    "phoneInvalid": "Tafadhali toa nambari sahihi ya simu",
+    "phoneDigits": "Nambari ya simu lazima iwe kati ya tarakimu 7 na 15",
+    "subjectRequired": "Mada inahitajika",
+    "subjectLength": "Mada lazima iwe kati ya herufi 3 na 200",
+    "messageRequired": "Ujumbe unahitajika",
+    "messageLength": "Ujumbe lazima uwe kati ya herufi 10 na 5000"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "index": {
+    "title": "Inicio - TechBridge Digital Hub",
+    "heroBadge": "Bienvenido a TechBridge Digital Hub",
+    "heroTitle1": "Ingeniería Avanzada y ",
+    "heroTitle2": "Soluciones de Hardware",
+    "heroSubtitle": "Tu canal unificado para la adquisición de hardware tecnológico premium, diagnóstico empresarial de dispositivos e instrucción técnica de élite en sistemas.",
+    "exploreShop": "Explorar Tienda",
+    "bookDiagnostic": "Reservar Diagnóstico",
+    "trainingAcademy": "Academia de Formación",
+    "stats": {
+      "customers": "Clientes Activos",
+      "products": "Productos Tecnológicos",
+      "courses": "Cursos de Formación",
+      "repairs": "Reparaciones Completadas"
+    },
+    "services": {
+      "badge": "Nuestros Servicios",
+      "title": "Soluciones Tecnológicas Integrales",
+      "desc": "Servicios tecnológicos integrales diseñados para el rendimiento, la fiabilidad y el crecimiento.",
+      "shopTitle": "Tienda Tecnológica",
+      "shopDesc": "Hardware premium, accesorios y equipos empresariales seleccionados por su rendimiento.",
+      "browseProducts": "Explorar Productos",
+      "maintenanceTitle": "Mantenimiento y Reparación",
+      "maintenanceDesc": "Diagnóstico experto de dispositivos, reparación de sistemas y canales de mantenimiento de TI empresarial.",
+      "bookRepair": "Reservar Reparación",
+      "trainingDesc": "Cursos profesionales de ingeniería y programas de certificación técnica.",
+      "exploreCourses": "Explorar Cursos"
+    },
+    "featured": {
+      "badge": "Productos Destacados",
+      "title": "Hardware Tecnológico Premium"
+    },
+    "courses": {
+      "title": "Últimos Cursos"
+    },
+    "cta": {
+      "title": "¿Listo para Empezar?",
+      "desc": "Únete a TechBridge Digital Hub y accede a productos tecnológicos premium, reparaciones expertas y formación profesional.",
+      "contactSales": "Contactar Ventas"
+    }
+  }
+}
