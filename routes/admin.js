@@ -86,4 +86,16 @@ router.post('/reviews/:id/hide', validateCsrf, adminController.toggleReviewHidde
 router.post('/reviews/:id/delete', validateCsrf, adminController.deleteReview);
 router.post('/reports/:id/resolve', validateCsrf, adminController.resolveReviewReport);
 
+router.get('/marketing-officers', adminController.getMarketingOfficers);
+router.get('/marketing-officers/new', adminController.getCreateMarketingOfficer);
+router.post('/marketing-officers', validateCsrf, adminController.createMarketingOfficer);
+router.get('/marketing-officers/:id/edit', adminController.getEditMarketingOfficer);
+router.post('/marketing-officers/:id', validateCsrf, adminController.updateMarketingOfficer);
+router.post('/marketing-officers/:id/status', validateCsrf, adminController.updateMarketingOfficerStatus);
+router.post('/marketing-officers/:id/reset-password', validateCsrf, adminController.resetMarketingOfficerPassword);
+router.get('/marketing-officers/:id/permissions', adminController.getMarketingOfficerPermissions);
+router.post('/marketing-officers/:id/permissions', validateCsrf, adminController.updateMarketingOfficerPermissions);
+
+router.get('/activity-logs', adminController.getActivityLogs);
+
 module.exports = router;

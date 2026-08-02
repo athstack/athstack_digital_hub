@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="section-badge"><i class="fa-solid fa-chart-line me-1"></i><%= t('marketing:analytics.badge') %></span>
+                        <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-magnifying-glass-chart me-2 text-primary"></i><%= t('marketing:analytics.heading') %></h2>
+                    </div>
+                    <a href="/marketing/analytics/products" class="btn btn-premium-outline btn-sm rounded-pill"><i class="fa-solid fa-ranking-star me-1"></i><%= t('marketing:analytics.productPerformance') %></a>
+                </div>
+
+                <div class="glass-card p-3 mb-4">
+                    <form method="GET" action="/marketing/analytics" class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="text-white-50 small text-uppercase tracking-widest mb-1" style="font-size:0.6rem;"><%= t('marketing:analytics.dateRange') %></label>
+                            <select name="range" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="7days" <%= range === '7days' ? 'selected' : '' %>><%= t('marketing:analytics.last7Days') %></option>
+                                <option value="30days" <%= range === '30days' ? 'selected' : '' %>><%= t('marketing:analytics.last30Days') %></option>
+                                <option value="90days" <%= range === '90days' ? 'selected' : '' %>><%= t('marketing:analytics.last90Days') %></option>
+                                <option value="year" <%= range === 'year' ? 'selected' : '' %>><%= t('marketing:analytics.thisYear') %></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-sm btn-premium-primary rounded-pill"><i class="fa-solid fa-filter me-1"></i><%= t('common:words.filter') %></button>
+                            <a href="/marketing/analytics" class="btn btn-sm btn-premium-outline rounded-pill"><i class="fa-solid fa-rotate"></i></a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <i class="fa-solid fa-user-group fa-xl text-primary mb-2"></i>
+                            <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= metrics.visitors %></h4>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:analytics.visitors') %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <i class="fa-solid fa-bag-shopping fa-xl text-info mb-2"></i>
+                            <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= metrics.orders %></h4>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:analytics.orders') %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <i class="fa-solid fa-dollar-sign fa-xl text-success mb-2"></i>
+                            <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= formatCurrency(metrics.revenue) %></h4>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:analytics.revenue') %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <i class="fa-solid fa-percent fa-xl text-warning mb-2"></i>
+                            <h4 class="text-white fw-bold mb-0" style="font-size:1.15rem;"><%= metrics.conversion_rate %>%</h4>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:analytics.conversionRate') %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-chart-column me-2 text-primary"></i><%= t('marketing:analytics.visitorsAndOrders') %></h5>
+                    <canvas id="analyticsChart" height="120"></canvas>
+                </div>
+
+                <div class="glass-card p-4">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-chart-area me-2 text-primary"></i><%= t('marketing:analytics.revenueTrend') %></h5>
+                    <canvas id="revenueChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    var labels = JSON.parse('<%= chartLabels %>');
+    var visitors = JSON.parse('<%= chartVisitors %>');
+    var orders = JSON.parse('<%= chartOrders %>');
+    var revenue = JSON.parse('<%= chartRevenue %>');
+
+    var a = document.getElementById('analyticsChart');
+    if (a && typeof Chart !== 'undefined') {
+        new Chart(a, {
+            data: {
+                labels: labels,
+                datasets: [
+                    { type: 'line', label: '<%= t('marketing:analytics.visitors') %>', data: visitors, borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.15)', fill: true, tension: 0.35, yAxisID: 'y' },
+                    { type: 'bar', label: '<%= t('marketing:analytics.orders') %>', data: orders, backgroundColor: 'rgba(16,185,129,0.55)', borderRadius: 4, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { labels: { color: 'rgba(255,255,255,0.7)' } } },
+                scales: {
+                    x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                    y: { position: 'left', ticks: { color: 'rgba(255,255,255,0.5)' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                    y1: { position: 'right', ticks: { color: 'rgba(255,255,255,0.5)', precision: 0 }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+    }
+
+    var r = document.getElementById('revenueChart');
+    if (r && typeof Chart !== 'undefined') {
+        new Chart(r, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{ label: '<%= t('marketing:analytics.revenue') %>', data: revenue, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.15)', fill: true, tension: 0.35 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: 'rgba(255,255,255,0.7)' } } },
+                scales: {
+                    x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                    y: { ticks: { color: 'rgba(255,255,255,0.5)' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+                }
+            }
+        });
+    }
+})();
+</script>
+
+<%- include('../partials/footer') %>

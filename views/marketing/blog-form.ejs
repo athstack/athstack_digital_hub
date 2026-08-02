@@ -1,0 +1,66 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pen' : 'plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('marketing:blogForm.headingEdit') : t('marketing:blogForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="<%= editing ? '/marketing/blog/' + post.id : '/marketing/blog' %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label"><%= t('marketing:blogForm.title') %> *</label>
+                                <input type="text" name="title" class="form-control" required value="<%= editing && post ? post.title : '' %>" placeholder="<%= t('marketing:blogForm.titlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('common:words.status') %></label>
+                                <select name="status" class="form-select">
+                                    <option value="draft" <%= editing && post && post.status === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
+                                    <option value="published" <%= editing && post && post.status === 'published' ? 'selected' : '' %>><%= t('marketing:status.published') %></option>
+                                    <option value="archived" <%= editing && post && post.status === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label"><%= t('marketing:blogForm.excerpt') %></label>
+                                <input type="text" name="excerpt" class="form-control" value="<%= editing && post ? (post.excerpt || '') : '' %>" placeholder="<%= t('marketing:blogForm.excerptPlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:blogForm.coverImage') %></label>
+                                <input type="text" name="cover_image" class="form-control" value="<%= editing && post ? (post.cover_image || '') : '' %>" placeholder="<%= t('marketing:blogForm.coverImagePlaceholder') %>">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label"><%= t('marketing:blogForm.content') %></label>
+                                <textarea name="content" class="form-control" rows="12" placeholder="<%= t('marketing:blogForm.contentPlaceholder') %>"><%= editing && post ? (post.content || '') : '' %></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'plus' %> me-2"></i><%= editing ? t('marketing:blogForm.updatePost') : t('marketing:blogForm.createPost') %>
+                            </button>
+                            <a href="/marketing/blog" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

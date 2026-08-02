@@ -49,6 +49,12 @@
         <a class="nav-link rounded<%= currentPath === '/admin/analytics' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/analytics">
             <i class="fa-solid fa-chart-bar me-2"></i> <%= t('admin:sidebar.analytics') %>
         </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/marketing-officers' || currentPath.indexOf('/admin/marketing-officers/') === 0 ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/marketing-officers">
+            <i class="fa-solid fa-bullhorn me-2"></i> <%= t('admin:sidebar.marketingOfficers') %>
+        </a>
+        <a class="nav-link rounded<%= currentPath === '/admin/activity-logs' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/activity-logs">
+            <i class="fa-solid fa-clock-rotate-left me-2"></i> <%= t('admin:sidebar.activityLogs') %>
+        </a>
         <a class="nav-link rounded<%= currentPath === '/admin/inbox' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/admin/inbox">
             <i class="fa-solid fa-envelope me-2"></i> <%= t('admin:sidebar.inbox') %>
         </a>

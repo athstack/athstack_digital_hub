@@ -102,6 +102,12 @@ async function runMigrations() {
 }
 
 async function migrate(connection) {
+  try {
+    await migrateMarketing(connection);
+  } catch (err) {
+    console.error('Marketing system migration failed:', err.message);
+    throw err;
+  }
   const [rows] = await connection.query(
     "SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'contact_messages' AND COLUMN_NAME = 'is_read_by_customer'"
   );
@@ -190,6 +196,258 @@ async function migrate(connection) {
     console.error('Review system migration failed:', err.message);
     throw err;
   }
+}
+
+/**
+ * Marketing Officer module migration: adds the marketing_officer role to the
+ * users ENUM, the is_promoted flag on products, activity/permission tables,
+ * and all marketing content tables. Every step is guarded so it is idempotent.
+ */
+async function migrateMarketing(connection) {
+  // 1. Add marketing_officer to the users.role ENUM
+  const [roleCol] = await connection.query(
+    "SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'"
+  );
+  if (roleCol[0] && !/marketing_officer/.test(roleCol[0].COLUMN_TYPE)) {
+    const [enumRows] = await connection.query(
+      "SELECT SUBSTRING(COLUMN_TYPE, 6, CHAR_LENGTH(COLUMN_TYPE) - 6) AS values_str FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'"
+    );
+    const existing = enumRows[0].values_str
+      .split(',')
+      .map((v) => v.trim())
+      .filter(Boolean);
+    const newValues = [...existing, "'marketing_officer'"];
+    await connection.query(
+      `ALTER TABLE users MODIFY role ENUM(${newValues.join(',')}) NOT NULL DEFAULT 'customer'`
+    );
+    console.log('Migration: added marketing_officer role to users.role');
+  }
+
+  // 2. is_promoted flag on products (distinct from featured)
+  const [promoCol] = await connection.query(
+    "SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = 'products' AND COLUMN_NAME = 'is_promoted'"
+  );
+  if (promoCol[0].cnt === 0) {
+    await connection.query(
+      "ALTER TABLE products ADD COLUMN is_promoted TINYINT(1) DEFAULT 0 AFTER featured, ADD INDEX idx_products_promoted (is_promoted)"
+    );
+    console.log('Migration: added products.is_promoted column');
+  }
+
+  // 3. activity_logs
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS activity_logs (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT DEFAULT NULL,
+      username VARCHAR(255) DEFAULT NULL,
+      role VARCHAR(50) DEFAULT NULL,
+      action VARCHAR(100) NOT NULL,
+      resource VARCHAR(100) DEFAULT NULL,
+      resource_id INT DEFAULT NULL,
+      ip_address VARCHAR(45) DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_alog_user (user_id),
+      INDEX idx_alog_role (role),
+      INDEX idx_alog_action (action),
+      INDEX idx_alog_created (created_at)
+    ) ENGINE=InnoDB`
+  );
+
+  // 4. role_permissions (default permission set per role)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS role_permissions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      role VARCHAR(50) NOT NULL,
+      permission VARCHAR(100) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_role_permission (role, permission)
+    ) ENGINE=InnoDB`
+  );
+
+  // 5. user_permissions (per-user permission grants/revokes)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS user_permissions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      permission VARCHAR(100) NOT NULL,
+      granted TINYINT(1) NOT NULL DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_user_permission (user_id, permission),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`
+  );
+
+  // 6. marketing_campaigns
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS marketing_campaigns (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) NOT NULL UNIQUE,
+      description TEXT DEFAULT NULL,
+      goal VARCHAR(100) DEFAULT NULL,
+      budget DECIMAL(10,2) DEFAULT NULL,
+      status ENUM('draft','active','paused','completed','archived') NOT NULL DEFAULT 'draft',
+      starts_at DATETIME NULL DEFAULT NULL,
+      ends_at DATETIME NULL DEFAULT NULL,
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_campaign_status (status),
+      INDEX idx_campaign_created (created_at)
+    ) ENGINE=InnoDB`
+  );
+
+  // 7. promotions (homepage banners + promotional sections)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS promotions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      subtitle VARCHAR(255) DEFAULT NULL,
+      type ENUM('banner','section') NOT NULL DEFAULT 'section',
+      banner_image VARCHAR(500) DEFAULT NULL,
+      link_url VARCHAR(500) DEFAULT NULL,
+      sort_order INT DEFAULT 0,
+      start_date DATE DEFAULT NULL,
+      end_date DATE DEFAULT NULL,
+      status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_promo_type (type),
+      INDEX idx_promo_status (status)
+    ) ENGINE=InnoDB`
+  );
+
+  // 8. coupons
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS coupons (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      code VARCHAR(50) NOT NULL UNIQUE,
+      name VARCHAR(255) DEFAULT NULL,
+      type ENUM('percentage','fixed') NOT NULL DEFAULT 'percentage',
+      value DECIMAL(10,2) NOT NULL DEFAULT 0,
+      min_order DECIMAL(10,2) DEFAULT NULL,
+      max_uses INT DEFAULT NULL,
+      used_count INT DEFAULT 0,
+      starts_at DATETIME NULL DEFAULT NULL,
+      expires_at DATETIME NULL DEFAULT NULL,
+      status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_coupon_status (status)
+    ) ENGINE=InnoDB`
+  );
+
+  // 9. blog_posts
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS blog_posts (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) NOT NULL UNIQUE,
+      excerpt TEXT DEFAULT NULL,
+      content LONGTEXT DEFAULT NULL,
+      cover_image VARCHAR(500) DEFAULT NULL,
+      status ENUM('draft','published','archived') NOT NULL DEFAULT 'draft',
+      published_at TIMESTAMP NULL DEFAULT NULL,
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_blog_status (status),
+      INDEX idx_blog_published (published_at)
+    ) ENGINE=InnoDB`
+  );
+
+  // 10. announcements
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS announcements (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_announce_status (status)
+    ) ENGINE=InnoDB`
+  );
+
+  // 11. testimonials
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS testimonials (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      author_name VARCHAR(255) NOT NULL,
+      author_role VARCHAR(255) DEFAULT NULL,
+      content TEXT NOT NULL,
+      rating INT DEFAULT 5,
+      status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+      created_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_testimonial_status (status)
+    ) ENGINE=InnoDB`
+  );
+
+  // 12. newsletter_subscribers
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      status ENUM('subscribed','unsubscribed') NOT NULL DEFAULT 'subscribed',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_sub_status (status)
+    ) ENGINE=InnoDB`
+  );
+
+  // 13. newsletter_sends (promotional email log)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS newsletter_sends (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      subject VARCHAR(255) NOT NULL,
+      body TEXT DEFAULT NULL,
+      recipient_count INT DEFAULT 0,
+      status ENUM('sent','draft','failed') NOT NULL DEFAULT 'sent',
+      sent_by INT DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB`
+  );
+
+  // 13b. website_visits (daily unique-visitor tracking for marketing analytics)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS website_visits (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      visit_date DATE NOT NULL,
+      visitor_key VARCHAR(64) NOT NULL,
+      page_path VARCHAR(500) DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_visit (visit_date, visitor_key),
+      INDEX idx_visit_date (visit_date)
+    ) ENGINE=InnoDB`
+  );
+
+  // 14. Seed default permissions for the marketing_officer role
+  const marketingPermissions = [
+    'marketing:dashboard',
+    'marketing:campaigns',
+    'marketing:promotions',
+    'marketing:coupons',
+    'marketing:banners',
+    'marketing:blog',
+    'marketing:testimonials',
+    'marketing:announcements',
+    'marketing:reviews',
+    'marketing:feedback',
+    'marketing:newsletters',
+    'marketing:featured_products',
+    'marketing:analytics',
+    'marketing:reports',
+    'marketing:profile',
+    'marketing:settings'
+  ];
+  for (const perm of marketingPermissions) {
+    await connection.query(
+      'INSERT IGNORE INTO role_permissions (role, permission) VALUES (?, ?)',
+      ['marketing_officer', perm]
+    );
+  }
+  console.log('Migration: marketing officer system ensured');
 }
 
 const whenReady = runMigrations();

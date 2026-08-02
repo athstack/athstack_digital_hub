@@ -14,6 +14,7 @@ const isVercel = process.env.VERCEL === '1';
 const { generateToken } = require('./middleware/csrf');
 const { errorHandler } = require('./middleware/errorHandler');
 const { attachUser, refreshSessionRole } = require('./middleware/auth');
+const { trackVisit } = require('./middleware/trackVisit');
 const { formatDisplayName } = require('./helpers/displayName');
 
 const app = express();
@@ -216,6 +217,7 @@ app.use((req, res, next) => {
 // ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
+app.use(trackVisit);
 app.use('/', require('./routes/language'));
 app.use('/', require('./routes/home'));
 app.use('/about', require('./routes/about'));
@@ -229,6 +231,7 @@ app.use('/reviews', require('./routes/reviews'));
 app.use('/admin', require('./routes/admin'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/technician', require('./routes/technician'));
+app.use('/marketing', require('./routes/marketing'));
 app.use('/api', require('./routes/api'));
 app.use('/user', (req, res) => res.redirect('/dashboard'));
 

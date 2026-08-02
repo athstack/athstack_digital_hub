@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('admin:words.users') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-key me-2 text-primary"></i><%= t('admin:title.marketingOfficerPermissions') %></h2>
+                    <div class="ms-auto">
+                        <a href="/admin/marketing-officers" class="btn btn-outline-secondary rounded-pill"><i class="fa-solid fa-arrow-left me-2"></i><%= t('admin:marketingOfficerPermissions.backToOfficers') %></a>
+                    </div>
+                </div>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+                            <i class="fa-solid fa-bullhorn text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white fw-bold mb-0"><%= formatDisplayName(user.first_name, user.last_name) %></h5>
+                            <small class="text-white-50"><%= t('admin:marketingOfficerPermissions.userLabel') %>: <%= user.email %> &middot; <%= t('admin:roles.marketingOfficer') %></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card no-lift p-4">
+                    <p class="text-white-50 small mb-4"><%= t('admin:marketingOfficerPermissions.permissionsHint') %></p>
+                    <form method="POST" action="/admin/marketing-officers/<%= user.id %>/permissions">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <% MARKETING_PERMISSIONS.forEach(perm => { %>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="glass-card no-lift p-3 h-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 gap-2">
+                                        <span class="text-white small fw-semibold text-truncate"><%= t(perm.label) %></span>
+                                        <select name="permissions[<%= perm.key %>]" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:110px;flex-shrink:0;">
+                                            <option value="default" <%= permissions && permissions[perm.key] === undefined ? 'selected' : '' %>><%= t('admin:marketingOfficerPermissions.default') %></option>
+                                            <option value="allow" <%= permissions && permissions[perm.key] === 1 ? 'selected' : '' %>><%= t('admin:marketingOfficerPermissions.allow') %></option>
+                                            <option value="deny" <%= permissions && permissions[perm.key] === 0 ? 'selected' : '' %>><%= t('admin:marketingOfficerPermissions.deny') %></option>
+                                        </select>
+                                    </div>
+                                    <small class="text-white-50 text-break" style="font-size:11px;"><%= perm.key %></small>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('admin:marketingOfficerPermissions.savePermissions') %></button>
+                            <a href="/admin/marketing-officers" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

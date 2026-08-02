@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-comment-dots me-2 text-primary"></i><%= t('marketing:testimonials.heading') %></h2>
+
+                <div class="glass-card no-lift p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><%= t('marketing:testimonials.addNew') %></h6>
+                    <form method="POST" action="/marketing/testimonials">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <input type="text" name="author_name" class="form-control" required placeholder="<%= t('marketing:testimonials.authorName') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="author_role" class="form-control" placeholder="<%= t('marketing:testimonials.authorRole') %>">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="rating" class="form-select">
+                                    <% for (let i = 5; i >= 1; i--) { %>
+                                    <option value="<%= i %>"><%= i %> ★</option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-9">
+                                <textarea name="content" class="form-control" rows="3" required placeholder="<%= t('marketing:testimonials.contentPlaceholder') %>"></textarea>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="status" class="form-select">
+                                    <option value="approved"><%= t('marketing:status.approved') %></option>
+                                    <option value="pending"><%= t('marketing:status.pending') %></option>
+                                    <option value="rejected"><%= t('marketing:status.rejected') %></option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:testimonials.add') %></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.author') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:testimonials.content') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:testimonials.rating') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (testimonials.length > 0) { %>
+                                <% testimonials.forEach(testimonial => { %>
+                                <tr>
+                                    <td class="py-3 px-4">
+                                        <div class="text-white fw-semibold"><%= testimonial.author_name %></div>
+                                        <small class="text-muted"><%= testimonial.author_role || '' %></small>
+                                    </td>
+                                    <td class="py-3 px-4 text-muted" style="max-width:320px;"><%= testimonial.content %></td>
+                                    <td class="py-3 px-4 text-warning"><%= '★'.repeat(testimonial.rating) %></td>
+                                    <td class="py-3 px-4"><span class="badge <%= testimonial.status === 'approved' ? 'bg-success' : (testimonial.status === 'rejected' ? 'bg-danger' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + testimonial.status) %></span></td>
+                                    <td class="py-3 px-4 text-end">
+                                        <form method="POST" action="/marketing/testimonials/<%= testimonial.id %>/status" class="d-inline me-1">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="status" value="<%= testimonial.status === 'approved' ? 'rejected' : 'approved' %>">
+                                            <button type="submit" class="btn btn-sm <%= testimonial.status === 'approved' ? 'btn-outline-danger' : 'btn-outline-success' %> rounded-pill">
+                                                <i class="fa-solid <%= testimonial.status === 'approved' ? 'fa-ban' : 'fa-check' %>"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="/marketing/testimonials/<%= testimonial.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-comment-dots fa-2x mb-2"></i><br>
+                                        <%= t('marketing:testimonials.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

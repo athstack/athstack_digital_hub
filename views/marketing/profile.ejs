@@ -1,0 +1,73 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-user me-2 text-primary"></i><%= t('marketing:profile.heading') %></h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="/marketing/profile">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:profile.firstName') %> *</label>
+                                <input type="text" name="first_name" class="form-control" required value="<%= user.first_name %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:profile.lastName') %> *</label>
+                                <input type="text" name="last_name" class="form-control" required value="<%= user.last_name %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:profile.email') %></label>
+                                <input type="email" class="form-control" value="<%= user.email %>" disabled>
+                                <small class="text-muted"><%= t('marketing:profile.emailHint') %></small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:profile.phone') %></label>
+                                <input type="text" name="phone" class="form-control" value="<%= user.phone || '' %>" placeholder="+255 7XX XXX XXX">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label"><%= t('marketing:profile.bio') %></label>
+                                <textarea name="bio" class="form-control" rows="3" placeholder="<%= t('marketing:profile.bioPlaceholder') %>"><%= user.bio || '' %></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="border-secondary opacity-25 my-4">
+
+                        <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-lock me-2 text-primary"></i><%= t('marketing:profile.changePassword') %></h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:profile.currentPassword') %></label>
+                                <input type="password" name="current_password" class="form-control" autocomplete="current-password">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:profile.newPassword') %></label>
+                                <input type="password" name="new_password" class="form-control" autocomplete="new-password" minlength="8">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <small class="text-muted"><%= t('marketing:profile.passwordHint') %></small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('marketing:profile.save') %></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

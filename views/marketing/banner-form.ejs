@@ -1,0 +1,79 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pen' : 'plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('marketing:bannerForm.headingEdit') : t('marketing:bannerForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="<%= editing ? '/marketing/banners/' + banner.id : '/marketing/banners' %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label"><%= t('marketing:bannerForm.title') %> *</label>
+                                <input type="text" name="title" class="form-control" required value="<%= editing && banner ? banner.title : '' %>" placeholder="<%= t('marketing:bannerForm.titlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:bannerForm.sortOrder') %></label>
+                                <input type="number" name="sort_order" class="form-control" min="0" value="<%= editing && banner ? (banner.sort_order || 0) : 0 %>">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label"><%= t('marketing:bannerForm.subtitle') %></label>
+                                <input type="text" name="subtitle" class="form-control" value="<%= editing && banner ? (banner.subtitle || '') : '' %>" placeholder="<%= t('marketing:bannerForm.subtitlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:bannerForm.imagePath') %></label>
+                                <input type="text" name="banner_image" class="form-control" value="<%= editing && banner ? (banner.banner_image || '') : '' %>" placeholder="<%= t('marketing:bannerForm.imagePathPlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:bannerForm.linkUrl') %></label>
+                                <input type="text" name="link_url" class="form-control" value="<%= editing && banner ? (banner.link_url || '') : '' %>" placeholder="https://...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><%= t('marketing:bannerForm.startDate') %></label>
+                                <input type="date" name="start_date" class="form-control" value="<%= editing && banner ? (banner.start_date ? banner.start_date.toString().slice(0,10) : '') : '' %>">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><%= t('marketing:bannerForm.endDate') %></label>
+                                <input type="date" name="end_date" class="form-control" value="<%= editing && banner ? (banner.end_date ? banner.end_date.toString().slice(0,10) : '') : '' %>">
+                            </div>
+                            <% if (editing) { %>
+                            <div class="col-md-3">
+                                <label class="form-label"><%= t('common:words.status') %></label>
+                                <select name="status" class="form-select">
+                                    <option value="active" <%= banner.status === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+                                    <option value="inactive" <%= banner.status === 'inactive' ? 'selected' : '' %>><%= t('marketing:status.inactive') %></option>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'plus' %> me-2"></i><%= editing ? t('marketing:bannerForm.updateBanner') : t('marketing:bannerForm.createBanner') %>
+                            </button>
+                            <a href="/marketing/banners" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

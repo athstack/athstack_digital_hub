@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-newspaper me-2 text-primary"></i><%= t('marketing:blog.heading') %></h2>
+                    <a href="/marketing/blog/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:blog.newPost') %></a>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.slug') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (posts.length > 0) { %>
+                                <% posts.forEach(post => { %>
+                                <tr>
+                                    <td class="py-3 px-4 text-white fw-semibold"><%= post.title %></td>
+                                    <td class="py-3 px-4 text-muted small"><%= post.slug %></td>
+                                    <td class="py-3 px-4">
+                                        <span class="badge <%= post.status === 'published' ? 'bg-success' : (post.status === 'archived' ? 'bg-secondary' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + post.status) %></span>
+                                    </td>
+                                    <td class="py-3 px-4 text-muted"><%= post.published_at ? formatDate(post.published_at) : formatDate(post.created_at) %></td>
+                                    <td class="py-3 px-4 text-end">
+                                        <a href="/marketing/blog/<%= post.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
+                                        <form method="POST" action="/marketing/blog/<%= post.id %>/status" class="d-inline me-1">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="status" value="<%= post.status === 'published' ? 'draft' : 'published' %>">
+                                            <button type="submit" class="btn btn-sm <%= post.status === 'published' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
+                                                <i class="fa-solid <%= post.status === 'published' ? 'fa-eye-slash' : 'fa-eye' %>"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="/marketing/blog/<%= post.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-newspaper fa-2x mb-2"></i><br>
+                                        <%= t('marketing:blog.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

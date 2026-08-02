@@ -16,7 +16,7 @@ CREATE TABLE `users` (
     `phone` VARCHAR(20) DEFAULT NULL,
     `country` VARCHAR(2) DEFAULT NULL,
     `password` VARCHAR(255) NOT NULL,
-    `role` ENUM('customer','technician','admin','super_admin') NOT NULL DEFAULT 'customer',
+    `role` ENUM('customer','technician','admin','super_admin','marketing_officer') NOT NULL DEFAULT 'customer',
     `status` ENUM('active','inactive','suspended','pending') NOT NULL DEFAULT 'active',
     `avatar` VARCHAR(500) DEFAULT NULL,
     `bio` TEXT DEFAULT NULL,
@@ -61,6 +61,7 @@ CREATE TABLE `products` (
     `total_sales` INT DEFAULT 0,
     `status` ENUM('active','inactive','out_of_stock') NOT NULL DEFAULT 'active',
     `featured` TINYINT(1) DEFAULT 0,
+    `is_promoted` TINYINT(1) DEFAULT 0,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`technician_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
@@ -379,4 +380,179 @@ CREATE TABLE `password_reset_tokens` (
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     INDEX `idx_prt_token` (`token`),
     INDEX `idx_prt_user` (`user_id`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 18. ACTIVITY LOGS
+-- ================================================================
+CREATE TABLE `activity_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT DEFAULT NULL,
+    `username` VARCHAR(255) DEFAULT NULL,
+    `role` VARCHAR(50) DEFAULT NULL,
+    `action` VARCHAR(100) NOT NULL,
+    `resource` VARCHAR(100) DEFAULT NULL,
+    `resource_id` INT DEFAULT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_alog_user` (`user_id`),
+    INDEX `idx_alog_role` (`role`),
+    INDEX `idx_alog_action` (`action`),
+    INDEX `idx_alog_created` (`created_at`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 19. ROLE PERMISSIONS (default permission set per role)
+-- ================================================================
+CREATE TABLE `role_permissions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `role` VARCHAR(50) NOT NULL,
+    `permission` VARCHAR(100) NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uq_role_permission` (`role`, `permission`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 20. USER PERMISSIONS (per-user permission grants/revokes)
+-- ================================================================
+CREATE TABLE `user_permissions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `permission` VARCHAR(100) NOT NULL,
+    `granted` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uq_user_permission` (`user_id`, `permission`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 21. MARKETING CAMPAIGNS
+-- ================================================================
+CREATE TABLE `marketing_campaigns` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `slug` VARCHAR(255) NOT NULL UNIQUE,
+    `description` TEXT DEFAULT NULL,
+    `goal` VARCHAR(100) DEFAULT NULL,
+    `budget` DECIMAL(10,2) DEFAULT NULL,
+    `status` ENUM('draft','active','paused','completed','archived') NOT NULL DEFAULT 'draft',
+    `starts_at` DATETIME NULL DEFAULT NULL,
+    `ends_at` DATETIME NULL DEFAULT NULL,
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_campaign_status` (`status`),
+    INDEX `idx_campaign_created` (`created_at`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 22. PROMOTIONS (homepage banners + promotional sections)
+-- ================================================================
+CREATE TABLE `promotions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `subtitle` VARCHAR(255) DEFAULT NULL,
+    `type` ENUM('banner','section') NOT NULL DEFAULT 'section',
+    `banner_image` VARCHAR(500) DEFAULT NULL,
+    `link_url` VARCHAR(500) DEFAULT NULL,
+    `sort_order` INT DEFAULT 0,
+    `start_date` DATE DEFAULT NULL,
+    `end_date` DATE DEFAULT NULL,
+    `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_promo_type` (`type`),
+    INDEX `idx_promo_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 23. COUPONS
+-- ================================================================
+CREATE TABLE `coupons` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `name` VARCHAR(255) DEFAULT NULL,
+    `type` ENUM('percentage','fixed') NOT NULL DEFAULT 'percentage',
+    `value` DECIMAL(10,2) NOT NULL DEFAULT 0,
+    `min_order` DECIMAL(10,2) DEFAULT NULL,
+    `max_uses` INT DEFAULT NULL,
+    `used_count` INT DEFAULT 0,
+    `starts_at` DATETIME NULL DEFAULT NULL,
+    `expires_at` DATETIME NULL DEFAULT NULL,
+    `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_coupon_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 24. BLOG POSTS
+-- ================================================================
+CREATE TABLE `blog_posts` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `slug` VARCHAR(255) NOT NULL UNIQUE,
+    `excerpt` TEXT DEFAULT NULL,
+    `content` LONGTEXT DEFAULT NULL,
+    `cover_image` VARCHAR(500) DEFAULT NULL,
+    `status` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft',
+    `published_at` TIMESTAMP NULL DEFAULT NULL,
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_blog_status` (`status`),
+    INDEX `idx_blog_published` (`published_at`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 25. ANNOUNCEMENTS
+-- ================================================================
+CREATE TABLE `announcements` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `message` TEXT NOT NULL,
+    `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_announce_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 26. TESTIMONIALS
+-- ================================================================
+CREATE TABLE `testimonials` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `author_name` VARCHAR(255) NOT NULL,
+    `author_role` VARCHAR(255) DEFAULT NULL,
+    `content` TEXT NOT NULL,
+    `rating` INT DEFAULT 5,
+    `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    `created_by` INT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_testimonial_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 27. NEWSLETTER SUBSCRIBERS
+-- ================================================================
+CREATE TABLE `newsletter_subscribers` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `status` ENUM('subscribed','unsubscribed') NOT NULL DEFAULT 'subscribed',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_sub_status` (`status`)
+) ENGINE=InnoDB;
+
+-- ================================================================
+-- 29. WEBSITE VISITS (daily unique-visitor tracking for marketing analytics)
+-- ================================================================
+CREATE TABLE `website_visits` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `visit_date` DATE NOT NULL,
+    `visitor_key` VARCHAR(64) NOT NULL,
+    `page_path` VARCHAR(500) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uq_visit` (`visit_date`, `visitor_key`),
+    INDEX `idx_visit_date` (`visit_date`)
 ) ENGINE=InnoDB;

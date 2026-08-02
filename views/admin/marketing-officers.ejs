@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('admin:words.users') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('admin:marketingOfficers.heading') %></h2>
+                    <div class="ms-auto">
+                        <a href="/admin/activity-logs" class="btn btn-premium-outline rounded-pill me-2"><i class="fa-solid fa-clock-rotate-left me-2"></i><%= t('admin:marketingOfficers.activityLogs') %></a>
+                        <a href="/admin/marketing-officers/new" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:marketingOfficers.addOfficer') %></a>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                <i class="fa-solid fa-users text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-bold mb-0"><%= officers ? officers.length : 0 %></h5>
+                                <small class="text-white-50"><%= t('admin:marketingOfficers.heading') %></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-success bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                <i class="fa-solid fa-file-circle-check text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-bold mb-0"><%= typeof activityCount !== 'undefined' ? activityCount : 0 %></h5>
+                                <small class="text-white-50"><%= t('admin:marketingOfficers.totalActivityEntries') %></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <form method="GET" action="/admin/marketing-officers" class="row g-2 align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label"><%= t('common:words.search') %></label>
+                            <input type="text" name="search" class="form-control" placeholder="<%= t('admin:marketingOfficers.searchPlaceholder') %>" value="<%= searchQuery || '' %>">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> <%= t('admin:words.filter') %></button>
+                        </div>
+                    </form>
+                </div>
+
+                <% if (officers && officers.length > 0) { %>
+                <div class="glass-card p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0 premium-table">
+                            <thead>
+                                <tr>
+                                    <th><%= t('admin:words.user') %></th>
+                                    <th><%= t('common:words.email') %></th>
+                                    <th><%= t('admin:marketingOfficers.status') %></th>
+                                    <th><%= t('admin:marketingOfficers.joined') %></th>
+                                    <th><%= t('common:words.actions') %></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% officers.forEach(o => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
+                                                <% if (o.avatar) { %>
+                                                <img src="<%= imageUrl(o.avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                                <i class="fa-solid fa-bullhorn text-white small" style="display:none;"></i>
+                                                <% } else { %>
+                                                <i class="fa-solid fa-bullhorn text-white small"></i>
+                                                <% } %>
+                                            </div>
+                                            <div>
+                                                <span class="text-white fw-bold"><%= formatDisplayName(o.first_name, o.last_name) %></span>
+                                                <% if (o.status === 'inactive') { %><span class="badge bg-secondary ms-1"><%= t('admin:status.inactive') %></span><% } %>
+                                                <% if (o.status === 'suspended') { %><span class="badge bg-danger ms-1"><%= t('admin:status.suspended') %></span><% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-white-50"><%= o.email %></td>
+                                    <td>
+                                        <form method="POST" action="/admin/marketing-officers/<%= o.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="status" value="<%= o.status === 'active' ? 'inactive' : 'active' %>">
+                                            <button type="submit" class="btn btn-sm <%= o.status === 'active' ? 'btn-outline-secondary' : 'btn-outline-success' %> rounded-pill">
+                                                <%= o.status === 'active' ? t('admin:status.inactive') : t('admin:status.active') %>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="text-white-50"><%= o.created_at ? new Date(o.created_at).toLocaleDateString() : '' %></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="/admin/marketing-officers/<%= o.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill" title="<%= t('admin:marketingOfficers.editOfficer') %>"><i class="fa-solid fa-pen"></i></a>
+                                            <a href="/admin/marketing-officers/<%= o.id %>/permissions" class="btn btn-sm btn-outline-info rounded-pill" title="<%= t('admin:marketingOfficers.managePermissions') %>"><i class="fa-solid fa-key"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-bullhorn fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold"><%= t('admin:marketingOfficers.noOfficers') %></h4>
+                    <p class="text-white-50"><%= t('admin:marketingOfficers.noOfficersMatch') %></p>
+                    <a href="/admin/marketing-officers/new" class="btn btn-premium-primary rounded-pill mt-2"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:marketingOfficers.addOfficer') %></a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

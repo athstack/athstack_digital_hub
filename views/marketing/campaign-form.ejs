@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pen' : 'plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('marketing:campaignForm.headingEdit') : t('marketing:campaignForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="<%= editing ? '/marketing/campaigns/' + campaign.id : '/marketing/campaigns' %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label"><%= t('marketing:campaignForm.title') %> *</label>
+                                <input type="text" name="title" class="form-control" required value="<%= editing && campaign ? campaign.title : '' %>" placeholder="<%= t('marketing:campaignForm.titlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:campaignForm.goal') %></label>
+                                <input type="text" name="goal" class="form-control" value="<%= editing && campaign ? (campaign.goal || '') : '' %>" placeholder="e.g. 100 new customers">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:campaignForm.budget') %></label>
+                                <input type="number" name="budget" class="form-control" step="0.01" min="0" value="<%= editing && campaign ? (campaign.budget || '') : '' %>" placeholder="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:campaignForm.startDate') %></label>
+                                <input type="datetime-local" name="starts_at" class="form-control" value="<%= editing && campaign ? (campaign.starts_at ? campaign.starts_at.toString().slice(0,16) : '') : '' %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:campaignForm.endDate') %></label>
+                                <input type="datetime-local" name="ends_at" class="form-control" value="<%= editing && campaign ? (campaign.ends_at ? campaign.ends_at.toString().slice(0,16) : '') : '' %>">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label"><%= t('marketing:campaignForm.description') %></label>
+                                <textarea name="description" class="form-control" rows="4" placeholder="<%= t('marketing:campaignForm.descriptionPlaceholder') %>"><%= editing && campaign ? (campaign.description || '') : '' %></textarea>
+                            </div>
+                            <% if (editing) { %>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('common:words.status') %></label>
+                                <select name="status" class="form-select">
+                                    <option value="draft" <%= campaign.status === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
+                                    <option value="active" <%= campaign.status === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+                                    <option value="paused" <%= campaign.status === 'paused' ? 'selected' : '' %>><%= t('marketing:status.paused') %></option>
+                                    <option value="completed" <%= campaign.status === 'completed' ? 'selected' : '' %>><%= t('marketing:status.completed') %></option>
+                                    <option value="archived" <%= campaign.status === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'plus' %> me-2"></i><%= editing ? t('marketing:campaignForm.updateCampaign') : t('marketing:campaignForm.createCampaign') %>
+                            </button>
+                            <a href="/marketing/campaigns" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

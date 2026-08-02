@@ -13,6 +13,8 @@
     "analytics": "Analytics",
     "inbox": "Inbox",
     "settings": "Settings",
+    "marketingOfficers": "Marketing Officers",
+    "activityLogs": "Activity Logs",
     "logout": "Logout"
   },
   "title": {
@@ -31,7 +33,12 @@
     "services": "Manage Services - TechBridge Digital Hub",
     "reviews": "Review Moderation - TechBridge Digital Hub",
     "reviewForm": "Edit Review - TechBridge Digital Hub",
-    "analytics": "Analytics - TechBridge Digital Hub"
+    "analytics": "Analytics - TechBridge Digital Hub",
+    "marketingOfficers": "Marketing Officers - TechBridge Digital Hub",
+    "createMarketingOfficer": "Create Marketing Officer - TechBridge Digital Hub",
+    "editMarketingOfficer": "Edit Marketing Officer - TechBridge Digital Hub",
+    "marketingOfficerPermissions": "Marketing Officer Permissions - TechBridge Digital Hub",
+    "activityLogs": "Activity Logs - TechBridge Digital Hub"
   },
   "words": {
     "admin": "Admin",
@@ -127,7 +134,8 @@
     "customer": "Customer",
     "technician": "Technician",
     "admin": "Admin",
-    "superAdmin": "Super Admin"
+    "superAdmin": "Super Admin",
+    "marketingOfficer": "Marketing Officer"
   },
   "flash": {
     "invalidUserId": "Invalid user ID.",
@@ -205,7 +213,13 @@
     "reviewCreated": "Review created.",
     "reviewDeleted": "Review deleted.",
     "reviewReplyTitle": "Seller Replied to Your Review",
-    "reviewReplyMessage": "The TechBridge team replied to your review."
+    "reviewReplyMessage": "The TechBridge team replied to your review.",
+    "passwordTooShort": "Password must be at least 6 characters.",
+    "marketingOfficerCreated": "Marketing officer \"{{name}}\" created successfully.",
+    "marketingOfficerUpdated": "Marketing officer updated successfully.",
+    "marketingOfficerStatusUpdated": "Marketing officer status updated.",
+    "passwordReset": "Password reset successfully.",
+    "permissionsUpdated": "Permissions updated successfully."
   },
   "validation": {
     "productNameRequired": "Product name is required",
@@ -452,5 +466,70 @@
     "previewAlt": "Preview",
     "currentFile": "Current file",
     "currentAlt": "Current"
+  },
+  "marketingOfficers": {
+    "heading": "Marketing Officers",
+    "addOfficer": "Add Marketing Officer",
+    "searchPlaceholder": "Name or email...",
+    "allActions": "All Actions",
+    "permissions": "Permissions",
+    "status": "Status",
+    "joined": "Joined",
+    "activityLogs": "Activity Logs",
+    "totalActivityEntries": "Total activity entries",
+    "noOfficers": "No Marketing Officers Found",
+    "noOfficersMatch": "No marketing officers match your current filters.",
+    "editOfficer": "Edit",
+    "resetPassword": "Reset Password",
+    "managePermissions": "Manage Permissions"
+  },
+  "marketingOfficerForm": {
+    "headingCreate": "Create Marketing Officer",
+    "headingEdit": "Edit Marketing Officer",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "First name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Last name",
+    "password": "Password",
+    "passwordHint": "Min 6 characters",
+    "enterPassword": "Enter password",
+    "status": "Status",
+    "roleLabel": "Role",
+    "roleValue": "Marketing Officer",
+    "permissionsLabel": "Permissions",
+    "permissionsHint": "Choose what this officer can access. Leave a permission at its default to inherit the role defaults.",
+    "default": "Default",
+    "allow": "Allow",
+    "deny": "Deny",
+    "createOfficer": "Create Marketing Officer",
+    "updateOfficer": "Update Marketing Officer"
+  },
+  "marketingOfficerPermissions": {
+    "heading": "Permissions",
+    "userLabel": "User",
+    "permissionsHint": "Grant, deny, or leave permissions at their default. Denied permissions override the role defaults.",
+    "default": "Default",
+    "allow": "Allow",
+    "deny": "Deny",
+    "savePermissions": "Save Permissions",
+    "backToOfficers": "Back to Marketing Officers"
+  },
+  "activityLogs": {
+    "heading": "Activity Logs",
+    "searchPlaceholder": "Username or resource...",
+    "allRoles": "All Roles",
+    "allActions": "All Actions",
+    "username": "Username",
+    "role": "Role",
+    "action": "Action",
+    "resource": "Resource",
+    "resourceId": "Resource ID",
+    "date": "Date",
+    "noLogs": "No Logs Found",
+    "noLogsMatch": "No activity logs match your current filters.",
+    "prev": "Prev",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "showingTotal": "{{total}} total entries"
   }
 }

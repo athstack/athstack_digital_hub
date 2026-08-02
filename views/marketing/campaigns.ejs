@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:campaigns.heading') %></h2>
+                    <a href="/marketing/campaigns/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:campaigns.newCampaign') %></a>
+                </div>
+
+                <div class="glass-card p-3 mb-3">
+                    <form method="GET" action="/marketing/campaigns" class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label text-white-50 small mb-1"><%= t('common:words.status') %></label>
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="all" <%= currentStatus === 'all' ? 'selected' : '' %>><%= t('marketing:campaigns.allStatuses') %></option>
+                                <option value="draft" <%= currentStatus === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
+                                <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+                                <option value="paused" <%= currentStatus === 'paused' ? 'selected' : '' %>><%= t('marketing:status.paused') %></option>
+                                <option value="completed" <%= currentStatus === 'completed' ? 'selected' : '' %>><%= t('marketing:status.completed') %></option>
+                                <option value="archived" <%= currentStatus === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-white-50 small mb-1"><%= t('marketing:campaigns.search') %></label>
+                            <input type="text" name="search" class="form-control form-control-sm" value="<%= searchQuery %>" placeholder="<%= t('marketing:campaigns.searchPlaceholder') %>">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-premium-primary btn-sm rounded-pill w-100"><i class="fa-solid fa-filter me-1"></i><%= t('common:words.filter') %></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.goal') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.budget') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (campaigns.length > 0) { %>
+                                <% campaigns.forEach(campaign => { %>
+                                <tr>
+                                    <td class="py-3 px-4">
+                                        <div class="text-white fw-semibold"><%= campaign.title %></div>
+                                        <small class="text-muted"><%= formatDate(campaign.starts_at || campaign.created_at) %></small>
+                                    </td>
+                                    <td class="py-3 px-4 text-muted"><%= campaign.goal || '—' %></td>
+                                    <td class="py-3 px-4 text-white"><%= campaign.budget ? formatCurrency(campaign.budget) : '—' %></td>
+                                    <td class="py-3 px-4">
+                                        <span class="badge <%= campaign.status === 'active' ? 'bg-success' : (campaign.status === 'archived' || campaign.status === 'completed' ? 'bg-secondary' : (campaign.status === 'paused' ? 'bg-warning text-dark' : 'bg-info text-dark')) %>"><%= t('marketing:status.' + campaign.status) %></span>
+                                    </td>
+                                    <td class="py-3 px-4 text-end">
+                                        <a href="/marketing/campaigns/<%= campaign.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
+                                        <form method="POST" action="/marketing/campaigns/<%= campaign.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="status" value="<%= campaign.status === 'active' ? 'paused' : 'active' %>">
+                                            <button type="submit" class="btn btn-sm <%= campaign.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill" title="<%= campaign.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') %>">
+                                                <i class="fa-solid <%= campaign.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="/marketing/campaigns/<%= campaign.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <input type="hidden" name="status" value="archived">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="<%= t('marketing:campaigns.archive') %>"><i class="fa-solid fa-box-archive"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-bullhorn fa-2x mb-2"></i><br>
+                                        <%= t('marketing:campaigns.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

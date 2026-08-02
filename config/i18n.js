@@ -21,7 +21,8 @@ const NAMESPACES = [
   'training',
   'dashboard',
   'admin',
-  'technician'
+  'technician',
+  'marketing'
 ];
 
 const LOCALES_DIR = path.join(__dirname, '..', 'locales');

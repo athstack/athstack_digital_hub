@@ -11,6 +11,7 @@ const ProductImageModel = require('../models/ProductImageModel');
 const { generateSlug } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
+const { logActivity } = require('../helpers/activityLog');
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -108,7 +109,7 @@ exports.updateUserRole = async (req, res, next) => {
       return respond(400, {});
     }
 
-    const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
+    const validRoles = ['customer', 'technician', 'admin', 'super_admin', 'marketing_officer'];
     if (!validRoles.includes(role)) {
       if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidRole') });
       req.flash('error', req.t('admin:flash.invalidRole'));
@@ -234,7 +235,7 @@ exports.createUser = async (req, res, next) => {
       return res.redirect('/admin/users/new');
     }
 
-    const validRoles = ['customer', 'technician', 'admin', 'super_admin'];
+    const validRoles = ['customer', 'technician', 'admin', 'super_admin', 'marketing_officer'];
     const validStatuses = ['active', 'inactive', 'suspended'];
     const userRole = validRoles.includes(role) ? role : 'customer';
     const userStatus = validStatuses.includes(status) ? status : 'active';
@@ -328,7 +329,7 @@ exports.updateUser = async (req, res, next) => {
       return res.redirect('/admin/users');
     }
 
-    if (role && !['customer', 'technician', 'admin', 'super_admin'].includes(role)) {
+    if (role && !['customer', 'technician', 'admin', 'super_admin', 'marketing_officer'].includes(role)) {
       req.flash('error', req.t('admin:flash.invalidRole'));
       return res.redirect('/admin/users');
     }
@@ -1369,6 +1370,339 @@ exports.getAnalytics = async (req, res, next) => {
       end_date: end_date || '',
       category: category || 'all',
       search: search || ''
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Marketing Officer management (admin only)
+// ---------------------------------------------------------------------------
+
+const MARKETING_PERMISSIONS = [
+  { key: 'marketing:dashboard', label: 'marketing:permissions.dashboard' },
+  { key: 'marketing:campaigns', label: 'marketing:permissions.campaigns' },
+  { key: 'marketing:promotions', label: 'marketing:permissions.promotions' },
+  { key: 'marketing:coupons', label: 'marketing:permissions.coupons' },
+  { key: 'marketing:banners', label: 'marketing:permissions.banners' },
+  { key: 'marketing:blog', label: 'marketing:permissions.blog' },
+  { key: 'marketing:testimonials', label: 'marketing:permissions.testimonials' },
+  { key: 'marketing:announcements', label: 'marketing:permissions.announcements' },
+  { key: 'marketing:reviews', label: 'marketing:permissions.reviews' },
+  { key: 'marketing:feedback', label: 'marketing:permissions.feedback' },
+  { key: 'marketing:newsletters', label: 'marketing:permissions.newsletters' },
+  { key: 'marketing:featured_products', label: 'marketing:permissions.featuredProducts' },
+  { key: 'marketing:analytics', label: 'marketing:permissions.analytics' },
+  { key: 'marketing:reports', label: 'marketing:permissions.reports' },
+  { key: 'marketing:profile', label: 'marketing:permissions.profile' },
+  { key: 'marketing:settings', label: 'marketing:permissions.settings' }
+];
+
+async function getMarketingPermissionMap(userId) {
+  const [rows] = await pool.execute(
+    'SELECT permission, granted FROM user_permissions WHERE user_id = ?',
+    [userId]
+  );
+  const map = {};
+  rows.forEach((r) => { map[r.permission] = Number(r.granted); });
+  return map;
+}
+
+exports.getMarketingOfficers = async (req, res, next) => {
+  try {
+    const search = req.query.search || null;
+    const { users } = await UserModel.getAll({ role: 'marketing_officer', search, page: 1, limit: 200 });
+    const [activityCount] = await pool.execute(
+      "SELECT COUNT(*) AS count FROM activity_logs WHERE role = 'marketing_officer'"
+    );
+    res.render('admin/marketing-officers', {
+      title: req.t('admin:title.marketingOfficers'),
+      officers: users,
+      searchQuery: search,
+      activityCount: activityCount[0].count
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCreateMarketingOfficer = (req, res) => {
+  res.render('admin/marketing-officer-form', {
+    title: req.t('admin:title.createMarketingOfficer'),
+    user: null,
+    editing: false,
+    MARKETING_PERMISSIONS,
+    permissions: {}
+  });
+};
+
+exports.createMarketingOfficer = async (req, res, next) => {
+  try {
+    const { first_name, last_name, email, phone, password } = req.body;
+
+    if (!first_name || !last_name || !email || !password) {
+      req.flash('error', req.t('admin:flash.userRequiredFields'));
+      return res.redirect('/admin/marketing-officers/new');
+    }
+
+    const existing = await UserModel.findByEmail(email);
+    if (existing) {
+      req.flash('error', req.t('admin:flash.emailExists'));
+      return res.redirect('/admin/marketing-officers/new');
+    }
+
+    const bcrypt = require('bcryptjs');
+    const hashed = await bcrypt.hash(password, 10);
+    const created = await UserModel.create({
+      first_name, last_name, email, phone, password: hashed, role: 'marketing_officer'
+    });
+
+    await applyMarketingPermissions(created.id, extractPermissions(req.body));
+    await logActivity(req, 'create', 'marketing_officer', created.id);
+    req.flash('success', req.t('admin:flash.marketingOfficerCreated', { name: first_name + ' ' + last_name }));
+    res.redirect('/admin/marketing-officers');
+  } catch (err) {
+    next(err);
+  }
+};
+
+async function applyMarketingPermissions(userId, permissions) {
+  const selected = permissions || {};
+  await pool.execute('DELETE FROM user_permissions WHERE user_id = ?', [userId]);
+  for (const perm of MARKETING_PERMISSIONS) {
+    const choice = selected[perm.key];
+    if (choice === 'allow') {
+      await pool.execute(
+        'INSERT INTO user_permissions (user_id, permission, granted) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE granted = 1',
+        [userId, perm.key]
+      );
+    } else if (choice === 'deny') {
+      await pool.execute(
+        'INSERT INTO user_permissions (user_id, permission, granted) VALUES (?, ?, 0) ON DUPLICATE KEY UPDATE granted = 0',
+        [userId, perm.key]
+      );
+    }
+  }
+}
+
+function extractPermissions(body) {
+  const result = {};
+  if (!body || typeof body !== 'object') return result;
+  if (body.permissions && typeof body.permissions === 'object') return body.permissions;
+  for (const key of Object.keys(body)) {
+    const m = /^permissions\[(.+)\]$/.exec(key);
+    if (m) result[m[1]] = body[key];
+  }
+  return result;
+}
+
+exports.getEditMarketingOfficer = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+    const permissions = await getMarketingPermissionMap(userId);
+    res.render('admin/marketing-officer-form', {
+      title: req.t('admin:title.editMarketingOfficer'),
+      user: target,
+      editing: true,
+      MARKETING_PERMISSIONS,
+      permissions
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateMarketingOfficer = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { first_name, last_name, email, phone, status, password } = req.body;
+
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+
+    const validStatuses = ['active', 'inactive', 'suspended'];
+    const newStatus = validStatuses.includes(status) ? status : target.status;
+
+    if (email && email !== target.email) {
+      const existing = await UserModel.findByEmail(email);
+      if (existing && existing.id !== userId) {
+        req.flash('error', req.t('admin:flash.emailExists'));
+        return res.redirect('/admin/marketing-officers/' + userId + '/edit');
+      }
+    }
+
+    await UserModel.adminUpdate(userId, {
+      first_name: first_name || target.first_name,
+      last_name: last_name || target.last_name,
+      email: email || target.email,
+      phone: phone || target.phone,
+      role: 'marketing_officer',
+      status: newStatus,
+      password: password || null
+    });
+
+    const permMap = extractPermissions(req.body);
+    if (Object.keys(permMap).length > 0) {
+      await applyMarketingPermissions(userId, permMap);
+    }
+
+    await logActivity(req, 'update', 'marketing_officer', userId);
+    req.flash('success', req.t('admin:flash.marketingOfficerUpdated'));
+    res.redirect('/admin/marketing-officers');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateMarketingOfficerStatus = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { status } = req.body;
+    const validStatuses = ['active', 'inactive', 'suspended'];
+
+    if (!validStatuses.includes(status)) {
+      req.flash('error', req.t('admin:flash.invalidStatus'));
+      return res.redirect('/admin/marketing-officers');
+    }
+
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+
+    await UserModel.updateStatus(userId, status);
+    await logActivity(req, status === 'active' ? 'activate' : 'deactivate', 'marketing_officer', userId);
+    req.flash('success', req.t('admin:flash.marketingOfficerStatusUpdated'));
+    res.redirect('/admin/marketing-officers');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetMarketingOfficerPassword = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { password } = req.body;
+
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+
+    if (!password || password.length < 6) {
+      req.flash('error', req.t('admin:flash.passwordTooShort'));
+      return res.redirect('/admin/marketing-officers/' + userId + '/edit');
+    }
+
+    const bcrypt = require('bcryptjs');
+    const hashed = await bcrypt.hash(password, 10);
+    await UserModel.updatePassword(userId, hashed);
+    await logActivity(req, 'reset_password', 'marketing_officer', userId);
+    req.flash('success', req.t('admin:flash.passwordReset'));
+    res.redirect('/admin/marketing-officers/' + userId + '/edit');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getMarketingOfficerPermissions = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+    const permissions = await getMarketingPermissionMap(userId);
+    res.render('admin/marketing-officer-permissions', {
+      title: req.t('admin:title.marketingOfficerPermissions'),
+      user: target,
+      MARKETING_PERMISSIONS,
+      permissions
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateMarketingOfficerPermissions = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      req.flash('error', req.t('admin:flash.userNotFound'));
+      return res.redirect('/admin/marketing-officers');
+    }
+    await applyMarketingPermissions(userId, extractPermissions(req.body));
+    await logActivity(req, 'update_permissions', 'marketing_officer', userId);
+    req.flash('success', req.t('admin:flash.permissionsUpdated'));
+    res.redirect('/admin/marketing-officers/' + userId + '/permissions');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getActivityLogs = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 30;
+    const offset = (page - 1) * limit;
+    const roleFilter = req.query.role || null;
+    const actionFilter = req.query.action || null;
+    const search = req.query.search || null;
+
+    const conditions = [];
+    const params = [];
+    if (roleFilter) {
+      conditions.push('role = ?');
+      params.push(roleFilter);
+    }
+    if (actionFilter) {
+      conditions.push('action = ?');
+      params.push(actionFilter);
+    }
+    if (search) {
+      conditions.push('(username LIKE ? OR resource LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term);
+    }
+    const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+
+    const [logs] = await pool.execute(
+      `SELECT * FROM activity_logs ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      [...params, limit, offset]
+    );
+    const [countRow] = await pool.execute(
+      `SELECT COUNT(*) AS total FROM activity_logs ${where}`,
+      params
+    );
+
+    const total = countRow[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    const [actions] = await pool.execute('SELECT DISTINCT action FROM activity_logs ORDER BY action');
+    const [roles] = await pool.execute('SELECT DISTINCT role FROM activity_logs ORDER BY role');
+
+    res.render('admin/activity-logs', {
+      title: req.t('admin:title.activityLogs'),
+      logs,
+      pagination: { page, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
+      currentRole: roleFilter,
+      currentAction: actionFilter,
+      searchQuery: search,
+      actions: actions.map((a) => a.action),
+      roles: roles.map((r) => r.role)
     });
   } catch (err) {
     next(err);

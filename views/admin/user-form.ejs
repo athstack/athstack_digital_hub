@@ -45,6 +45,7 @@
                                 <select name="role" class="form-select" required>
                                     <option value="customer" <%= editing && user && user.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
                                     <option value="technician" <%= editing && user && user.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
+                                    <option value="marketing_officer" <%= editing && user && user.role === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
                                     <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                     <option value="admin" <%= editing && user && user.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
                                     <option value="super_admin" <%= editing && user && user.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>

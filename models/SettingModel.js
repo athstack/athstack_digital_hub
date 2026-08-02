@@ -28,7 +28,7 @@ class SettingModel {
     return true;
   }
 
-  async setGroup(settings) {
+  async setGroup(settings, group = 'general') {
     const connection = require('../config/db').pool;
     const conn = await connection.getConnection();
     try {
@@ -36,10 +36,10 @@ class SettingModel {
 
       for (const [key, value] of Object.entries(settings)) {
         await conn.execute(
-          `INSERT INTO settings (setting_key, setting_value)
-           VALUES (?, ?)
-           ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`,
-          [key, value]
+          `INSERT INTO settings (setting_key, setting_value, setting_group)
+           VALUES (?, ?, ?)
+           ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), setting_group = VALUES(setting_group)`,
+          [key, value, group]
         );
       }
 

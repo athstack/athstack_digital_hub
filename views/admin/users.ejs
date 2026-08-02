@@ -44,6 +44,7 @@
                                     <option value=""><%= t('admin:users.allRoles') %></option>
                                     <option value="customer" <%= currentRole === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
                                     <option value="technician" <%= currentRole === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
+                                    <option value="marketing_officer" <%= currentRole === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
                                     <option value="admin" <%= currentRole === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
                                     <option value="super_admin" <%= currentRole === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
                                 </select>
@@ -84,6 +85,7 @@
                                         <select class="form-select form-select-sm bg-dark text-white border-secondary role-select" style="width:120px;" data-user-id="<%= u.id %>" data-original="<%= u.role %>" <%= protectRow ? 'disabled' : '' %>>
                                             <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
                                             <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
+                                            <option value="marketing_officer" <%= u.role === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
                                             <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
                                             <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
                                         </select>

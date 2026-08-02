@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:announcements.heading') %></h2>
+
+                <div class="glass-card no-lift p-4 mb-4">
+                    <h6 class="text-white fw-bold mb-3"><%= t('marketing:announcements.addNew') %></h6>
+                    <form method="POST" action="/marketing/announcements">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" name="title" class="form-control" required placeholder="<%= t('marketing:announcements.titlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="status" class="form-select">
+                                    <option value="active"><%= t('marketing:status.active') %></option>
+                                    <option value="inactive"><%= t('marketing:status.inactive') %></option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <textarea name="message" class="form-control" rows="3" required placeholder="<%= t('marketing:announcements.messagePlaceholder') %>"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:announcements.add') %></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:announcements.message') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (announcements.length > 0) { %>
+                                <% announcements.forEach(announcement => { %>
+                                <tr>
+                                    <td class="py-3 px-4 text-white fw-semibold"><%= announcement.title %></td>
+                                    <td class="py-3 px-4 text-muted" style="max-width:360px;"><%= announcement.message %></td>
+                                    <td class="py-3 px-4"><span class="badge <%= announcement.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + announcement.status) %></span></td>
+                                    <td class="py-3 px-4 text-end">
+                                        <form method="POST" action="/marketing/announcements/<%= announcement.id %>/status" class="d-inline me-1">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm <%= announcement.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
+                                                <i class="fa-solid <%= announcement.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="/marketing/announcements/<%= announcement.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-bullhorn fa-2x mb-2"></i><br>
+                                        <%= t('marketing:announcements.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

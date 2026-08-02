@@ -1,0 +1,82 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <div>
+                        <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-star me-2 text-primary"></i><%= t('marketing:featuredProducts.heading') %></h2>
+                        <p class="text-muted small mb-0 mt-1"><%= t('marketing:featuredProducts.hint') %></p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.product') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.seller') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.sales') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;"><%= t('marketing:featuredProducts.featured') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;"><%= t('marketing:featuredProducts.promoted') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (products.length > 0) { %>
+                                <% products.forEach(product => { %>
+                                <tr>
+                                    <td class="py-3 px-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <% if (product.main_image) { %>
+                                            <img src="<%= imageUrl(product.main_image, 'products') %>" alt="" style="height:36px;width:48px;object-fit:cover;border-radius:6px;">
+                                            <% } %>
+                                            <div>
+                                                <div class="text-white small fw-semibold"><%= product.name %></div>
+                                                <small class="text-muted"><%= product.category_name || '—' %></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-muted"><%= product.first_name ? product.first_name + ' ' + product.last_name : t('marketing:featuredProducts.athstack') %></td>
+                                    <td class="py-3 px-4 text-white"><%= product.total_sales %></td>
+                                    <td class="py-3 px-4 text-center">
+                                        <form method="POST" action="/marketing/products/<%= product.id %>/featured" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm rounded-pill <%= product.featured ? 'btn-warning' : 'btn-outline-warning' %>">
+                                                <i class="fa-solid fa-star"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="py-3 px-4 text-center">
+                                        <form method="POST" action="/marketing/products/<%= product.id %>/promoted" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm rounded-pill <%= product.is_promoted ? 'btn-success' : 'btn-outline-success' %>">
+                                                <i class="fa-solid fa-bullhorn"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-box-open fa-2x mb-2"></i><br>
+                                        <%= t('marketing:featuredProducts.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

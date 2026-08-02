@@ -77,6 +77,8 @@ exports.postLogin = async (req, res, next) => {
           redirectUrl = returnTo || '/admin';
         } else if (user.role === 'technician') {
           redirectUrl = returnTo || '/technician';
+        } else if (user.role === 'marketing_officer') {
+          redirectUrl = returnTo || '/marketing';
         } else {
           redirectUrl = returnTo || '/dashboard';
         }

@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= t('common:nav.profile') %>">
+                        <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : (user.role === 'marketing_officer' ? '/marketing' : '/dashboard')) %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= t('common:nav.profile') %>">
                             <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:30px;height:30px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
                             <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= formatDisplayName(user.firstName, user.lastName) %></span>
                         </a>
@@ -164,7 +164,7 @@
                 <span class="mobile-action-btn-label"><%= t('common:nav.orders') %></span>
             </a>
             <% } %>
-            <a href="<%= user ? (['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard')) : '/auth/login' %>" class="mobile-action-btn" aria-label="<%= user ? t('common:nav.dashboard') : t('common:nav.signIn') %>">
+            <a href="<%= user ? (['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : (user.role === 'marketing_officer' ? '/marketing' : '/dashboard'))) : '/auth/login' %>" class="mobile-action-btn" aria-label="<%= user ? t('common:nav.dashboard') : t('common:nav.signIn') %>">
                 <span class="mobile-action-btn-icon"><i class="fa-solid <%= user ? 'fa-user-gear' : 'fa-arrow-right-to-bracket' %>"></i></span>
                 <span class="mobile-action-btn-label"><%= user ? t('common:nav.dashboard') : t('common:nav.signIn') %></span>
             </a>
@@ -186,7 +186,7 @@
                     <span class="mobile-user-name"><%= formatDisplayName(user.firstName, user.lastName) %></span>
                     <span class="mobile-user-email"><%= user.email %></span>
                 </div>
-                <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : '/dashboard') %>" class="mobile-user-profile-btn"><%= t('common:nav.viewProfile') %></a>
+                <a href="<%= ['admin', 'super_admin'].includes(user.role) ? '/admin' : (user.role === 'technician' ? '/technician' : (user.role === 'marketing_officer' ? '/marketing' : '/dashboard')) %>" class="mobile-user-profile-btn"><%= t('common:nav.viewProfile') %></a>
             </div>
             <% } else { %>
             <div class="mobile-user-auth">

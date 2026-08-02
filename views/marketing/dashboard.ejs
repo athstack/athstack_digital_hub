@@ -1,0 +1,225 @@
+<%- include('../partials/header') %>
+
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="section-badge"><%= t('marketing:words.marketing') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:dashboard.heading') %></h2>
+                </div>
+
+                <% if (typeof metrics === 'undefined' || !metrics) { metrics = { total_campaigns: 0, active_campaigns: 0, active_promotions: 0, featured_products: 0, promoted_products: 0, active_coupons: 0, visitors: 0, conversion_rate: '0.0', sales_generated: 0, customer_reviews: 0, blog_posts: 0, subscribers: 0 }; } %>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-bullhorn fa-2x text-primary mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.total_campaigns %></h3>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:dashboard.totalCampaigns') %></p>
+                            <small class="text-success"><%= metrics.active_campaigns %> <%= t('marketing:dashboard.active') %></small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-tags fa-2x text-info mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.active_promotions %></h3>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:dashboard.activePromotions') %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-star fa-2x text-warning mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.featured_products %></h3>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:dashboard.featuredProducts') %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-4 text-center">
+                            <i class="fa-solid fa-ticket fa-2x text-success mb-2"></i>
+                            <h3 class="text-white fw-bold mb-0"><%= metrics.active_coupons %></h3>
+                            <p class="text-white-50 small mb-0"><%= t('marketing:dashboard.activeCoupons') %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.websiteVisitors') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.visitors %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.conversionRate') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.conversion_rate %>%</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.salesGenerated') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= formatCurrency(metrics.sales_generated) %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.promotedProducts') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.promoted_products %></h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.customerReviews') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.customer_reviews %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.blogPosts') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.blog_posts %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.subscribers') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.subscribers %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('marketing:dashboard.promotedTechProducts') %></small>
+                            <h5 class="text-white fw-bold mb-0"><%= metrics.promoted_products %></h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-2 text-primary"></i><%= t('marketing:dashboard.performanceOverview') %></h5>
+                        <a href="/marketing/analytics" class="btn btn-premium-outline btn-sm rounded-pill"><%= t('common:words.viewAll') %></a>
+                    </div>
+                    <canvas id="performanceChart" height="120"></canvas>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-white fw-bold mb-0"><i class="fa-solid fa-bullseye me-2 text-primary"></i><%= t('marketing:dashboard.upcomingPromotions') %></h6>
+                                <a href="/marketing/promotions" class="btn btn-sm btn-link text-primary p-0 text-decoration-none"><%= t('common:words.viewAll') %></a>
+                            </div>
+                            <% if (upcomingPromotions && upcomingPromotions.length > 0) { %>
+                            <% upcomingPromotions.forEach(promo => { %>
+                            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle py-2">
+                                <div>
+                                    <div class="text-white small fw-semibold"><%= promo.title %></div>
+                                    <small class="text-muted"><%= promo.start_date ? formatDate(promo.start_date) : t('marketing:words.immediate') %></small>
+                                </div>
+                                <span class="badge <%= promo.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + promo.status) %></span>
+                            </div>
+                            <% }) %>
+                            <% } else { %>
+                            <p class="text-muted small mb-0 text-center py-3"><%= t('marketing:dashboard.noUpcomingPromotions') %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-white fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i><%= t('marketing:dashboard.recentActivities') %></h6>
+                            </div>
+                            <% if (recentActivities && recentActivities.length > 0) { %>
+                            <% recentActivities.forEach(act => { %>
+                            <div class="border-bottom border-secondary-subtle py-2">
+                                <div class="small text-white"><span class="badge bg-primary bg-opacity-25 text-primary"><%= act.action %></span> <%= t('marketing:resources.' + (act.resource || 'none'), { defaultValue: act.resource || '' }) %></div>
+                                <small class="text-muted"><%= formatDate(act.created_at, { hour: '2-digit', minute: '2-digit' }) %></small>
+                            </div>
+                            <% }) %>
+                            <% } else { %>
+                            <p class="text-muted small mb-0 text-center py-3"><%= t('marketing:dashboard.noRecentActivities') %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-white fw-bold mb-0"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:dashboard.recentCampaigns') %></h5>
+                        <a href="/marketing/campaigns" class="btn btn-premium-outline btn-sm rounded-pill"><%= t('common:words.viewAll') %></a>
+                    </div>
+                    <% if (recentCampaigns && recentCampaigns.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:words.goal') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.date') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% recentCampaigns.forEach(campaign => { %>
+                                <tr>
+                                    <td class="text-white fw-semibold"><%= campaign.title %></td>
+                                    <td class="text-muted"><%= campaign.goal || '—' %></td>
+                                    <td><span class="badge <%= campaign.status === 'active' ? 'bg-success' : (campaign.status === 'archived' || campaign.status === 'completed' ? 'bg-secondary' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + campaign.status) %></span></td>
+                                    <td class="text-muted"><%= formatDate(campaign.created_at) %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } else { %>
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-2"><%= t('marketing:dashboard.noCampaigns') %></p>
+                        <a href="/marketing/campaigns/new" class="btn btn-premium-primary btn-sm rounded-pill"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:dashboard.createCampaign') %></a>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    var chartEl = document.getElementById('performanceChart');
+    if (!chartEl || typeof Chart === 'undefined') return;
+    var labels = JSON.parse('<%= chartLabels %>');
+    var visitors = JSON.parse('<%= chartVisitors %>');
+    var orders = JSON.parse('<%= chartOrders %>');
+    var revenue = JSON.parse('<%= chartRevenue %>');
+    new Chart(chartEl, {
+        data: {
+            labels: labels,
+            datasets: [
+                { type: 'line', label: '<%= t('marketing:dashboard.visitors') %>', data: visitors, borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.15)', fill: true, tension: 0.35, yAxisID: 'y' },
+                { type: 'bar', label: '<%= t('marketing:dashboard.orders') %>', data: orders, backgroundColor: 'rgba(16,185,129,0.55)', borderRadius: 4, yAxisID: 'y1' }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.7)' } } },
+            scales: {
+                x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 45 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                y: { position: 'left', ticks: { color: 'rgba(255,255,255,0.5)' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                y1: { position: 'right', ticks: { color: 'rgba(255,255,255,0.5)', precision: 0 }, grid: { drawOnChartArea: false } }
+            }
+        }
+    });
+})();
+</script>
+
+<%- include('../partials/footer') %>

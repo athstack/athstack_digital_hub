@@ -1,0 +1,86 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pen' : 'plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('marketing:couponForm.headingEdit') : t('marketing:couponForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="<%= editing ? '/marketing/coupons/' + coupon.id : '/marketing/coupons' %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:couponForm.code') %> *</label>
+                                <input type="text" name="code" class="form-control text-uppercase" required value="<%= editing && coupon ? coupon.code : '' %>" placeholder="WELCOME10">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:couponForm.name') %></label>
+                                <input type="text" name="name" class="form-control" value="<%= editing && coupon ? (coupon.name || '') : '' %>" placeholder="<%= t('marketing:couponForm.namePlaceholder') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.type') %></label>
+                                <select name="type" class="form-select">
+                                    <option value="percentage" <%= editing && coupon && coupon.type === 'percentage' ? 'selected' : '' %>><%= t('marketing:couponForm.percentage') %></option>
+                                    <option value="fixed" <%= editing && coupon && coupon.type === 'fixed' ? 'selected' : '' %>><%= t('marketing:couponForm.fixed') %></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.value') %> *</label>
+                                <input type="number" name="value" class="form-control" required step="0.01" min="0" value="<%= editing && coupon ? coupon.value : '' %>" placeholder="10">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.minOrder') %></label>
+                                <input type="number" name="min_order" class="form-control" step="0.01" min="0" value="<%= editing && coupon ? (coupon.min_order || '') : '' %>" placeholder="0.00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.maxUses') %></label>
+                                <input type="number" name="max_uses" class="form-control" min="0" value="<%= editing && coupon ? (coupon.max_uses || '') : '' %>" placeholder="100">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.startDate') %></label>
+                                <input type="datetime-local" name="starts_at" class="form-control" value="<%= editing && coupon ? (coupon.starts_at ? coupon.starts_at.toString().slice(0,16) : '') : '' %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:couponForm.expiryDate') %></label>
+                                <input type="datetime-local" name="expires_at" class="form-control" value="<%= editing && coupon ? (coupon.expires_at ? coupon.expires_at.toString().slice(0,16) : '') : '' %>">
+                            </div>
+                            <% if (editing) { %>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('common:words.status') %></label>
+                                <select name="status" class="form-select">
+                                    <option value="active" <%= coupon.status === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+                                    <option value="inactive" <%= coupon.status === 'inactive' ? 'selected' : '' %>><%= t('marketing:status.inactive') %></option>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'plus' %> me-2"></i><%= editing ? t('marketing:couponForm.updateCoupon') : t('marketing:couponForm.createCoupon') %>
+                            </button>
+                            <a href="/marketing/coupons" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

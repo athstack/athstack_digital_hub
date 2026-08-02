@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-flag me-2 text-primary"></i><%= t('marketing:banners.heading') %></h2>
+                    <a href="/marketing/banners/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:banners.newBanner') %></a>
+                </div>
+
+                <div class="glass-card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.image') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% if (banners.length > 0) { %>
+                                <% banners.forEach(banner => { %>
+                                <tr>
+                                    <td class="py-3 px-4">
+                                        <div class="text-white fw-semibold"><%= banner.title %></div>
+                                        <% if (banner.subtitle) { %><small class="text-muted"><%= banner.subtitle %></small><% } %>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <% if (banner.banner_image) { %>
+                                        <img src="<%= imageUrl(banner.banner_image, 'promotions') %>" alt="" style="height:40px;width:80px;object-fit:cover;border-radius:6px;">
+                                        <% } else { %><span class="text-muted">—</span><% } %>
+                                    </td>
+                                    <td class="py-3 px-4"><span class="badge <%= banner.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + banner.status) %></span></td>
+                                    <td class="py-3 px-4 text-end">
+                                        <a href="/marketing/banners/<%= banner.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
+                                        <form method="POST" action="/marketing/banners/<%= banner.id %>/status" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm <%= banner.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
+                                                <i class="fa-solid <%= banner.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                        <i class="fa-solid fa-flag fa-2x mb-2"></i><br>
+                                        <%= t('marketing:banners.empty') %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

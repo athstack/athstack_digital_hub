@@ -1,0 +1,75 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pen' : 'plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('marketing:promotionForm.headingEdit') : t('marketing:promotionForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4">
+                    <form method="POST" action="<%= editing ? '/marketing/promotions/' + promotion.id : '/marketing/promotions' %>">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label"><%= t('marketing:promotionForm.title') %> *</label>
+                                <input type="text" name="title" class="form-control" required value="<%= editing && promotion ? promotion.title : '' %>" placeholder="<%= t('marketing:promotionForm.titlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('marketing:promotionForm.sortOrder') %></label>
+                                <input type="number" name="sort_order" class="form-control" min="0" value="<%= editing && promotion ? (promotion.sort_order || 0) : 0 %>">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label"><%= t('marketing:promotionForm.subtitle') %></label>
+                                <input type="text" name="subtitle" class="form-control" value="<%= editing && promotion ? (promotion.subtitle || '') : '' %>" placeholder="<%= t('marketing:promotionForm.subtitlePlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('marketing:promotionForm.linkUrl') %></label>
+                                <input type="text" name="link_url" class="form-control" value="<%= editing && promotion ? (promotion.link_url || '') : '' %>" placeholder="https://...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><%= t('marketing:promotionForm.startDate') %></label>
+                                <input type="date" name="start_date" class="form-control" value="<%= editing && promotion ? (promotion.start_date ? promotion.start_date.toString().slice(0,10) : '') : '' %>">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label"><%= t('marketing:promotionForm.endDate') %></label>
+                                <input type="date" name="end_date" class="form-control" value="<%= editing && promotion ? (promotion.end_date ? promotion.end_date.toString().slice(0,10) : '') : '' %>">
+                            </div>
+                            <% if (editing) { %>
+                            <div class="col-md-4">
+                                <label class="form-label"><%= t('common:words.status') %></label>
+                                <select name="status" class="form-select">
+                                    <option value="active" <%= promotion.status === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+                                    <option value="inactive" <%= promotion.status === 'inactive' ? 'selected' : '' %>><%= t('marketing:status.inactive') %></option>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'plus' %> me-2"></i><%= editing ? t('marketing:promotionForm.updatePromotion') : t('marketing:promotionForm.createPromotion') %>
+                            </button>
+                            <a href="/marketing/promotions" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

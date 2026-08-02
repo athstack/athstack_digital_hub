@@ -1,0 +1,117 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/marketingSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-envelope-circle-check me-2 text-primary"></i><%= t('marketing:newsletters.heading') %></h2>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-5">
+                        <div class="glass-card no-lift p-4 h-100">
+                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-plus me-2 text-primary"></i><%= t('marketing:newsletters.addSubscriber') %></h6>
+                            <form method="POST" action="/marketing/newsletters/subscribers" class="d-flex gap-2">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <input type="email" name="email" class="form-control" required placeholder="<%= t('marketing:newsletters.emailPlaceholder') %>">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-plus"></i></button>
+                            </form>
+
+                            <hr class="border-secondary opacity-25 my-3">
+                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-paper-plane me-2 text-primary"></i><%= t('marketing:newsletters.sendNewsletter') %></h6>
+                            <form method="POST" action="/marketing/newsletters/send">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <div class="mb-2">
+                                    <input type="text" name="subject" class="form-control" required placeholder="<%= t('marketing:newsletters.subjectPlaceholder') %>">
+                                </div>
+                                <div class="mb-2">
+                                    <textarea name="body" class="form-control" rows="4" placeholder="<%= t('marketing:newsletters.bodyPlaceholder') %>"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-premium-primary rounded-pill w-100"><i class="fa-solid fa-paper-plane me-2"></i><%= t('marketing:newsletters.send') %></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="glass-card p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark align-middle mb-0">
+                                    <thead>
+                                        <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.email') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (subscribers.length > 0) { %>
+                                        <% subscribers.forEach(sub => { %>
+                                        <tr>
+                                            <td class="py-3 px-4 text-white small"><%= sub.email %></td>
+                                            <td class="py-3 px-4"><span class="badge <%= sub.status === 'subscribed' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:newsletters.' + sub.status) %></span></td>
+                                            <td class="py-3 px-4 text-muted small"><%= formatDate(sub.created_at) %></td>
+                                            <td class="py-3 px-4 text-end">
+                                                <form method="POST" action="/marketing/newsletters/subscribers/<%= sub.id %>/status" class="d-inline me-1">
+                                                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                                    <button type="submit" class="btn btn-sm <%= sub.status === 'subscribed' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
+                                                        <i class="fa-solid <%= sub.status === 'subscribed' ? 'fa-user-slash' : 'fa-user-check' %>"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="/marketing/newsletters/subscribers/<%= sub.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
+                                                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                        <% } else { %>
+                                        <tr>
+                                            <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                                                <i class="fa-solid fa-envelope-circle-check fa-2x mb-2"></i><br>
+                                                <%= t('marketing:newsletters.empty') %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (sends.length > 0) { %>
+                <div class="glass-card p-0">
+                    <div class="px-4 pt-3">
+                        <h6 class="text-white fw-bold mb-0"><%= t('marketing:newsletters.sendHistory') %></h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.subject') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.recipients') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% sends.forEach(send => { %>
+                                <tr>
+                                    <td class="py-3 px-4 text-white small"><%= send.subject %></td>
+                                    <td class="py-3 px-4 text-muted"><%= send.recipient_count %></td>
+                                    <td class="py-3 px-4"><span class="badge <%= send.status === 'sent' ? 'bg-success' : (send.status === 'failed' ? 'bg-danger' : 'bg-secondary') %>"><%= t('marketing:newsletters.' + send.status) %></span></td>
+                                    <td class="py-3 px-4 text-muted small"><%= formatDate(send.created_at) %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

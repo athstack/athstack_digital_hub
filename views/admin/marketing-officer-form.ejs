@@ -1,0 +1,118 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4">
+                    <i class="fa-solid fa-<%= editing ? 'pencil' : 'user-plus' %> me-2 text-primary"></i>
+                    <%= editing ? t('admin:marketingOfficerForm.headingEdit') : t('admin:marketingOfficerForm.headingCreate') %>
+                </h2>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <div class="glass-card no-lift p-4 mb-4">
+                    <form method="POST" action="<%= editing ? '/admin/marketing-officers/' + user.id : '/admin/marketing-officers' %>" id="officerForm">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('admin:marketingOfficerForm.firstName') %> *</label>
+                                <input type="text" name="first_name" class="form-control" required value="<%= editing && user ? user.first_name : '' %>" placeholder="<%= t('admin:marketingOfficerForm.firstNamePlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('admin:marketingOfficerForm.lastName') %> *</label>
+                                <input type="text" name="last_name" class="form-control" required value="<%= editing && user ? user.last_name : '' %>" placeholder="<%= t('admin:marketingOfficerForm.lastNamePlaceholder') %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('common:words.email') %> *</label>
+                                <input type="email" name="email" class="form-control" required value="<%= editing && user ? user.email : '' %>" placeholder="user@example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('common:words.phone') %></label>
+                                <input type="text" name="phone" class="form-control" value="<%= editing && user ? (user.phone || '') : '' %>" placeholder="+255 7XX XXX XXX">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><%= t('admin:marketingOfficerForm.roleLabel') %> *</label>
+                                <select class="form-select" disabled>
+                                    <option value="marketing_officer" selected><%= t('admin:marketingOfficerForm.roleValue') %></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <% if (editing) { %>
+                                <label class="form-label"><%= t('common:words.status') %> *</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="active" <%= user.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+                                    <option value="inactive" <%= user.status === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
+                                    <option value="suspended" <%= user.status === 'suspended' ? 'selected' : '' %>><%= t('admin:status.suspended') %></option>
+                                </select>
+                                <% } else { %>
+                                <label class="form-label"><%= t('admin:marketingOfficerForm.password') %> *</label>
+                                <input type="password" name="password" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.enterPassword') %>" minlength="6">
+                                <small class="text-white-50"><%= t('admin:marketingOfficerForm.passwordHint') %></small>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <hr class="border-secondary opacity-25 my-4">
+
+                        <h6 class="text-white fw-semibold mb-1"><i class="fa-solid fa-key me-2 text-primary"></i><%= t('admin:marketingOfficerForm.permissionsLabel') %></h6>
+                        <p class="text-white-50 small mb-3"><%= t('admin:marketingOfficerForm.permissionsHint') %></p>
+
+                        <div class="row g-3">
+                            <% MARKETING_PERMISSIONS.forEach(perm => { %>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="glass-card no-lift p-3 h-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 gap-2">
+                                        <span class="text-white small fw-semibold text-truncate"><%= t(perm.label) %></span>
+                                        <select name="permissions[<%= perm.key %>]" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:110px;flex-shrink:0;">
+                                            <option value="default" <%= permissions && permissions[perm.key] === undefined ? 'selected' : '' %>><%= t('admin:marketingOfficerForm.default') %></option>
+                                            <option value="allow" <%= permissions && permissions[perm.key] === 1 ? 'selected' : '' %>><%= t('admin:marketingOfficerForm.allow') %></option>
+                                            <option value="deny" <%= permissions && permissions[perm.key] === 0 ? 'selected' : '' %>><%= t('admin:marketingOfficerForm.deny') %></option>
+                                        </select>
+                                    </div>
+                                    <small class="text-white-50 text-break" style="font-size:11px;"><%= perm.key %></small>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-premium-primary rounded-pill px-4">
+                                <i class="fa-solid fa-<%= editing ? 'save' : 'user-plus' %> me-2"></i><%= editing ? t('admin:marketingOfficerForm.updateOfficer') : t('admin:marketingOfficerForm.createOfficer') %>
+                            </button>
+                            <a href="/admin/marketing-officers" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                        </div>
+                    </form>
+                </div>
+
+                <% if (editing && user) { %>
+                <div class="glass-card no-lift p-4">
+                    <h6 class="text-white fw-semibold mb-1"><i class="fa-solid fa-rotate me-2 text-primary"></i><%= t('admin:marketingOfficers.resetPassword') %></h6>
+                    <form method="POST" action="/admin/marketing-officers/<%= user.id %>/reset-password" class="row g-3 align-items-end">
+                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                        <div class="col-md-6">
+                            <label class="form-label"><%= t('admin:marketingOfficerForm.password') %></label>
+                            <input type="password" name="password" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.enterPassword') %>" minlength="6">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-premium-outline rounded-pill px-4"><i class="fa-solid fa-rotate me-2"></i><%= t('admin:marketingOfficers.resetPassword') %></button>
+                        </div>
+                    </form>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
