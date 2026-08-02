@@ -229,7 +229,10 @@ async function migrateMarketing(connection) {
   );
   if (promoCol[0].cnt === 0) {
     await connection.query(
-      "ALTER TABLE products ADD COLUMN is_promoted TINYINT(1) DEFAULT 0 AFTER featured, ADD INDEX idx_products_promoted (is_promoted)"
+      "ALTER TABLE products ADD COLUMN is_promoted TINYINT(1) DEFAULT 0 AFTER featured"
+    );
+    await connection.query(
+      "ALTER TABLE products ADD INDEX idx_products_promoted (is_promoted)"
     );
     console.log('Migration: added products.is_promoted column');
   }
