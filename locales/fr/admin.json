@@ -254,7 +254,9 @@
     "courseRequiredFields": "Veuillez remplir les champs obligatoires.",
     "invalidReviewId": "ID d'avis invalide.",
     "invalidReviewStatus": "Statut d'avis invalide.",
-    "reviewStatusUpdated": "Statut de l'avis mis à jour."
+    "reviewStatusUpdated": "Statut de l'avis mis à jour.",
+    "invalidMessageId": "ID de message invalide.",
+    "messageNotFound": "Message introuvable."
   },
   "validation": {
     "productNameRequired": "Le nom du produit est requis",
@@ -590,7 +592,20 @@
     "sent": "Envoyé",
     "sendReplyFailed": "Échec de l'envoi de la réponse.",
     "networkError": "Erreur réseau. Veuillez réessayer.",
-    "deleting": "Suppression…"
+    "deleting": "Suppression…",
+    "filterStatus": "Tous les statuts",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "last": "Dernière page",
+    "viewDetail": "Voir le message",
+    "detailTitle": "Détails du message",
+    "noMessagesMatch": "Aucun message ne correspond à votre recherche.",
+    "updateFailed": "Échec de la mise à jour.",
+    "deleteFailed": "Échec de la suppression du message.",
+    "searchPlaceholder": "Rechercher par nom, e-mail ou sujet…"
   },
   "settings": {
     "heading": "Paramètres du système",

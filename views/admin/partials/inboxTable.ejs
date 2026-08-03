@@ -1,0 +1,79 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:inbox.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:inbox.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('admin:inbox.filterStatus') %>">
+        <option value=""><%= t('admin:inbox.filterStatus') %></option>
+        <option value="unread" <%= currentStatus === 'unread' ? 'selected' : '' %>><%= t('admin:status.unread') %></option>
+        <option value="read" <%= currentStatus === 'read' ? 'selected' : '' %>><%= t('admin:status.read') %></option>
+        <option value="replied" <%= currentStatus === 'replied' ? 'selected' : '' %>><%= t('admin:status.replied') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:inbox.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (messages && messages.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table inbox-table">
+            <thead>
+                <tr><th><%= t('admin:inbox.from') %></th><th><%= t('common:words.subject') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% messages.forEach(msg => { %>
+                <% var statusColors = { unread: 'bg-primary', read: 'bg-secondary', replied: 'bg-success' }; %>
+                <tr data-msg-id="<%= msg.id %>">
+                    <td>
+                        <div class="text-white fw-bold"><%= msg.name %></div>
+                        <small class="text-white-50"><%= msg.email %></small>
+                    </td>
+                    <td class="text-white-50"><%= msg.subject || t('admin:inbox.noSubject') %></td>
+                    <td><small class="text-white-50"><%= msg.created_at ? new Date(msg.created_at).toLocaleDateString() : '' %></small></td>
+                    <td>
+                        <span class="badge inbox-status-badge <%= statusColors[msg.status] || 'bg-secondary' %>"><%= msg.status === 'unread' ? t('admin:inbox.new') : t('admin:status.' + msg.status, { defaultValue: msg.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abButton:true, abIcon:'fa-eye', abAttrs:'data-view-message data-id="' + msg.id + '"', abTitle:t('admin:inbox.viewDetail') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-message data-id="' + msg.id + '" data-name="' + escapeAttr(msg.name) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:inbox.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:inbox.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:inbox.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:inbox.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:inbox.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-envelope fa-4x mb-3"></i>
+    <% if (currentSearch || currentStatus) { %>
+    <h4 class="text-white fw-bold"><%= t('admin:inbox.empty') %></h4>
+    <p class="text-white-50"><%= t('admin:inbox.noMessagesMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('admin:inbox.empty') %></h4>
+    <p class="text-white-50"><%= t('admin:inbox.emptyHint') %></p>
+    <% } %>
+</div>
+<% } %>

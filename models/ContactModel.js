@@ -9,13 +9,19 @@ class ContactModel {
     return queryOne('SELECT * FROM contact_messages WHERE id = ?', [result.insertId]);
   }
 
-  async getAll({ status, page = 1, limit = 20 } = {}) {
+  async getAll({ status, search, page = 1, limit = 20 } = {}) {
     const conditions = [];
     const params = [];
 
     if (status) {
       conditions.push('cm.status = ?');
       params.push(status);
+    }
+
+    if (search) {
+      conditions.push('(cm.name LIKE ? OR cm.email LIKE ? OR cm.subject LIKE ? OR cm.message LIKE ?)');
+      const term = `%${search}%`;
+      params.push(term, term, term, term);
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';

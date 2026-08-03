@@ -71,7 +71,6 @@
     color: var(--text-main);
     letter-spacing: -0.02em;
 }
-
 #messageModal .reply-form {
     border-top: 1px solid rgba(255,255,255,0.06);
     margin-top: 1rem;
@@ -108,13 +107,6 @@
     opacity: 0.6;
     cursor: default;
 }
-#replyStatus {
-    font-size: var(--font-xs);
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
-}
-#replyStatus.success { background: rgba(16,185,129,0.12); color: #10B981; }
-#replyStatus.error { background: rgba(239,68,68,0.12); color: #ef4444; }
 </style>
 
 <section class="py-5" data-aos="fade-up">
@@ -131,94 +123,28 @@
                 <%- include('../partials/adminSidebar') %>
             </div>
             <div class="col-lg-9">
-                <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
                     <span class="section-badge"><%= t('admin:words.inbox') %></span>
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope me-2 text-primary"></i><%= t('admin:inbox.heading') %></h2>
+                    <% if (unreadCount > 0) { %>
+                    <span class="badge bg-primary rounded-pill px-3 py-2"><i class="fa-solid fa-envelope-open me-1"></i><%= unreadCount %> <%= t('admin:status.unread') %></span>
+                    <% } %>
                 </div>
 
-                <% if (messages && messages.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table" id="inboxTable">
-                            <thead>
-                                <tr><th><%= t('admin:inbox.from') %></th><th><%= t('common:words.subject') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:words.action') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% messages.forEach(msg => { %>
-                                <tr data-msg-id="<%= msg.id %>">
-                                    <td>
-                                        <div>
-                                            <span class="text-white fw-bold"><%= msg.name %></span><br>
-                                            <small class="text-white-50"><%= msg.email %></small>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50"><%= msg.subject || t('admin:inbox.noSubject') %></td>
-                                    <td class="text-white-50"><%= formatDate(msg.created_at) %></td>
-                                    <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? t('admin:inbox.new') : (msg.status === 'replied' ? t('admin:status.replied') : t('admin:status.read')) %></span></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <button type="button"
-                                                class="action-btn action-btn--view view-msg"
-                                                title="<%= t('common:words.view') %>"
-                                                aria-label="<%= t('common:words.view') %>"
-                                                data-id="<%= msg.id %>"
-                                                data-name="<%= msg.name %>"
-                                                data-email="<%= msg.email %>"
-                                                data-phone="<%= msg.phone || '' %>"
-                                                data-subject="<%= (msg.subject || t('admin:inbox.noSubject')).replace(/"/g, '&quot;') %>"
-                                                data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
-                                                data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
-                                                data-replied-by="<%= msg.replied_first_name ? (msg.replied_first_name + ' ' + msg.replied_last_name) : '' %>"
-                                                data-replied-at="<%= msg.replied_at || '' %>"
-                                                data-status="<%= msg.status %>"
-                                                data-csrf="<%= csrfToken %>">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/admin/inbox">
+                    <%- include('./partials/inboxTable') %>
                 </div>
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-envelope fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:inbox.empty') %></h4>
-                    <p class="text-white-50"><%= t('admin:inbox.emptyHint') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:16px;">
-            <div class="modal-body text-center p-4">
-                <div class="mb-3" style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto;">
-                    <i class="fa-solid fa-trash-can" style="color:#ef4444;font-size:1.25rem;"></i>
-                </div>
-                <h6 class="text-white fw-bold mb-2" style="font-size:1.05rem;"><%= t('admin:inbox.deleteMessage') %></h6>
-                <p class="mb-4" style="color:var(--text-muted);font-size:var(--font-sm);line-height:1.5;"><%= t('admin:inbox.deleteConfirm') %></p>
-                <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" class="btn btn-premium-outline rounded-pill btn-sm" data-bs-dismiss="modal" style="min-width:80px;"><%= t('common:words.cancel') %></button>
-                    <button type="button" class="btn btn-danger rounded-pill btn-sm" id="confirmDeleteBtn" style="min-width:80px;"><i class="fa-solid fa-trash-can me-1"></i><%= t('common:words.delete') %></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Single Message Modal -->
-<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+<!-- Message detail modal -->
+<div class="modal fade crud-modal" id="messageModal" tabindex="-1" aria-labelledby="msgModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center justify-content-between">
-                <h5 class="modal-title" id="msgModalTitle"><%= t('admin:inbox.messageFrom') %> —</h5>
+                <h5 class="modal-title" id="msgModalTitle"><%= t('admin:inbox.detailTitle') %></h5>
                 <div class="d-flex align-items-center gap-2">
                     <button type="button" class="action-btn action-btn--delete" id="msgDeleteHeaderBtn" title="<%= t('common:words.delete') %>" aria-label="<%= t('common:words.delete') %>">
                         <i class="fa-solid fa-trash-can"></i>
@@ -227,6 +153,10 @@
                 </div>
             </div>
             <div class="modal-body">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary" id="msgStatusBadge"><%= t('admin:inbox.new') %></span>
+                    <span class="text-muted small" id="msgMeta"></span>
+                </div>
                 <div class="contact-grid" id="msgContactGrid">
                     <div class="contact-item">
                         <div class="label"><%= t('common:words.email') %></div>
@@ -245,28 +175,30 @@
                     <div id="replyBody" style="color:var(--text-secondary);font-size:var(--font-base);line-height:var(--leading-body);white-space:pre-wrap;"></div>
                     <div id="replyMeta" style="color:rgba(255,255,255,0.3);font-size:0.7rem;margin-top:0.5rem;"></div>
                 </div>
-                <div class="reply-form hidden" id="replyForm">
+
+                <form class="reply-form hidden" id="replyForm" method="POST" action="/admin/inbox/0/reply" novalidate>
+                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                    <input type="hidden" name="to" id="replyToInput">
                     <div class="mb-2">
                         <label><%= t('admin:inbox.to') %></label>
                         <input type="text" class="form-control-plaintext" id="replyTo" readonly>
                     </div>
                     <div class="mb-2">
                         <label><%= t('common:words.subject') %></label>
-                        <input type="text" class="form-control" id="replySubject">
+                        <input type="text" class="form-control" name="subject" id="replySubject">
                     </div>
                     <div class="mb-2">
                         <label><%= t('admin:inbox.yourReply') %></label>
-                        <textarea class="form-control" id="replyText" placeholder="<%= t('admin:inbox.replyPlaceholder') %>"></textarea>
+                        <textarea class="form-control" name="reply_text" id="replyText" maxlength="2000" placeholder="<%= t('admin:inbox.replyPlaceholder') %>"></textarea>
                     </div>
-                    <div id="replyStatus" class="mb-2 hidden"></div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-premium-outline rounded-pill" id="replyCancelBtn"><%= t('common:words.cancel') %></button>
-                        <button type="button" class="btn btn-sm btn-premium-primary rounded-pill" id="replySendBtn"><i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %></button>
+                        <button type="submit" class="btn btn-sm btn-premium-primary rounded-pill" id="replySendBtn"><i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %></button>
                     </div>
-                </div>
+                </form>
             </div>
             <div class="modal-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <span class="text-muted small" id="msgMeta"></span>
+                <span class="text-muted small"><%= t('admin:inbox.messageFrom') %></span>
                 <div class="d-flex flex-wrap gap-2">
                     <button type="button" class="btn btn-premium-primary rounded-pill btn-sm" id="msgReplyBtn" style="display:none;">
                         <i class="fa-solid fa-reply me-1"></i><%= t('admin:inbox.reply') %>
@@ -280,227 +212,193 @@
 
 <script>
 (function() {
-    var modal = document.getElementById('messageModal');
-    if (!modal) return;
-    var title = document.getElementById('msgModalTitle');
-    var emailEl = document.getElementById('msgEmail');
-    var phoneEl = document.getElementById('msgPhone');
-    var subjectEl = document.getElementById('msgSubject');
-    var bodyEl = document.getElementById('msgBody');
-    var metaEl = document.getElementById('msgMeta');
-    var deleteBtn = document.getElementById('msgDeleteHeaderBtn');
-    var replyBtn = document.getElementById('msgReplyBtn');
-
-    var currentId = null;
-    var currentCsrf = null;
-    var currentEmail = '';
-    var currentSubject = '';
-    var modalInstance = null;
-
-    function ensureModal(el) {
-        if (typeof bootstrap !== 'undefined') return new bootstrap.Modal(el);
-        var check = setInterval(function() {
-            if (typeof bootstrap !== 'undefined') {
-                clearInterval(check);
-                modalInstance = new bootstrap.Modal(el);
-                modalInstance.show();
-            }
-        }, 50);
-        return null;
-    }
-
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var modalEl = document.getElementById('messageModal');
     var replyForm = document.getElementById('replyForm');
-    var replyTo = document.getElementById('replyTo');
-    var replySubject = document.getElementById('replySubject');
-    var replyText = document.getElementById('replyText');
-    var replyStatus = document.getElementById('replyStatus');
-    var replyCancelBtn = document.getElementById('replyCancelBtn');
-    var replySendBtn = document.getElementById('replySendBtn');
-    var replyDisplay = document.getElementById('replyDisplay');
-    var replyBody = document.getElementById('replyBody');
-    var replyMeta = document.getElementById('replyMeta');
+    var currentId = null;
+    var currentStatus = null;
 
-    function updateRowBadge(id, text, className) {
+    var i18n = {
+        new: '<%= t('admin:inbox.new') %>',
+        read: '<%= t('admin:status.read') %>',
+        replied: '<%= t('admin:status.replied') %>',
+        messageFrom: '<%= t('admin:inbox.messageFrom') %>',
+        noSubject: '<%= t('admin:inbox.noSubject') %>',
+        generalInquiry: '<%= t('admin:inbox.generalInquiry') %>',
+        by: '<%= t('admin:inbox.by') %>',
+        sendReply: '<%= t('admin:inbox.sendReply') %>',
+        sent: '<%= t('admin:inbox.sent') %>',
+        sending: '<%= t('admin:inbox.sending') %>',
+        replySent: '<%= t('admin:inbox.replySent') %>',
+        messageMarkedRead: '<%= t('admin:flash.messageMarkedRead') %>',
+        messageDeleted: '<%= t('admin:flash.messageDeleted') %>',
+        deleteTitle: '<%= t('common:words.delete') %>',
+        deleteConfirm: '<%= t('admin:inbox.deleteConfirm') %>',
+        deleteFailed: '<%= t('admin:inbox.deleteFailed') %>',
+        updateFailed: '<%= t('admin:inbox.updateFailed') %>',
+        networkError: '<%= t('admin:inbox.networkError') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function statusBadge(status) {
+        if (status === 'replied') return '<span class="badge bg-success">' + esc(i18n.replied) + '</span>';
+        if (status === 'read') return '<span class="badge bg-secondary">' + esc(i18n.read) + '</span>';
+        return '<span class="badge bg-primary">' + esc(i18n.new) + '</span>';
+    }
+
+    function updateRowBadge(id, status) {
         var row = document.querySelector('tr[data-msg-id="' + id + '"]');
-        if (row) {
-            var badge = row.querySelector('.badge');
-            if (badge) {
-                badge.className = 'badge ' + className;
-                badge.textContent = text;
-            }
-        }
+        if (!row) return;
+        var badge = row.querySelector('.inbox-status-badge');
+        if (!badge) return;
+        var cls = { unread: 'bg-primary', read: 'bg-secondary', replied: 'bg-success' };
+        badge.className = 'badge inbox-status-badge ' + (cls[status] || 'bg-secondary');
+        badge.textContent = status === 'unread' ? i18n.new : (status === 'replied' ? i18n.replied : i18n.read);
     }
 
-    function openModal(id, name, email, phone, subject, message, status, csrf, replyTextVal, repliedByName, repliedAt) {
-        currentId = id;
-        currentCsrf = csrf;
-        currentEmail = email;
-        currentSubject = subject;
-        title.textContent = '<%= t('admin:inbox.messageFrom') %> ' + name;
-        emailEl.textContent = email;
-        phoneEl.textContent = phone || '—';
-        subjectEl.textContent = subject;
-        bodyEl.textContent = message;
-        metaEl.textContent = '';
-        replyForm.classList.add('hidden');
-        replyStatus.classList.add('hidden');
-        replyStatus.className = 'mb-2 hidden';
-        replyBtn.style.display = 'inline-flex';
+    function openDetail(id) {
+        Crud.get('/admin/inbox/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.message) return;
+                var m = data.message;
+                currentId = m.id;
+                currentStatus = m.status;
+                document.getElementById('msgModalTitle').textContent = i18n.messageFrom + ' ' + m.name;
+                document.getElementById('msgEmail').textContent = m.email;
+                document.getElementById('msgPhone').textContent = m.phone || '—';
+                document.getElementById('msgSubject').textContent = m.subject || i18n.noSubject;
+                document.getElementById('msgBody').textContent = m.message;
+                document.getElementById('msgStatusBadge').innerHTML = statusBadge(m.status);
+                document.getElementById('msgMeta').textContent = m.created_at_formatted ? (i18n.by + ' ' + m.created_at_formatted) : '';
 
-        if (replyTextVal) {
-            replyBody.textContent = replyTextVal;
-            var metaParts = [];
-            if (repliedByName) metaParts.push('<%= t('admin:inbox.by') %> ' + repliedByName);
-            if (repliedAt) metaParts.push(new Date(repliedAt).toLocaleString());
-            replyMeta.textContent = metaParts.join(' — ');
-            replyDisplay.classList.remove('hidden');
-            replyBtn.style.display = 'none';
-        } else {
-            replyDisplay.classList.add('hidden');
-        }
-
-        if (!modalInstance) {
-            modalInstance = ensureModal(modal);
-        }
-        if (modalInstance) modalInstance.show();
-
-        if (status === 'unread') {
-            fetch('/admin/inbox/' + id + '/read', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'csrf_token=' + encodeURIComponent(csrf)
-            }).then(function(r) { return r.json(); }).then(function(data) {
-                if (data.success) {
-                    updateRowBadge(id, '<%= t('admin:status.read') %>', 'bg-secondary');
+                var replyDisplay = document.getElementById('replyDisplay');
+                var replyBtn = document.getElementById('msgReplyBtn');
+                if (m.reply_text) {
+                    document.getElementById('replyBody').textContent = m.reply_text;
+                    var metaParts = [];
+                    if (m.replied_by_name) metaParts.push(m.replied_by_name);
+                    if (m.replied_at_formatted) metaParts.push(m.replied_at_formatted);
+                    document.getElementById('replyMeta').textContent = metaParts.join(' — ');
+                    replyDisplay.classList.remove('hidden');
+                    replyBtn.style.display = 'none';
+                } else {
+                    replyDisplay.classList.add('hidden');
+                    replyBtn.style.display = 'inline-flex';
                 }
-            }).catch(function() {});
-        }
+
+                replyForm.classList.add('hidden');
+                replyForm.setAttribute('action', '/admin/inbox/' + m.id + '/reply');
+                Crud.clearErrors(replyForm);
+                Crud.openModal(modalEl);
+
+                if (m.status === 'unread') {
+                    Crud.post('/admin/inbox/' + m.id + '/read')
+                        .then(function () {
+                            updateRowBadge(m.id, 'read');
+                        })
+                        .catch(function () {});
+                }
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
     }
 
-    replyBtn.addEventListener('click', function() {
-        replyTo.value = currentEmail;
-        var subj = currentSubject;
-        if (!subj || subj === '<%= t('admin:inbox.noSubject') %>' || subj.toLowerCase() === 'product') {
-            subj = '<%= t('admin:inbox.generalInquiry') %>';
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-message]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
         }
-        replySubject.value = 'Re: ' + subj;
-        replyText.value = '';
-        replyStatus.classList.add('hidden');
-        replyStatus.className = 'mb-2 hidden';
-        replySendBtn.disabled = false;
-        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
+
+        var delBtn = e.target.closest('[data-delete-message]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                message: i18n.deleteConfirm,
+                confirmText: i18n.delete
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/admin/inbox/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.messageDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/admin/inbox' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    document.getElementById('msgReplyBtn').addEventListener('click', function () {
+        var to = document.getElementById('msgEmail').textContent;
+        if (to === '—') to = '';
+        document.getElementById('replyTo').value = to;
+        document.getElementById('replyToInput').value = to;
+        var subj = document.getElementById('msgSubject').textContent;
+        if (!subj || subj === i18n.noSubject || subj.toLowerCase() === 'product') {
+            subj = i18n.generalInquiry;
+        }
+        document.getElementById('replySubject').value = 'Re: ' + subj;
+        document.getElementById('replyText').value = '';
+        document.getElementById('replySendBtn').disabled = false;
+        document.getElementById('replySendBtn').innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i>' + esc(i18n.sendReply);
         replyForm.classList.remove('hidden');
     });
 
-    replyCancelBtn.addEventListener('click', function() {
+    document.getElementById('replyCancelBtn').addEventListener('click', function () {
         replyForm.classList.add('hidden');
     });
 
-    replySendBtn.addEventListener('click', function() {
-        var text = replyText.value.trim();
-        if (!text) { replyText.focus(); return; }
-        replySendBtn.disabled = true;
-        replySendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span><%= t('admin:inbox.sending') %>';
-        replyStatus.className = 'mb-2 hidden';
+    document.getElementById('msgDeleteHeaderBtn').addEventListener('click', function () {
+        if (!currentId) return;
+        Crud.confirm({
+            title: i18n.deleteTitle,
+            message: i18n.deleteConfirm,
+            confirmText: i18n.delete
+        }).then(function (ok) {
+            if (!ok) return;
+            Crud.post('/admin/inbox/' + currentId + '/delete')
+                .then(function (data) {
+                    Crud.closeModal(modalEl);
+                    Crud.toast(data.message || i18n.messageDeleted, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/admin/inbox' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                });
+        });
+    });
 
-        var params = new URLSearchParams();
-        params.append('csrf_token', currentCsrf);
-        params.append('to', currentEmail);
-        params.append('subject', replySubject.value);
-        params.append('reply_text', text);
-
-        fetch('/admin/inbox/' + currentId + '/reply', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        }).then(function(r) { return r.json(); }).then(function(data) {
-            if (data.success) {
-                replyStatus.textContent = '<%= t('admin:inbox.replySent') %>';
-                replyStatus.className = 'mb-2 success';
-                replyStatus.classList.remove('hidden');
-                replySendBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i><%= t('admin:inbox.sent') %>';
-                setTimeout(function() {
-                    modalInstance.hide();
-                }, 1200);
-                updateRowBadge(currentId, '<%= t('admin:status.replied') %>', 'bg-secondary');
-            } else {
-                replyStatus.textContent = data.message || '<%= t('admin:inbox.sendReplyFailed') %>';
-                replyStatus.className = 'mb-2 error';
-                replyStatus.classList.remove('hidden');
-                replySendBtn.disabled = false;
-                replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
+    replyForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(replyForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.replySent, 'success');
+                if (currentId) updateRowBadge(currentId, 'replied');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/inbox' });
             }
-        }).catch(function() {
-            replyStatus.textContent = '<%= t('admin:inbox.networkError') %>';
-            replyStatus.className = 'mb-2 error';
-            replyStatus.classList.remove('hidden');
-            replySendBtn.disabled = false;
-            replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
         });
     });
 
-    var deleteConfirmModal = null;
-    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-    var pendingDeleteId = null;
-    var pendingDeleteCsrf = null;
-
-    deleteBtn.addEventListener('click', function() {
-        if (!currentId || !currentCsrf) return;
-        pendingDeleteId = currentId;
-        pendingDeleteCsrf = currentCsrf;
-        if (!deleteConfirmModal) {
-            deleteConfirmModal = ensureModal(document.getElementById('deleteConfirmModal'));
-        }
-        if (modalInstance) modalInstance.hide();
-        if (deleteConfirmModal) deleteConfirmModal.show();
-    });
-
-    confirmDeleteBtn.addEventListener('click', function() {
-        if (!pendingDeleteId || !pendingDeleteCsrf) return;
-        confirmDeleteBtn.disabled = true;
-        confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span><%= t('admin:inbox.deleting') %>';
-
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/admin/inbox/' + pendingDeleteId + '/delete';
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'csrf_token';
-        input.value = pendingDeleteCsrf;
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    });
-
-    document.querySelectorAll('.view-msg').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            var id = this.getAttribute('data-id');
-            var name = this.getAttribute('data-name');
-            var email = this.getAttribute('data-email');
-            var phone = this.getAttribute('data-phone');
-            var subject = this.getAttribute('data-subject');
-            var message = this.getAttribute('data-message');
-            var replyTextVal = this.getAttribute('data-reply');
-            var repliedByName = this.getAttribute('data-replied-by');
-            var repliedAt = this.getAttribute('data-replied-at');
-            var status = this.getAttribute('data-status');
-            var csrf = this.getAttribute('data-csrf');
-            openModal(id, name, email, phone, subject, message, status, csrf, replyTextVal, repliedByName, repliedAt);
-        });
-    });
-
-    modal.addEventListener('hidden.bs.modal', function() {
-        currentId = null;
-        currentCsrf = null;
-        currentEmail = '';
-        currentSubject = '';
-        replyForm.classList.add('hidden');
-        replyDisplay.classList.add('hidden');
-        replyStatus.className = 'mb-2 hidden';
-        replySendBtn.disabled = false;
-        replySendBtn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i><%= t('admin:inbox.sendReply') %>';
-    });
+    Crud.initTable(tableWrap);
 })();
 </script>
 

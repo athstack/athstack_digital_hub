@@ -254,7 +254,9 @@
     "courseRequiredFields": "Preencha os campos obrigatórios.",
     "invalidReviewId": "ID de avaliação inválido.",
     "invalidReviewStatus": "Status de avaliação inválido.",
-    "reviewStatusUpdated": "Status da avaliação atualizado."
+    "reviewStatusUpdated": "Status da avaliação atualizado.",
+    "invalidMessageId": "ID de mensagem inválido.",
+    "messageNotFound": "Mensagem não encontrada."
   },
   "validation": {
     "productNameRequired": "O nome do produto é obrigatório",
@@ -590,7 +592,20 @@
     "sent": "Enviada",
     "sendReplyFailed": "Falha ao enviar a resposta.",
     "networkError": "Erro de rede. Tente novamente.",
-    "deleting": "A eliminar…"
+    "deleting": "A eliminar…",
+    "filterStatus": "Todos os estados",
+    "refresh": "Atualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primeira página",
+    "prev": "Página anterior",
+    "next": "Página seguinte",
+    "last": "Última página",
+    "viewDetail": "Ver mensagem",
+    "detailTitle": "Detalhes da mensagem",
+    "noMessagesMatch": "Nenhuma mensagem corresponde à sua pesquisa.",
+    "updateFailed": "Falha ao atualizar.",
+    "deleteFailed": "Falha ao excluir a mensagem.",
+    "searchPlaceholder": "Pesquisar por nome, e-mail ou assunto…"
   },
   "settings": {
     "heading": "Definições do Sistema",

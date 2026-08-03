@@ -254,7 +254,9 @@
     "courseRequiredFields": "कृपया आवश्यक फ़ील्ड भरें।",
     "invalidReviewId": "अमान्य समीक्षा आईडी।",
     "invalidReviewStatus": "अमान्य समीक्षा स्थिति।",
-    "reviewStatusUpdated": "समीक्षा स्थिति अपडेट हो गई।"
+    "reviewStatusUpdated": "समीक्षा स्थिति अपडेट हो गई।",
+    "invalidMessageId": "अमान्य संदेश आईडी।",
+    "messageNotFound": "संदेश नहीं मिला।"
   },
   "validation": {
     "productNameRequired": "प्रोडक्ट का नाम आवश्यक है",
@@ -590,7 +592,20 @@
     "sent": "भेजा गया",
     "sendReplyFailed": "जवाब भेजने में विफल।",
     "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
-    "deleting": "हटाया जा रहा है…"
+    "deleting": "हटाया जा रहा है…",
+    "filterStatus": "सभी स्थितियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ",
+    "viewDetail": "संदेश देखें",
+    "detailTitle": "संदेश विवरण",
+    "noMessagesMatch": "आपकी खोज से कोई संदेश मेल नहीं खाता।",
+    "updateFailed": "अपडेट करने में विफल।",
+    "deleteFailed": "संदेश हटाना विफल रहा।",
+    "searchPlaceholder": "नाम, ईमेल या विषय से खोजें…"
   },
   "settings": {
     "heading": "सिस्टम सेटिंग्स",

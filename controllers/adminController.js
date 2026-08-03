@@ -1509,10 +1509,80 @@ exports.deleteCourse = async (req, res, next) => {
 
 exports.getInbox = async (req, res, next) => {
   try {
-    const { messages } = await ContactModel.getAll({});
-    res.render('admin/inbox', {
+    const status = req.query.status || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const page = parseInt(req.query.page) || 1;
+    const result = await ContactModel.getAll({ status, search, page, limit: 20 });
+    const totalPages = Math.ceil(result.total / result.limit);
+    const unreadCount = await ContactModel.countAll('unread');
+
+    const viewData = {
       title: req.t('admin:title.inbox'),
-      messages
+      messages: result.messages,
+      pagination: { page, totalPages, total: result.total, hasNext: page < totalPages, hasPrev: page > 1 },
+      currentStatus: status,
+      currentSearch: search,
+      unreadCount
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/inboxTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        messages: result.messages,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/inbox', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getMessageDetail = async (req, res, next) => {
+  try {
+    const messageId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/inbox');
+
+    if (isNaN(messageId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidMessageId') });
+      req.flash('error', req.t('admin:flash.invalidMessageId'));
+      return respond(400, {});
+    }
+
+    const message = await ContactModel.getById(messageId);
+    if (!message) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.messageNotFound') });
+      req.flash('error', req.t('admin:flash.messageNotFound'));
+      return respond(404, {});
+    }
+
+    const lang = req.language;
+    res.json({
+      success: true,
+      message: {
+        id: message.id,
+        name: message.name,
+        email: message.email,
+        phone: message.phone || '',
+        subject: message.subject || '',
+        message: message.message,
+        status: message.status,
+        created_at_formatted: message.created_at ? formatDate(message.created_at, lang) : null,
+        reply_text: message.reply_text,
+        replied_at_formatted: message.replied_at ? formatDate(message.replied_at, lang) : null,
+        replied_by_name: formatDisplayName(message.replied_first_name, message.replied_last_name)
+      }
     });
   } catch (err) {
     next(err);
@@ -1522,9 +1592,27 @@ exports.getInbox = async (req, res, next) => {
 exports.markAsRead = async (req, res, next) => {
   try {
     const messageId = parseInt(req.params.id);
-    await pool.execute("UPDATE contact_messages SET status = 'read' WHERE id = ?", [messageId]);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/inbox');
+
+    if (isNaN(messageId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidMessageId') });
+      req.flash('error', req.t('admin:flash.invalidMessageId'));
+      return respond(400, {});
+    }
+
+    const message = await ContactModel.getById(messageId);
+    if (!message) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.messageNotFound') });
+      req.flash('error', req.t('admin:flash.messageNotFound'));
+      return respond(404, {});
+    }
+
+    await ContactModel.markAsRead(messageId);
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.messageMarkedRead') });
     req.flash('success', req.t('admin:flash.messageMarkedRead'));
-    res.redirect('/admin/inbox');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1533,10 +1621,27 @@ exports.markAsRead = async (req, res, next) => {
 exports.deleteMessage = async (req, res, next) => {
   try {
     const messageId = parseInt(req.params.id);
-    const ContactModel = require('../models/ContactModel');
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/inbox');
+
+    if (isNaN(messageId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidMessageId') });
+      req.flash('error', req.t('admin:flash.invalidMessageId'));
+      return respond(400, {});
+    }
+
+    const message = await ContactModel.getById(messageId);
+    if (!message) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.messageNotFound') });
+      req.flash('error', req.t('admin:flash.messageNotFound'));
+      return respond(404, {});
+    }
+
     await ContactModel.delete(messageId);
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.messageDeleted') });
     req.flash('success', req.t('admin:flash.messageDeleted'));
-    res.redirect('/admin/inbox');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1547,10 +1652,32 @@ exports.replyToMessage = async (req, res, next) => {
     const messageId = parseInt(req.params.id);
     const { to, subject, reply_text } = req.body;
     const { sendReply } = require('../helpers/mail');
-    const ContactModel = require('../models/ContactModel');
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/inbox');
 
+    if (isNaN(messageId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidMessageId') });
+      req.flash('error', req.t('admin:flash.invalidMessageId'));
+      return respond(400, {});
+    }
     if (!to || !reply_text) {
-      return res.status(400).json({ success: false, message: req.t('admin:flash.replyRequired') });
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.replyRequired') });
+      req.flash('error', req.t('admin:flash.replyRequired'));
+      return respond(400, {});
+    }
+
+    const message = await ContactModel.getById(messageId);
+    if (!message) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.messageNotFound') });
+      req.flash('error', req.t('admin:flash.messageNotFound'));
+      return respond(404, {});
+    }
+
+    const replyText = String(reply_text).trim();
+    if (replyText.length > 2000) {
+      if (isAjax) return respond(422, { success: false, message: req.t('admin:flash.replyTooLong'), errors: { reply_text: req.t('admin:flash.replyTooLong') } });
+      req.flash('error', req.t('admin:flash.replyTooLong'));
+      return respond(422, {});
     }
 
     const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
@@ -1558,21 +1685,25 @@ exports.replyToMessage = async (req, res, next) => {
         <h2 style="color:#fff;margin:0;font-size:20px;">TechBridge</h2>
       </div>
       <div style="background:#1e293b;padding:32px;color:#e2e8f0;font-size:15px;line-height:1.7;">
-        ${reply_text.replace(/\n/g, '<br>')}
+        ${replyText.replace(/\n/g, '<br>')}
       </div>
       <div style="background:#0f172a;padding:16px 32px;border-radius:0 0 12px 12px;text-align:center;">
         <p style="color:#64748b;font-size:12px;margin:0;">TechBridge &mdash; Premium Tech Marketplace</p>
       </div>
     </div>`;
 
-    await sendReply({ to, subject: subject || req.t('admin:flash.replySubject'), text: reply_text, html });
+    await sendReply({ to, subject: subject || req.t('admin:flash.replySubject'), text: replyText, html });
 
-    await ContactModel.addReply(messageId, reply_text, req.session.userId);
+    await ContactModel.addReply(messageId, replyText, req.session.userId);
 
-    return res.status(200).json({ success: true, message: req.t('admin:flash.replySent') });
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.replySent') });
+    req.flash('success', req.t('admin:flash.replySent'));
+    respond(200, {});
   } catch (err) {
     console.error('Reply error:', err);
-    return res.status(500).json({ success: false, message: req.t('admin:flash.replyFailed') });
+    if (isAjaxRequest(req)) return res.status(500).json({ success: false, message: req.t('admin:flash.replyFailed') });
+    req.flash('error', req.t('admin:flash.replyFailed'));
+    res.redirect('/admin/inbox');
   }
 };
 

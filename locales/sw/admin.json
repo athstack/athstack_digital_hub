@@ -254,7 +254,9 @@
     "courseRequiredFields": "Tafadhali jaza sehemu zinazohitajika.",
     "invalidReviewId": "Kitambulisho cha maoni si sahihi.",
     "invalidReviewStatus": "Hali ya maoni si sahihi.",
-    "reviewStatusUpdated": "Hali ya maoni imesasishwa."
+    "reviewStatusUpdated": "Hali ya maoni imesasishwa.",
+    "invalidMessageId": "Kitambulisho cha ujumbe si sahihi.",
+    "messageNotFound": "Ujumbe haupatikani."
   },
   "validation": {
     "productNameRequired": "Jina la bidhaa linahitajika",
@@ -590,7 +592,20 @@
     "sent": "Imetumwa",
     "sendReplyFailed": "Imeshindwa kutuma jibu.",
     "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
-    "deleting": "Inafuta..."
+    "deleting": "Inafuta...",
+    "filterStatus": "Hali zote",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho",
+    "viewDetail": "Angalia ujumbe",
+    "detailTitle": "Maelezo ya ujumbe",
+    "noMessagesMatch": "Hakuna ujumbe unaolingana na utafutaji wako.",
+    "updateFailed": "Imeshindwa kusasisha.",
+    "deleteFailed": "Imeshindwa kufuta ujumbe.",
+    "searchPlaceholder": "Tafuta kwa jina, barua pepe au mada…"
   },
   "settings": {
     "heading": "Mipangilio ya Mfumo",

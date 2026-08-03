@@ -254,7 +254,9 @@
     "courseRequiredFields": "يرجى ملء الحقول المطلوبة.",
     "invalidReviewId": "معرف المراجعة غير صالح.",
     "invalidReviewStatus": "حالة المراجعة غير صالحة.",
-    "reviewStatusUpdated": "تم تحديث حالة المراجعة."
+    "reviewStatusUpdated": "تم تحديث حالة المراجعة.",
+    "invalidMessageId": "معرف الرسالة غير صالح.",
+    "messageNotFound": "الرسالة غير موجودة."
   },
   "validation": {
     "productNameRequired": "اسم المنتج مطلوب",
@@ -590,7 +592,20 @@
     "sent": "أُرسل",
     "sendReplyFailed": "فشل إرسال الرد.",
     "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
-    "deleting": "جارٍ الحذف..."
+    "deleting": "جارٍ الحذف...",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "viewDetail": "عرض الرسالة",
+    "detailTitle": "تفاصيل الرسالة",
+    "noMessagesMatch": "لا توجد رسائل تطابق البحث.",
+    "updateFailed": "فشل التحديث.",
+    "deleteFailed": "فشل حذف الرسالة.",
+    "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني أو الموضوع…"
   },
   "settings": {
     "heading": "إعدادات النظام",

@@ -254,7 +254,9 @@
     "courseRequiredFields": "Por favor complete los campos obligatorios.",
     "invalidReviewId": "ID de reseña no válida.",
     "invalidReviewStatus": "Estado de reseña no válido.",
-    "reviewStatusUpdated": "Estado de la reseña actualizado."
+    "reviewStatusUpdated": "Estado de la reseña actualizado.",
+    "invalidMessageId": "ID de mensaje no válida.",
+    "messageNotFound": "Mensaje no encontrado."
   },
   "validation": {
     "productNameRequired": "El nombre del producto es obligatorio",
@@ -590,7 +592,20 @@
     "sent": "Enviado",
     "sendReplyFailed": "No se pudo enviar la respuesta.",
     "networkError": "Error de red. Por favor, inténtalo de nuevo.",
-    "deleting": "Eliminando…"
+    "deleting": "Eliminando…",
+    "filterStatus": "Todos los estados",
+    "refresh": "Actualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primera página",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página",
+    "viewDetail": "Ver mensaje",
+    "detailTitle": "Detalles del mensaje",
+    "noMessagesMatch": "No hay mensajes que coincidan con su búsqueda.",
+    "updateFailed": "No se pudo actualizar.",
+    "deleteFailed": "No se pudo eliminar el mensaje.",
+    "searchPlaceholder": "Buscar por nombre, correo o asunto…"
   },
   "settings": {
     "heading": "Ajustes del Sistema",

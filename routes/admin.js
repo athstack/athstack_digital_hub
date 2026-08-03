@@ -83,6 +83,7 @@ router.post('/training/delete/:id', requirePermission('manage_training'), valida
 
 // -- Support inbox ---------------------------------------------------------------
 router.get('/inbox', requirePermission('manage_support'), adminController.getInbox);
+router.get('/inbox/:id', requirePermission('manage_support'), adminController.getMessageDetail);
 router.post('/inbox/:id/read', requirePermission('manage_support'), validateCsrf, adminController.markAsRead);
 router.post('/inbox/:id/delete', requirePermission('manage_support'), validateCsrf, adminController.deleteMessage);
 router.post('/inbox/:id/reply', requirePermission('manage_support'), validateCsrf, adminController.replyToMessage);

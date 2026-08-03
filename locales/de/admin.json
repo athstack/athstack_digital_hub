@@ -254,7 +254,9 @@
     "courseRequiredFields": "Bitte füllen Sie die Pflichtfelder aus.",
     "invalidReviewId": "Ungültige Rezensions-ID.",
     "invalidReviewStatus": "Ungültiger Rezensionsstatus.",
-    "reviewStatusUpdated": "Rezensionsstatus aktualisiert."
+    "reviewStatusUpdated": "Rezensionsstatus aktualisiert.",
+    "invalidMessageId": "Ungültige Nachrichten-ID.",
+    "messageNotFound": "Nachricht nicht gefunden."
   },
   "validation": {
     "productNameRequired": "Produktname ist erforderlich",
@@ -590,7 +592,20 @@
     "sent": "Gesendet",
     "sendReplyFailed": "Antwort konnte nicht gesendet werden.",
     "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
-    "deleting": "Wird gelöscht…"
+    "deleting": "Wird gelöscht…",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "viewDetail": "Nachricht ansehen",
+    "detailTitle": "Nachrichtendetails",
+    "noMessagesMatch": "Keine Nachrichten entsprechen Ihrer Suche.",
+    "updateFailed": "Aktualisierung fehlgeschlagen.",
+    "deleteFailed": "Nachricht konnte nicht gelöscht werden.",
+    "searchPlaceholder": "Nach Name, E-Mail oder Betreff suchen…"
   },
   "settings": {
     "heading": "Systemeinstellungen",
