@@ -384,7 +384,7 @@ class ReviewModel {
 
   async getById(id) {
     const review = await queryOne(
-      `SELECT r.*, u.first_name, u.last_name, u.email, p.name AS product_name
+      `SELECT r.*, u.first_name, u.last_name, u.email, p.name AS product_name, p.slug AS product_slug
        FROM reviews r
        LEFT JOIN users u ON r.user_id = u.id
        LEFT JOIN products p ON r.product_id = p.id
@@ -446,6 +446,13 @@ class ReviewModel {
       "UPDATE reviews SET status = 'rejected', approved_by = ? WHERE id = ?",
       [adminId, id]
     );
+    const review = await this.getById(id);
+    if (review) invalidateStats(review.product_id);
+    return review;
+  }
+
+  async setStatus(id, status) {
+    await pool.execute('UPDATE reviews SET status = ? WHERE id = ?', [status, id]);
     const review = await this.getById(id);
     if (review) invalidateStats(review.product_id);
     return review;

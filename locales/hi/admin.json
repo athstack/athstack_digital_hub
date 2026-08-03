@@ -251,7 +251,10 @@
     "invalidCourseId": "अमान्य पाठ्यक्रम आईडी।",
     "invalidCourseStatus": "अमान्य पाठ्यक्रम स्थिति।",
     "courseStatusUpdated": "पाठ्यक्रम स्थिति अपडेट हो गई।",
-    "courseRequiredFields": "कृपया आवश्यक फ़ील्ड भरें।"
+    "courseRequiredFields": "कृपया आवश्यक फ़ील्ड भरें।",
+    "invalidReviewId": "अमान्य समीक्षा आईडी।",
+    "invalidReviewStatus": "अमान्य समीक्षा स्थिति।",
+    "reviewStatusUpdated": "समीक्षा स्थिति अपडेट हो गई।"
   },
   "validation": {
     "productNameRequired": "प्रोडक्ट का नाम आवश्यक है",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "समीक्षा टिप्पणी...",
     "createReview": "समीक्षा बनाएं",
     "respondingTo": "समीक्षा का जवाब दे रहे हैं",
-    "respondingToOn": "समीक्षा का जवाब दे रहे हैं:"
+    "respondingToOn": "समीक्षा का जवाब दे रहे हैं:",
+    "filterStatus": "सभी स्थितियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ",
+    "viewDetail": "समीक्षा देखें",
+    "detailTitle": "समीक्षा विवरण",
+    "customer": "ग्राहक",
+    "onProduct": "उत्पाद पर",
+    "submittedOn": "प्रस्तुत",
+    "reportReason": "रिपोर्ट का कारण",
+    "noReports": "कोई रिपोर्ट नहीं",
+    "noReviewsMatch": "आपकी खोज से कोई समीक्षा मेल नहीं खाती।",
+    "updateFailed": "समीक्षा अपडेट करने में विफल।",
+    "deleteFailed": "समीक्षा हटाना विफल रहा।",
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।"
   },
   "reviewForm": {
     "heading": "समीक्षा संपादित करें",

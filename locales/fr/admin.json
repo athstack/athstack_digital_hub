@@ -251,7 +251,10 @@
     "invalidCourseId": "ID de cours invalide.",
     "invalidCourseStatus": "Statut de cours invalide.",
     "courseStatusUpdated": "Statut du cours mis à jour.",
-    "courseRequiredFields": "Veuillez remplir les champs obligatoires."
+    "courseRequiredFields": "Veuillez remplir les champs obligatoires.",
+    "invalidReviewId": "ID d'avis invalide.",
+    "invalidReviewStatus": "Statut d'avis invalide.",
+    "reviewStatusUpdated": "Statut de l'avis mis à jour."
   },
   "validation": {
     "productNameRequired": "Le nom du produit est requis",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "Commentaire de l'avis...",
     "createReview": "Créer l'avis",
     "respondingTo": "Réponse à l'avis",
-    "respondingToOn": "Réponse à l'avis sur :"
+    "respondingToOn": "Réponse à l'avis sur :",
+    "filterStatus": "Tous les statuts",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "last": "Dernière page",
+    "viewDetail": "Voir l'avis",
+    "detailTitle": "Détails de l'avis",
+    "customer": "Client",
+    "onProduct": "sur le produit",
+    "submittedOn": "Soumis le",
+    "reportReason": "Raison du signalement",
+    "noReports": "Aucun signalement",
+    "noReviewsMatch": "Aucun avis ne correspond à votre recherche.",
+    "updateFailed": "Échec de la mise à jour de l'avis.",
+    "deleteFailed": "Échec de la suppression de l'avis.",
+    "networkError": "Erreur réseau. Veuillez réessayer."
   },
   "reviewForm": {
     "heading": "Modifier l'avis",

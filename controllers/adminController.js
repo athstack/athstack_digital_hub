@@ -1734,7 +1734,7 @@ exports.getReviews = async (req, res, next) => {
     const pendingCount = await ReviewModel.getPendingCount();
     const reportedCount = await ReviewModel.getReportedCount();
 
-    res.render('admin/reviews', {
+    const viewData = {
       title: req.t('admin:title.reviews'),
       reviews: result.reviews,
       pagination: { page, totalPages, total: result.total, hasNext: page < totalPages, hasPrev: page > 1 },
@@ -1743,7 +1743,115 @@ exports.getReviews = async (req, res, next) => {
       isReportedFilter: reported,
       pendingCount,
       reportedCount
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/reviewsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        reviews: result.reviews,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/reviews', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getReviewDetail = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
+
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
+    const review = await ReviewModel.getById(reviewId);
+    if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
+      return respond(404, {});
+    }
+
+    const lang = req.language;
+    res.json({
+      success: true,
+      review: {
+        id: review.id,
+        product_id: review.product_id,
+        product_name: review.product_name,
+        user_id: review.user_id,
+        user_name: formatDisplayName(review.first_name, review.last_name),
+        email: review.email,
+        title: review.title,
+        comment: review.comment,
+        rating: review.rating,
+        type: review.type,
+        status: review.status,
+        is_verified: review.is_verified,
+        is_hidden: review.is_hidden,
+        images: (review.images || []).map(img => toImageUrl(img, 'reviews')),
+        helpful_count: review.helpful_count || 0,
+        reported_count: review.reported_count || 0,
+        seller_reply: review.seller_reply,
+        seller_replied_at_formatted: review.seller_replied_at ? formatDate(review.seller_replied_at, lang) : null,
+        created_at_formatted: review.created_at ? formatDate(review.created_at, lang) : null
+      }
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateReviewStatus = async (req, res, next) => {
+  try {
+    const ReviewModel = require('../models/ReviewModel');
+    const reviewId = parseInt(req.params.id);
+    const { status } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
+
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
+    if (!['pending', 'approved', 'rejected'].includes(status)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewStatus') });
+      req.flash('error', req.t('admin:flash.invalidReviewStatus'));
+      return respond(400, {});
+    }
+
+    const review = await ReviewModel.getById(reviewId);
+    if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
+      req.flash('error', req.t('admin:flash.reviewNotFound'));
+      return respond(404, {});
+    }
+
+    if (status === 'approved') await ReviewModel.approve(reviewId, req.session.userId);
+    else if (status === 'rejected') await ReviewModel.reject(reviewId, req.session.userId);
+    else await ReviewModel.setStatus(reviewId, 'pending');
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.reviewStatusUpdated') });
+    req.flash('success', req.t('admin:flash.reviewStatusUpdated'));
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1755,20 +1863,30 @@ exports.replyToReview = async (req, res, next) => {
     const NotificationModel = require('../models/NotificationModel');
     const reviewId = parseInt(req.params.id);
     const reply = String(req.body.reply || '').trim();
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
 
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
     if (!reply) {
+      if (isAjax) return respond(422, { success: false, message: req.t('admin:flash.replyTextRequired'), errors: { reply: req.t('admin:flash.replyTextRequired') } });
       req.flash('error', req.t('admin:flash.replyTextRequired'));
-      return res.redirect('/admin/reviews');
+      return respond(422, {});
     }
     if (reply.length > 2000) {
+      if (isAjax) return respond(422, { success: false, message: req.t('admin:flash.replyTooLong'), errors: { reply: req.t('admin:flash.replyTooLong') } });
       req.flash('error', req.t('admin:flash.replyTooLong'));
-      return res.redirect('/admin/reviews');
+      return respond(422, {});
     }
 
     const review = await ReviewModel.getById(reviewId);
     if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
       req.flash('error', req.t('admin:flash.reviewNotFound'));
-      return res.redirect('/admin/reviews');
+      return respond(404, {});
     }
 
     await ReviewModel.sellerReply(reviewId, req.session.userId, reply);
@@ -1782,8 +1900,9 @@ exports.replyToReview = async (req, res, next) => {
       });
     }
 
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.reviewReplied') });
     req.flash('success', req.t('admin:flash.reviewReplied'));
-    res.redirect('/admin/reviews');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1793,21 +1912,28 @@ exports.toggleReviewHidden = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const reviewId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
+
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
     const review = await ReviewModel.getById(reviewId);
-
     if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
       req.flash('error', req.t('admin:flash.reviewNotFound'));
-      return res.redirect('/admin/reviews');
+      return respond(404, {});
     }
 
-    await ReviewModel.toggleHidden(reviewId);
+    const updated = await ReviewModel.toggleHidden(reviewId);
+    const message = req.t(updated.is_hidden ? 'admin:flash.reviewHidden' : 'admin:flash.reviewUnhidden');
 
-    if (review.product_id) {
-      await ReviewModel.updateProductRating(review.product_id);
-    }
-
-    req.flash('success', req.t(review.is_hidden ? 'admin:flash.reviewUnhidden' : 'admin:flash.reviewHidden'));
-    res.redirect('/admin/reviews');
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1818,11 +1944,15 @@ exports.resolveReviewReport = async (req, res, next) => {
     const ReviewModel = require('../models/ReviewModel');
     const reportId = parseInt(req.params.id);
     const action = req.body.action === 'dismissed' ? 'dismissed' : 'resolved';
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews?reported=1');
 
     await ReviewModel.resolveReport(reportId, action);
 
-    req.flash('success', req.t(action === 'dismissed' ? 'admin:flash.reportDismissed' : 'admin:flash.reportResolved'));
-    res.redirect('/admin/reviews?reported=1');
+    const message = req.t(action === 'dismissed' ? 'admin:flash.reportDismissed' : 'admin:flash.reportResolved');
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1832,21 +1962,27 @@ exports.approveReview = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const reviewId = parseInt(req.params.id);
-    const review = await ReviewModel.getById(reviewId);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
 
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
+    const review = await ReviewModel.getById(reviewId);
     if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
       req.flash('error', req.t('admin:flash.reviewNotFound'));
-      return res.redirect('/admin/reviews');
+      return respond(404, {});
     }
 
     await ReviewModel.approve(reviewId, req.session.userId);
 
-    if (review.product_id) {
-      await ReviewModel.updateProductRating(review.product_id);
-    }
-
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.reviewApproved') });
     req.flash('success', req.t('admin:flash.reviewApproved'));
-    res.redirect('/admin/reviews');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1856,21 +1992,27 @@ exports.rejectReview = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const reviewId = parseInt(req.params.id);
-    const review = await ReviewModel.getById(reviewId);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
 
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
+    const review = await ReviewModel.getById(reviewId);
     if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
       req.flash('error', req.t('admin:flash.reviewNotFound'));
-      return res.redirect('/admin/reviews');
+      return respond(404, {});
     }
 
     await ReviewModel.reject(reviewId, req.session.userId);
 
-    if (review.product_id) {
-      await ReviewModel.updateProductRating(review.product_id);
-    }
-
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.reviewRejected') });
     req.flash('success', req.t('admin:flash.reviewRejected'));
-    res.redirect('/admin/reviews');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1946,8 +2088,15 @@ exports.createReview = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const { user_id, product_id, rating, comment, type, status } = req.body;
+    const ajax = isAjaxRequest(req);
 
-    if (!user_id || !product_id || !rating || rating < 1 || rating > 5) {
+    const errors = {};
+    if (!user_id) errors.user_id = req.t('admin:flash.reviewRequiredFields');
+    if (!product_id) errors.product_id = req.t('admin:flash.reviewRequiredFields');
+    if (!rating || rating < 1 || rating > 5) errors.rating = req.t('admin:flash.ratingOutOfRange');
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.reviewRequiredFields'), errors);
       req.flash('error', req.t('admin:flash.reviewRequiredFields'));
       return res.redirect('/admin/reviews');
     }
@@ -1963,10 +2112,13 @@ exports.createReview = async (req, res, next) => {
       is_verified: true
     });
 
-    if (created && created.product_id) {
-      await ReviewModel.updateProductRating(created.product_id);
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.reviewCreated'),
+        review: { id: created.id, rating: created.rating }
+      });
     }
-
     req.flash('success', req.t('admin:flash.reviewCreated'));
     res.redirect('/admin/reviews');
   } catch (err) {
@@ -1978,21 +2130,27 @@ exports.deleteReview = async (req, res, next) => {
   try {
     const ReviewModel = require('../models/ReviewModel');
     const reviewId = parseInt(req.params.id);
-    const review = await ReviewModel.getById(reviewId);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/reviews');
 
+    if (isNaN(reviewId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidReviewId') });
+      req.flash('error', req.t('admin:flash.invalidReviewId'));
+      return respond(400, {});
+    }
+
+    const review = await ReviewModel.getById(reviewId);
     if (!review) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.reviewNotFound') });
       req.flash('error', req.t('admin:flash.reviewNotFound'));
-      return res.redirect('/admin/reviews');
+      return respond(404, {});
     }
 
     await ReviewModel.delete(reviewId);
 
-    if (review.product_id) {
-      await ReviewModel.updateProductRating(review.product_id);
-    }
-
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.reviewDeleted') });
     req.flash('success', req.t('admin:flash.reviewDeleted'));
-    res.redirect('/admin/reviews');
+    respond(200, {});
   } catch (err) {
     next(err);
   }

@@ -1,0 +1,140 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:reviews.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:reviews.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('admin:reviews.filterStatus') %>">
+        <option value=""><%= t('admin:reviews.filterStatus') %></option>
+        <option value="pending" <%= currentStatus === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %><%= pendingCount > 0 ? ' (' + pendingCount + ')' : '' %></option>
+        <option value="approved" <%= currentStatus === 'approved' ? 'selected' : '' %>><%= t('admin:status.approved') %></option>
+        <option value="rejected" <%= currentStatus === 'rejected' ? 'selected' : '' %>><%= t('admin:status.rejected') %></option>
+    </select>
+    <select class="form-select w-auto" data-crud-filter name="reported" aria-label="<%= t('admin:reviews.reportedFilter') %>">
+        <option value=""><%= t('common:words.all') %></option>
+        <option value="1" <%= isReportedFilter ? 'selected' : '' %>><%= t('admin:reviews.reportedFilter') %><%= reportedCount > 0 ? ' (' + reportedCount + ')' : '' %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:reviews.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (reviews && reviews.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table reviews-table">
+            <thead>
+                <tr><th><%= t('admin:words.user') %></th><th><%= t('admin:words.review') %></th><th><%= t('admin:words.rating') %></th><th><%= t('admin:words.verified') %></th><th><%= t('admin:words.photos') %></th><th><%= t('admin:words.helpful') %></th><th><%= t('admin:words.reports') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.date') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% reviews.forEach(review => { %>
+                <tr data-review-id="<%= review.id %>" class="<%= review.is_hidden ? 'table-danger' : '' %>">
+                    <td>
+                        <div class="text-white"><%= formatDisplayName(review.first_name, review.last_name) %></div>
+                        <small class="text-white-50"><%= review.email %></small>
+                    </td>
+                    <td>
+                        <% if (review.product_name) { %>
+                        <div class="text-white mb-1"><%= review.product_name %></div>
+                        <% } %>
+                        <% if (review.title) { %>
+                        <div class="text-white-50 small fw-semibold"><%= review.title %></div>
+                        <% } %>
+                        <% if (review.comment) { %>
+                        <p class="text-white-50 mb-0 small" style="max-width:280px;"><%= review.comment %></p>
+                        <% } else { %>
+                        <span class="text-white-50 small fst-italic"><%= t('admin:reviews.noComment') %></span>
+                        <% } %>
+                        <% if (review.pending_reports > 0) { %>
+                        <span class="badge bg-danger mt-1"><i class="fa-regular fa-flag me-1"></i><%= t('admin:reviews.openReport', {count: review.pending_reports}) %></span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <div class="text-warning" style="white-space:nowrap;">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                            <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star small"></i>
+                            <% } %>
+                        </div>
+                    </td>
+                    <td>
+                        <% if (review.is_verified) { %>
+                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i></span>
+                        <% } else { %>
+                        <span class="text-white-50">—</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (review.images && review.images.length > 0) { %>
+                        <span class="badge bg-info text-dark rounded-pill"><i class="fa-solid fa-camera me-1"></i><%= review.images.length %></span>
+                        <% } else { %>
+                        <span class="text-white-50">—</span>
+                        <% } %>
+                    </td>
+                    <td class="text-white-50"><%= review.helpful_count || 0 %></td>
+                    <td>
+                        <% if (review.reported_count > 0) { %>
+                        <span class="badge bg-danger rounded-pill"><%= review.reported_count %></span>
+                        <% } else { %>
+                        <span class="text-white-50">—</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary review-status-select" style="width:120px;" data-review-id="<%= review.id %>" data-original="<%= review.status %>">
+                                <option value="pending" <%= review.status === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
+                                <option value="approved" <%= review.status === 'approved' ? 'selected' : '' %>><%= t('admin:status.approved') %></option>
+                                <option value="rejected" <%= review.status === 'rejected' ? 'selected' : '' %>><%= t('admin:status.rejected') %></option>
+                            </select>
+                            <% var statusColors = { pending: 'bg-warning text-dark', approved: 'bg-success', rejected: 'bg-danger' }; %>
+                            <span class="badge <%= statusColors[review.status] || 'bg-secondary' %>"><%= t('admin:status.' + review.status, { defaultValue: review.status }) %></span>
+                        </div>
+                        <% if (review.is_hidden) { %>
+                        <span class="badge bg-secondary rounded-pill mt-1"><%= t('admin:status.hidden') %></span>
+                        <% } %>
+                    </td>
+                    <td><small class="text-white-50"><%= review.created_at ? new Date(review.created_at).toLocaleDateString() : '' %></small></td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abButton:true, abIcon:'fa-eye', abAttrs:'data-view-review data-id="' + review.id + '"', abTitle:t('admin:reviews.viewDetail') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-reply', abAttrs:'data-reply-review data-id="' + review.id + '" data-name="' + escapeAttr(review.product_name || '') + '"', abTitle:t('admin:reviews.replyToReview') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abHref:'/admin/reviews/' + review.id + '/edit', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'hide', abButton:true, abIcon: review.is_hidden ? 'fa-eye' : 'fa-eye-slash', abOn: review.is_hidden, abAttrs:'data-toggle-review-hidden data-id="' + review.id + '" data-hidden="' + (review.is_hidden ? '1' : '0') + '"', abTitle: review.is_hidden ? t('admin:reviews.unhide') : t('admin:reviews.hide') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-review data-id="' + review.id + '" data-title="' + escapeAttr(review.title || review.product_name || '') + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:reviews.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:reviews.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:reviews.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:reviews.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:reviews.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-star fa-4x mb-3"></i>
+    <% if (currentSearch || currentStatus || isReportedFilter) { %>
+    <h4 class="text-white fw-bold"><%= t('admin:reviews.noReviews') %></h4>
+    <p class="text-white-50"><%= t('admin:reviews.noReviewsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('admin:reviews.noReviews') %></h4>
+    <p class="text-white-50"><%= t('admin:reviews.noReviewsFound') %></p>
+    <% } %>
+</div>
+<% } %>

@@ -251,7 +251,10 @@
     "invalidCourseId": "Kitambulisho cha kozi si sahihi.",
     "invalidCourseStatus": "Hali ya kozi si sahihi.",
     "courseStatusUpdated": "Hali ya kozi imesasishwa.",
-    "courseRequiredFields": "Tafadhali jaza sehemu zinazohitajika."
+    "courseRequiredFields": "Tafadhali jaza sehemu zinazohitajika.",
+    "invalidReviewId": "Kitambulisho cha maoni si sahihi.",
+    "invalidReviewStatus": "Hali ya maoni si sahihi.",
+    "reviewStatusUpdated": "Hali ya maoni imesasishwa."
   },
   "validation": {
     "productNameRequired": "Jina la bidhaa linahitajika",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "Maoni...",
     "createReview": "Unda Maoni",
     "respondingTo": "Unajibu maoni",
-    "respondingToOn": "Unajibu maoni juu ya:"
+    "respondingToOn": "Unajibu maoni juu ya:",
+    "filterStatus": "Hali zote",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho",
+    "viewDetail": "Angalia maoni",
+    "detailTitle": "Maelezo ya maoni",
+    "customer": "Mteja",
+    "onProduct": "kwenye bidhaa",
+    "submittedOn": "Imewasilishwa",
+    "reportReason": "Sababu ya taarifa",
+    "noReports": "Hakuna taarifa",
+    "noReviewsMatch": "Hakuna maoni yanayolingana na utafutaji wako.",
+    "updateFailed": "Imeshindwa kusasisha maoni.",
+    "deleteFailed": "Imeshindwa kufuta maoni.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena."
   },
   "reviewForm": {
     "heading": "Hariri Maoni",

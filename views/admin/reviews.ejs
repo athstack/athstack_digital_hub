@@ -2,6 +2,13 @@
 
 <section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/adminSidebar') %>
@@ -17,184 +24,36 @@
                         <% if (reportedCount > 0) { %>
                         <span class="badge bg-danger rounded-pill px-3 py-2"><%= reportedCount %> <%= t('admin:words.reported') %></span>
                         <% } %>
-                        <button type="button" class="btn btn-premium-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#addReviewModal"><i class="fa-solid fa-plus me-1"></i><%= t('admin:reviews.addReview') %></button>
+                        <button type="button" class="btn btn-premium-primary btn-sm rounded-pill" id="addReviewBtn"><i class="fa-solid fa-plus me-1"></i><%= t('admin:reviews.addReview') %></button>
                     </div>
                 </div>
 
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
-                    <a href="/admin/reviews" class="btn btn-sm rounded-pill<%= !currentStatus && !isReportedFilter ? ' btn-primary' : ' btn-outline-secondary' %>"><%= t('common:words.all') %></a>
-                    <a href="/admin/reviews?status=pending" class="btn btn-sm rounded-pill<%= currentStatus === 'pending' ? ' btn-warning text-dark' : ' btn-outline-secondary' %>"><%= t('admin:status.pending') %> <% if (pendingCount > 0) { %>(<%= pendingCount %>)<% } %></a>
-                    <a href="/admin/reviews?status=approved" class="btn btn-sm rounded-pill<%= currentStatus === 'approved' ? ' btn-success' : ' btn-outline-secondary' %>"><%= t('admin:status.approved') %></a>
-                    <a href="/admin/reviews?status=rejected" class="btn btn-sm rounded-pill<%= currentStatus === 'rejected' ? ' btn-danger' : ' btn-outline-secondary' %>"><%= t('admin:status.rejected') %></a>
-                    <a href="/admin/reviews?reported=1" class="btn btn-sm rounded-pill<%= isReportedFilter ? ' btn-danger' : ' btn-outline-secondary' %>"><%= t('admin:reviews.reportedFilter') %> <% if (reportedCount > 0) { %>(<%= reportedCount %>)<% } %></a>
+                <div data-crud-table data-crud-url="/admin/reviews">
+                    <%- include('./partials/reviewsTable') %>
                 </div>
-
-                <form method="GET" action="/admin/reviews" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="<%= t('admin:reviews.searchPlaceholder') %>" value="<%= currentSearch || '' %>">
-                        <button class="btn btn-premium-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    </div>
-                </form>
-
-                <% if (reviews && reviews.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr>
-                                    <th><%= t('admin:words.user') %></th>
-                                    <th><%= t('admin:words.review') %></th>
-                                    <th><%= t('admin:words.rating') %></th>
-                                    <th><%= t('admin:words.verified') %></th>
-                                    <th><%= t('admin:words.photos') %></th>
-                                    <th><%= t('admin:words.helpful') %></th>
-                                    <th><%= t('admin:words.reports') %></th>
-                                    <th><%= t('common:words.status') %></th>
-                                    <th><%= t('common:words.date') %></th>
-                                    <th><%= t('common:words.actions') %></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% reviews.forEach(review => { %>
-                                <tr class="<%= review.is_hidden ? 'table-danger' : '' %>">
-                                    <td>
-                                        <div class="text-white"><%= formatDisplayName(review.first_name, review.last_name) %></div>
-                                        <small class="text-white-50"><%= review.email %></small>
-                                    </td>
-                                    <td>
-                                        <% if (review.product_name) { %>
-                                        <div class="text-white mb-1"><%= review.product_name %></div>
-                                        <% } %>
-                                        <% if (review.title) { %>
-                                        <div class="text-white-50 small fw-semibold"><%= review.title %></div>
-                                        <% } %>
-                                        <% if (review.comment) { %>
-                                        <p class="text-white-50 mb-0 small" style="max-width:280px;"><%= review.comment %></p>
-                                        <% } else { %>
-                                        <span class="text-white-50 small fst-italic"><%= t('admin:reviews.noComment') %></span>
-                                        <% } %>
-                                        <% if (review.pending_reports > 0) { %>
-                                        <span class="badge bg-danger mt-1"><i class="fa-regular fa-flag me-1"></i><%= t('admin:reviews.openReport', {count: review.pending_reports}) %></span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <div class="text-warning" style="white-space:nowrap;">
-                                            <% for (let i = 1; i <= 5; i++) { %>
-                                            <i class="fa-<%= i <= review.rating ? 'solid' : 'regular' %> fa-star small"></i>
-                                            <% } %>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <% if (review.is_verified) { %>
-                                        <span class="verified-badge"><i class="fa-solid fa-circle-check"></i></span>
-                                        <% } else { %>
-                                        <span class="text-white-50">—</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% if (review.images && review.images.length > 0) { %>
-                                        <span class="badge bg-info text-dark rounded-pill"><i class="fa-solid fa-camera me-1"></i><%= review.images.length %></span>
-                                        <% } else { %>
-                                        <span class="text-white-50">—</span>
-                                        <% } %>
-                                    </td>
-                                    <td class="text-white-50"><%= review.helpful_count || 0 %></td>
-                                    <td>
-                                        <% if (review.reported_count > 0) { %>
-                                        <span class="badge bg-danger rounded-pill"><%= review.reported_count %></span>
-                                        <% } else { %>
-                                        <span class="text-white-50">—</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% if (review.status === 'pending') { %>
-                                        <span class="badge bg-warning text-dark rounded-pill"><%= t('admin:status.pending') %></span>
-                                        <% } else if (review.status === 'approved') { %>
-                                        <span class="badge bg-success rounded-pill"><%= t('admin:status.approved') %></span>
-                                        <% } else { %>
-                                        <span class="badge bg-danger rounded-pill"><%= t('admin:status.rejected') %></span>
-                                        <% } %>
-                                        <% if (review.is_hidden) { %>
-                                        <span class="badge bg-secondary rounded-pill mt-1 d-block"><%= t('admin:status.hidden') %></span>
-                                        <% } %>
-                                    </td>
-                                    <td><small class="text-white-50"><%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %></small></td>
-                                    <td>
-                                        <div class="review-actions">
-                                            <%- include('../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-reply', abTitle:t('admin:reviews.replyToReview'), abAttrs:'data-bs-toggle="modal" data-bs-target="#replyReviewModal" data-review-id="' + review.id + '" data-review-name="' + escapeAttr(review.product_name || '') + '"' }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/reviews/' + review.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/admin/reviews/' + review.id + '/hide', abFormCsrf:csrfToken, abIcon: review.is_hidden ? 'fa-eye' : 'fa-eye-slash', abOn: review.is_hidden, abTitle: review.is_hidden ? t('admin:reviews.unhide') : t('admin:reviews.hide') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-trash-can', abFormAction:'/admin/reviews/' + review.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('admin:reviews.deleteConfirm'), abTitle:t('common:words.delete') }) %>
-                                            <% if (review.status === 'pending') { %>
-                                            <%- include('../partials/actionButton', { abVariant:'approve', abFormAction:'/admin/reviews/' + review.id + '/approve', abFormCsrf:csrfToken, abTitle:t('admin:reviews.approve') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'reject', abFormAction:'/admin/reviews/' + review.id + '/reject', abFormCsrf:csrfToken, abTitle:t('admin:reviews.reject') }) %>
-                                            <% } else if (review.approver_first_name) { %>
-                                            <span class="approver-label"><%= formatDisplayName(review.approver_first_name, review.approver_last_name) %></span>
-                                            <% } %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <% if (pagination.totalPages > 1) { %>
-                <nav class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item<%= pagination.hasPrev ? '' : ' disabled' %>">
-                            <a class="page-link" href="?page=<%= pagination.page - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>"><%= t('common:words.previous') %></a>
-                        </li>
-                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-                        <li class="page-item<%= i === pagination.page ? ' active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>"><%= i %></a>
-                        </li>
-                        <% } %>
-                        <li class="page-item<%= pagination.hasNext ? '' : ' disabled' %>">
-                            <a class="page-link" href="?page=<%= pagination.page + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %><%= isReportedFilter ? '&reported=1' : '' %><%= currentSearch ? '&search=' + encodeURIComponent(currentSearch) : '' %>"><%= t('common:words.next') %></a>
-                        </li>
-                    </ul>
-                </nav>
-                <% } %>
-
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-star fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:reviews.noReviews') %></h4>
-                    <p class="text-white-50"><%= t('admin:reviews.noReviewsFound') %><%= currentStatus ? t('admin:reviews.withStatus', {status: currentStatus}) : '' %><%= isReportedFilter ? t('admin:reviews.withOpenReports') : '' %>.</p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Reply to Review Modal -->
-<div class="modal fade" id="replyReviewModal" tabindex="-1">
+<!-- Reply to Review modal -->
+<div class="modal fade crud-modal" id="replyReviewModal" tabindex="-1" aria-labelledby="replyReviewModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-reply me-2 text-primary"></i><%= t('admin:reviews.replyModalTitle') %></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" action="/admin/reviews/0/reply" id="replyReviewForm">
+        <div class="modal-content">
+            <form id="replyReviewForm" method="POST" action="/admin/reviews/0/reply" novalidate>
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyReviewModalTitle"><i class="fa-solid fa-reply me-2 text-primary"></i><%= t('admin:reviews.replyModalTitle') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
                     <p class="text-white-50 small" id="replyReviewProductName"></p>
                     <div class="mb-0">
-                        <label class="form-label"><%= t('admin:reviews.response') %></label>
-                        <textarea name="reply" class="form-control" rows="4" maxlength="2000" placeholder="<%= t('admin:reviews.responsePlaceholder') %>"></textarea>
+                        <label class="form-label" for="replyReviewTextarea"><%= t('admin:reviews.response') %></label>
+                        <textarea name="reply" id="replyReviewTextarea" class="form-control" rows="4" maxlength="2000" placeholder="<%= t('admin:reviews.responsePlaceholder') %>"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
                     <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i><%= t('admin:reviews.postReply') %></button>
                 </div>
@@ -203,59 +62,59 @@
     </div>
 </div>
 
-<!-- Add Review Modal -->
-<div class="modal fade" id="addReviewModal" tabindex="-1">
+<!-- Add Review modal -->
+<div class="modal fade crud-modal" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white fw-bold"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('admin:reviews.addReview') %></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" action="/admin/reviews/add">
+        <div class="modal-content">
+            <form id="addReviewForm" method="POST" action="/admin/reviews/add" novalidate>
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addReviewModalTitle"><i class="fa-solid fa-star me-2 text-warning"></i><%= t('admin:reviews.addReview') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label"><%= t('admin:reviews.userId') %></label>
-                        <input type="number" name="user_id" class="form-control" placeholder="<%= t('admin:reviews.enterUserId') %>" required>
+                        <label class="form-label" for="af-user-id"><%= t('admin:reviews.userId') %></label>
+                        <input type="number" name="user_id" id="af-user-id" class="form-control" placeholder="<%= t('admin:reviews.enterUserId') %>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><%= t('admin:reviews.productId') %></label>
-                        <input type="number" name="product_id" class="form-control" placeholder="<%= t('admin:reviews.enterProductId') %>" required>
+                        <label class="form-label" for="af-product-id"><%= t('admin:reviews.productId') %></label>
+                        <input type="number" name="product_id" id="af-product-id" class="form-control" placeholder="<%= t('admin:reviews.enterProductId') %>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><%= t('admin:words.rating') %></label>
-                        <select name="rating" class="form-select" required>
+                        <label class="form-label" for="af-rating"><%= t('admin:words.rating') %></label>
+                        <select name="rating" id="af-rating" class="form-select" required>
                             <% for (let i = 1; i <= 5; i++) { %>
                             <option value="<%= i %>"><%= t('admin:reviews.stars', {count: i}) %></option>
                             <% } %>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><%= t('admin:words.type') %></label>
-                        <select name="type" class="form-select">
+                        <label class="form-label" for="af-type"><%= t('admin:words.type') %></label>
+                        <select name="type" id="af-type" class="form-select">
                             <option value="product"><%= t('admin:reviews.typeProduct') %></option>
                             <option value="technician"><%= t('admin:reviews.typeTechnician') %></option>
                             <option value="service"><%= t('admin:reviews.typeService') %></option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><%= t('common:words.status') %></label>
-                        <select name="status" class="form-select">
+                        <label class="form-label" for="af-status"><%= t('common:words.status') %></label>
+                        <select name="status" id="af-status" class="form-select">
                             <option value="pending"><%= t('admin:status.pending') %></option>
                             <option value="approved" selected><%= t('admin:status.approved') %></option>
                             <option value="rejected"><%= t('admin:status.rejected') %></option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><%= t('admin:words.title') %></label>
-                        <input type="text" name="title" class="form-control" maxlength="120" placeholder="<%= t('admin:reviews.titleOptional') %>">
+                        <label class="form-label" for="af-title"><%= t('admin:words.title') %></label>
+                        <input type="text" name="title" id="af-title" class="form-control" maxlength="120" placeholder="<%= t('admin:reviews.titleOptional') %>">
                     </div>
                     <div class="mb-0">
-                        <label class="form-label"><%= t('admin:words.comment') %></label>
-                        <textarea name="comment" class="form-control" rows="3" placeholder="<%= t('admin:reviews.commentPlaceholder') %>"></textarea>
+                        <label class="form-label" for="af-comment"><%= t('admin:words.comment') %></label>
+                        <textarea name="comment" id="af-comment" class="form-control" rows="3" placeholder="<%= t('admin:reviews.commentPlaceholder') %>"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
                     <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('admin:reviews.createReview') %></button>
                 </div>
@@ -264,20 +123,272 @@
     </div>
 </div>
 
+<!-- Review detail modal -->
+<div class="modal fade crud-modal" id="reviewDetailModal" tabindex="-1" aria-labelledby="reviewDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewDetailTitle"><%= t('admin:reviews.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="reviewDetailBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 (function() {
-    var replyModal = document.getElementById('replyReviewModal');
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var addBtn = document.getElementById('addReviewBtn');
+    var addModalEl = document.getElementById('addReviewModal');
+    var addForm = document.getElementById('addReviewForm');
+    var replyModalEl = document.getElementById('replyReviewModal');
     var replyForm = document.getElementById('replyReviewForm');
-    var productName = document.getElementById('replyReviewProductName');
-    if (replyModal && replyForm) {
-        replyModal.addEventListener('show.bs.modal', function(e) {
-            var btn = e.relatedTarget;
-            var id = btn.getAttribute('data-review-id');
-            var name = btn.getAttribute('data-review-name');
-            replyForm.setAttribute('action', '/admin/reviews/' + id + '/reply');
-            if (productName) productName.textContent = name ? ('<%= t('admin:reviews.respondingToOn') %> ' + name) : '<%= t('admin:reviews.respondingTo') %>';
-        });
+    var replyTextarea = document.getElementById('replyReviewTextarea');
+    var replyProductName = document.getElementById('replyReviewProductName');
+    var detailModalEl = document.getElementById('reviewDetailModal');
+    var detailTitleEl = document.getElementById('reviewDetailTitle');
+    var detailBodyEl = document.getElementById('reviewDetailBody');
+
+    var i18n = {
+        detailTitle: '<%= t('admin:reviews.detailTitle') %>',
+        customer: '<%= t('admin:reviews.customer') %>',
+        onProduct: '<%= t('admin:reviews.onProduct') %>',
+        rating: '<%= t('admin:words.rating') %>',
+        verified: '<%= t('admin:words.verified') %>',
+        photos: '<%= t('admin:words.photos') %>',
+        helpful: '<%= t('admin:words.helpful') %>',
+        reports: '<%= t('admin:words.reports') %>',
+        status: '<%= t('common:words.status') %>',
+        submittedOn: '<%= t('admin:reviews.submittedOn') %>',
+        noComment: '<%= t('admin:reviews.noComment') %>',
+        noReports: '<%= t('admin:reviews.noReports') %>',
+        statusPending: '<%= t('admin:status.pending') %>',
+        statusApproved: '<%= t('admin:status.approved') %>',
+        statusRejected: '<%= t('admin:status.rejected') %>',
+        hidden: '<%= t('admin:status.hidden') %>',
+        replyModalTitle: '<%= t('admin:reviews.replyModalTitle') %>',
+        respondingTo: '<%= t('admin:reviews.respondingTo') %>',
+        respondingToOn: '<%= t('admin:reviews.respondingToOn') %>',
+        reviewReplied: '<%= t('admin:flash.reviewReplied') %>',
+        reviewHidden: '<%= t('admin:flash.reviewHidden') %>',
+        reviewUnhidden: '<%= t('admin:flash.reviewUnhidden') %>',
+        reviewDeleted: '<%= t('admin:flash.reviewDeleted') %>',
+        reviewStatusUpdated: '<%= t('admin:flash.reviewStatusUpdated') %>',
+        reviewCreated: '<%= t('admin:flash.reviewCreated') %>',
+        deleteTitle: '<%= t('common:words.delete') %>',
+        deleteConfirm: '<%= t('admin:reviews.deleteConfirm') %>',
+        deleteFailed: '<%= t('admin:reviews.deleteFailed') %>',
+        updateFailed: '<%= t('admin:reviews.updateFailed') %>',
+        networkError: '<%= t('admin:reviews.networkError') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
+
+    function statusBadge(status) {
+        if (status === 'approved') return '<span class="badge bg-success">' + esc(i18n.statusApproved) + '</span>';
+        if (status === 'rejected') return '<span class="badge bg-danger">' + esc(i18n.statusRejected) + '</span>';
+        return '<span class="badge bg-warning text-dark">' + esc(i18n.statusPending) + '</span>';
+    }
+
+    function stars(rating) {
+        var html = '<div class="text-warning" style="white-space:nowrap;">';
+        for (var i = 1; i <= 5; i++) {
+            html += '<i class="fa-' + (i <= rating ? 'solid' : 'regular') + ' fa-star"></i>';
+        }
+        return html + '</div>';
+    }
+
+    function openDetail(id) {
+        Crud.get('/admin/reviews/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.review) return;
+                var r = data.review;
+                detailTitleEl.textContent = i18n.detailTitle;
+                var productHtml = r.product_name
+                    ? '<span class="badge bg-primary rounded-pill mb-2"><i class="fa-solid fa-box me-1"></i>' + esc(i18n.onProduct) + ' ' + esc(r.product_name) + '</span>'
+                    : '';
+                var titleHtml = r.title
+                    ? '<h5 class="text-white fw-bold mb-1">' + esc(r.title) + '</h5>'
+                    : '';
+                var commentHtml = r.comment
+                    ? '<p class="text-white-50 mb-0">' + esc(r.comment) + '</p>'
+                    : '<p class="text-white-50 fst-italic mb-0">' + i18n.noComment + '</p>';
+                var photosHtml = (r.images && r.images.length)
+                    ? '<div class="d-flex flex-wrap gap-2 mt-2">' + r.images.map(function (u) {
+                        return '<img src="' + esc(u) + '" alt="review photo" class="rounded" style="width:64px;height:64px;object-fit:cover;">';
+                    }).join('') + '</div>'
+                    : '';
+                var replyHtml = r.seller_reply
+                    ? '<div class="glass-card p-3 mt-3">' +
+                      '<small class="text-white-50 d-block mb-1"><i class="fa-solid fa-reply me-1"></i>' + i18n.replyModalTitle + '</small>' +
+                      '<p class="text-white mb-0">' + esc(r.seller_reply) + '</p>' +
+                      (r.seller_replied_at_formatted ? '<small class="text-white-50 d-block mt-1">' + esc(r.seller_replied_at_formatted) + '</small>' : '') +
+                      '</div>'
+                    : '';
+                var badgesHtml =
+                    (r.is_verified ? '<span class="badge bg-info text-dark rounded-pill"><i class="fa-solid fa-circle-check me-1"></i>' + i18n.verified + '</span>' : '') +
+                    (r.is_hidden ? ' <span class="badge bg-secondary rounded-pill">' + esc(i18n.hidden) + '</span>' : '');
+
+                var html =
+                    productHtml +
+                    '<div class="glass-card p-3 mb-3">' +
+                    '<small class="text-white-50 d-block">' + i18n.customer + '</small>' +
+                    '<span class="text-white fw-bold">' + esc(r.user_name) + '</span>' +
+                    (r.email ? '<div class="text-white-50 small">' + esc(r.email) + '</div>' : '') +
+                    '</div>' +
+                    '<div class="glass-card p-3 mb-3">' +
+                    '<div class="d-flex align-items-center gap-2 mb-1">' + stars(r.rating) + statusBadge(r.status) + '</div>' +
+                    badgesHtml +
+                    titleHtml +
+                    commentHtml +
+                    photosHtml +
+                    '</div>' +
+                    '<div class="row g-3">' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.helpful + '</small>' +
+                    '<span class="text-white fw-bold">' + esc(r.helpful_count) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.reports + '</small>' +
+                    '<span class="text-white fw-bold">' + (r.reported_count > 0 ? esc(r.reported_count) : i18n.noReports) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.submittedOn + '</small>' +
+                    '<span class="text-white">' + (r.created_at_formatted ? esc(r.created_at_formatted) : '—') + '</span>' +
+                    '</div></div>' +
+                    '</div>' +
+                    replyHtml;
+
+                detailBodyEl.innerHTML = html;
+                Crud.openModal(detailModalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    function openReply(id, name) {
+        replyForm.setAttribute('action', '/admin/reviews/' + id + '/reply');
+        replyTextarea.value = '';
+        Crud.clearErrors(replyForm);
+        replyProductName.textContent = name ? (i18n.respondingToOn + ' ' + name) : i18n.respondingTo;
+        Crud.openModal(replyModalEl);
+    }
+
+    addBtn.addEventListener('click', function () {
+        addForm.reset();
+        Crud.clearErrors(addForm);
+        Crud.openModal(addModalEl);
+    });
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-review]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var replyBtn = e.target.closest('[data-reply-review]');
+        if (replyBtn) {
+            e.preventDefault();
+            openReply(replyBtn.getAttribute('data-id'), replyBtn.getAttribute('data-name'));
+            return;
+        }
+
+        var hideBtn = e.target.closest('[data-toggle-review-hidden]');
+        if (hideBtn) {
+            e.preventDefault();
+            Crud.post('/admin/reviews/' + hideBtn.getAttribute('data-id') + '/hide')
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.reviewHidden, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/admin/reviews' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                });
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-review]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                message: i18n.deleteConfirm,
+                confirmText: i18n.delete
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/admin/reviews/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.reviewDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/admin/reviews' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    tableWrap.addEventListener('change', function (e) {
+        var statusSel = e.target.closest('.review-status-select');
+        if (!statusSel) return;
+        var orig = statusSel.getAttribute('data-original');
+        var rid = statusSel.getAttribute('data-review-id');
+        Crud.post('/admin/reviews/' + rid + '/status', { status: statusSel.value })
+            .then(function (data) {
+                statusSel.setAttribute('data-original', statusSel.value);
+                Crud.toast(data.message || i18n.reviewStatusUpdated, 'success');
+            })
+            .catch(function (err) {
+                statusSel.value = orig;
+                Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+            });
+    });
+
+    replyForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(replyForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(replyModalEl);
+                Crud.toast(data.message || i18n.reviewReplied, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/reviews' });
+            }
+        });
+    });
+
+    addForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(addForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(addModalEl);
+                Crud.toast(data.message || i18n.reviewCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/reviews' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
 })();
 </script>
 

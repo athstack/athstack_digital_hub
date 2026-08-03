@@ -251,7 +251,10 @@
     "invalidCourseId": "معرف الدورة غير صالح.",
     "invalidCourseStatus": "حالة الدورة غير صالحة.",
     "courseStatusUpdated": "تم تحديث حالة الدورة.",
-    "courseRequiredFields": "يرجى ملء الحقول المطلوبة."
+    "courseRequiredFields": "يرجى ملء الحقول المطلوبة.",
+    "invalidReviewId": "معرف المراجعة غير صالح.",
+    "invalidReviewStatus": "حالة المراجعة غير صالحة.",
+    "reviewStatusUpdated": "تم تحديث حالة المراجعة."
   },
   "validation": {
     "productNameRequired": "اسم المنتج مطلوب",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "تعليق المراجعة...",
     "createReview": "إنشاء مراجعة",
     "respondingTo": "جارٍ الرد على المراجعة",
-    "respondingToOn": "جارٍ الرد على المراجعة على:"
+    "respondingToOn": "جارٍ الرد على المراجعة على:",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "viewDetail": "عرض المراجعة",
+    "detailTitle": "تفاصيل المراجعة",
+    "customer": "العميل",
+    "onProduct": "على المنتج",
+    "submittedOn": "تاريخ التقديم",
+    "reportReason": "سبب البلاغ",
+    "noReports": "لا توجد بلاغات",
+    "noReviewsMatch": "لا توجد مراجعات تطابق البحث.",
+    "updateFailed": "فشل تحديث المراجعة.",
+    "deleteFailed": "فشل حذف المراجعة.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى."
   },
   "reviewForm": {
     "heading": "تعديل المراجعة",

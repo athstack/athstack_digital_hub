@@ -102,9 +102,11 @@ router.get('/analytics', requirePermission('view_business_reports'), adminContro
 
 // -- Reviews -------------------------------------------------------------------------
 router.get('/reviews', requirePermission('manage_reviews'), adminController.getReviews);
+router.get('/reviews/:id', requirePermission('manage_reviews'), adminController.getReviewDetail);
 router.get('/reviews/:id/edit', requirePermission('manage_reviews'), adminController.getEditReview);
 router.post('/reviews/:id/edit', requirePermission('manage_reviews'), validateCsrf, adminController.updateReview);
 router.post('/reviews/add', requirePermission('manage_reviews'), validateCsrf, adminController.createReview);
+router.post('/reviews/:id/status', requirePermission('manage_reviews'), validateCsrf, adminController.updateReviewStatus);
 router.post('/reviews/:id/approve', requirePermission('manage_reviews'), validateCsrf, adminController.approveReview);
 router.post('/reviews/:id/reject', requirePermission('manage_reviews'), validateCsrf, adminController.rejectReview);
 router.post('/reviews/:id/reply', requirePermission('manage_reviews'), validateCsrf, adminController.replyToReview);

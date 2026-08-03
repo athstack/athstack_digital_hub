@@ -251,7 +251,10 @@
     "invalidCourseId": "无效的课程 ID。",
     "invalidCourseStatus": "无效的课程状态。",
     "courseStatusUpdated": "课程状态已更新。",
-    "courseRequiredFields": "请填写必填字段。"
+    "courseRequiredFields": "请填写必填字段。",
+    "invalidReviewId": "无效的评价 ID。",
+    "invalidReviewStatus": "无效的评价状态。",
+    "reviewStatusUpdated": "评价状态已更新。"
   },
   "validation": {
     "productNameRequired": "请填写商品名称",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "评价内容...",
     "createReview": "创建评价",
     "respondingTo": "正在回复评价",
-    "respondingToOn": "正在回复以下评价："
+    "respondingToOn": "正在回复以下评价：",
+    "filterStatus": "所有状态",
+    "refresh": "刷新",
+    "paginationInfo": "共 {{total}} 项，第 {{from}}–{{to}} 项",
+    "first": "第一页",
+    "prev": "上一页",
+    "next": "下一页",
+    "last": "最后一页",
+    "viewDetail": "查看评价",
+    "detailTitle": "评价详情",
+    "customer": "客户",
+    "onProduct": "关于产品",
+    "submittedOn": "提交于",
+    "reportReason": "举报原因",
+    "noReports": "无举报",
+    "noReviewsMatch": "没有与您的搜索匹配的评价。",
+    "updateFailed": "更新评价失败。",
+    "deleteFailed": "删除评价失败。",
+    "networkError": "网络错误。请重试。"
   },
   "reviewForm": {
     "heading": "编辑评价",

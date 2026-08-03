@@ -251,7 +251,10 @@
     "invalidCourseId": "Ungültige Kurs-ID.",
     "invalidCourseStatus": "Ungültiger Kursstatus.",
     "courseStatusUpdated": "Kursstatus aktualisiert.",
-    "courseRequiredFields": "Bitte füllen Sie die Pflichtfelder aus."
+    "courseRequiredFields": "Bitte füllen Sie die Pflichtfelder aus.",
+    "invalidReviewId": "Ungültige Rezensions-ID.",
+    "invalidReviewStatus": "Ungültiger Rezensionsstatus.",
+    "reviewStatusUpdated": "Rezensionsstatus aktualisiert."
   },
   "validation": {
     "productNameRequired": "Produktname ist erforderlich",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "Bewertungskommentar...",
     "createReview": "Bewertung erstellen",
     "respondingTo": "Antwort auf Bewertung",
-    "respondingToOn": "Antwort auf Bewertung zu:"
+    "respondingToOn": "Antwort auf Bewertung zu:",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "viewDetail": "Rezension ansehen",
+    "detailTitle": "Rezensionsdetails",
+    "customer": "Kunde",
+    "onProduct": "zum Produkt",
+    "submittedOn": "Eingereicht am",
+    "reportReason": "Grund der Meldung",
+    "noReports": "Keine Meldungen",
+    "noReviewsMatch": "Keine Rezensionen entsprechen Ihrer Suche.",
+    "updateFailed": "Rezension konnte nicht aktualisiert werden.",
+    "deleteFailed": "Rezension konnte nicht gelöscht werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen."
   },
   "reviewForm": {
     "heading": "Bewertung bearbeiten",

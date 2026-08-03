@@ -251,7 +251,10 @@
     "invalidCourseId": "ID de curso no válida.",
     "invalidCourseStatus": "Estado de curso no válido.",
     "courseStatusUpdated": "Estado del curso actualizado.",
-    "courseRequiredFields": "Por favor complete los campos obligatorios."
+    "courseRequiredFields": "Por favor complete los campos obligatorios.",
+    "invalidReviewId": "ID de reseña no válida.",
+    "invalidReviewStatus": "Estado de reseña no válido.",
+    "reviewStatusUpdated": "Estado de la reseña actualizado."
   },
   "validation": {
     "productNameRequired": "El nombre del producto es obligatorio",
@@ -451,7 +454,25 @@
     "commentPlaceholder": "Comentario de la reseña...",
     "createReview": "Crear Reseña",
     "respondingTo": "Respondiendo a la reseña",
-    "respondingToOn": "Respondiendo a la reseña sobre:"
+    "respondingToOn": "Respondiendo a la reseña sobre:",
+    "filterStatus": "Todos los estados",
+    "refresh": "Actualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primera página",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página",
+    "viewDetail": "Ver reseña",
+    "detailTitle": "Detalles de la reseña",
+    "customer": "Cliente",
+    "onProduct": "sobre el producto",
+    "submittedOn": "Enviado el",
+    "reportReason": "Motivo del reporte",
+    "noReports": "Sin reportes",
+    "noReviewsMatch": "No hay reseñas que coincidan con su búsqueda.",
+    "updateFailed": "No se pudo actualizar la reseña.",
+    "deleteFailed": "No se pudo eliminar la reseña.",
+    "networkError": "Error de red. Inténtelo de nuevo."
   },
   "reviewForm": {
     "heading": "Editar Reseña",
