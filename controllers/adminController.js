@@ -81,7 +81,7 @@ exports.getDashboard = async (req, res, next) => {
     );
 
     let systemHealth = null;
-    if (req.user && req.user.role === ROLES.SUPER_ADMIN) {
+    if (req.can && req.can(PERMISSIONS.VIEW_SYSTEM_REPORTS)) {
       let dbOk = true;
       try {
         await pool.query('SELECT 1');
@@ -110,8 +110,7 @@ exports.getDashboard = async (req, res, next) => {
       pending_reviews: pendingReviews[0].count,
       active_campaigns: activeCampaigns[0].count,
       website_visitors: visitors30[0].count,
-      pending_approvals: pendingApprovals[0].count,
-      isSuperAdmin: !!(req.user && req.user.role === ROLES.SUPER_ADMIN)
+      pending_approvals: pendingApprovals[0].count
     };
 
     res.render('admin/dashboard', {
@@ -660,8 +659,7 @@ exports.getRepairs = async (req, res, next) => {
     res.render('admin/repairs', {
       title: req.t('admin:title.repairs'),
       repairs: result.repairs,
-      technicians,
-      isSuperAdmin: req.session.userRole === 'super_admin'
+      technicians
     });
   } catch (err) {
     next(err);

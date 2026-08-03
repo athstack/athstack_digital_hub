@@ -13,6 +13,7 @@
  *   4. requirePermission(...) runs per route and decides allow/deny.
  */
 const { getUserPermissionSet } = require('../helpers/rbac');
+const { PERMISSIONS } = require('../config/permissions');
 
 const PERMISSION_CACHE_TTL_MS = 60 * 1000; // 60 seconds
 
@@ -28,6 +29,7 @@ function loadPermissions(req, res, next) {
     req.permissions = new Set();
     req.can = () => false;
     res.locals.can = req.can;
+    res.locals.homePanel = '/auth/login';
     return next();
   }
 
@@ -42,6 +44,7 @@ function loadPermissions(req, res, next) {
     req.permissions = perms;
     req.can = (permission) => perms.has(permission);
     res.locals.can = req.can;
+    res.locals.homePanel = homePanel(req);
     return next();
   }
 
@@ -50,6 +53,7 @@ function loadPermissions(req, res, next) {
       req.permissions = perms;
       req.can = (permission) => perms.has(permission);
       res.locals.can = req.can;
+      res.locals.homePanel = homePanel(req);
 
       if (req.session) {
         req.session.permissionCache = {
@@ -166,6 +170,35 @@ function homePanelFor(role) {
   }
 }
 
+/**
+ * Permission-based equivalent of homePanelFor. Resolves the landing panel from
+ * the user's effective permission set so navigation stays permission-driven
+ * instead of role-name-driven. Used by the site header on every page.
+ * @param {Object} req
+ * @returns {string}
+ */
+function homePanel(req) {
+  if (!req.user) return '/auth/login';
+  const can = req.can || (() => false);
+
+  if (
+    can(PERMISSIONS.MANAGE_USERS) ||
+    can(PERMISSIONS.MANAGE_PRODUCTS) ||
+    can(PERMISSIONS.MANAGE_ORDERS) ||
+    can(PERMISSIONS.VIEW_BUSINESS_REPORTS) ||
+    (can(PERMISSIONS.MANAGE_REPAIRS) && can(PERMISSIONS.ASSIGN_REPAIRS))
+  ) {
+    return '/admin';
+  }
+  if (can(PERMISSIONS.MANAGE_CAMPAIGNS) || can(PERMISSIONS.VIEW_MARKETING_ANALYTICS)) {
+    return '/marketing';
+  }
+  if (can(PERMISSIONS.MANAGE_REPAIRS) || can(PERMISSIONS.CREATE_PRODUCTS)) {
+    return '/technician';
+  }
+  return '/dashboard';
+}
+
 module.exports = {
   loadPermissions,
   invalidatePermissionCache,
@@ -173,5 +206,6 @@ module.exports = {
   requireAllPermissions,
   requireRole,
   denyAccess,
-  homePanelFor
+  homePanelFor,
+  homePanel
 };

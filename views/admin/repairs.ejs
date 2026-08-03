@@ -37,12 +37,12 @@
                                     <td class="text-white-50"><%= formatDate(repair.appointment_date) %></td>
                                     <td><span class="badge <%= getStatusBadgeClass(repair.status) %>"><%= t('admin:status.' + (repair.status||'').toLowerCase(), {defaultValue: repair.status}) %></span></td>
                                     <td>
-                                        <% if (repair.technician_first_name && typeof isSuperAdmin !== 'undefined' && !isSuperAdmin) { %>
-                                        <span class="text-success small"><i class="fa-solid fa-check-circle me-1"></i><%= t('admin:status.assigned') %></span>
-                                        <% } else { %>
+                                        <% if (can('assign_repairs')) { %>
                                         <button type="button" class="btn btn-premium-outline btn-sm rounded-pill assign-trigger" data-bs-toggle="modal" data-bs-target="#assignTechnicianModal" data-repair-id="<%= repair.id %>" data-reference="<%= repair.reference_number %>">
                                             <i class="fa-solid fa-user-plus"></i><%= repair.technician_first_name ? ' ' + t('admin:repairs.reassign') : '' %>
                                         </button>
+                                        <% } else { %>
+                                        <span class="text-success small"><i class="fa-solid fa-check-circle me-1"></i><%= repair.technician_first_name ? t('admin:status.assigned') : t('admin:repairs.unassigned') %></span>
                                         <% } %>
                                     </td>
                                 </tr>
