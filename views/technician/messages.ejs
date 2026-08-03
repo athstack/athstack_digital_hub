@@ -39,10 +39,9 @@
                                         <% } %>
                                     </td>
                                     <td>
-                                        <form method="POST" action="/technician/messages/<%= m.id %>/read" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm btn-outline-info rounded-pill"><i class="fa-solid fa-check me-1"></i><%= t('technician:messages.markRead') %></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'view', abIcon:'fa-check', abFormAction:'/technician/messages/' + m.id + '/read', abFormCsrf:csrfToken, abTitle:t('technician:messages.markRead') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

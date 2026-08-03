@@ -33,9 +33,9 @@
                                     <td class="text-muted"><%= formatDate(repair.appointment_date) %></td>
                                     <td><span class="badge <%= getStatusBadgeClass(repair.status) %>"><%= t('technician:status.' + (repair.status||'').toLowerCase(), {defaultValue: repair.status}) %></span></td>
                                     <td>
-                                        <button type="button" class="btn btn-premium-outline btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#statusModal<%= repair.id %>">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen', abTitle:t('technician:repairs.updateStatus', {ref: repair.reference_number}), abAttrs:'data-bs-toggle="modal" data-bs-target="#statusModal' + repair.id + '"' }) %>
+                                        </div>
                                         <div class="modal fade" id="statusModal<%= repair.id %>" tabindex="-1">
                                             <div class="modal-dialog">
                                                 <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">

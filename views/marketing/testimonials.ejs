@@ -69,17 +69,10 @@
                                     <td class="py-3 px-4 text-warning"><%= '★'.repeat(testimonial.rating) %></td>
                                     <td class="py-3 px-4"><span class="badge <%= testimonial.status === 'approved' ? 'bg-success' : (testimonial.status === 'rejected' ? 'bg-danger' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + testimonial.status) %></span></td>
                                     <td class="py-3 px-4 text-end">
-                                        <form method="POST" action="/marketing/testimonials/<%= testimonial.id %>/status" class="d-inline me-1">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="hidden" name="status" value="<%= testimonial.status === 'approved' ? 'rejected' : 'approved' %>">
-                                            <button type="submit" class="btn btn-sm <%= testimonial.status === 'approved' ? 'btn-outline-danger' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= testimonial.status === 'approved' ? 'fa-ban' : 'fa-check' %>"></i>
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="/marketing/testimonials/<%= testimonial.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'reject', abFormAction:'/marketing/testimonials/' + testimonial.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (testimonial.status === 'approved' ? 'rejected' : 'approved') + '">', abOn: testimonial.status === 'approved', abIcon: testimonial.status === 'approved' ? 'fa-ban' : 'fa-check', abTitle: testimonial.status === 'approved' ? t('admin:reviews.reject') : t('admin:reviews.approve') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/testimonials/' + testimonial.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

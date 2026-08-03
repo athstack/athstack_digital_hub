@@ -54,16 +54,10 @@
                                     <td class="py-3 px-4 text-muted" style="max-width:360px;"><%= announcement.message %></td>
                                     <td class="py-3 px-4"><span class="badge <%= announcement.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + announcement.status) %></span></td>
                                     <td class="py-3 px-4 text-end">
-                                        <form method="POST" action="/marketing/announcements/<%= announcement.id %>/status" class="d-inline me-1">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm <%= announcement.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= announcement.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="/marketing/announcements/<%= announcement.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/announcements/' + announcement.id + '/status', abFormCsrf:csrfToken, abOn: announcement.status === 'active', abIcon: announcement.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: announcement.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/announcements/' + announcement.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

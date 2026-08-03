@@ -37,11 +37,10 @@
                                     <td class="text-white"><%= formatCurrency(service.base_price) %></td>
                                     <td><span class="badge bg-<%= service.status === 'active' ? 'success' : 'secondary' %>"><%= t('admin:status.' + (service.status||'').toLowerCase(), {defaultValue: service.status}) %></span></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary rounded-pill me-1" data-bs-toggle="modal" data-bs-target="#editService<%= service.id %>"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        <form method="POST" action="/admin/services/delete/<%= service.id %>" class="d-inline" data-confirm="<%= t('admin:services.deleteConfirm') %>">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash-can"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abTitle:t('common:words.edit'), abAttrs:'data-bs-toggle="modal" data-bs-target="#editService' + service.id + '"' }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-trash-can', abFormAction:'/admin/services/delete/' + service.id, abFormCsrf:csrfToken, abConfirm:t('admin:services.deleteConfirm'), abTitle:t('common:words.delete') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

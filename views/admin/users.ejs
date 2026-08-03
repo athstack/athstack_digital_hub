@@ -107,13 +107,10 @@
                                     </td>
                                     <td class="text-white-50"><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : '' %></td>
                                     <td>
-                                        <div class="d-flex gap-1">
-                                            <a href="/admin/users/<%= u.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill" title="<%= t('common:words.edit') %>"><i class="fa-solid fa-pen"></i></a>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/users/' + u.id + '/edit', abTitle:t('common:words.edit') }) %>
                                             <% if (!protectRow) { %>
-                                            <form method="POST" action="/admin/users/<%= u.id %>/delete" class="d-inline" data-confirm="<%= t('admin:users.deleteConfirm', {name: u.first_name + ' ' + u.last_name}) %>">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/admin/users/' + u.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('admin:users.deleteConfirm', {name: u.first_name + ' ' + u.last_name}), abTitle:t('common:words.delete') }) %>
                                             <% } %>
                                         </div>
                                     </td>

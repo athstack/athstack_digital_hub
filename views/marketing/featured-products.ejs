@@ -45,20 +45,14 @@
                                     <td class="py-3 px-4 text-muted"><%= product.first_name ? product.first_name + ' ' + product.last_name : t('marketing:featuredProducts.athstack') %></td>
                                     <td class="py-3 px-4 text-white"><%= product.total_sales %></td>
                                     <td class="py-3 px-4 text-center">
-                                        <form method="POST" action="/marketing/products/<%= product.id %>/featured" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm rounded-pill <%= product.featured ? 'btn-warning' : 'btn-outline-warning' %>">
-                                                <i class="fa-solid fa-star"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/marketing/products/' + product.id + '/featured', abFormCsrf:csrfToken, abOn: product.featured, abIcon:'fa-star', abTitle:t('marketing:featuredProducts.featured') }) %>
+                                        </div>
                                     </td>
                                     <td class="py-3 px-4 text-center">
-                                        <form method="POST" action="/marketing/products/<%= product.id %>/promoted" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm rounded-pill <%= product.is_promoted ? 'btn-success' : 'btn-outline-success' %>">
-                                                <i class="fa-solid fa-bullhorn"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'view', abFormAction:'/marketing/products/' + product.id + '/promoted', abFormCsrf:csrfToken, abOn: product.is_promoted, abIcon:'fa-bullhorn', abTitle:t('marketing:featuredProducts.promoted') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

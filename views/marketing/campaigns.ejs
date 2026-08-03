@@ -62,19 +62,11 @@
                                         <span class="badge <%= campaign.status === 'active' ? 'bg-success' : (campaign.status === 'archived' || campaign.status === 'completed' ? 'bg-secondary' : (campaign.status === 'paused' ? 'bg-warning text-dark' : 'bg-info text-dark')) %>"><%= t('marketing:status.' + campaign.status) %></span>
                                     </td>
                                     <td class="py-3 px-4 text-end">
-                                        <a href="/marketing/campaigns/<%= campaign.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/marketing/campaigns/<%= campaign.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="hidden" name="status" value="<%= campaign.status === 'active' ? 'paused' : 'active' %>">
-                                            <button type="submit" class="btn btn-sm <%= campaign.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill" title="<%= campaign.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') %>">
-                                                <i class="fa-solid <%= campaign.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="/marketing/campaigns/<%= campaign.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="hidden" name="status" value="archived">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="<%= t('marketing:campaigns.archive') %>"><i class="fa-solid fa-box-archive"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/campaigns/' + campaign.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/campaigns/' + campaign.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (campaign.status === 'active' ? 'paused' : 'active') + '">', abOn: campaign.status === 'active', abIcon: campaign.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: campaign.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-box-archive', abFormAction:'/marketing/campaigns/' + campaign.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="archived">', abTitle:t('marketing:campaigns.archive') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

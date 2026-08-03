@@ -96,19 +96,15 @@
                                     </td>
                                     <td class="text-white-50"><%= o.email %></td>
                                     <td>
-                                        <form method="POST" action="/admin/marketing-officers/<%= o.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="hidden" name="status" value="<%= o.status === 'active' ? 'inactive' : 'active' %>">
-                                            <button type="submit" class="btn btn-sm <%= o.status === 'active' ? 'btn-outline-secondary' : 'btn-outline-success' %> rounded-pill">
-                                                <%= o.status === 'active' ? t('admin:status.inactive') : t('admin:status.active') %>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/admin/marketing-officers/' + o.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (o.status === 'active' ? 'inactive' : 'active') + '">', abOn: o.status === 'active', abIcon: o.status === 'active' ? 'fa-toggle-on' : 'fa-toggle-off', abTitle: o.status === 'active' ? t('admin:status.inactive') : t('admin:status.active') }) %>
+                                        </div>
                                     </td>
                                     <td class="text-white-50"><%= o.created_at ? new Date(o.created_at).toLocaleDateString() : '' %></td>
                                     <td>
-                                        <div class="d-flex gap-1">
-                                            <a href="/admin/marketing-officers/<%= o.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill" title="<%= t('admin:marketingOfficers.editOfficer') %>"><i class="fa-solid fa-pen"></i></a>
-                                            <a href="/admin/marketing-officers/<%= o.id %>/permissions" class="btn btn-sm btn-outline-info rounded-pill" title="<%= t('admin:marketingOfficers.managePermissions') %>"><i class="fa-solid fa-key"></i></a>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/marketing-officers/' + o.id + '/edit', abTitle:t('admin:marketingOfficers.editOfficer') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'info', abIcon:'fa-key', abHref:'/admin/marketing-officers/' + o.id + '/permissions', abTitle:t('admin:marketingOfficers.managePermissions') }) %>
                                         </div>
                                     </td>
                                 </tr>

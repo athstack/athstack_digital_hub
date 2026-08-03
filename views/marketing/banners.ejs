@@ -40,13 +40,10 @@
                                     </td>
                                     <td class="py-3 px-4"><span class="badge <%= banner.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + banner.status) %></span></td>
                                     <td class="py-3 px-4 text-end">
-                                        <a href="/marketing/banners/<%= banner.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/marketing/banners/<%= banner.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm <%= banner.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= banner.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/banners/' + banner.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/banners/' + banner.id + '/status', abFormCsrf:csrfToken, abOn: banner.status === 'active', abIcon: banner.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: banner.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

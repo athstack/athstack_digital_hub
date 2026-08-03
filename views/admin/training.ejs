@@ -110,11 +110,10 @@
                                     <td class="text-white-50"><%= mod.enrollment_count || 0 %></td>
                                     <td><span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('admin:status.' + (mod.status||'').toLowerCase(), {defaultValue: mod.status}) %></span></td>
                                     <td>
-                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#editCourseModal<%= mod.id %>" title="<%= t('admin:training.editCourse') %>"><i class="fa-solid fa-pen"></i></button>
-                                        <form method="POST" action="/admin/training/delete/<%= mod.id %>" class="d-inline" data-confirm="<%= t('admin:training.deleteConfirm') %>">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen', abTitle:t('admin:training.editCourse'), abAttrs:'data-bs-toggle="modal" data-bs-target="#editCourseModal' + mod.id + '"' }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/admin/training/delete/' + mod.id, abFormCsrf:csrfToken, abConfirm:t('admin:training.deleteConfirm'), abTitle:t('common:words.delete') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

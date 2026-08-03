@@ -156,22 +156,25 @@
                                     <td class="text-white-50"><%= formatDate(msg.created_at) %></td>
                                     <td><span class="badge <%= msg.status === 'unread' ? 'bg-primary' : 'bg-secondary' %>"><%= msg.status === 'unread' ? t('admin:inbox.new') : (msg.status === 'replied' ? t('admin:status.replied') : t('admin:status.read')) %></span></td>
                                     <td>
-                                        <button type="button"
-                                            class="btn btn-premium-outline btn-sm rounded-pill view-msg"
-                                            title="<%= t('common:words.view') %>"
-                                            data-id="<%= msg.id %>"
-                                            data-name="<%= msg.name %>"
-                                            data-email="<%= msg.email %>"
-                                            data-phone="<%= msg.phone || '' %>"
-                                            data-subject="<%= (msg.subject || t('admin:inbox.noSubject')).replace(/"/g, '&quot;') %>"
-                                            data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
-                                            data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
-                                            data-replied-by="<%= msg.replied_first_name ? (msg.replied_first_name + ' ' + msg.replied_last_name) : '' %>"
-                                            data-replied-at="<%= msg.replied_at || '' %>"
-                                            data-status="<%= msg.status %>"
-                                            data-csrf="<%= csrfToken %>">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </button>
+                                        <div class="action-cell">
+                                            <button type="button"
+                                                class="action-btn action-btn--view view-msg"
+                                                title="<%= t('common:words.view') %>"
+                                                aria-label="<%= t('common:words.view') %>"
+                                                data-id="<%= msg.id %>"
+                                                data-name="<%= msg.name %>"
+                                                data-email="<%= msg.email %>"
+                                                data-phone="<%= msg.phone || '' %>"
+                                                data-subject="<%= (msg.subject || t('admin:inbox.noSubject')).replace(/"/g, '&quot;') %>"
+                                                data-message="<%= msg.message.replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                                data-reply="<%= (msg.reply_text || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n') %>"
+                                                data-replied-by="<%= msg.replied_first_name ? (msg.replied_first_name + ' ' + msg.replied_last_name) : '' %>"
+                                                data-replied-at="<%= msg.replied_at || '' %>"
+                                                data-status="<%= msg.status %>"
+                                                data-csrf="<%= csrfToken %>">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>
@@ -217,7 +220,7 @@
             <div class="modal-header d-flex align-items-center justify-content-between">
                 <h5 class="modal-title" id="msgModalTitle"><%= t('admin:inbox.messageFrom') %> —</h5>
                 <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-danger rounded-pill" id="msgDeleteHeaderBtn" title="<%= t('common:words.delete') %>">
+                    <button type="button" class="action-btn action-btn--delete" id="msgDeleteHeaderBtn" title="<%= t('common:words.delete') %>" aria-label="<%= t('common:words.delete') %>">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>

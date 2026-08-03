@@ -33,13 +33,10 @@
                                     <td class="py-3 px-4 text-muted"><%= promo.subtitle || '—' %></td>
                                     <td class="py-3 px-4"><span class="badge <%= promo.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + promo.status) %></span></td>
                                     <td class="py-3 px-4 text-end">
-                                        <a href="/marketing/promotions/<%= promo.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/marketing/promotions/<%= promo.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm <%= promo.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= promo.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/promotions/' + promo.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/promotions/' + promo.id + '/status', abFormCsrf:csrfToken, abOn: promo.status === 'active', abIcon: promo.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: promo.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

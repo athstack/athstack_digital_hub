@@ -36,18 +36,11 @@
                                     </td>
                                     <td class="py-3 px-4 text-muted"><%= post.published_at ? formatDate(post.published_at) : formatDate(post.created_at) %></td>
                                     <td class="py-3 px-4 text-end">
-                                        <a href="/marketing/blog/<%= post.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/marketing/blog/<%= post.id %>/status" class="d-inline me-1">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="hidden" name="status" value="<%= post.status === 'published' ? 'draft' : 'published' %>">
-                                            <button type="submit" class="btn btn-sm <%= post.status === 'published' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= post.status === 'published' ? 'fa-eye-slash' : 'fa-eye' %>"></i>
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="/marketing/blog/<%= post.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/blog/' + post.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'view', abFormAction:'/marketing/blog/' + post.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (post.status === 'published' ? 'draft' : 'published') + '">', abOn: post.status === 'published', abIcon: post.status === 'published' ? 'fa-eye-slash' : 'fa-eye', abTitle: post.status === 'published' ? t('marketing:reviews.hide') : t('marketing:reviews.unhide') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/blog/' + post.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

@@ -52,24 +52,18 @@
                                     <td class="col-stock text-white-50"><%= product.stock_quantity %></td>
                                     <td class="col-status">
                                         <button type="button"
-                                            class="btn btn-sm rounded-pill status-toggle <%= product.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary' %>"
+                                            class="action-btn action-btn--publish status-toggle <%= product.status === 'active' ? 'is-on' : '' %>"
                                             data-id="<%= product.id %>"
                                             data-status="<%= product.status %>"
-                                            title="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>">
+                                            title="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>"
+                                            aria-label="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>">
                                             <i class="fa-solid fa-<%= product.status === 'active' ? 'toggle-on' : 'toggle-off' %>"></i>
-                                            <span class="status-label"><%= t('admin:status.' + (product.status||'').toLowerCase(), {defaultValue: product.status}) %></span>
                                         </button>
                                     </td>
                                     <td class="col-actions">
-                                        <div class="d-flex gap-2 align-items-center">
-                                            <a href="/admin/products/edit/<%= product.id %>" class="btn-product-action btn-product-action-edit" title="<%= t('common:words.edit') %>"><i class="fa-solid fa-pen"></i></a>
-                                            <button type="button"
-                                                class="btn-product-action btn-product-action-delete btn-delete-product"
-                                                data-id="<%= product.id %>"
-                                                data-name="<%= product.name %>"
-                                                title="<%= t('common:words.delete') %>">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/products/edit/' + product.id, abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abButton:true, abClassExtra:'btn-delete-product', abAttrs:'data-id="' + product.id + '" data-name="' + product.name + '"', abTitle:t('common:words.delete') }) %>
                                         </div>
                                     </td>
                                 </tr>
@@ -192,9 +186,9 @@
                 if (data.success) {
                     el.dataset.status = data.status;
                     el.title = data.status === 'active' ? '<%= t('admin:products.clickDeactivate') %>' : '<%= t('admin:products.clickActivate') %>';
-                    el.className = 'btn btn-sm rounded-pill status-toggle ' + (data.status === 'active' ? 'btn-outline-success' : 'btn-outline-secondary');
+                    el.setAttribute('aria-label', el.title);
+                    el.className = 'action-btn action-btn--publish status-toggle ' + (data.status === 'active' ? 'is-on' : '');
                     el.querySelector('i').className = 'fa-solid fa-' + (data.status === 'active' ? 'toggle-on' : 'toggle-off');
-                    el.querySelector('.status-label').textContent = data.status;
                 } else {
                     alert(data.message || '<%= t('admin:products.updateStatusFailed') %>');
                 }

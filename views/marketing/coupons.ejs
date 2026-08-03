@@ -37,13 +37,10 @@
                                     <td class="py-3 px-4 text-muted"><%= coupon.used_count %><% if (coupon.max_uses) { %> / <%= coupon.max_uses %><% } %></td>
                                     <td class="py-3 px-4"><span class="badge <%= coupon.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + coupon.status) %></span></td>
                                     <td class="py-3 px-4 text-end">
-                                        <a href="/marketing/coupons/<%= coupon.id %>/edit" class="btn btn-sm btn-outline-secondary rounded-pill me-1"><i class="fa-solid fa-pen"></i></a>
-                                        <form method="POST" action="/marketing/coupons/<%= coupon.id %>/status" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm <%= coupon.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                <i class="fa-solid <%= coupon.status === 'active' ? 'fa-pause' : 'fa-play' %>"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/coupons/' + coupon.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/coupons/' + coupon.id + '/status', abFormCsrf:csrfToken, abOn: coupon.status === 'active', abIcon: coupon.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: coupon.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

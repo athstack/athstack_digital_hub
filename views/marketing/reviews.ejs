@@ -43,17 +43,14 @@
                                         <form method="POST" action="/marketing/reviews/<%= review.id %>/reply" class="d-flex gap-1">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                             <input type="text" name="reply" class="form-control form-control-sm" placeholder="<%= t('marketing:reviews.replyPlaceholder') %>" required>
-                                            <button type="submit" class="btn btn-sm btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
+                                            <button type="submit" class="action-btn action-btn--publish flex-shrink-0" title="<%= t('marketing:reviews.reply') %>" aria-label="<%= t('marketing:reviews.reply') %>"><i class="fa-solid fa-paper-plane"></i></button>
                                         </form>
                                         <% } %>
                                     </td>
                                     <td class="py-3 px-4 text-end">
-                                        <form method="POST" action="/marketing/reviews/<%= review.id %>/hide" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <button type="submit" class="btn btn-sm <%= review.is_hidden ? 'btn-outline-success' : 'btn-outline-warning' %> rounded-pill" title="<%= review.is_hidden ? t('marketing:reviews.unhide') : t('marketing:reviews.hide') %>">
-                                                <i class="fa-solid fa-eye<%= review.is_hidden ? '-slash' : '' %>"></i>
-                                            </button>
-                                        </form>
+                                        <div class="action-cell">
+                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/marketing/reviews/' + review.id + '/hide', abFormCsrf:csrfToken, abOn: review.is_hidden, abIcon: review.is_hidden ? 'fa-eye-slash' : 'fa-eye', abTitle: review.is_hidden ? t('marketing:reviews.unhide') : t('marketing:reviews.hide') }) %>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }) %>

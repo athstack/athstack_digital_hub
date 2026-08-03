@@ -57,16 +57,10 @@
                                             <td class="py-3 px-4"><span class="badge <%= sub.status === 'subscribed' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:newsletters.' + sub.status) %></span></td>
                                             <td class="py-3 px-4 text-muted small"><%= formatDate(sub.created_at) %></td>
                                             <td class="py-3 px-4 text-end">
-                                                <form method="POST" action="/marketing/newsletters/subscribers/<%= sub.id %>/status" class="d-inline me-1">
-                                                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                    <button type="submit" class="btn btn-sm <%= sub.status === 'subscribed' ? 'btn-outline-warning' : 'btn-outline-success' %> rounded-pill">
-                                                        <i class="fa-solid <%= sub.status === 'subscribed' ? 'fa-user-slash' : 'fa-user-check' %>"></i>
-                                                    </button>
-                                                </form>
-                                                <form method="POST" action="/marketing/newsletters/subscribers/<%= sub.id %>/delete" class="d-inline" onsubmit="return confirm('<%= t('common:confirm.areYouSure') %>');">
-                                                    <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-trash"></i></button>
-                                                </form>
+                                                <div class="action-cell">
+                                                    <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/newsletters/subscribers/' + sub.id + '/status', abFormCsrf:csrfToken, abOn: sub.status === 'subscribed', abIcon: sub.status === 'subscribed' ? 'fa-user-slash' : 'fa-user-check', abTitle: sub.status === 'subscribed' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                                    <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/newsletters/subscribers/' + sub.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
+                                                </div>
                                             </td>
                                         </tr>
                                         <% }) %>

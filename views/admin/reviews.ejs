@@ -128,25 +128,13 @@
                                     <td><small class="text-white-50"><%= review.created_at ? new Date(review.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '' %></small></td>
                                     <td>
                                         <div class="review-actions">
-                                            <button type="button" class="btn-action btn-action-edit" title="<%= t('admin:reviews.replyToReview') %>" data-bs-toggle="modal" data-bs-target="#replyReviewModal" data-review-id="<%= review.id %>" data-review-name="<%= review.product_name || '' %>"><i class="fa-solid fa-reply"></i></button>
-                                            <a href="/admin/reviews/<%= review.id %>/edit" class="btn-action btn-action-edit" title="<%= t('common:words.edit') %>"><i class="fa-solid fa-pen"></i></a>
-                                            <form method="POST" action="/admin/reviews/<%= review.id %>/hide" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-hide" title="<%= review.is_hidden ? t('admin:reviews.unhide') : t('admin:reviews.hide') %>"><i class="fa-solid <%= review.is_hidden ? 'fa-eye' : 'fa-eye-slash' %>"></i></button>
-                                            </form>
-                                            <form method="POST" action="/admin/reviews/<%= review.id %>/delete" class="d-inline" data-confirm="<%= t('admin:reviews.deleteConfirm') %>">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-delete" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash-can"></i></button>
-                                            </form>
+                                            <%- include('../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-reply', abTitle:t('admin:reviews.replyToReview'), abAttrs:'data-bs-toggle="modal" data-bs-target="#replyReviewModal" data-review-id="' + review.id + '" data-review-name="' + (review.product_name || '') + '"' }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/reviews/' + review.id + '/edit', abTitle:t('common:words.edit') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/admin/reviews/' + review.id + '/hide', abFormCsrf:csrfToken, abIcon: review.is_hidden ? 'fa-eye' : 'fa-eye-slash', abOn: review.is_hidden, abTitle: review.is_hidden ? t('admin:reviews.unhide') : t('admin:reviews.hide') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-trash-can', abFormAction:'/admin/reviews/' + review.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('admin:reviews.deleteConfirm'), abTitle:t('common:words.delete') }) %>
                                             <% if (review.status === 'pending') { %>
-                                            <form method="POST" action="/admin/reviews/<%= review.id %>/approve" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-approve" title="<%= t('admin:reviews.approve') %>"><i class="fa-solid fa-check"></i></button>
-                                            </form>
-                                            <form method="POST" action="/admin/reviews/<%= review.id %>/reject" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn-action btn-action-reject" title="<%= t('admin:reviews.reject') %>"><i class="fa-solid fa-xmark"></i></button>
-                                            </form>
+                                            <%- include('../partials/actionButton', { abVariant:'approve', abFormAction:'/admin/reviews/' + review.id + '/approve', abFormCsrf:csrfToken, abTitle:t('admin:reviews.approve') }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'reject', abFormAction:'/admin/reviews/' + review.id + '/reject', abFormCsrf:csrfToken, abTitle:t('admin:reviews.reject') }) %>
                                             <% } else if (review.approver_first_name) { %>
                                             <span class="approver-label"><%= formatDisplayName(review.approver_first_name, review.approver_last_name) %></span>
                                             <% } %>
