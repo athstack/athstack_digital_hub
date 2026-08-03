@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "商品名称、价格和分类为必填项。",
     "productCreated": "商品创建成功。",
+    "productSkuDuplicate": "SKU 已存在。请重试。",
     "productNotFound": "商品未找到。",
     "editOwnOnly": "您只能编辑自己的商品。",
     "productUpdated": "商品更新成功。",
@@ -128,6 +129,7 @@
     "namePlaceholder": "例如：Dell XPS 15 Laptop",
     "sku": "SKU",
     "skuPlaceholder": "例如：DELL-XPS-15",
+    "generateSku": "自动生成",
     "descriptionPlaceholder": "商品描述...",
     "price": "价格（$）",
     "discountPrice": "折扣价（$）",

@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "Jina la bidhaa, bei, na kategoria vinahitajika.",
     "productCreated": "Bidhaa imeundwa kwa mafanikio.",
+    "productSkuDuplicate": "SKU tayari ipo. Tafadhali jaribu tena.",
     "productNotFound": "Bidhaa haipatikani.",
     "editOwnOnly": "Unaweza kuhariri bidhaa zako mwenyewe pekee.",
     "productUpdated": "Bidhaa imesasishwa kwa mafanikio.",
@@ -128,6 +129,7 @@
     "namePlaceholder": "mf. Dell XPS 15 Laptop",
     "sku": "SKU",
     "skuPlaceholder": "mf. DELL-XPS-15",
+    "generateSku": "Zalisha kiotomatiki",
     "descriptionPlaceholder": "Maelezo ya bidhaa...",
     "price": "Bei ($)",
     "discountPrice": "Bei ya Punguzo ($)",

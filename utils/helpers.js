@@ -15,6 +15,26 @@ function generateSlug(text) {
 }
 
 /**
+ * Generate a product SKU in the format TB-[CAT]-[INITIALS]-[4DIGIT],
+ * e.g. TB-ACC-USBC-8492 for category "Accessories" and product "USB-C Cable".
+ * @param {string} name - Product name used to derive the initials
+ * @param {string} [category] - Category name used to derive the category code
+ * @param {Object} [opts]
+ * @param {boolean} [opts.random=false] - Use a random 4-digit suffix instead of the time-based one
+ * @returns {string}
+ */
+function generateSku(name, category = '', { random = false } = {}) {
+  const clean = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+  const catCode = clean(category).replace(/[^A-Z0-9]/g, '').slice(0, 3) || 'GEN';
+  const words = clean(name).split(/[^A-Z0-9]+/).filter(Boolean);
+  const initials = words.map((w) => w[0]).join('').slice(0, 4) || 'PRD';
+  const suffix = random
+    ? String(Math.floor(1000 + Math.random() * 9000))
+    : Date.now().toString().slice(-4);
+  return ['TB', catCode, initials, suffix].join('-');
+}
+
+/**
  * Locale-aware currency formatter.
  *
  * Formatting follows the selected language/locale, e.g.:
@@ -168,6 +188,7 @@ function paginate(array, page = 1, limit = 10) {
 
 module.exports = {
   generateSlug,
+  generateSku,
   formatCurrency,
   formatDate,
   truncateText,

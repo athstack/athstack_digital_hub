@@ -88,6 +88,10 @@ class ProductModel {
     );
   }
 
+  async findBySku(sku) {
+    return queryOne('SELECT id FROM products WHERE sku = ?', [sku]);
+  }
+
   async findById(id) {
     return queryOne(
       `SELECT p.*, c.name AS category_name, c.slug AS category_slug,

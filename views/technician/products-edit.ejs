@@ -21,11 +21,14 @@
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label"><%= t('technician:productForm.name') %> *</label>
-                                <input type="text" name="name" class="form-control" required value="<%= product.name %>">
+                                <input type="text" name="name" id="productName" class="form-control" required value="<%= product.name %>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><%= t('technician:productForm.sku') %></label>
-                                <input type="text" name="sku" class="form-control" value="<%= product.sku || '' %>">
+                                <div class="input-group">
+                                    <input type="text" name="sku" id="productSku" class="form-control" value="<%= product.sku || '' %>">
+                                    <button type="button" id="skuGenerateBtn" class="btn btn-premium-outline" title="<%= t('technician:productForm.generateSku') %>" aria-label="<%= t('technician:productForm.generateSku') %>"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label"><%= t('common:words.description') %></label>
@@ -45,7 +48,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><%= t('common:words.category') %> *</label>
-                                <select name="category_id" class="form-select" required>
+                                <select name="category_id" id="productCategory" class="form-select" required>
                                     <option value=""><%= t('technician:productForm.selectCategory') %></option>
                                     <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
                                     <option value="<%= cat.id %>" <%= product.category_id == cat.id ? 'selected' : '' %>><%= cat.name %></option>
@@ -99,5 +102,53 @@
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    var nameInput = document.getElementById('productName');
+    var catSelect = document.getElementById('productCategory');
+    var skuInput = document.getElementById('productSku');
+    var genBtn = document.getElementById('skuGenerateBtn');
+    if (!nameInput || !skuInput) return;
+
+    var manual = skuInput.value.trim().length > 0;
+
+    function catCode() {
+        var text = catSelect && catSelect.selectedIndex >= 0 ? catSelect.options[catSelect.selectedIndex].text : '';
+        var clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        return clean.slice(0, 3) || 'GEN';
+    }
+
+    function initials() {
+        var words = nameInput.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+        return words.map(function(w) { return w[0]; }).join('').slice(0, 4) || 'PRD';
+    }
+
+    function generate() {
+        var suffix = String(Math.floor(1000 + Math.random() * 9000));
+        return ['TB', catCode(), initials(), suffix].join('-');
+    }
+
+    function autoFill() {
+        if (manual) return;
+        skuInput.value = nameInput.value.trim() ? generate() : '';
+    }
+
+    nameInput.addEventListener('input', autoFill);
+    if (catSelect) catSelect.addEventListener('change', autoFill);
+
+    skuInput.addEventListener('input', function() {
+        manual = skuInput.value.trim().length > 0;
+    });
+
+    if (genBtn) {
+        genBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            manual = false;
+            skuInput.value = generate();
+        });
+    }
+})();
+</script>
 
 <%- include('../partials/footer') %>

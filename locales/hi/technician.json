@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "प्रोडक्ट का नाम, मूल्य और श्रेणी आवश्यक हैं।",
     "productCreated": "प्रोडक्ट सफलतापूर्वक बनाया गया।",
+    "productSkuDuplicate": "SKU पहले से मौजूद है। कृपया पुनः प्रयास करें।",
     "productNotFound": "प्रोडक्ट नहीं मिला।",
     "editOwnOnly": "आप केवल अपने स्वयं के प्रोडक्ट संपादित कर सकते हैं।",
     "productUpdated": "प्रोडक्ट सफलतापूर्वक अपडेट हुआ।",
@@ -128,6 +129,7 @@
     "namePlaceholder": "जैसे Dell XPS 15 Laptop",
     "sku": "SKU",
     "skuPlaceholder": "जैसे DELL-XPS-15",
+    "generateSku": "स्वचालित रूप से उत्पन्न करें",
     "descriptionPlaceholder": "प्रोडक्ट विवरण...",
     "price": "मूल्य ($)",
     "discountPrice": "छूट मूल्य ($)",

@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "El nombre del producto, el precio y la categoría son obligatorios.",
     "productCreated": "Producto creado con éxito.",
+    "productSkuDuplicate": "El SKU ya existe. Inténtalo de nuevo.",
     "productNotFound": "Producto no encontrado.",
     "editOwnOnly": "Solo puedes editar tus propios productos.",
     "productUpdated": "Producto actualizado con éxito.",
@@ -128,6 +129,7 @@
     "namePlaceholder": "p. ej. Portátil Dell XPS 15",
     "sku": "SKU",
     "skuPlaceholder": "p. ej. DELL-XPS-15",
+    "generateSku": "Generar automáticamente",
     "descriptionPlaceholder": "Descripción del producto...",
     "price": "Precio ($)",
     "discountPrice": "Precio de Descuento ($)",

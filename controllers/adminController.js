@@ -8,7 +8,7 @@ const OrderModel = require('../models/OrderModel');
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug } = require('../utils/helpers');
+const { generateSlug, generateSku } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 const { logActivity } = require('../helpers/activityLog');
@@ -534,20 +534,38 @@ exports.createProduct = async (req, res, next) => {
       slug = `${baseSlug}-${Date.now()}`;
     }
 
-    await ProductModel.create({
-      category_id: parseInt(category_id),
-      name,
-      slug,
-      description: description || '',
-      price: parseFloat(price),
-      discount_price: discount_price ? parseFloat(discount_price) : null,
-      stock_quantity: parseInt(stock_quantity) || 0,
-      main_image: mainImage,
-      technician_id: req.session.userId,
-      status: 'active',
-      featured: 0,
-      sku: sku || null
-    });
+    let finalSku = sku ? String(sku).trim() : '';
+    if (!finalSku) {
+      const category = await CategoryModel.findById(parseInt(category_id));
+      const categoryName = category ? category.name : '';
+      for (let attempt = 0; attempt < 20; attempt++) {
+        finalSku = generateSku(name, categoryName, { random: true });
+        if (!(await ProductModel.findBySku(finalSku))) break;
+      }
+    }
+
+    try {
+      await ProductModel.create({
+        category_id: parseInt(category_id),
+        name,
+        slug,
+        description: description || '',
+        price: parseFloat(price),
+        discount_price: discount_price ? parseFloat(discount_price) : null,
+        stock_quantity: parseInt(stock_quantity) || 0,
+        main_image: mainImage,
+        technician_id: req.session.userId,
+        status: 'active',
+        featured: 0,
+        sku: finalSku || null
+      });
+    } catch (err) {
+      if (err && (err.code === 'ER_DUP_ENTRY' || err.errno === 1062)) {
+        req.flash('error', req.t('admin:flash.productSkuDuplicate'));
+        return res.redirect('/admin/products/new');
+      }
+      throw err;
+    }
 
     const created = await ProductModel.findBySlug(slug);
     if (created && req.files && req.files['gallery_images']) {
@@ -604,16 +622,34 @@ exports.updateProduct = async (req, res, next) => {
       mainImage = await processUploadedFile(mainImageFile, 'products');
     }
 
-    await ProductModel.update(productId, {
-      category_id: parseInt(category_id) || product.category_id,
-      name: name || product.name,
-      description: description || '',
-      price: parseFloat(price) || product.price,
-      discount_price: discount_price !== undefined ? (discount_price ? parseFloat(discount_price) : null) : product.discount_price,
-      stock_quantity: parseInt(stock_quantity) || 0,
-      main_image: mainImage,
-      sku: sku !== undefined ? (sku || null) : product.sku
-    });
+    let finalSku = sku !== undefined ? (sku ? String(sku).trim() : '') : product.sku;
+    if (!finalSku) {
+      const category = await CategoryModel.findById(parseInt(category_id) || product.category_id);
+      const categoryName = category ? category.name : '';
+      for (let attempt = 0; attempt < 20; attempt++) {
+        finalSku = generateSku(name || product.name, categoryName, { random: true });
+        if (!(await ProductModel.findBySku(finalSku))) break;
+      }
+    }
+
+    try {
+      await ProductModel.update(productId, {
+        category_id: parseInt(category_id) || product.category_id,
+        name: name || product.name,
+        description: description || '',
+        price: parseFloat(price) || product.price,
+        discount_price: discount_price !== undefined ? (discount_price ? parseFloat(discount_price) : null) : product.discount_price,
+        stock_quantity: parseInt(stock_quantity) || 0,
+        main_image: mainImage,
+        sku: finalSku
+      });
+    } catch (err) {
+      if (err && (err.code === 'ER_DUP_ENTRY' || err.errno === 1062)) {
+        req.flash('error', req.t('admin:flash.productSkuDuplicate'));
+        return res.redirect('/admin/products/edit/' + productId);
+      }
+      throw err;
+    }
 
     if (req.files && req.files['gallery_images'] && req.files['gallery_images'].length > 0) {
       const galleryPaths = await processUploadedFiles(req.files['gallery_images'], 'products');

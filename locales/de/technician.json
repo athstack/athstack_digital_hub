@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "Produktname, Preis und Kategorie sind erforderlich.",
     "productCreated": "Produkt erfolgreich erstellt.",
+    "productSkuDuplicate": "SKU existiert bereits. Bitte versuchen Sie es erneut.",
     "productNotFound": "Produkt nicht gefunden.",
     "editOwnOnly": "Sie können nur Ihre eigenen Produkte bearbeiten.",
     "productUpdated": "Produkt erfolgreich aktualisiert.",
@@ -128,6 +129,7 @@
     "namePlaceholder": "z. B. Dell XPS 15 Laptop",
     "sku": "SKU",
     "skuPlaceholder": "z. B. DELL-XPS-15",
+    "generateSku": "Automatisch generieren",
     "descriptionPlaceholder": "Produktbeschreibung...",
     "price": "Preis ($)",
     "discountPrice": "Rabattpreis ($)",

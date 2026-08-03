@@ -59,6 +59,7 @@
   "flash": {
     "productRequiredFields": "اسم المنتج والسعر والفئة مطلوبة.",
     "productCreated": "تم إنشاء المنتج بنجاح.",
+    "productSkuDuplicate": "رمز SKU موجود بالفعل. يرجى المحاولة مرة أخرى.",
     "productNotFound": "المنتج غير موجود.",
     "editOwnOnly": "يمكنك فقط تعديل منتجاتك الخاصة.",
     "productUpdated": "تم تحديث المنتج بنجاح.",
@@ -128,6 +129,7 @@
     "namePlaceholder": "مثال: Dell XPS 15 Laptop",
     "sku": "SKU",
     "skuPlaceholder": "مثال: DELL-XPS-15",
+    "generateSku": "توليد تلقائي",
     "descriptionPlaceholder": "وصف المنتج...",
     "price": "السعر ($)",
     "discountPrice": "سعر الخصم ($)",
