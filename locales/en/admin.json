@@ -15,6 +15,8 @@
     "settings": "Settings",
     "marketingOfficers": "Marketing Officers",
     "activityLogs": "Activity Logs",
+    "roles": "Roles",
+    "permissions": "Permissions",
     "logout": "Logout"
   },
   "title": {
@@ -38,7 +40,9 @@
     "createMarketingOfficer": "Create Marketing Officer - TechBridge Digital Hub",
     "editMarketingOfficer": "Edit Marketing Officer - TechBridge Digital Hub",
     "marketingOfficerPermissions": "Marketing Officer Permissions - TechBridge Digital Hub",
-    "activityLogs": "Activity Logs - TechBridge Digital Hub"
+    "activityLogs": "Activity Logs - TechBridge Digital Hub",
+    "roleManagement": "Role Management - TechBridge Digital Hub",
+    "permissionManagement": "Permission Management - TechBridge Digital Hub"
   },
   "words": {
     "admin": "Admin",
@@ -135,7 +139,19 @@
     "technician": "Technician",
     "admin": "Admin",
     "superAdmin": "Super Admin",
-    "marketingOfficer": "Marketing Officer"
+    "super_admin": "Super Admin",
+    "marketingOfficer": "Marketing Officer",
+    "marketing_officer": "Marketing Officer",
+    "permissionsGranted": "permissions granted",
+    "editPermissions": "Edit Permissions",
+    "superAdminNote": "Super Administrators have unrestricted access to every permission and cannot be modified.",
+    "saveRole": "Save Role"
+  },
+  "permissionManagement": {
+    "addPermission": "Add Permission",
+    "permissionName": "Permission",
+    "module": "Module",
+    "description": "Description"
   },
   "flash": {
     "invalidUserId": "Invalid user ID.",
@@ -219,7 +235,10 @@
     "marketingOfficerUpdated": "Marketing officer updated successfully.",
     "marketingOfficerStatusUpdated": "Marketing officer status updated.",
     "passwordReset": "Password reset successfully.",
-    "permissionsUpdated": "Permissions updated successfully."
+    "permissionsUpdated": "Permissions updated successfully.",
+    "rolePermissionsUpdated": "Role permissions updated successfully.",
+    "permissionAdded": "Permission added successfully.",
+    "invalidPermissionName": "Invalid permission name. Use lowercase letters, numbers and underscores only."
   },
   "validation": {
     "productNameRequired": "Product name is required",
@@ -242,7 +261,18 @@
     "recentOrders": "Recent Orders",
     "colRef": "Ref",
     "noRecentRepairs": "No recent repairs.",
-    "noRecentOrders": "No recent orders."
+    "noRecentOrders": "No recent orders.",
+    "activeCampaigns": "Active Campaigns",
+    "websiteVisitors": "Visitors (30 days)",
+    "pendingApprovals": "Pending Approvals",
+    "totalUsers": "Total Users",
+    "systemHealth": "System Health",
+    "database": "Database",
+    "online": "Online",
+    "offline": "Offline",
+    "uptime": "Uptime",
+    "memory": "Memory",
+    "nodeVersion": "Node.js"
   },
   "analytics": {
     "badge": "Analytics",

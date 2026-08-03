@@ -12,11 +12,25 @@ const { generateSlug } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 const { logActivity } = require('../helpers/activityLog');
+const {
+  PERMISSIONS,
+  ROLE_PERMISSIONS,
+  PERMISSION_MODULES,
+  ROLES,
+  ROLE_NAMES
+} = require('../config/permissions');
+const {
+  getRolePermissions,
+  setRolePermissions,
+  getCatalogPermissions,
+  addCatalogPermission
+} = require('../helpers/rbac');
 
 exports.getDashboard = async (req, res, next) => {
   try {
     const totalClients = await UserModel.countAll({ role: 'customer' });
     const totalTechnicians = await UserModel.countAll({ role: 'technician' });
+    const totalUsers = await UserModel.countAll();
     const [productCountRow] = await pool.execute('SELECT COUNT(*) AS count FROM products');
 
     const [pendingBookings] = await pool.execute(
@@ -30,6 +44,9 @@ exports.getDashboard = async (req, res, next) => {
     );
     const [totalOrders] = await pool.execute(
       "SELECT COUNT(*) AS count FROM orders"
+    );
+    const [totalRepairs] = await pool.execute(
+      'SELECT COUNT(*) AS count FROM repair_requests'
     );
     const [unreadMessages] = await pool.execute(
       "SELECT COUNT(*) AS count FROM contact_messages WHERE status = 'unread'"
@@ -52,23 +69,57 @@ exports.getDashboard = async (req, res, next) => {
        ORDER BY o.created_at DESC LIMIT 5`
     );
 
+    // Super Admin / system-wide metrics
+    const [activeCampaigns] = await pool.execute(
+      "SELECT COUNT(*) AS count FROM marketing_campaigns WHERE status = 'active'"
+    );
+    const [visitors30] = await pool.execute(
+      'SELECT COUNT(DISTINCT visitor_key) AS count FROM website_visits WHERE visit_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)'
+    );
+    const [pendingApprovals] = await pool.execute(
+      "SELECT (SELECT COUNT(*) FROM users WHERE status = 'pending') + (SELECT COUNT(*) FROM reviews WHERE status = 'pending') + (SELECT COUNT(*) FROM testimonials WHERE status = 'pending') AS count"
+    );
+
+    let systemHealth = null;
+    if (req.user && req.user.role === ROLES.SUPER_ADMIN) {
+      let dbOk = true;
+      try {
+        await pool.query('SELECT 1');
+      } catch (e) {
+        dbOk = false;
+      }
+      systemHealth = {
+        database: dbOk,
+        uptimeSeconds: Math.floor(process.uptime()),
+        memoryMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+        nodeVersion: process.version
+      };
+    }
+
     const metrics = {
       revenue: totalRevenue[0].total,
       pending_orders: pendingOrders[0].count,
       total_orders: totalOrders[0].count,
+      total_repairs: totalRepairs[0].count,
       pending_bookings: pendingBookings[0].count,
       total_clients: totalClients,
       total_technicians: totalTechnicians,
+      total_users: totalUsers,
       total_products: productCountRow[0].count,
       unread_messages: unreadMessages[0].count,
-      pending_reviews: pendingReviews[0].count
+      pending_reviews: pendingReviews[0].count,
+      active_campaigns: activeCampaigns[0].count,
+      website_visitors: visitors30[0].count,
+      pending_approvals: pendingApprovals[0].count,
+      isSuperAdmin: !!(req.user && req.user.role === ROLES.SUPER_ADMIN)
     };
 
     res.render('admin/dashboard', {
       title: req.t('admin:title.dashboard'),
       metrics,
       recentBookings,
-      recentOrders
+      recentOrders,
+      systemHealth
     });
   } catch (err) {
     next(err);
@@ -1377,26 +1428,29 @@ exports.getAnalytics = async (req, res, next) => {
 };
 
 // ---------------------------------------------------------------------------
-// Marketing Officer management (admin only)
+// Marketing Officer management (role + permission management — super admin only)
 // ---------------------------------------------------------------------------
 
+/**
+ * Permission toggles exposed in the marketing-officer editor. Drawn from the
+ * central catalog so the UI can never drift from the real authorization model.
+ */
 const MARKETING_PERMISSIONS = [
-  { key: 'marketing:dashboard', label: 'marketing:permissions.dashboard' },
-  { key: 'marketing:campaigns', label: 'marketing:permissions.campaigns' },
-  { key: 'marketing:promotions', label: 'marketing:permissions.promotions' },
-  { key: 'marketing:coupons', label: 'marketing:permissions.coupons' },
-  { key: 'marketing:banners', label: 'marketing:permissions.banners' },
-  { key: 'marketing:blog', label: 'marketing:permissions.blog' },
-  { key: 'marketing:testimonials', label: 'marketing:permissions.testimonials' },
-  { key: 'marketing:announcements', label: 'marketing:permissions.announcements' },
-  { key: 'marketing:reviews', label: 'marketing:permissions.reviews' },
-  { key: 'marketing:feedback', label: 'marketing:permissions.feedback' },
-  { key: 'marketing:newsletters', label: 'marketing:permissions.newsletters' },
-  { key: 'marketing:featured_products', label: 'marketing:permissions.featuredProducts' },
-  { key: 'marketing:analytics', label: 'marketing:permissions.analytics' },
-  { key: 'marketing:reports', label: 'marketing:permissions.reports' },
-  { key: 'marketing:profile', label: 'marketing:permissions.profile' },
-  { key: 'marketing:settings', label: 'marketing:permissions.settings' }
+  { key: PERMISSIONS.VIEW_DASHBOARD, label: 'marketing:permissions.dashboard' },
+  { key: PERMISSIONS.MANAGE_CAMPAIGNS, label: 'marketing:permissions.campaigns' },
+  { key: PERMISSIONS.MANAGE_PROMOTIONS, label: 'marketing:permissions.promotions' },
+  { key: PERMISSIONS.MANAGE_COUPONS, label: 'marketing:permissions.coupons' },
+  { key: PERMISSIONS.MANAGE_FEATURED_PRODUCTS, label: 'marketing:permissions.featured_products' },
+  { key: PERMISSIONS.MANAGE_BLOG, label: 'marketing:permissions.blog' },
+  { key: PERMISSIONS.MANAGE_BANNERS, label: 'marketing:permissions.banners' },
+  { key: PERMISSIONS.MANAGE_ANNOUNCEMENTS, label: 'marketing:permissions.announcements' },
+  { key: PERMISSIONS.MANAGE_TESTIMONIALS, label: 'marketing:permissions.testimonials' },
+  { key: PERMISSIONS.MANAGE_REVIEWS, label: 'marketing:permissions.reviews' },
+  { key: PERMISSIONS.MANAGE_MESSAGES, label: 'marketing:permissions.feedback' },
+  { key: PERMISSIONS.MANAGE_NEWSLETTERS, label: 'marketing:permissions.newsletters' },
+  { key: PERMISSIONS.VIEW_MARKETING_ANALYTICS, label: 'marketing:permissions.analytics' },
+  { key: PERMISSIONS.MANAGE_PROFILE, label: 'marketing:permissions.profile' },
+  { key: PERMISSIONS.MANAGE_SETTINGS, label: 'marketing:permissions.settings' }
 ];
 
 async function getMarketingPermissionMap(userId) {
@@ -1648,6 +1702,105 @@ exports.updateMarketingOfficerPermissions = async (req, res, next) => {
     await logActivity(req, 'update_permissions', 'marketing_officer', userId);
     req.flash('success', req.t('admin:flash.permissionsUpdated'));
     res.redirect('/admin/marketing-officers/' + userId + '/permissions');
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Role Management (super admin only)
+// ---------------------------------------------------------------------------
+
+exports.getRoles = async (req, res, next) => {
+  try {
+    const roles = Object.values(ROLES).map((role) => ({
+      role,
+      nameKey: ROLE_NAMES[role]
+    }));
+
+    const rolesWithPermissions = [];
+    for (const entry of roles) {
+      const current = await getRolePermissions(entry.role);
+      rolesWithPermissions.push({ ...entry, permissions: current });
+    }
+
+    const modulePermissions = PERMISSION_MODULES.map((mod) => ({
+      key: mod.key,
+      label: mod.label,
+      permissions: mod.permissions
+    }));
+
+    res.render('admin/roles', {
+      title: req.t('admin:title.roleManagement'),
+      roles: rolesWithPermissions,
+      modulePermissions,
+      ALL_PERMISSIONS: modulePermissions.flatMap((m) => m.permissions)
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateRolePermissions = async (req, res, next) => {
+  try {
+    const role = req.params.role;
+    if (!ROLE_NAMES[role]) {
+      req.flash('error', req.t('admin:flash.invalidRole'));
+      return res.redirect('/admin/roles');
+    }
+
+    // Never allow a role to be stripped to nothing unexpectedly; super_admin is
+    // always treated as having every permission regardless of DB rows.
+    let selected = req.body.permissions;
+    if (!Array.isArray(selected)) {
+      selected = selected ? [selected] : [];
+    }
+    selected = selected.filter((p) => ROLE_PERMISSIONS[role].includes(p));
+
+    if (role === ROLES.SUPER_ADMIN) {
+      selected = Object.values(PERMISSIONS);
+    }
+
+    await setRolePermissions(role, selected);
+    await logActivity(req, 'update_permissions', 'role', null);
+    req.flash('success', req.t('admin:flash.rolePermissionsUpdated'));
+    res.redirect('/admin/roles');
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Permission Management (super admin only)
+// ---------------------------------------------------------------------------
+
+exports.getPermissions = async (req, res, next) => {
+  try {
+    const rows = await getCatalogPermissions();
+    res.render('admin/permissions', {
+      title: req.t('admin:title.permissionManagement'),
+      permissions: rows
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.addPermission = async (req, res, next) => {
+  try {
+    const permission = String(req.body.permission || '').trim();
+    const module = String(req.body.module || 'general').trim() || 'general';
+    const description = String(req.body.description || '').trim() || null;
+
+    if (!/^[a-z][a-z0-9_]{1,99}$/.test(permission)) {
+      req.flash('error', req.t('admin:flash.invalidPermissionName'));
+      return res.redirect('/admin/permissions');
+    }
+
+    await addCatalogPermission(permission, module, description);
+    await logActivity(req, 'create', 'permission', null);
+    req.flash('success', req.t('admin:flash.permissionAdded'));
+    res.redirect('/admin/permissions');
   } catch (err) {
     next(err);
   }

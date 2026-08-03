@@ -183,43 +183,13 @@ function isMarketingOfficer(req, res, next) {
 }
 
 /**
- * Require a specific permission. Admins bypass the permission check.
- * Marketing officers are checked against role_permissions (default set) and
- * user_permissions (per-user grants). Supports user-level revokes where the
- * permission exists in user_permissions with granted = 0.
+ * Deprecated. Delegates to the centralized RBAC middleware (middleware/rbac.js).
+ * Kept only for backward compatibility — new code must use requirePermission.
  * @param {string} permission
  */
 function hasPermission(permission) {
-  return async (req, res, next) => {
-    const role = req.session && req.session.userRole;
-    if (['admin', 'super_admin'].includes(role)) return next();
-
-    if (role === 'marketing_officer' && req.session.userId) {
-      try {
-        const override = await queryOne(
-          'SELECT granted FROM user_permissions WHERE user_id = ? AND permission = ?',
-          [req.session.userId, permission]
-        );
-        if (override) {
-          if (Number(override.granted) === 1) return next();
-          req.flash('error', 'Access denied. You do not have permission to perform this action.');
-          return res.redirect('/marketing');
-        }
-        const rolePerm = await queryOne(
-          'SELECT permission FROM role_permissions WHERE role = ? AND permission = ?',
-          [role, permission]
-        );
-        if (rolePerm) return next();
-        req.flash('error', 'Access denied. You do not have permission to perform this action.');
-        return res.redirect('/marketing');
-      } catch (err) {
-        return next(err);
-      }
-    }
-
-    req.flash('error', 'Access denied.');
-    res.redirect('/');
-  };
+  const { requirePermission } = require('./rbac');
+  return requirePermission(permission);
 }
 
 /**

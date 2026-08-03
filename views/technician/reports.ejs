@@ -1,0 +1,82 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/techSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-chart-pie me-2 text-info"></i><%= t('technician:reports.heading') %></h2>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-info bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                <i class="fa-solid fa-receipt text-info"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-bold mb-0"><%= summary ? summary.total_orders : 0 %></h5>
+                                <small class="text-white-50"><%= t('technician:reports.totalOrders') %></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-success bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                <i class="fa-solid fa-sack-dollar text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-bold mb-0"><%= summary ? formatCurrency(summary.total_revenue) : formatCurrency(0) %></h5>
+                                <small class="text-white-50"><%= t('technician:reports.totalRevenue') %></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-3 d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                                <i class="fa-solid fa-wrench text-warning"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-white fw-bold mb-0"><%= completedRepairs || 0 %></h5>
+                                <small class="text-white-50"><%= t('technician:reports.completedRepairs') %></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (orders && orders.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th><%= t('technician:words.order') %></th><th><%= t('technician:words.product') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.quantity') %></th><th><%= t('common:words.total') %></th><th><%= t('common:words.status') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(o => { %>
+                                <tr>
+                                    <td class="text-white fw-bold"><%= o.order_reference || ('#' + o.order_id) %></td>
+                                    <td class="text-muted"><%= o.product_name %></td>
+                                    <td class="text-muted"><%= formatDate(o.created_at) %></td>
+                                    <td class="text-muted"><%= o.quantity %></td>
+                                    <td class="text-primary fw-bold"><%= formatCurrency(o.total_price) %></td>
+                                    <td><span class="badge <%= getStatusBadgeClass(o.order_status) %>"><%= t('technician:status.' + (o.order_status||'').toLowerCase(), {defaultValue: o.order_status}) %></span></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-chart-pie fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold"><%= t('technician:reports.noReports') %></h4>
+                    <p class="text-muted"><%= t('technician:reports.noReportsHint') %></p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

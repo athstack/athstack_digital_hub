@@ -82,6 +82,7 @@
                                     </td>
                                     <td class="text-white-50"><%= u.email %></td>
                                     <td>
+                                        <% if (can('manage_roles')) { %>
                                         <select class="form-select form-select-sm bg-dark text-white border-secondary role-select" style="width:120px;" data-user-id="<%= u.id %>" data-original="<%= u.role %>" <%= protectRow ? 'disabled' : '' %>>
                                             <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
                                             <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
@@ -89,6 +90,9 @@
                                             <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
                                             <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
                                         </select>
+                                        <% } else { %>
+                                        <span class="badge bg-secondary text-capitalize"><%= t('admin:roles.' + u.role) %></span>
+                                        <% } %>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">

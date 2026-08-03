@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/techSidebar') %>
+            </div>
+            <div class="col-lg-9">
+                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-envelope me-2 text-info"></i><%= t('technician:messages.heading') %></h2>
+
+                <% if (messages && messages.length > 0) { %>
+                <div class="glass-card no-lift p-4">
+                    <div class="table-responsive">
+                        <table class="table table-dark align-middle mb-0">
+                            <thead>
+                                <tr><th><%= t('technician:messages.subject') %></th><th><%= t('common:words.date') %></th><th><%= t('technician:messages.status') %></th><th><%= t('technician:words.action') %></th></tr>
+                            </thead>
+                            <tbody>
+                                <% messages.forEach(m => { %>
+                                <tr>
+                                    <td>
+                                        <div class="text-white fw-bold"><%= m.subject || t('technician:messages.noSubject') %></div>
+                                        <small class="text-muted"><%= (m.message || '').substring(0, 60) %></small>
+                                    </td>
+                                    <td class="text-muted"><%= formatDate(m.created_at) %></td>
+                                    <td>
+                                        <% if (m.reply_text) { %>
+                                            <span class="badge bg-success"><%= t('technician:messages.replied') %></span>
+                                            <% if (!m.is_read_by_customer) { %>
+                                            <span class="badge bg-warning text-dark"><%= t('technician:messages.unreadReply') %></span>
+                                            <% } %>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary"><%= t('technician:messages.pending') %></span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/technician/messages/<%= m.id %>/read" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-info rounded-pill"><i class="fa-solid fa-check me-1"></i><%= t('technician:messages.markRead') %></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% if (total > limit) { %>
+                    <nav class="mt-4">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            <% if (page > 1) { %>
+                            <li class="page-item"><a class="page-link" href="?page=<%= page - 1 %>"><%= t('technician:messages.prev') %></a></li>
+                            <% } %>
+                            <% const totalPages = Math.ceil(total / limit); %>
+                            <% for (let p = 1; p <= totalPages; p++) { %>
+                            <li class="page-item <%= p === page ? 'active' : '' %>"><a class="page-link" href="?page=<%= p %>"><%= p %></a></li>
+                            <% } %>
+                            <% if (page < totalPages) { %>
+                            <li class="page-item"><a class="page-link" href="?page=<%= page + 1 %>"><%= t('technician:messages.next') %></a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                    <% } %>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-envelope fa-4x mb-3"></i>
+                    <h4 class="text-white fw-bold"><%= t('technician:messages.noMessages') %></h4>
+                    <p class="text-muted"><%= t('technician:messages.noMessagesHint') %></p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

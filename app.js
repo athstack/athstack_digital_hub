@@ -14,6 +14,7 @@ const isVercel = process.env.VERCEL === '1';
 const { generateToken } = require('./middleware/csrf');
 const { errorHandler } = require('./middleware/errorHandler');
 const { attachUser, refreshSessionRole } = require('./middleware/auth');
+const { loadPermissions } = require('./middleware/rbac');
 const { trackVisit } = require('./middleware/trackVisit');
 const { formatDisplayName } = require('./helpers/displayName');
 
@@ -161,6 +162,7 @@ app.use(i18nMiddleware);
 // ---------------------------------------------------------------------------
 app.use(attachUser);
 app.use(refreshSessionRole);
+app.use(loadPermissions);
 app.use(generateToken);
 
 app.use((req, res, next) => {
@@ -169,6 +171,7 @@ app.use((req, res, next) => {
   res.locals.flashInfo = req.flash('info');
   res.locals.userStatus = (req.session && req.session.userId) ? (req.session.userStatus || 'active') : null;
   res.locals.formatDisplayName = formatDisplayName;
+  res.locals.getStatusBadgeClass = require('./utils/helpers').getStatusBadgeClass;
   res.locals.imageUrl = function(path, folder) {
     if (!path) return `/uploads/${folder}/product-placeholder.svg`;
     if (path.startsWith('http://') || path.startsWith('https://')) return path;

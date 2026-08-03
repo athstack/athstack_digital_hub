@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <%- include('../partials/adminSidebar') %>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('admin:words.users') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-user-shield me-2 text-primary"></i><%= t('admin:title.roleManagement') %></h2>
+                </div>
+
+                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <% } %>
+
+                <% roles.forEach((entry, index) => { %>
+                <div class="glass-card no-lift p-4 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
+                            <i class="fa-solid fa-id-badge text-primary"></i>
+                        </div>
+                        <div class="me-auto">
+                            <h5 class="text-white fw-bold mb-0"><%= t(entry.nameKey) %></h5>
+                            <small class="text-white-50"><%= entry.permissions.length %> <%= t('admin:roles.permissionsGranted') %></small>
+                        </div>
+                        <button class="btn btn-premium-outline rounded-pill" type="button" data-bs-toggle="collapse" data-bs-target="#roleForm<%= index %>" aria-expanded="<%= entry.role === 'admin' ? 'true' : 'false' %>">
+                            <i class="fa-solid fa-sliders me-2"></i><%= t('admin:roles.editPermissions') %>
+                        </button>
+                    </div>
+
+                    <% if (entry.role === 'super_admin') { %>
+                    <div class="collapse mt-4" id="roleForm<%= index %>">
+                        <div class="alert alert-info mb-0">
+                            <i class="fa-solid fa-crown me-2"></i><%= t('admin:roles.superAdminNote') %>
+                        </div>
+                    </div>
+                    <% } else { %>
+                    <div class="collapse <%= entry.role === 'admin' ? 'show' : '' %> mt-4" id="roleForm<%= index %>">
+                        <form method="POST" action="/admin/roles/<%= entry.role %>">
+                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                            <div class="row g-4">
+                                <% modulePermissions.forEach(mod => { %>
+                                <div class="col-md-6 col-xl-4">
+                                    <div class="glass-card no-lift p-3 h-100">
+                                        <h6 class="text-primary fw-bold mb-3"><%= t(mod.label) %></h6>
+                                        <% mod.permissions.forEach(perm => { %>
+                                        <% const checked = entry.permissions.includes(perm) ? 'checked' : ''; %>
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" name="permissions" value="<%= perm %>" id="perm-<%= entry.role %>-<%= perm %>" <%= checked %>>
+                                            <label class="form-check-label text-white-50 small" for="perm-<%= entry.role %>-<%= perm %>"><%= t('permissions:labels.' + perm) %></label>
+                                        </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('admin:roles.saveRole') %></button>
+                                <a href="/admin/roles" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
+                            </div>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

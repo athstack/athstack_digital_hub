@@ -22,50 +22,75 @@
     </div>
     <hr class="border-secondary opacity-25 my-2">
     <nav class="nav flex-column gap-1">
+        <% if (can('view_dashboard')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'dashboard' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing">
             <i class="fa-solid fa-gauge-high me-2"></i> <%= t('marketing:sidebar.dashboard') %>
         </a>
+        <% } %>
 
         <div class="sidebar-section-label"><%= t('marketing:sidebar.sectionMarketing') %></div>
+        <% if (can('manage_campaigns')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'campaigns' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/campaigns">
             <i class="fa-solid fa-bullhorn me-2"></i> <%= t('marketing:sidebar.campaigns') %>
         </a>
+        <% } %>
+        <% if (can('manage_promotions')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'promotions' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/promotions">
             <i class="fa-solid fa-tags me-2"></i> <%= t('marketing:sidebar.promotions') %>
         </a>
+        <% } %>
+        <% if (can('manage_coupons')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'coupons' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/coupons">
             <i class="fa-solid fa-ticket me-2"></i> <%= t('marketing:sidebar.coupons') %>
         </a>
+        <% } %>
+        <% if (can('manage_featured_products')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'featured-products' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/featured-products">
             <i class="fa-solid fa-star me-2"></i> <%= t('marketing:sidebar.featuredProducts') %>
         </a>
+        <% } %>
 
         <div class="sidebar-section-label"><%= t('marketing:sidebar.sectionContent') %></div>
+        <% if (can('manage_banners')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'banners' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/banners">
             <i class="fa-solid fa-flag me-2"></i> <%= t('marketing:sidebar.banners') %>
         </a>
+        <% } %>
+        <% if (can('manage_blog')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'blog' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/blog">
             <i class="fa-solid fa-newspaper me-2"></i> <%= t('marketing:sidebar.blog') %>
         </a>
+        <% } %>
+        <% if (can('manage_testimonials')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'testimonials' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/testimonials">
             <i class="fa-solid fa-comment-dots me-2"></i> <%= t('marketing:sidebar.testimonials') %>
         </a>
+        <% } %>
+        <% if (can('manage_announcements')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'announcements' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/announcements">
             <i class="fa-solid fa-bullhorn me-2"></i> <%= t('marketing:sidebar.announcements') %>
         </a>
+        <% } %>
 
         <div class="sidebar-section-label"><%= t('marketing:sidebar.sectionEngagement') %></div>
+        <% if (can('manage_reviews')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'reviews' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/reviews">
             <i class="fa-solid fa-star-half-stroke me-2"></i> <%= t('marketing:sidebar.reviews') %>
         </a>
+        <% } %>
+        <% if (can('manage_messages')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'feedback' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/feedback">
             <i class="fa-solid fa-envelope-open-text me-2"></i> <%= t('marketing:sidebar.feedback') %>
         </a>
+        <% } %>
+        <% if (can('manage_newsletters')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'newsletters' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/newsletters">
             <i class="fa-solid fa-envelope-circle-check me-2"></i> <%= t('marketing:sidebar.newsletters') %>
         </a>
+        <% } %>
 
         <div class="sidebar-section-label"><%= t('marketing:sidebar.sectionAnalytics') %></div>
+        <% if (can('view_marketing_analytics')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'analytics' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/analytics">
             <i class="fa-solid fa-chart-line me-2"></i> <%= t('marketing:sidebar.websiteAnalytics') %>
         </a>
@@ -78,14 +103,19 @@
         <a class="nav-link rounded<%= page.activeSection === 'reports' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/reports">
             <i class="fa-solid fa-file-lines me-2"></i> <%= t('marketing:sidebar.marketingReports') %>
         </a>
+        <% } %>
 
         <hr class="border-secondary opacity-25 my-2">
+        <% if (can('manage_profile')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'profile' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/profile">
             <i class="fa-solid fa-user me-2"></i> <%= t('marketing:sidebar.profile') %>
         </a>
+        <% } %>
+        <% if (can('manage_settings')) { %>
         <a class="nav-link rounded<%= page.activeSection === 'settings' ? ' text-primary bg-primary bg-opacity-10' : ' text-white-50' %>" href="/marketing/settings">
             <i class="fa-solid fa-gear me-2"></i> <%= t('marketing:sidebar.settings') %>
         </a>
+        <% } %>
         <form method="POST" action="/auth/logout" class="d-inline w-100">
             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
             <button type="submit" class="nav-link rounded text-white-50 w-100 text-start border-0 bg-transparent">

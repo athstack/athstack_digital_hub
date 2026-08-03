@@ -3,24 +3,25 @@ const UserModel = require('../models/UserModel');
 const SettingModel = require('../models/SettingModel');
 const { generateSlug } = require('../utils/helpers');
 const { logActivity } = require('../helpers/activityLog');
+const { PERMISSIONS } = require('../config/permissions');
 
-const PERMISSIONS = {
-  dashboard: 'marketing:dashboard',
-  campaigns: 'marketing:campaigns',
-  promotions: 'marketing:promotions',
-  coupons: 'marketing:coupons',
-  banners: 'marketing:banners',
-  blog: 'marketing:blog',
-  testimonials: 'marketing:testimonials',
-  announcements: 'marketing:announcements',
-  reviews: 'marketing:reviews',
-  feedback: 'marketing:feedback',
-  newsletters: 'marketing:newsletters',
-  featured_products: 'marketing:featured_products',
-  analytics: 'marketing:analytics',
-  reports: 'marketing:reports',
-  profile: 'marketing:profile',
-  settings: 'marketing:settings'
+const PERMISSION_MAP = {
+  dashboard: PERMISSIONS.VIEW_DASHBOARD,
+  campaigns: PERMISSIONS.MANAGE_CAMPAIGNS,
+  promotions: PERMISSIONS.MANAGE_PROMOTIONS,
+  coupons: PERMISSIONS.MANAGE_COUPONS,
+  banners: PERMISSIONS.MANAGE_BANNERS,
+  blog: PERMISSIONS.MANAGE_BLOG,
+  testimonials: PERMISSIONS.MANAGE_TESTIMONIALS,
+  announcements: PERMISSIONS.MANAGE_ANNOUNCEMENTS,
+  reviews: PERMISSIONS.MANAGE_REVIEWS,
+  feedback: PERMISSIONS.MANAGE_MESSAGES,
+  newsletters: PERMISSIONS.MANAGE_NEWSLETTERS,
+  featured_products: PERMISSIONS.MANAGE_FEATURED_PRODUCTS,
+  analytics: PERMISSIONS.VIEW_MARKETING_ANALYTICS,
+  reports: PERMISSIONS.VIEW_MARKETING_ANALYTICS,
+  profile: PERMISSIONS.MANAGE_PROFILE,
+  settings: PERMISSIONS.MANAGE_SETTINGS
 };
 
 function pageInfo(req) {
@@ -138,7 +139,7 @@ exports.getDashboard = async (req, res, next) => {
       chartOrders: JSON.stringify(chartOrders),
       chartRevenue: JSON.stringify(chartRevenue),
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -174,7 +175,7 @@ exports.getCampaigns = async (req, res, next) => {
       currentStatus: status || 'all',
       searchQuery: search || '',
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -199,7 +200,7 @@ exports.getCampaignForm = async (req, res, next) => {
       campaign,
       editing,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -291,7 +292,7 @@ exports.getPromotions = async (req, res, next) => {
       title: req.t('marketing:title.promotions'),
       promotions,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -317,7 +318,7 @@ exports.getPromotionForm = async (req, res, next) => {
       editing,
       type: 'section',
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -400,7 +401,7 @@ exports.getBanners = async (req, res, next) => {
       title: req.t('marketing:title.banners'),
       banners,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -425,7 +426,7 @@ exports.getBannerForm = async (req, res, next) => {
       banner,
       editing,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -506,7 +507,7 @@ exports.getCoupons = async (req, res, next) => {
       title: req.t('marketing:title.coupons'),
       coupons,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -531,7 +532,7 @@ exports.getCouponForm = async (req, res, next) => {
       coupon,
       editing,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -633,7 +634,7 @@ exports.getFeaturedProducts = async (req, res, next) => {
       title: req.t('marketing:title.featuredProducts'),
       products,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -689,7 +690,7 @@ exports.getBlog = async (req, res, next) => {
       title: req.t('marketing:title.blog'),
       posts,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -714,7 +715,7 @@ exports.getBlogForm = async (req, res, next) => {
       post,
       editing,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -819,7 +820,7 @@ exports.getTestimonials = async (req, res, next) => {
       title: req.t('marketing:title.testimonials'),
       testimonials,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -887,7 +888,7 @@ exports.getAnnouncements = async (req, res, next) => {
       title: req.t('marketing:title.announcements'),
       announcements,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -962,7 +963,7 @@ exports.getReviews = async (req, res, next) => {
       title: req.t('marketing:title.reviews'),
       reviews,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1021,7 +1022,7 @@ exports.getFeedback = async (req, res, next) => {
       title: req.t('marketing:title.feedback'),
       messages,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1045,7 +1046,7 @@ exports.getNewsletters = async (req, res, next) => {
       subscribers,
       sends,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1195,7 +1196,7 @@ exports.getAnalytics = async (req, res, next) => {
       chartOrders: JSON.stringify(chartOrders),
       chartRevenue: JSON.stringify(chartRevenue),
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1218,7 +1219,7 @@ exports.getProductPerformance = async (req, res, next) => {
       title: req.t('marketing:title.productPerformance'),
       products,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1238,7 +1239,7 @@ exports.getCampaignAnalytics = async (req, res, next) => {
       campaigns,
       totalSales: salesTotal[0].total,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1284,7 +1285,7 @@ exports.getReports = async (req, res, next) => {
       report,
       recentOrders,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1302,7 +1303,7 @@ exports.getProfile = async (req, res, next) => {
       title: req.t('marketing:title.profile'),
       user,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);
@@ -1354,7 +1355,7 @@ exports.getSettings = async (req, res, next) => {
       title: req.t('marketing:title.settings'),
       settings,
       page: pageInfo(req),
-      can: PERMISSIONS
+      can: PERMISSION_MAP
     });
   } catch (err) {
     next(err);

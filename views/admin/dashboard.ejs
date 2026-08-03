@@ -79,6 +79,58 @@
                     </div>
                 </div>
 
+                <% if (can('view_system_reports')) { %>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('admin:dashboard.activeCampaigns') %></small>
+                            <h5 class="text-primary fw-bold mb-0"><%= metrics.active_campaigns %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('admin:dashboard.websiteVisitors') %></small>
+                            <h5 class="text-primary fw-bold mb-0"><%= metrics.website_visitors %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('admin:dashboard.pendingApprovals') %></small>
+                            <h5 class="text-warning fw-bold mb-0"><%= metrics.pending_approvals %></h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card p-3 text-center">
+                            <small class="text-white-50"><%= t('admin:dashboard.totalUsers') %></small>
+                            <h5 class="text-primary fw-bold mb-0"><%= metrics.total_users %></h5>
+                        </div>
+                    </div>
+                </div>
+                <% if (systemHealth) { %>
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-heart-pulse me-2 text-success"></i><%= t('admin:dashboard.systemHealth') %></h5>
+                    <div class="row g-3 text-center">
+                        <div class="col-md-3">
+                            <small class="text-white-50 d-block"><%= t('admin:dashboard.database') %></small>
+                            <span class="badge <%= systemHealth.database ? 'bg-success' : 'bg-danger' %>"><%= systemHealth.database ? t('admin:dashboard.online') : t('admin:dashboard.offline') %></span>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-white-50 d-block"><%= t('admin:dashboard.uptime') %></small>
+                            <span class="text-white fw-bold"><%= Math.floor(systemHealth.uptimeSeconds / 3600) %>h <%= Math.floor((systemHealth.uptimeSeconds % 3600) / 60) %>m</span>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-white-50 d-block"><%= t('admin:dashboard.memory') %></small>
+                            <span class="text-white fw-bold"><%= systemHealth.memoryMB %> MB</span>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-white-50 d-block"><%= t('admin:dashboard.nodeVersion') %></small>
+                            <span class="text-white fw-bold"><%= systemHealth.nodeVersion %></span>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+                <% } %>
+
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="glass-card p-4 h-100">

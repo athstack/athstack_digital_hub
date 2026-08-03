@@ -6,6 +6,9 @@
     "products": "My Products",
     "repairs": "Repairs",
     "orders": "Orders",
+    "reports": "Reports",
+    "messages": "Messages",
+    "profile": "Profile",
     "logout": "Logout"
   },
   "title": {
@@ -14,7 +17,10 @@
     "addProduct": "Add Product - TechBridge Digital Hub",
     "editProduct": "Edit Product - TechBridge Digital Hub",
     "repairs": "Assigned Repairs - TechBridge Digital Hub",
-    "orders": "Product Orders - TechBridge Digital Hub"
+    "orders": "Product Orders - TechBridge Digital Hub",
+    "reports": "My Reports - TechBridge Digital Hub",
+    "messages": "Messages - TechBridge Digital Hub",
+    "profile": "My Profile - TechBridge Digital Hub"
   },
   "words": {
     "reference": "Reference",
@@ -24,7 +30,8 @@
     "device": "Device",
     "action": "Action",
     "general": "General",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "product": "Product"
   },
   "status": {
     "pending": "Pending",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "Repair status updated.",
     "repairStatusUpdatedTitle": "Repair Status Updated",
     "repairStatusMessage": "Your repair {{ref}} is now: {{status}}",
-    "notesSuffix": "Notes: {{notes}}"
+    "notesSuffix": "Notes: {{notes}}",
+    "userNotFound": "User not found.",
+    "profileRequiredFields": "First and last name are required.",
+    "currentPasswordWrong": "Current password is incorrect.",
+    "passwordTooShort": "New password must be at least 8 characters.",
+    "profileUpdated": "Profile updated successfully."
   },
   "dashboard": {
     "heading": "Technician Dashboard",
@@ -130,5 +142,44 @@
     "updateProduct": "Update Product",
     "productNotFound": "Product Not Found",
     "backToProducts": "Back to Products"
+  },
+  "reports": {
+    "heading": "My Reports",
+    "totalOrders": "Total Orders",
+    "totalRevenue": "Total Revenue",
+    "completedRepairs": "Completed Repairs",
+    "noReports": "No Reports Yet",
+    "noReportsHint": "Your sales and repair performance reports will appear here once you have activity."
+  },
+  "messages": {
+    "heading": "My Messages",
+    "subject": "Subject",
+    "status": "Status",
+    "noSubject": "No Subject",
+    "replied": "Replied",
+    "unreadReply": "New Reply",
+    "pending": "Pending",
+    "markRead": "Mark Read",
+    "prev": "Prev",
+    "next": "Next",
+    "noMessages": "No Messages",
+    "noMessagesHint": "Messages sent to TechBridge support from your account will appear here."
+  },
+  "profile": {
+    "heading": "My Profile",
+    "avatar": "Profile Picture",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "emailHint": "Email cannot be changed.",
+    "phone": "Phone",
+    "specialization": "Specialization",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell customers about your skills and experience...",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "passwordHint": "Min 8 characters. Leave blank to keep current password.",
+    "save": "Save Changes"
   }
 }

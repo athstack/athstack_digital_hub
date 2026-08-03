@@ -356,3 +356,162 @@ exports.getOrders = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getRepairHistory = async (req, res, next) => {
+  try {
+    const [repairs] = await pool.execute(
+      `SELECT rr.*, s.title AS service_title,
+              CONCAT(u.first_name, ' ', u.last_name) AS customer_name
+       FROM repair_requests rr
+       LEFT JOIN services s ON rr.service_id = s.id
+       LEFT JOIN users u ON rr.user_id = u.id
+       WHERE rr.technician_id = ? AND rr.status IN ('completed', 'cancelled')
+       ORDER BY rr.updated_at DESC`,
+      [req.session.userId]
+    );
+
+    res.render('technician/repairs', {
+      title: req.t('technician:title.repairs'),
+      repairs,
+      historyMode: true
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getReports = async (req, res, next) => {
+  try {
+    const techId = req.session.userId;
+
+    const [orders] = await pool.execute(
+      `SELECT o.order_reference, o.created_at, o.order_status, o.payment_status,
+              oi.product_name, oi.quantity, oi.unit_price, oi.total_price
+       FROM orders o
+       INNER JOIN order_items oi ON o.id = oi.order_id
+       WHERE oi.technician_id = ? AND o.order_status != 'cancelled'
+       ORDER BY o.created_at DESC`,
+      [techId]
+    );
+
+    const [summary] = await pool.execute(
+      `SELECT COUNT(DISTINCT o.id) AS total_orders,
+              COALESCE(SUM(oi.total_price), 0) AS total_revenue,
+              COALESCE(SUM(oi.quantity), 0) AS total_units
+       FROM orders o
+       INNER JOIN order_items oi ON o.id = oi.order_id
+       WHERE oi.technician_id = ? AND o.order_status != 'cancelled'`,
+      [techId]
+    );
+
+    const [completedRepairs] = await pool.execute(
+      "SELECT COUNT(*) AS count FROM repair_requests WHERE technician_id = ? AND status = 'completed'",
+      [techId]
+    );
+
+    res.render('technician/reports', {
+      title: req.t('technician:title.reports'),
+      orders,
+      summary: summary[0],
+      completedRepairs: completedRepairs[0].count
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getMessages = async (req, res, next) => {
+  try {
+    const ContactModel = require('../models/ContactModel');
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const result = await ContactModel.getByUserId(req.session.userId, page, limit);
+
+    res.render('technician/messages', {
+      title: req.t('technician:title.messages'),
+      messages: result.messages,
+      total: result.total,
+      page: result.page,
+      limit: result.limit
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.markMessageRead = async (req, res, next) => {
+  try {
+    const ContactModel = require('../models/ContactModel');
+    const message = await ContactModel.getById(req.params.id);
+    if (message && Number(message.user_id) === Number(req.session.userId)) {
+      await ContactModel.markAsReadByCustomer(req.params.id);
+    }
+    res.redirect('/technician/messages');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getProfile = async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(req.session.userId);
+    if (!user) {
+      req.flash('error', req.t('technician:flash.userNotFound'));
+      return res.redirect('/technician');
+    }
+
+    res.render('technician/profile', {
+      title: req.t('technician:title.profile'),
+      profile: user
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { first_name, last_name, phone, bio, specialization, current_password, new_password } = req.body;
+    const user = await UserModel.findById(req.session.userId);
+
+    if (!first_name || !last_name) {
+      req.flash('error', req.t('technician:flash.profileRequiredFields'));
+      return res.redirect('/technician/profile');
+    }
+
+    if (new_password) {
+      const bcrypt = require('bcryptjs');
+      const valid = await bcrypt.compare(current_password || '', user.password);
+      if (!valid) {
+        req.flash('error', req.t('technician:flash.currentPasswordWrong'));
+        return res.redirect('/technician/profile');
+      }
+      if (new_password.length < 8) {
+        req.flash('error', req.t('technician:flash.passwordTooShort'));
+        return res.redirect('/technician/profile');
+      }
+      const hashed = await bcrypt.hash(new_password, 10);
+      await UserModel.updatePassword(user.id, hashed);
+    }
+
+    let avatar = user.avatar || null;
+    if (req.file) {
+      avatar = await processUploadedFile(req.file, 'profiles');
+    }
+
+    await pool.execute(
+      'UPDATE users SET first_name = ?, last_name = ?, phone = ?, bio = ?, specialization = ?, avatar = ? WHERE id = ?',
+      [first_name, last_name, phone || null, bio || null, specialization || null, avatar, user.id]
+    );
+
+    req.session.userName = `${first_name} ${last_name}`;
+    req.session.userAvatar = avatar;
+    req.session.userFirstName = first_name;
+    req.session.userLastName = last_name;
+
+    req.flash('success', req.t('technician:flash.profileUpdated'));
+    res.redirect('/technician/profile');
+  } catch (err) {
+    next(err);
+  }
+};

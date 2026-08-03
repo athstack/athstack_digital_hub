@@ -280,6 +280,17 @@ async function migrateMarketing(connection) {
     ) ENGINE=InnoDB`
   );
 
+  // 5b. permissions (canonical RBAC catalog table)
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS permissions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      permission VARCHAR(100) NOT NULL UNIQUE,
+      module VARCHAR(50) NOT NULL DEFAULT 'general',
+      description VARCHAR(255) DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB`
+  );
+
   // 6. marketing_campaigns
   await connection.query(
     `CREATE TABLE IF NOT EXISTS marketing_campaigns (
@@ -425,31 +436,68 @@ async function migrateMarketing(connection) {
     ) ENGINE=InnoDB`
   );
 
-  // 14. Seed default permissions for the marketing_officer role
-  const marketingPermissions = [
-    'marketing:dashboard',
-    'marketing:campaigns',
-    'marketing:promotions',
-    'marketing:coupons',
-    'marketing:banners',
-    'marketing:blog',
-    'marketing:testimonials',
-    'marketing:announcements',
-    'marketing:reviews',
-    'marketing:feedback',
-    'marketing:newsletters',
-    'marketing:featured_products',
-    'marketing:analytics',
-    'marketing:reports',
-    'marketing:profile',
-    'marketing:settings'
-  ];
-  for (const perm of marketingPermissions) {
+  // 14. Seed the RBAC permission catalog + default role permissions
+  const {
+    ALL_PERMISSIONS,
+    ROLE_PERMISSIONS,
+    PERMISSION_MODULES,
+    LEGACY_PERMISSION_MAP
+  } = require('./permissions');
+
+  // 14a. Seed the canonical permissions catalog (idempotent).
+  for (const module of PERMISSION_MODULES) {
+    for (const permission of module.permissions) {
+      await connection.query(
+        'INSERT IGNORE INTO permissions (permission, module, description) VALUES (?, ?, NULL)',
+        [permission, module.key]
+      );
+    }
+  }
+
+  // 14b. Migrate legacy namespaced permissions (marketing:*) to catalog names
+  //      in both role_permissions and user_permissions. Each legacy row is
+  //      first re-created under its modern name (INSERT IGNORE — safe against
+  //      unique-key conflicts) and then deleted.
+  for (const [legacy, modern] of Object.entries(LEGACY_PERMISSION_MAP)) {
     await connection.query(
-      'INSERT IGNORE INTO role_permissions (role, permission) VALUES (?, ?)',
-      ['marketing_officer', perm]
+      'INSERT IGNORE INTO role_permissions (role, permission) SELECT role, ? FROM role_permissions WHERE permission = ?',
+      [modern, legacy]
+    );
+    await connection.query(
+      'INSERT IGNORE INTO user_permissions (user_id, permission, granted) SELECT user_id, ?, granted FROM user_permissions WHERE permission = ?',
+      [modern, legacy]
+    );
+    await connection.query(
+      'DELETE FROM role_permissions WHERE permission = ?',
+      [legacy]
+    );
+    await connection.query(
+      'DELETE FROM user_permissions WHERE permission = ?',
+      [legacy]
     );
   }
+
+  // 14c. Delete any permission names no longer present in the catalog.
+  const catalogPlaceholders = ALL_PERMISSIONS.map(() => '?').join(',');
+  await connection.query(
+    `DELETE FROM role_permissions WHERE permission NOT IN (${catalogPlaceholders})`,
+    ALL_PERMISSIONS
+  );
+  await connection.query(
+    `DELETE FROM user_permissions WHERE permission NOT IN (${catalogPlaceholders})`,
+    ALL_PERMISSIONS
+  );
+
+  // 14d. Seed default permission sets for every role (idempotent).
+  for (const [role, permissions] of Object.entries(ROLE_PERMISSIONS)) {
+    for (const permission of permissions) {
+      await connection.query(
+        'INSERT IGNORE INTO role_permissions (role, permission) VALUES (?, ?)',
+        [role, permission]
+      );
+    }
+  }
+  console.log('Migration: RBAC permission catalog + role defaults ensured');
   console.log('Migration: marketing officer system ensured');
 }
 
