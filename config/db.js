@@ -103,6 +103,11 @@ async function runMigrations() {
 
 async function migrate(connection) {
   try {
+    await migrateCategories(connection);
+  } catch (err) {
+    console.error('Product category migration failed:', err.message);
+  }
+  try {
     await migrateMarketing(connection);
   } catch (err) {
     console.error('Marketing system migration failed:', err.message);
@@ -196,6 +201,39 @@ async function migrate(connection) {
     console.error('Review system migration failed:', err.message);
     throw err;
   }
+}
+
+/**
+ * Product category migration: seeds the wider catalog (Electronics, Mobile
+ * Devices, Laptops, etc.) on top of the original seeds. Idempotent via the
+ * unique slug constraint (INSERT IGNORE).
+ */
+async function migrateCategories(connection) {
+  const categories = [
+    { name: 'Electronics', slug: 'electronics', description: 'General electronics and gadgets', icon: 'fa-microchip', sort_order: 16 },
+    { name: 'Mobile Devices', slug: 'mobile-devices', description: 'Smartphones, tablets, and portable devices', icon: 'fa-mobile-screen', sort_order: 17 },
+    { name: 'Laptops', slug: 'laptops', description: 'Laptops and notebook computers', icon: 'fa-laptop', sort_order: 18 },
+    { name: 'Desktop Computers', slug: 'desktop-computers', description: 'Desktop PCs and all-in-one computers', icon: 'fa-computer', sort_order: 19 },
+    { name: 'Tablets', slug: 'tablets', description: 'Tablets and iPad devices', icon: 'fa-tablet-screen-button', sort_order: 20 },
+    { name: 'Monitors & Displays', slug: 'monitors-displays', description: 'Computer monitors and display screens', icon: 'fa-display', sort_order: 21 },
+    { name: 'Computer Components', slug: 'computer-components', description: 'CPUs, RAM, motherboards, and PC parts', icon: 'fa-cpu', sort_order: 22 },
+    { name: 'Cameras', slug: 'cameras', description: 'Digital cameras and photography equipment', icon: 'fa-camera', sort_order: 23 },
+    { name: 'Gaming', slug: 'gaming', description: 'Gaming consoles, controllers, and accessories', icon: 'fa-gamepad', sort_order: 24 },
+    { name: 'Smart Home Devices', slug: 'smart-home-devices', description: 'Smart bulbs, plugs, and home automation', icon: 'fa-house-signal', sort_order: 25 },
+    { name: 'Drones', slug: 'drones', description: 'Drones and aerial photography equipment', icon: 'fa-plane', sort_order: 26 },
+    { name: 'Printers & Scanners', slug: 'printers-scanners', description: 'Printers, scanners, and imaging devices', icon: 'fa-print', sort_order: 27 },
+    { name: 'Networking Equipment', slug: 'networking-equipment', description: 'Switches, access points, and network gear', icon: 'fa-network-wired', sort_order: 28 },
+    { name: 'Security & Surveillance', slug: 'security-surveillance', description: 'CCTV, IP cameras, and security systems', icon: 'fa-video', sort_order: 29 },
+    { name: 'Batteries & Power', slug: 'batteries-power', description: 'Rechargeable batteries and power accessories', icon: 'fa-car-battery', sort_order: 30 }
+  ];
+
+  for (const c of categories) {
+    await connection.query(
+      'INSERT IGNORE INTO product_categories (name, slug, description, icon, sort_order) VALUES (?, ?, ?, ?, ?)',
+      [c.name, c.slug, c.description, c.icon, c.sort_order]
+    );
+  }
+  console.log('Migration: seeded product categories (' + categories.length + ' ensured)');
 }
 
 /**

@@ -22,7 +22,22 @@ INSERT INTO product_categories (id, name, slug, description, icon, sort_order) V
 (12, 'Computer Accessories', 'computer-accessories', 'Keyboards, mice, and peripherals', 'fa-keyboard', 12),
 (13, 'SSDs', 'ssds', 'Solid state drives', 'fa-hard-drive', 13),
 (14, 'Hard Drives', 'hard-drives', 'HDD storage', 'fa-hard-drive', 14),
-(15, 'Routers', 'routers', 'WiFi routers and networking', 'fa-wifi', 15);
+(15, 'Routers', 'routers', 'WiFi routers and networking', 'fa-wifi', 15),
+(16, 'Electronics', 'electronics', 'General electronics and gadgets', 'fa-microchip', 16),
+(17, 'Mobile Devices', 'mobile-devices', 'Smartphones, tablets, and portable devices', 'fa-mobile-screen', 17),
+(18, 'Laptops', 'laptops', 'Laptops and notebook computers', 'fa-laptop', 18),
+(19, 'Desktop Computers', 'desktop-computers', 'Desktop PCs and all-in-one computers', 'fa-computer', 19),
+(20, 'Tablets', 'tablets', 'Tablets and iPad devices', 'fa-tablet-screen-button', 20),
+(21, 'Monitors & Displays', 'monitors-displays', 'Computer monitors and display screens', 'fa-display', 21),
+(22, 'Computer Components', 'computer-components', 'CPUs, RAM, motherboards, and PC parts', 'fa-cpu', 22),
+(23, 'Cameras', 'cameras', 'Digital cameras and photography equipment', 'fa-camera', 23),
+(24, 'Gaming', 'gaming', 'Gaming consoles, controllers, and accessories', 'fa-gamepad', 24),
+(25, 'Smart Home Devices', 'smart-home-devices', 'Smart bulbs, plugs, and home automation', 'fa-house-signal', 25),
+(26, 'Drones', 'drones', 'Drones and aerial photography equipment', 'fa-plane', 26),
+(27, 'Printers & Scanners', 'printers-scanners', 'Printers, scanners, and imaging devices', 'fa-print', 27),
+(28, 'Networking Equipment', 'networking-equipment', 'Switches, access points, and network gear', 'fa-network-wired', 28),
+(29, 'Security & Surveillance', 'security-surveillance', 'CCTV, IP cameras, and security systems', 'fa-video', 29),
+(30, 'Batteries & Power', 'batteries-power', 'Rechargeable batteries and power accessories', 'fa-car-battery', 30);
 
 INSERT INTO services (id, title, slug, category, description, base_price, icon_class) VALUES
 (1, 'OS Installation', 'os-installation', 'computer', 'Clean installation of Windows, macOS, or Linux with driver setup.', 45.00, 'fa-compact-disc'),
