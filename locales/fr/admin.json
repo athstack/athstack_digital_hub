@@ -244,7 +244,8 @@
     "permissionsUpdated": "Permissions mises à jour avec succès.",
     "rolePermissionsUpdated": "Permissions du rôle mises à jour avec succès.",
     "permissionAdded": "Permission ajoutée avec succès.",
-    "invalidPermissionName": "Nom de permission invalide. Utilisez uniquement des lettres minuscules, des chiffres et des underscores."
+    "invalidPermissionName": "Nom de permission invalide. Utilisez uniquement des lettres minuscules, des chiffres et des underscores.",
+    "invalidOrderId": "ID de commande invalide."
   },
   "validation": {
     "productNameRequired": "Le nom du produit est requis",
@@ -350,7 +351,27 @@
     "updateOrder": "Mettre à jour la commande n°{{id}}",
     "orderStatusLabel": "Statut de la commande",
     "noOrders": "Aucune commande",
-    "noOrdersPlaced": "Aucune commande n'a encore été passée."
+    "noOrdersPlaced": "Aucune commande n'a encore été passée.",
+    "filterStatus": "Tous les statuts",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "last": "Dernière page",
+    "searchPlaceholder": "Réf., client ou e-mail...",
+    "viewDetail": "Voir la commande",
+    "detailTitle": "Détails de la commande",
+    "orderReference": "Référence de commande",
+    "customer": "Client",
+    "placedAt": "Date de commande",
+    "paymentMethod": "Mode de paiement",
+    "paymentStatus": "Statut du paiement",
+    "shippingAddress": "Adresse de livraison",
+    "noAddress": "Aucune adresse de livraison",
+    "noOrdersMatch": "Aucune commande ne correspond aux filtres actuels.",
+    "updateFailed": "Échec de la mise à jour",
+    "networkError": "Erreur réseau"
   },
   "users": {
     "heading": "Utilisateurs",

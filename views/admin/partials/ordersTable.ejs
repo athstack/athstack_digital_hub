@@ -1,0 +1,91 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:orders.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:orders.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('admin:orders.filterStatus') %>">
+        <option value=""><%= t('admin:orders.filterStatus') %></option>
+        <option value="pending" <%= currentStatus === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
+        <option value="confirmed" <%= currentStatus === 'confirmed' ? 'selected' : '' %>><%= t('admin:status.confirmed') %></option>
+        <option value="processing" <%= currentStatus === 'processing' ? 'selected' : '' %>><%= t('admin:status.processing') %></option>
+        <option value="shipped" <%= currentStatus === 'shipped' ? 'selected' : '' %>><%= t('admin:status.shipped') %></option>
+        <option value="delivered" <%= currentStatus === 'delivered' ? 'selected' : '' %>><%= t('admin:status.delivered') %></option>
+        <option value="cancelled" <%= currentStatus === 'cancelled' ? 'selected' : '' %>><%= t('admin:status.cancelled') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:orders.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (orders && orders.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table orders-table">
+            <thead>
+                <tr><th><%= t('admin:words.order') %></th><th><%= t('admin:orders.customer') %></th><th><%= t('common:words.email') %></th><th><%= t('common:words.date') %></th><th><%= t('admin:orders.paymentMethod') %></th><th><%= t('common:words.total') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(o => { %>
+                <% var ostatus = o.order_status || o.status || ''; %>
+                <tr data-order-id="<%= o.id %>">
+                    <td class="text-white fw-bold">#<%= o.id %><% if (o.order_reference) { %><br><small class="text-white-50"><%= o.order_reference %></small><% } %></td>
+                    <td class="text-white-50"><%= formatDisplayName(o.first_name, o.last_name) %></td>
+                    <td class="text-white-50 small"><%= o.email %></td>
+                    <td class="text-white-50"><%= formatDate(o.created_at) %></td>
+                    <td class="text-white-50"><%= o.payment_method ? o.payment_method.toUpperCase() : '—' %></td>
+                    <td class="text-primary fw-bold"><%= formatCurrency(o.total_amount) %></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary order-status-select" style="width:132px;" data-order-id="<%= o.id %>" data-original="<%= ostatus %>">
+                                <option value="pending" <%= ostatus === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
+                                <option value="confirmed" <%= ostatus === 'confirmed' ? 'selected' : '' %>><%= t('admin:status.confirmed') %></option>
+                                <option value="processing" <%= ostatus === 'processing' ? 'selected' : '' %>><%= t('admin:status.processing') %></option>
+                                <option value="shipped" <%= ostatus === 'shipped' ? 'selected' : '' %>><%= t('admin:status.shipped') %></option>
+                                <option value="delivered" <%= ostatus === 'delivered' ? 'selected' : '' %>><%= t('admin:status.delivered') %></option>
+                                <option value="cancelled" <%= ostatus === 'cancelled' ? 'selected' : '' %>><%= t('admin:status.cancelled') %></option>
+                            </select>
+                            <span class="badge <%= getStatusBadgeClass(ostatus) %>"><%= t('admin:status.' + ostatus.toLowerCase(), {defaultValue: ostatus}) %></span>
+                        </div>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-receipt', abAttrs:'data-view-order data-id="' + o.id + '"', abTitle:t('admin:orders.viewDetail') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:orders.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:orders.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:orders.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:orders.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:orders.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-receipt fa-4x mb-3"></i>
+    <% if (currentSearch || currentStatus) { %>
+    <h4 class="text-white fw-bold"><%= t('admin:orders.noOrders') %></h4>
+    <p class="text-white-50"><%= t('admin:orders.noOrdersMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('admin:orders.noOrders') %></h4>
+    <p class="text-white-50"><%= t('admin:orders.noOrdersPlaced') %></p>
+    <% } %>
+</div>
+<% } %>

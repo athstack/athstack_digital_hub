@@ -244,7 +244,8 @@
     "permissionsUpdated": "Permisos actualizados con éxito.",
     "rolePermissionsUpdated": "Permisos del rol actualizados correctamente.",
     "permissionAdded": "Permiso añadido correctamente.",
-    "invalidPermissionName": "Nombre de permiso no válido. Utilice solo letras minúsculas, números y guiones bajos."
+    "invalidPermissionName": "Nombre de permiso no válido. Utilice solo letras minúsculas, números y guiones bajos.",
+    "invalidOrderId": "ID de pedido no válida."
   },
   "validation": {
     "productNameRequired": "El nombre del producto es obligatorio",
@@ -350,7 +351,27 @@
     "updateOrder": "Actualizar Pedido #{{id}}",
     "orderStatusLabel": "Estado del Pedido",
     "noOrders": "Sin Pedidos",
-    "noOrdersPlaced": "Aún no se ha realizado ningún pedido."
+    "noOrdersPlaced": "Aún no se ha realizado ningún pedido.",
+    "filterStatus": "Todos los estados",
+    "refresh": "Actualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primera página",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página",
+    "searchPlaceholder": "Ref. pedido, cliente o correo...",
+    "viewDetail": "Ver pedido",
+    "detailTitle": "Detalles del pedido",
+    "orderReference": "Referencia del pedido",
+    "customer": "Cliente",
+    "placedAt": "Fecha del pedido",
+    "paymentMethod": "Método de pago",
+    "paymentStatus": "Estado del pago",
+    "shippingAddress": "Dirección de envío",
+    "noAddress": "Sin dirección de envío",
+    "noOrdersMatch": "No hay pedidos que coincidan con los filtros actuales.",
+    "updateFailed": "No se pudo actualizar",
+    "networkError": "Error de red"
   },
   "users": {
     "heading": "Usuarios",

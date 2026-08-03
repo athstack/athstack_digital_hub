@@ -101,13 +101,18 @@ class OrderModel {
     return row.total;
   }
 
-  async getAll({ status, page = 1, limit = 20, technician_id } = {}) {
+  async getAll({ status, search, page = 1, limit = 20, technician_id } = {}) {
     const conditions = [];
     const params = [];
 
     if (status) {
       conditions.push('o.order_status = ?');
       params.push(status);
+    }
+    if (search) {
+      conditions.push('(o.order_reference LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)');
+      const like = `%${search}%`;
+      params.push(like, like, like, like);
     }
     if (technician_id) {
       conditions.push('o.id IN (SELECT order_id FROM order_items WHERE technician_id = ?)');

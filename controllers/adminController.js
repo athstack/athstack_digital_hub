@@ -8,7 +8,7 @@ const OrderModel = require('../models/OrderModel');
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug, generateSku } = require('../utils/helpers');
+const { generateSlug, generateSku, formatCurrency, formatDate } = require('../utils/helpers');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 const { logActivity } = require('../helpers/activityLog');
@@ -1007,16 +1007,103 @@ exports.assignTechnician = async (req, res, next) => {
 
 exports.getOrders = async (req, res, next) => {
   try {
-    const [orders] = await pool.execute(
-      `SELECT o.*, u.first_name, u.last_name, u.email
-       FROM orders o
-       JOIN users u ON o.user_id = u.id
-       ORDER BY o.created_at DESC`
-    );
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const status = req.query.status && ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].includes(req.query.status) ? req.query.status : null;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10;
 
-    res.render('admin/orders', {
+    const result = await OrderModel.getAll({ status, search, page, limit });
+    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
+
+    const viewData = {
       title: req.t('admin:title.orders'),
-      orders
+      orders: result.orders,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages,
+        hasNext: result.page < totalPages,
+        hasPrev: result.page > 1
+      },
+      currentStatus: status || '',
+      currentSearch: search || ''
+    };
+
+    // Fragment: server-rendered toolbar + table for instant in-place refresh.
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/ordersTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    // Plain JSON list for API consumers.
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        orders: result.orders,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/orders', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getOrderDetail = async (req, res, next) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (status, data) => isAjax ? res.status(status).json(data) : res.redirect('/admin/orders');
+
+    if (isNaN(orderId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidOrderId') });
+      req.flash('error', req.t('admin:flash.invalidOrderId'));
+      return respond(400, {});
+    }
+
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.orderNotFound') });
+      req.flash('error', req.t('admin:flash.orderNotFound'));
+      return respond(404, {});
+    }
+
+    const lang = req.language;
+    res.json({
+      success: true,
+      order: {
+        id: order.id,
+        order_reference: order.order_reference,
+        created_at: order.created_at,
+        created_at_formatted: formatDate(order.created_at, lang),
+        order_status: order.order_status,
+        payment_status: order.payment_status,
+        payment_method: order.payment_method,
+        shipping_address: order.shipping_address,
+        total_amount: order.total_amount,
+        total_formatted: formatCurrency(order.total_amount, lang),
+        first_name: order.first_name,
+        last_name: order.last_name,
+        email: order.email,
+        phone: order.phone,
+        items: (order.items || []).map(i => ({
+          id: i.id,
+          product_name: i.product_name,
+          product_image: i.product_image,
+          product_slug: i.product_slug,
+          quantity: i.quantity,
+          unit_price: i.unit_price,
+          unit_price_formatted: formatCurrency(i.unit_price, lang),
+          total_price: i.total_price,
+          total_price_formatted: formatCurrency(i.total_price, lang)
+        }))
+      }
     });
   } catch (err) {
     next(err);
@@ -1027,20 +1114,31 @@ exports.updateOrderStatus = async (req, res, next) => {
   try {
     const orderId = parseInt(req.params.id);
     const { status } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/orders');
 
     const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+    if (isNaN(orderId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidOrderId') });
+      req.flash('error', req.t('admin:flash.invalidOrderId'));
+      return respond(400, {});
+    }
+
     if (!validStatuses.includes(status)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidStatus') });
       req.flash('error', req.t('admin:flash.invalidStatus'));
-      return res.redirect('/admin/orders');
+      return respond(400, {});
     }
 
     const order = await OrderModel.findById(orderId);
     if (!order) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.orderNotFound') });
       req.flash('error', req.t('admin:flash.orderNotFound'));
-      return res.redirect('/admin/orders');
+      return respond(404, {});
     }
 
-    await pool.execute('UPDATE orders SET order_status = ? WHERE id = ?', [status, orderId]);
+    await OrderModel.updateStatus(orderId, status);
 
     if (status === 'delivered' && order.user_id) {
       await NotificationModel.create(order.user_id, {
@@ -1051,8 +1149,9 @@ exports.updateOrderStatus = async (req, res, next) => {
       });
     }
 
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.orderStatusUpdated') });
     req.flash('success', req.t('admin:flash.orderStatusUpdated'));
-    res.redirect('/admin/orders');
+    respond(200, {});
   } catch (err) {
     next(err);
   }

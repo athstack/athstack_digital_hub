@@ -60,6 +60,7 @@ router.post('/repairs/:id/assign', requirePermission('assign_repairs'), validate
 
 // -- Orders ---------------------------------------------------------------------
 router.get('/orders', requirePermission('manage_orders'), adminController.getOrders);
+router.get('/orders/:id', requirePermission('manage_orders'), adminController.getOrderDetail);
 router.post('/orders/:id/status', requirePermission('manage_orders'), validateCsrf, adminController.updateOrderStatus);
 
 // -- Training ---------------------------------------------------------------------

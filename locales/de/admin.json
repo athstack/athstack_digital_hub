@@ -244,7 +244,8 @@
     "permissionsUpdated": "Berechtigungen erfolgreich aktualisiert.",
     "rolePermissionsUpdated": "Rollenberechtigungen erfolgreich aktualisiert.",
     "permissionAdded": "Berechtigung erfolgreich hinzugefügt.",
-    "invalidPermissionName": "Ungültiger Berechtigungsname. Verwenden Sie nur Kleinbuchstaben, Zahlen und Unterstriche."
+    "invalidPermissionName": "Ungültiger Berechtigungsname. Verwenden Sie nur Kleinbuchstaben, Zahlen und Unterstriche.",
+    "invalidOrderId": "Ungültige Bestell-ID."
   },
   "validation": {
     "productNameRequired": "Produktname ist erforderlich",
@@ -350,7 +351,27 @@
     "updateOrder": "Bestellung Nr. {{id}} aktualisieren",
     "orderStatusLabel": "Bestellstatus",
     "noOrders": "Keine Bestellungen",
-    "noOrdersPlaced": "Es wurden noch keine Bestellungen aufgegeben."
+    "noOrdersPlaced": "Es wurden noch keine Bestellungen aufgegeben.",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "searchPlaceholder": "Bestellnr., Kunde oder E-Mail...",
+    "viewDetail": "Bestellung ansehen",
+    "detailTitle": "Bestelldetails",
+    "orderReference": "Bestellreferenz",
+    "customer": "Kunde",
+    "placedAt": "Bestelldatum",
+    "paymentMethod": "Zahlungsmethode",
+    "paymentStatus": "Zahlungsstatus",
+    "shippingAddress": "Lieferadresse",
+    "noAddress": "Keine Lieferadresse",
+    "noOrdersMatch": "Keine Bestellungen passen zu den aktuellen Filtern.",
+    "updateFailed": "Aktualisierung fehlgeschlagen",
+    "networkError": "Netzwerkfehler"
   },
   "users": {
     "heading": "Benutzer",

@@ -19,70 +19,187 @@
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-receipt me-2 text-primary"></i><%= t('admin:orders.heading') %></h2>
                 </div>
 
-                <% if (orders && orders.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr><th><%= t('admin:words.order') %></th><th><%= t('admin:words.customer') %></th><th><%= t('common:words.email') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.total') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:words.action') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% orders.forEach(order => { %>
-                                <tr>
-                                    <td class="text-white fw-bold">#<%= order.id %><% if (order.order_reference) { %><br><small class="text-white-50"><%= order.order_reference %></small><% } %></td>
-                                    <td class="text-white-50"><%= formatDisplayName(order.first_name, order.last_name) %></td>
-                                    <td class="text-white-50 small"><%= order.email %></td>
-                                    <td class="text-white-50"><%= formatDate(order.created_at) %></td>
-                                    <td class="text-primary fw-bold"><%= formatCurrency(order.total_amount) %></td>
-                                    <td><span class="badge <%= getStatusBadgeClass(order.status || order.order_status) %>"><%= t('admin:status.' + ((order.status || order.order_status)||'').toLowerCase(), {defaultValue: order.status || order.order_status}) %></span></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen', abTitle:t('admin:orders.updateOrder', {id: order.id}), abAttrs:'data-bs-toggle="modal" data-bs-target="#orderModal' + order.id + '"' }) %>
-                                        </div>
-                                        <div class="modal fade" id="orderModal<%= order.id %>" tabindex="-1">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-                                                    <form method="POST" action="/admin/orders/<%= order.id %>/status">
-                                                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                                        <div class="modal-header border-secondary">
-                                                            <h5 class="text-white fw-bold"><%= t('admin:orders.updateOrder', {id: order.id}) %></h5>
-                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <label class="form-label"><%= t('admin:orders.orderStatusLabel') %></label>
-                                                            <select name="status" class="form-select" required>
-                                                                <option value="pending" <%= (order.status || order.order_status) === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
-                                                                <option value="processing" <%= (order.status || order.order_status) === 'processing' ? 'selected' : '' %>><%= t('admin:status.processing') %></option>
-                                                                <option value="shipped" <%= (order.status || order.order_status) === 'shipped' ? 'selected' : '' %>><%= t('admin:status.shipped') %></option>
-                                                                <option value="delivered" <%= (order.status || order.order_status) === 'delivered' ? 'selected' : '' %>><%= t('admin:status.delivered') %></option>
-                                                                <option value="cancelled" <%= (order.status || order.order_status) === 'cancelled' ? 'selected' : '' %>><%= t('admin:status.cancelled') %></option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="modal-footer border-secondary">
-                                                            <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
-                                                            <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('common:words.update') %></button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/admin/orders">
+                    <%- include('./partials/ordersTable') %>
                 </div>
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-receipt fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:orders.noOrders') %></h4>
-                    <p class="text-white-50"><%= t('admin:orders.noOrdersPlaced') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Order detail modal -->
+<div class="modal fade crud-modal" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailTitle"><%= t('admin:orders.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('orderDetailModal');
+    var bodyEl = document.getElementById('orderDetailBody');
+    var titleEl = document.getElementById('orderDetailTitle');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        detailTitle: '<%= t('admin:orders.detailTitle') %>',
+        orderReference: '<%= t('admin:orders.orderReference') %>',
+        customer: '<%= t('admin:orders.customer') %>',
+        placedAt: '<%= t('admin:orders.placedAt') %>',
+        paymentMethod: '<%= t('admin:orders.paymentMethod') %>',
+        paymentStatus: '<%= t('admin:orders.paymentStatus') %>',
+        shippingAddress: '<%= t('admin:orders.shippingAddress') %>',
+        noAddress: '<%= t('admin:orders.noAddress') %>',
+        orderStatus: '<%= t('admin:orders.orderStatusLabel') %>',
+        updateFailed: '<%= t('admin:orders.updateFailed') %>',
+        networkError: '<%= t('admin:orders.networkError') %>',
+        statusUpdated: '<%= t('admin:flash.orderStatusUpdated') %>',
+        product: '<%= t('dashboard:words.product') %>',
+        qty: '<%= t('dashboard:words.qty') %>',
+        unitPrice: '<%= t('dashboard:words.unitPrice') %>',
+        subtotal: '<%= t('dashboard:words.subtotal') %>',
+        total: '<%= t('common:words.total') %>',
+        email: '<%= t('common:words.email') %>',
+        phone: '<%= t('common:words.phone') %>',
+        noItems: '<%= t('dashboard:orderDetail.noItems') %>'
+    };
+
+    var paymentColors = { paid: 'bg-success', unpaid: 'bg-warning text-dark', failed: 'bg-danger', pending: 'bg-warning text-dark', refunded: 'bg-secondary' };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function statusBadge(status, colorMap) {
+        var key = String(status || '').toLowerCase();
+        var color = (colorMap && colorMap[key]) || 'bg-secondary';
+        var label = esc(status || '');
+        return '<span class="badge text-capitalize ' + color + '">' + label + '</span>';
+    }
+
+    function renderDetail(o) {
+        var itemsHtml = '';
+        var itemCount = 0;
+        if (o.items && o.items.length > 0) {
+            itemsHtml = '<div class="table-responsive"><table class="table table-dark align-middle mb-0 premium-table">' +
+                '<thead><tr><th>' + i18n.product + '</th><th>' + i18n.qty + '</th><th>' + i18n.unitPrice + '</th><th>' + i18n.subtotal + '</th></tr></thead><tbody>';
+            o.items.forEach(function (it) {
+                itemCount += it.quantity || 0;
+                itemsHtml += '<tr>' +
+                    '<td class="text-white fw-bold">' + esc(it.product_name) + '</td>' +
+                    '<td class="text-white-50">' + esc(it.quantity) + '</td>' +
+                    '<td class="text-white-50">' + esc(it.unit_price_formatted) + '</td>' +
+                    '<td class="text-primary fw-bold">' + esc(it.total_price_formatted) + '</td>' +
+                    '</tr>';
+            });
+            itemsHtml += '</tbody></table></div>';
+        } else {
+            itemsHtml = '<p class="text-white-50 mb-0">' + i18n.noItems + '</p>';
+        }
+
+        var customerHtml = o.first_name || o.last_name ? esc([o.first_name, o.last_name].filter(Boolean).join(' ')) : '—';
+        var emailHtml = o.email ? '<div class="small text-white-50"><i class="fa-solid fa-envelope me-1"></i>' + esc(o.email) + '</div>' : '';
+        var phoneHtml = o.phone ? '<div class="small text-white-50"><i class="fa-solid fa-phone me-1"></i>' + esc(o.phone) + '</div>' : '';
+        var addressHtml = o.shipping_address ? esc(o.shipping_address) : '<span class="text-white-50 fst-italic">' + i18n.noAddress + '</span>';
+
+        var html =
+            '<div class="row g-4">' +
+            '<div class="col-md-6">' +
+            '<div class="glass-card p-4 h-100">' +
+            '<h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-box me-2 text-primary"></i>' + i18n.orderReference + '</h6>' +
+            '<p class="text-white mb-1 fw-bold">#' + esc(o.id) + '</p>' +
+            (o.order_reference ? '<p class="text-white-50 small mb-1">' + esc(o.order_reference) + '</p>' : '') +
+            '<p class="text-white-50 mb-0 small"><i class="fa-solid fa-calendar me-1"></i>' + esc(o.created_at_formatted) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<div class="glass-card p-4 h-100">' +
+            '<h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user me-2 text-primary"></i>' + i18n.customer + '</h6>' +
+            '<p class="text-white mb-1">' + customerHtml + '</p>' +
+            emailHtml + phoneHtml +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<div class="glass-card p-4 h-100">' +
+            '<h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-truck me-2 text-primary"></i>' + i18n.shippingAddress + '</h6>' +
+            '<p class="text-white-50 mb-0">' + addressHtml + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-6">' +
+            '<div class="glass-card p-4 h-100">' +
+            '<h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i>' + i18n.paymentMethod + '</h6>' +
+            '<p class="text-white mb-1">' + esc((o.payment_method || '—').toUpperCase()) + '</p>' +
+            '<p class="text-white-50 mb-0 small">' + i18n.paymentStatus + ': ' + statusBadge(o.payment_status, paymentColors) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="glass-card p-4 mt-4">' +
+            '<h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>' + i18n.product + ' (' + itemCount + ')</h6>' +
+            itemsHtml +
+            '<div class="d-flex justify-content-end align-items-center gap-3 mt-3">' +
+            '<span class="text-white-50">' + i18n.total + '</span>' +
+            '<span class="text-primary fw-bold fs-5">' + esc(o.total_formatted) + '</span>' +
+            '</div>' +
+            '</div>';
+
+        return html;
+    }
+
+    function openDetail(id) {
+        Crud.get('/admin/orders/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.order) return;
+                var o = data.order;
+                titleEl.textContent = i18n.detailTitle + ' #' + o.id;
+                bodyEl.innerHTML = renderDetail(o);
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-order]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+        }
+    });
+
+    tableWrap.addEventListener('change', function (e) {
+        var statusSel = e.target.closest('.order-status-select');
+        if (!statusSel) return;
+        var orig = statusSel.getAttribute('data-original');
+        var oid = statusSel.getAttribute('data-order-id');
+        Crud.post('/admin/orders/' + oid + '/status', { status: statusSel.value })
+            .then(function (data) {
+                statusSel.setAttribute('data-original', statusSel.value);
+                Crud.toast(data.message || i18n.statusUpdated, 'success');
+            })
+            .catch(function (err) {
+                statusSel.value = orig;
+                Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+            });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

@@ -244,7 +244,8 @@
     "permissionsUpdated": "تم تحديث الصلاحيات بنجاح.",
     "rolePermissionsUpdated": "تم تحديث صلاحيات الدور بنجاح.",
     "permissionAdded": "تمت إضافة الصلاحية بنجاح.",
-    "invalidPermissionName": "اسم صلاحية غير صالح. استخدم الأحرف الصغيرة والأرقام والشرطات السفلية فقط."
+    "invalidPermissionName": "اسم صلاحية غير صالح. استخدم الأحرف الصغيرة والأرقام والشرطات السفلية فقط.",
+    "invalidOrderId": "معرف الطلب غير صالح."
   },
   "validation": {
     "productNameRequired": "اسم المنتج مطلوب",
@@ -350,7 +351,27 @@
     "updateOrder": "تحديث الطلب #{{id}}",
     "orderStatusLabel": "حالة الطلب",
     "noOrders": "لا توجد طلبات",
-    "noOrdersPlaced": "لم يتم تقديم أي طلبات بعد."
+    "noOrdersPlaced": "لم يتم تقديم أي طلبات بعد.",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "searchPlaceholder": "رقم الطلب أو العميل أو البريد",
+    "viewDetail": "عرض الطلب",
+    "detailTitle": "تفاصيل الطلب",
+    "orderReference": "رقم الطلب",
+    "customer": "العميل",
+    "placedAt": "تاريخ الطلب",
+    "paymentMethod": "طريقة الدفع",
+    "paymentStatus": "حالة الدفع",
+    "shippingAddress": "عنوان الشحن",
+    "noAddress": "لا يوجد عنوان شحن",
+    "noOrdersMatch": "لا توجد طلبات تطابق عوامل التصفية الحالية.",
+    "updateFailed": "فشل التحديث",
+    "networkError": "خطأ في الشبكة"
   },
   "users": {
     "heading": "المستخدمون",
