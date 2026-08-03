@@ -43,7 +43,7 @@
                     </div>
                     <% } else { %>
                     <div class="collapse <%= entry.role === 'admin' ? 'show' : '' %> mt-4" id="roleForm<%= index %>">
-                        <form method="POST" action="/admin/roles/<%= entry.role %>">
+                        <form method="POST" action="/admin/roles/<%= entry.role %>/permissions">
                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                             <div class="row g-4">
                                 <% modulePermissions.forEach(mod => { %>
