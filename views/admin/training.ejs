@@ -57,6 +57,13 @@
                                             <label class="form-label"><%= t('admin:training.price') %></label>
                                             <input type="number" name="price" class="form-control" min="0" step="0.01" value="0">
                                         </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label"><%= t('admin:training.status') %></label>
+                                            <select name="status" class="form-select">
+                                                <option value="active" selected><%= t('admin:status.active') %></option>
+                                                <option value="draft"><%= t('admin:status.draft') %></option>
+                                            </select>
+                                        </div>
                                         <div class="col-12">
                                             <%- include('../partials/fileUpload', {
                                                 name: 'course_image',
@@ -103,6 +110,7 @@
                                     <td class="text-white-50"><%= mod.enrollment_count || 0 %></td>
                                     <td><span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('admin:status.' + (mod.status||'').toLowerCase(), {defaultValue: mod.status}) %></span></td>
                                     <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#editCourseModal<%= mod.id %>" title="<%= t('admin:training.editCourse') %>"><i class="fa-solid fa-pen"></i></button>
                                         <form method="POST" action="/admin/training/delete/<%= mod.id %>" class="d-inline" data-confirm="<%= t('admin:training.deleteConfirm') %>">
                                             <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="<%= t('common:words.delete') %>"><i class="fa-solid fa-trash"></i></button>
@@ -114,6 +122,61 @@
                         </table>
                     </div>
                 </div>
+
+                <% modules.forEach(mod => { %>
+                <div class="modal fade" id="editCourseModal<%= mod.id %>" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
+                            <form method="POST" action="/admin/training/edit/<%= mod.id %>" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                                <div class="modal-header border-secondary">
+                                    <h5 class="text-white fw-bold"><%= t('admin:training.editCourseModal') %></h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label"><%= t('admin:training.courseTitle') %> *</label>
+                                            <input type="text" name="title" class="form-control" required value="<%= mod.title %>">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label"><%= t('common:words.description') %></label>
+                                            <textarea name="description" class="form-control" rows="3"><%= mod.description || '' %></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label"><%= t('admin:training.duration') %></label>
+                                            <input type="text" name="duration" class="form-control" value="<%= mod.duration || '' %>">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label"><%= t('admin:training.level') %></label>
+                                            <select name="level" class="form-select">
+                                                <option value="Beginner" <%= mod.level === 'Beginner' ? 'selected' : '' %>><%= t('admin:training.levelBeginner') %></option>
+                                                <option value="Intermediate" <%= mod.level === 'Intermediate' ? 'selected' : '' %>><%= t('admin:training.levelIntermediate') %></option>
+                                                <option value="Advanced" <%= mod.level === 'Advanced' ? 'selected' : '' %>><%= t('admin:training.levelAdvanced') %></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label"><%= t('admin:training.price') %></label>
+                                            <input type="number" name="price" class="form-control" min="0" step="0.01" value="<%= mod.price %>">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label"><%= t('admin:training.status') %></label>
+                                            <select name="status" class="form-select">
+                                                <option value="active" <%= mod.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+                                                <option value="draft" <%= mod.status === 'draft' ? 'selected' : '' %>><%= t('admin:status.draft') %></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-secondary">
+                                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                                    <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:training.updateCourse') %></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
                 <% } else { %>
                 <div class="empty-state">
                     <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>

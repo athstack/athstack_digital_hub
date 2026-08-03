@@ -442,7 +442,11 @@
     "courseImage": "课程图片",
     "deleteConfirm": "删除此课程？",
     "noCourses": "暂无课程",
-    "noCoursesHint": "创建您的第一门培训课程即可开始。"
+    "noCoursesHint": "创建您的第一门培训课程即可开始。",
+    "updateCourse": "更新课程",
+    "editCourseModal": "编辑课程",
+    "editCourse": "编辑",
+    "status": "状态"
   },
   "inbox": {
     "heading": "联系收件箱",

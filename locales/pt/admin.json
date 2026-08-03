@@ -442,7 +442,11 @@
     "courseImage": "Imagem do Curso",
     "deleteConfirm": "Eliminar este curso?",
     "noCourses": "Ainda Sem Cursos",
-    "noCoursesHint": "Crie o seu primeiro curso de formação para começar."
+    "noCoursesHint": "Crie o seu primeiro curso de formação para começar.",
+    "updateCourse": "Atualizar Curso",
+    "editCourseModal": "Editar Curso",
+    "editCourse": "Editar",
+    "status": "Status"
   },
   "inbox": {
     "heading": "Caixa de Entrada de Contactos",

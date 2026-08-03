@@ -442,7 +442,11 @@
     "courseImage": "صورة الدورة",
     "deleteConfirm": "حذف هذه الدورة؟",
     "noCourses": "لا توجد دورات بعد",
-    "noCoursesHint": "أنشئ أول دورة تدريبية لك للبدء."
+    "noCoursesHint": "أنشئ أول دورة تدريبية لك للبدء.",
+    "updateCourse": "تحديث الدورة",
+    "editCourseModal": "تعديل الدورة",
+    "editCourse": "تعديل",
+    "status": "الحالة"
   },
   "inbox": {
     "heading": "صندوق الوارد للتواصل",

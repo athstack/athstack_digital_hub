@@ -448,7 +448,11 @@
     "courseImage": "Course Image",
     "deleteConfirm": "Delete this course?",
     "noCourses": "No Courses Yet",
-    "noCoursesHint": "Create your first training course to get started."
+    "noCoursesHint": "Create your first training course to get started.",
+    "updateCourse": "Update Course",
+    "editCourseModal": "Edit Course",
+    "editCourse": "Edit",
+    "status": "Status"
   },
   "inbox": {
     "heading": "Contact Inbox",

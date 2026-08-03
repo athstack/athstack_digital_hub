@@ -442,7 +442,11 @@
     "courseImage": "Picha ya Kozi",
     "deleteConfirm": "Futa kozi hii?",
     "noCourses": "Hakuna Kozi Bado",
-    "noCoursesHint": "Unda kozi yako ya kwanza ya mafunzo kuanza."
+    "noCoursesHint": "Unda kozi yako ya kwanza ya mafunzo kuanza.",
+    "updateCourse": "Sasisha Kozi",
+    "editCourseModal": "Hariri Kozi",
+    "editCourse": "Hariri",
+    "status": "Hali"
   },
   "inbox": {
     "heading": "Kikasha cha Mawasiliano",

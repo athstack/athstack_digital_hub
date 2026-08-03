@@ -442,7 +442,11 @@
     "courseImage": "Image du cours",
     "deleteConfirm": "Supprimer ce cours ?",
     "noCourses": "Aucun cours pour le moment",
-    "noCoursesHint": "Créez votre premier cours de formation pour commencer."
+    "noCoursesHint": "Créez votre premier cours de formation pour commencer.",
+    "updateCourse": "Mettre à jour le cours",
+    "editCourseModal": "Modifier le cours",
+    "editCourse": "Modifier",
+    "status": "Statut"
   },
   "inbox": {
     "heading": "Boîte de réception des contacts",

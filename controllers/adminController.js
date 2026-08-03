@@ -830,7 +830,7 @@ exports.getCourses = async (req, res, next) => {
 
 exports.createCourse = async (req, res, next) => {
   try {
-    const { title, description, duration, level, price, instructor } = req.body;
+    const { title, description, duration, level, price, status, instructor } = req.body;
 
     if (!title) {
       req.flash('error', req.t('admin:flash.courseTitleRequired'));
@@ -846,7 +846,7 @@ exports.createCourse = async (req, res, next) => {
       slug,
       description: description || '',
       duration: duration || '',
-      status: 'draft',
+      status: status === 'draft' ? 'draft' : 'active',
       level: level || 'Beginner',
       price: parseFloat(price) || 0,
       image_path: courseImage

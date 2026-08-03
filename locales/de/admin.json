@@ -442,7 +442,11 @@
     "courseImage": "Kursbild",
     "deleteConfirm": "Diesen Kurs löschen?",
     "noCourses": "Noch keine Kurse",
-    "noCoursesHint": "Erstellen Sie Ihren ersten Schulungskurs, um zu starten."
+    "noCoursesHint": "Erstellen Sie Ihren ersten Schulungskurs, um zu starten.",
+    "updateCourse": "Kurs aktualisieren",
+    "editCourseModal": "Kurs bearbeiten",
+    "editCourse": "Bearbeiten",
+    "status": "Status"
   },
   "inbox": {
     "heading": "Kontakt-Posteingang",
