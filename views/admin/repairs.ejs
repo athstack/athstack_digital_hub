@@ -19,88 +19,232 @@
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-wrench me-2 text-primary"></i><%= t('admin:repairs.heading') %></h2>
                 </div>
 
-                <% if (repairs && repairs.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr><th><%= t('admin:words.reference') %></th><th><%= t('admin:words.customer') %></th><th><%= t('admin:words.service') %></th><th><%= t('admin:words.device') %></th><th><%= t('admin:repairs.assignedTo') %></th><th><%= t('common:words.date') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:words.action') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% repairs.forEach(repair => { %>
-                                <tr>
-                                    <td class="text-white fw-bold"><%= repair.reference_number || 'N/A' %></td>
-                                    <td class="text-white-50"><%= repair.customer_name %></td>
-                                    <td class="text-white-50"><%= repair.service_title || 'N/A' %></td>
-                                    <td class="text-white-50"><%= repair.device_type || '' %> <%= repair.device_brand || '' %></td>
-                                    <td class="text-white-50"><% if (repair.technician_first_name) { %><%= formatDisplayName(repair.technician_first_name, repair.technician_last_name) %><% } else { %><span class="text-warning"><%= t('admin:repairs.unassigned') %></span><% } %></td>
-                                    <td class="text-white-50"><%= formatDate(repair.appointment_date) %></td>
-                                    <td><span class="badge <%= getStatusBadgeClass(repair.status) %>"><%= t('admin:status.' + (repair.status||'').toLowerCase(), {defaultValue: repair.status}) %></span></td>
-                                    <td>
-                                        <% if (can('assign_repairs')) { %>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-user-plus', abClassExtra:'assign-trigger', abTitle: repair.technician_first_name ? t('admin:repairs.reassign') : t('admin:repairs.assign'), abAttrs:'data-bs-toggle="modal" data-bs-target="#assignTechnicianModal" data-repair-id="' + repair.id + '" data-reference="' + escapeAttr(repair.reference_number || '') + '"' }) %>
-                                        </div>
-                                        <% } else { %>
-                                        <span class="text-success small"><i class="fa-solid fa-check-circle me-1"></i><%= repair.technician_first_name ? t('admin:status.assigned') : t('admin:repairs.unassigned') %></span>
-                                        <% } %>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/admin/repairs">
+                    <%- include('./partials/repairsTable') %>
                 </div>
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-wrench fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:repairs.noRepairs') %></h4>
-                    <p class="text-white-50"><%= t('admin:repairs.noRepairsSubmitted') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
 
-<div class="modal fade" id="assignTechnicianModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-            <form method="POST" action="" id="assignForm">
+<!-- Assign technician modal -->
+<div class="modal fade crud-modal" id="assignTechnicianModal" tabindex="-1" aria-labelledby="assignTechnicianTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="assignForm" method="POST" action="/admin/repairs" novalidate>
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <div class="modal-header border-secondary pt-4">
-                    <h5 class="text-white fw-bold"><%= t('admin:repairs.assignTechnicianTitle') %> - <span id="assignReference"></span></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignTechnicianTitle"><%= t('admin:repairs.assignTechnicianTitle') %> <span class="text-white-50" id="assignReference"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <label class="form-label"><%= t('admin:repairs.selectTechnician') %></label>
-                    <select name="technician_id" class="form-select" required>
+                    <label class="form-label" for="assign-technician-select"><%= t('admin:repairs.selectTechnician') %></label>
+                    <select name="technician_id" id="assign-technician-select" class="form-select" required>
                         <option value=""><%= (technicians && technicians.length > 0) ? t('admin:repairs.chooseTechnician') : t('admin:repairs.noTechnicians') %></option>
                         <% if (technicians && technicians.length > 0) { technicians.forEach(tech => { %>
                         <option value="<%= tech.id %>"><%= formatDisplayName(tech.first_name, tech.last_name) %><%= tech.role !== 'technician' ? ' (' + t('admin:words.admin') + ')' : '' %></option>
                         <% }) } %>
                     </select>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
-                    <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:repairs.assign') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-user-check me-1"></i><%= t('admin:repairs.assign') %></button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Repair detail modal -->
+<div class="modal fade crud-modal" id="repairDetailModal" tabindex="-1" aria-labelledby="repairDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="repairDetailTitle"><%= t('admin:repairs.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="repairDetailBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.assign-trigger').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var id = this.dataset.repairId;
-            var ref = this.dataset.reference;
-            document.getElementById('assignReference').textContent = ref;
-            document.getElementById('assignForm').action = '/admin/repairs/' + id + '/assign';
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var assignModalEl = document.getElementById('assignTechnicianModal');
+    var assignForm = document.getElementById('assignForm');
+    var assignReference = document.getElementById('assignReference');
+    var detailModalEl = document.getElementById('repairDetailModal');
+    var detailBodyEl = document.getElementById('repairDetailBody');
+    var detailTitleEl = document.getElementById('repairDetailTitle');
+
+    var i18n = {
+        detailTitle: '<%= t('admin:repairs.detailTitle') %>',
+        referenceLabel: '<%= t('admin:words.reference') %>',
+        device: '<%= t('admin:words.device') %>',
+        customer: '<%= t('admin:words.customer') %>',
+        service: '<%= t('admin:words.service') %>',
+        issue: '<%= t('admin:repairs.issue') %>',
+        appointment: '<%= t('admin:repairs.appointment') %>',
+        priority: '<%= t('admin:repairs.priority') %>',
+        estimatedCost: '<%= t('admin:repairs.estimatedCost') %>',
+        actualCost: '<%= t('admin:repairs.actualCost') %>',
+        timeline: '<%= t('admin:repairs.timeline') %>',
+        noTimeline: '<%= t('admin:repairs.noTimeline') %>',
+        updatedBy: '<%= t('admin:repairs.updatedBy') %>',
+        assignedTo: '<%= t('admin:repairs.assignedTo') %>',
+        unassigned: '<%= t('admin:repairs.unassigned') %>',
+        createdAt: '<%= t('common:words.date') %>',
+        email: '<%= t('common:words.email') %>',
+        phone: '<%= t('common:words.phone') %>',
+        status: '<%= t('common:words.status') %>',
+        updateFailed: '<%= t('admin:repairs.updateFailed') %>',
+        networkError: '<%= t('admin:repairs.networkError') %>',
+        selectTechnician: '<%= t('admin:flash.selectTechnician') %>',
+        assigned: '<%= t('admin:flash.technicianAssigned') %>'
+    };
+
+    var statusColors = { pending: 'bg-warning text-dark', assigned: 'bg-info text-dark', diagnosing: 'bg-primary', in_repair: 'bg-secondary', awaiting_parts: 'bg-warning text-dark', completed: 'bg-success', resolved: 'bg-success', closed: 'bg-secondary', cancelled: 'bg-danger' };
+    var priorityColors = { low: 'bg-secondary', medium: 'bg-warning text-dark', high: 'bg-danger', urgent: 'bg-danger' };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function badge(value, colorMap) {
+        var key = String(value || '').toLowerCase();
+        return '<span class="badge text-capitalize ' + ((colorMap && colorMap[key]) || 'bg-secondary') + '">' + esc(value || '') + '</span>';
+    }
+
+    function infoCard(title, icon, html) {
+        return '<div class="glass-card p-4 h-100"><h6 class="text-white fw-bold mb-3"><i class="fa-solid ' + icon + ' me-2 text-primary"></i>' + esc(title) + '</h6>' + html + '</div>';
+    }
+
+    function renderDetail(r) {
+        var techHtml = r.technician_first_name
+            ? esc([r.technician_first_name, r.technician_last_name].filter(Boolean).join(' '))
+            : '<span class="text-warning">' + i18n.unassigned + '</span>';
+
+        var deviceParts = [];
+        if (r.device_type) deviceParts.push(esc(r.device_type));
+        if (r.device_brand) deviceParts.push(esc(r.device_brand));
+        if (r.device_model) deviceParts.push(esc(r.device_model));
+        var deviceHtml = deviceParts.length ? deviceParts.join(' — ') : '—';
+        if (r.device_serial) deviceHtml += '<div class="small text-white-50 mt-1">SN: ' + esc(r.device_serial) + '</div>';
+
+        var customerHtml = esc(r.customer_name || '—') +
+            (r.customer_email ? '<div class="small text-white-50 mt-1"><i class="fa-solid fa-envelope me-1"></i>' + esc(r.customer_email) + '</div>' : '') +
+            (r.customer_phone ? '<div class="small text-white-50"><i class="fa-solid fa-phone me-1"></i>' + esc(r.customer_phone) + '</div>' : '');
+
+        var timelineHtml = '';
+        if (r.updates && r.updates.length > 0) {
+            timelineHtml = '<ul class="list-unstyled mb-0">';
+            r.updates.forEach(function (u) {
+                var updater = [u.updater_first_name, u.updater_last_name].filter(Boolean).join(' ');
+                timelineHtml += '<li class="mb-3">' +
+                    '<div class="d-flex align-items-center gap-2 mb-1">' + badge(u.status, statusColors) + '<span class="text-white-50 small">' + esc(u.created_at_formatted || '') + '</span></div>' +
+                    (u.notes ? '<p class="text-white-50 small mb-1">' + esc(u.notes) + '</p>' : '') +
+                    (updater ? '<span class="text-white-50 small"><i class="fa-solid fa-user me-1"></i>' + i18n.updatedBy + ': ' + esc(updater) + '</span>' : '') +
+                    '</li>';
+            });
+            timelineHtml += '</ul>';
+        } else {
+            timelineHtml = '<p class="text-white-50 mb-0 fst-italic">' + i18n.noTimeline + '</p>';
+        }
+
+        var costRow = function (label, value) {
+            return '<div class="d-flex justify-content-between mb-1"><span class="text-white-50">' + esc(label) + '</span><span class="text-white">' + (value || '—') + '</span></div>';
+        };
+
+        var html =
+            '<div class="row g-4">' +
+            '<div class="col-md-6">' + infoCard(i18n.referenceLabel, 'fa-hashtag',
+                '<p class="text-white mb-1 fw-bold">' + esc(r.reference_number || 'N/A') + '</p>' +
+                '<p class="text-white-50 mb-1">' + i18n.status + ': ' + badge(r.status, statusColors) + '</p>' +
+                '<p class="text-white-50 mb-1">' + i18n.priority + ': ' + badge(r.priority, priorityColors) + '</p>' +
+                '<p class="text-white-50 mb-0 small"><i class="fa-solid fa-calendar me-1"></i>' + i18n.appointment + ': ' + esc(r.appointment_date_formatted || '—') + '</p>' +
+                '<p class="text-white-50 mb-0 small mt-1"><i class="fa-solid fa-clock me-1"></i>' + i18n.createdAt + ': ' + esc(r.created_at_formatted || '—') + '</p>') + '</div>' +
+            '<div class="col-md-6">' + infoCard(i18n.device, 'fa-laptop',
+                '<p class="text-white mb-0">' + deviceHtml + '</p>') + '</div>' +
+            '<div class="col-md-6">' + infoCard(i18n.customer, 'fa-user',
+                '<p class="text-white mb-0">' + customerHtml + '</p>') + '</div>' +
+            '<div class="col-md-6">' + infoCard(i18n.service, 'fa-screwdriver-wrench',
+                '<p class="text-white mb-0">' + esc(r.service_title || '—') + '</p>') + '</div>' +
+            '<div class="col-12">' + infoCard(i18n.issue, 'fa-circle-info',
+                '<p class="text-white-50 mb-0">' + (r.issue_description ? esc(r.issue_description) : '—') + '</p>') + '</div>' +
+            '<div class="col-12">' + infoCard(i18n.assignedTo, 'fa-user-tie',
+                '<div class="d-flex flex-wrap gap-4">' +
+                '<div>' + costRow(i18n.assignedTo, techHtml) + '</div>' +
+                '<div>' + costRow(i18n.estimatedCost, esc(r.estimated_cost_formatted)) + '</div>' +
+                '<div>' + costRow(i18n.actualCost, esc(r.actual_cost_formatted)) + '</div>' +
+                '</div>') + '</div>' +
+            '<div class="col-12">' + infoCard(i18n.timeline, 'fa-timeline', timelineHtml) + '</div>' +
+            '</div>';
+
+        return html;
+    }
+
+    function openDetail(id) {
+        Crud.get('/admin/repairs/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.repair) return;
+                var r = data.repair;
+                detailTitleEl.textContent = i18n.detailTitle + ' — ' + (r.reference_number || '#' + r.id);
+                detailBodyEl.innerHTML = renderDetail(r);
+                Crud.openModal(detailModalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    function openAssign(id, ref) {
+        assignForm.action = '/admin/repairs/' + id + '/assign';
+        assignReference.textContent = ref;
+        Crud.clearErrors(assignForm);
+        Crud.openModal(assignModalEl);
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-repair]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
+        }
+        var assignBtn = e.target.closest('[data-assign-repair]');
+        if (assignBtn) {
+            e.preventDefault();
+            openAssign(assignBtn.getAttribute('data-id'), assignBtn.getAttribute('data-reference'));
+        }
+    });
+
+    assignForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!assignForm.elements['technician_id'].value) {
+            Crud.toast(i18n.selectTechnician, 'error');
+            return;
+        }
+        Crud.submitForm(assignForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(assignModalEl);
+                Crud.toast(data.message || i18n.assigned, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/repairs' });
+            }
         });
     });
-});
+
+    Crud.initTable(tableWrap);
+})();
 </script>
 
 <%- include('../partials/footer') %>

@@ -56,6 +56,7 @@ router.post('/products/:id/status', requirePermission('manage_products'), valida
 
 // -- Repairs -------------------------------------------------------------------
 router.get('/repairs', requirePermission('manage_repairs'), adminController.getRepairs);
+router.get('/repairs/:id', requirePermission('manage_repairs'), adminController.getRepairDetail);
 router.post('/repairs/:id/assign', requirePermission('assign_repairs'), validateCsrf, adminController.assignTechnician);
 
 // -- Orders ---------------------------------------------------------------------

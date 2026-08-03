@@ -245,7 +245,9 @@
     "rolePermissionsUpdated": "Ruhusa za jukumu zimesasishwa kwa mafanikio.",
     "permissionAdded": "Ruhusa imeongezwa kwa mafanikio.",
     "invalidPermissionName": "Jina la ruhusa batili. Tumia herufi ndogo, namba na michakato ya chini pekee.",
-    "invalidOrderId": "Kitambulisho cha agizo si sahihi."
+    "invalidOrderId": "Kitambulisho cha agizo si sahihi.",
+    "invalidRepairId": "Kitambulisho cha ukarabati si sahihi.",
+    "repairNotFound": "Ombi la ukarabati halikupatikana."
   },
   "validation": {
     "productNameRequired": "Jina la bidhaa linahitajika",
@@ -462,7 +464,28 @@
     "selectTechnician": "Chagua Fundi",
     "chooseTechnician": "Chagua fundi...",
     "noTechnicians": "Hakuna mafundi walipatikana — Ongeza moja katika Usimamizi wa Watumiaji",
-    "assign": "Kabidhi"
+    "assign": "Kabidhi",
+    "filterStatus": "Hali zote",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho",
+    "updateFailed": "Imeshindwa kusasisha",
+    "networkError": "Hitilafu ya mtandao",
+    "searchPlaceholder": "Rejea, jina au barua pepe...",
+    "noRepairsMatch": "Hakuna maombi ya ukarabati yanayolingana na vichujio vya sasa.",
+    "viewDetail": "Angalia Urekebishaji",
+    "detailTitle": "Maelezo ya Urekebishaji",
+    "issue": "Maelezo ya tatizo",
+    "appointment": "Tarehe ya Uteuzi",
+    "priority": "Kipaumbele",
+    "estimatedCost": "Gharama Inayokadiriwa",
+    "actualCost": "Gharama Halisi",
+    "timeline": "Mfuatano wa Masasisho",
+    "noTimeline": "Hakuna masasisho yaliyorekodiwa bado.",
+    "updatedBy": "Imesasishwa na"
   },
   "services": {
     "heading": "Simamia Huduma",

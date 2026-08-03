@@ -245,7 +245,9 @@
     "rolePermissionsUpdated": "Rollenberechtigungen erfolgreich aktualisiert.",
     "permissionAdded": "Berechtigung erfolgreich hinzugefügt.",
     "invalidPermissionName": "Ungültiger Berechtigungsname. Verwenden Sie nur Kleinbuchstaben, Zahlen und Unterstriche.",
-    "invalidOrderId": "Ungültige Bestell-ID."
+    "invalidOrderId": "Ungültige Bestell-ID.",
+    "invalidRepairId": "Ungültige Reparatur-ID.",
+    "repairNotFound": "Reparaturanfrage nicht gefunden."
   },
   "validation": {
     "productNameRequired": "Produktname ist erforderlich",
@@ -462,7 +464,28 @@
     "selectTechnician": "Techniker auswählen",
     "chooseTechnician": "Techniker wählen...",
     "noTechnicians": "Keine Techniker gefunden — Fügen Sie einen in der Benutzerverwaltung hinzu",
-    "assign": "Zuweisen"
+    "assign": "Zuweisen",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "updateFailed": "Aktualisierung fehlgeschlagen",
+    "networkError": "Netzwerkfehler",
+    "searchPlaceholder": "Referenz, Name oder E-Mail...",
+    "noRepairsMatch": "Keine Reparaturanfragen passen zu den aktuellen Filtern.",
+    "viewDetail": "Reparatur ansehen",
+    "detailTitle": "Reparaturdetails",
+    "issue": "Problembeschreibung",
+    "appointment": "Termindatum",
+    "priority": "Priorität",
+    "estimatedCost": "Geschätzte Kosten",
+    "actualCost": "Tatsächliche Kosten",
+    "timeline": "Aktualisierungsverlauf",
+    "noTimeline": "Noch keine Aktualisierungen erfasst.",
+    "updatedBy": "Aktualisiert von"
   },
   "services": {
     "heading": "Dienste verwalten",

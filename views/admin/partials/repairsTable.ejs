@@ -1,0 +1,84 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:repairs.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:repairs.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('admin:repairs.filterStatus') %>">
+        <option value=""><%= t('admin:repairs.filterStatus') %></option>
+        <option value="pending" <%= currentStatus === 'pending' ? 'selected' : '' %>><%= t('admin:status.pending') %></option>
+        <option value="assigned" <%= currentStatus === 'assigned' ? 'selected' : '' %>><%= t('admin:status.assigned') %></option>
+        <option value="diagnosing" <%= currentStatus === 'diagnosing' ? 'selected' : '' %>><%= t('admin:status.diagnosing') %></option>
+        <option value="in_repair" <%= currentStatus === 'in_repair' ? 'selected' : '' %>><%= t('admin:status.in_repair') %></option>
+        <option value="awaiting_parts" <%= currentStatus === 'awaiting_parts' ? 'selected' : '' %>><%= t('admin:status.awaiting_parts') %></option>
+        <option value="completed" <%= currentStatus === 'completed' ? 'selected' : '' %>><%= t('admin:status.completed') %></option>
+        <option value="cancelled" <%= currentStatus === 'cancelled' ? 'selected' : '' %>><%= t('admin:status.cancelled') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:repairs.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (repairs && repairs.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table repairs-table">
+            <thead>
+                <tr><th><%= t('admin:words.reference') %></th><th><%= t('admin:words.customer') %></th><th><%= t('admin:words.service') %></th><th><%= t('admin:words.device') %></th><th><%= t('admin:repairs.assignedTo') %></th><th><%= t('admin:repairs.appointment') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% repairs.forEach(r => { %>
+                <tr data-repair-id="<%= r.id %>">
+                    <td class="text-white fw-bold"><%= r.reference_number || 'N/A' %></td>
+                    <td class="text-white-50"><%= r.customer_name || '—' %></td>
+                    <td class="text-white-50"><%= r.service_title || 'N/A' %></td>
+                    <td class="text-white-50"><%= r.device_type || '' %> <%= r.device_brand || '' %></td>
+                    <td class="text-white-50">
+                        <% if (r.technician_first_name) { %><%= formatDisplayName(r.technician_first_name, r.technician_last_name) %><% } else { %><span class="text-warning"><%= t('admin:repairs.unassigned') %></span><% } %>
+                    </td>
+                    <td class="text-white-50"><%= formatDate(r.appointment_date) %></td>
+                    <td><span class="badge <%= getStatusBadgeClass(r.status) %>"><%= t('admin:status.' + (r.status||'').toLowerCase(), {defaultValue: r.status}) %></span></td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-receipt', abAttrs:'data-view-repair data-id="' + r.id + '"', abTitle:t('admin:repairs.viewDetail') }) %>
+                            <% if (can('assign_repairs')) { %>
+                            <%- include('../../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-user-plus', abAttrs:'data-assign-repair data-id="' + r.id + '" data-reference="' + escapeAttr(r.reference_number || '') + '"', abTitle:r.technician_first_name ? t('admin:repairs.reassign') : t('admin:repairs.assign') }) %>
+                            <% } %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:repairs.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:repairs.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:repairs.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:repairs.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:repairs.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-wrench fa-4x mb-3"></i>
+    <% if (currentSearch || currentStatus) { %>
+    <h4 class="text-white fw-bold"><%= t('admin:repairs.noRepairs') %></h4>
+    <p class="text-white-50"><%= t('admin:repairs.noRepairsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('admin:repairs.noRepairs') %></h4>
+    <p class="text-white-50"><%= t('admin:repairs.noRepairsSubmitted') %></p>
+    <% } %>
+</div>
+<% } %>

@@ -931,13 +931,110 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.getRepairs = async (req, res, next) => {
   try {
-    const result = await RepairModel.getAll({});
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const status = req.query.status && ['pending', 'assigned', 'diagnosing', 'in_repair', 'awaiting_parts', 'completed', 'cancelled'].includes(req.query.status) ? req.query.status : null;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10;
+
+    const result = await RepairModel.getAll({ status, search, page, limit });
+    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
     const technicians = await UserModel.getTechnicians();
 
-    res.render('admin/repairs', {
+    const viewData = {
       title: req.t('admin:title.repairs'),
       repairs: result.repairs,
-      technicians
+      technicians,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages,
+        hasNext: result.page < totalPages,
+        hasPrev: result.page > 1
+      },
+      currentStatus: status || '',
+      currentSearch: search || ''
+    };
+
+    // Fragment: server-rendered toolbar + table for instant in-place refresh.
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/repairsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    // Plain JSON list for API consumers.
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        repairs: result.repairs,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/repairs', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getRepairDetail = async (req, res, next) => {
+  try {
+    const repairId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (status, data) => isAjax ? res.status(status).json(data) : res.redirect('/admin/repairs');
+
+    if (isNaN(repairId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidRepairId') });
+      req.flash('error', req.t('admin:flash.invalidRepairId'));
+      return respond(400, {});
+    }
+
+    const repair = await RepairModel.findById(repairId);
+    if (!repair) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.repairNotFound') });
+      req.flash('error', req.t('admin:flash.repairNotFound'));
+      return respond(404, {});
+    }
+
+    const lang = req.language;
+    res.json({
+      success: true,
+      repair: {
+        id: repair.id,
+        reference_number: repair.reference_number,
+        customer_name: repair.customer_name,
+        customer_email: repair.customer_email,
+        customer_phone: repair.customer_phone,
+        service_title: repair.service_title,
+        device_type: repair.device_type,
+        device_brand: repair.device_brand,
+        device_model: repair.device_model,
+        device_serial: repair.device_serial,
+        issue_description: repair.issue_description,
+        appointment_date: repair.appointment_date,
+        appointment_date_formatted: formatDate(repair.appointment_date, lang),
+        created_at_formatted: formatDate(repair.created_at, lang),
+        status: repair.status,
+        priority: repair.priority,
+        estimated_cost: repair.estimated_cost,
+        estimated_cost_formatted: formatCurrency(repair.estimated_cost, lang),
+        actual_cost: repair.actual_cost,
+        actual_cost_formatted: formatCurrency(repair.actual_cost, lang),
+        technician_first_name: repair.technician_first_name,
+        technician_last_name: repair.technician_last_name,
+        updates: (repair.updates || []).map(u => ({
+          id: u.id,
+          status: u.status,
+          notes: u.notes,
+          created_at_formatted: formatDate(u.created_at, lang),
+          updater_first_name: u.updater_first_name,
+          updater_last_name: u.updater_last_name
+        }))
+      }
     });
   } catch (err) {
     next(err);
@@ -948,38 +1045,42 @@ exports.assignTechnician = async (req, res, next) => {
   try {
     const repairId = parseInt(req.params.id);
     const { technician_id } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/repairs');
 
-    if (!technician_id) {
-      req.flash('error', req.t('admin:flash.selectTechnician'));
-      return res.redirect('/admin/repairs');
+    if (isNaN(repairId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidRepairId') });
+      req.flash('error', req.t('admin:flash.invalidRepairId'));
+      return respond(400, {});
     }
 
-    const [existing] = await pool.execute(
-      'SELECT technician_id FROM repair_requests WHERE id = ?',
-      [repairId]
-    );
-    if (existing.length > 0 && existing[0].technician_id) {
+    if (!technician_id) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.selectTechnician') });
+      req.flash('error', req.t('admin:flash.selectTechnician'));
+      return respond(400, {});
+    }
+
+    const repair = await RepairModel.findById(repairId);
+    if (!repair) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.repairNotFound') });
+      req.flash('error', req.t('admin:flash.repairNotFound'));
+      return respond(404, {});
+    }
+
+    if (repair.technician_id) {
       if (req.session.userRole !== 'super_admin') {
+        if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.reassignRestricted') });
         req.flash('error', req.t('admin:flash.reassignRestricted'));
-        return res.redirect('/admin/repairs');
+        return respond(403, {});
       }
     }
 
-    await pool.execute(
-      'UPDATE repair_requests SET technician_id = ?, status = ? WHERE id = ?',
-      [parseInt(technician_id), 'assigned', repairId]
-    );
+    await RepairModel.assignTechnician(repairId, parseInt(technician_id));
 
-    const [repair] = await pool.execute(
-      'SELECT user_id, reference_number FROM repair_requests WHERE id = ?',
-      [repairId]
-    );
-    const repairData = repair[0];
-
-    if (repairData && repairData.user_id) {
-      await NotificationModel.create(repairData.user_id, {
+    if (repair.user_id) {
+      await NotificationModel.create(repair.user_id, {
         title: req.t('admin:flash.repairAssignedTitle'),
-        message: req.t('admin:flash.repairAssignedMessage', { ref: repairData.reference_number }),
+        message: req.t('admin:flash.repairAssignedMessage', { ref: repair.reference_number }),
         type: 'repair',
         link: '/dashboard/repairs'
       });
@@ -992,14 +1093,15 @@ exports.assignTechnician = async (req, res, next) => {
     if (techUser.length > 0) {
       await NotificationModel.create(techUser[0].id, {
         title: req.t('admin:flash.newAssignmentTitle'),
-        message: req.t('admin:flash.newAssignmentMessage', { ref: repairData.reference_number }),
+        message: req.t('admin:flash.newAssignmentMessage', { ref: repair.reference_number }),
         type: 'repair',
         link: '/technician/repairs'
       });
     }
 
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.technicianAssigned') });
     req.flash('success', req.t('admin:flash.technicianAssigned'));
-    res.redirect('/admin/repairs');
+    respond(200, {});
   } catch (err) {
     next(err);
   }

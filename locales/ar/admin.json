@@ -245,7 +245,9 @@
     "rolePermissionsUpdated": "تم تحديث صلاحيات الدور بنجاح.",
     "permissionAdded": "تمت إضافة الصلاحية بنجاح.",
     "invalidPermissionName": "اسم صلاحية غير صالح. استخدم الأحرف الصغيرة والأرقام والشرطات السفلية فقط.",
-    "invalidOrderId": "معرف الطلب غير صالح."
+    "invalidOrderId": "معرف الطلب غير صالح.",
+    "invalidRepairId": "معرف الإصلاح غير صالح.",
+    "repairNotFound": "طلب الإصلاح غير موجود."
   },
   "validation": {
     "productNameRequired": "اسم المنتج مطلوب",
@@ -462,7 +464,28 @@
     "selectTechnician": "اختر فنيًا",
     "chooseTechnician": "اختر الفني...",
     "noTechnicians": "لا يوجد فنون — أضف واحدًا من إدارة المستخدمين",
-    "assign": "إسناد"
+    "assign": "إسناد",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "updateFailed": "فشل التحديث",
+    "networkError": "خطأ في الشبكة",
+    "searchPlaceholder": "المرجع أو الاسم أو البريد الإلكتروني...",
+    "noRepairsMatch": "لا توجد طلبات إصلاح تطابق عوامل التصفية الحالية.",
+    "viewDetail": "عرض الإصلاح",
+    "detailTitle": "تفاصيل الإصلاح",
+    "issue": "وصف المشكلة",
+    "appointment": "تاريخ الموعد",
+    "priority": "الأولوية",
+    "estimatedCost": "التكلفة التقديرية",
+    "actualCost": "التكلفة الفعلية",
+    "timeline": "الجدول الزمني للتحديثات",
+    "noTimeline": "لا توجد تحديثات مسجلة بعد.",
+    "updatedBy": "تم التحديث بواسطة"
   },
   "services": {
     "heading": "إدارة الخدمات",

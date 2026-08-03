@@ -79,13 +79,18 @@ class RepairModel {
     return row.total;
   }
 
-  async getAll({ status, technician_id, page = 1, limit = 20 } = {}) {
+  async getAll({ status, search, technician_id, page = 1, limit = 20 } = {}) {
     const conditions = [];
     const params = [];
 
     if (status) {
       conditions.push('rr.status = ?');
       params.push(status);
+    }
+    if (search) {
+      conditions.push('(rr.reference_number LIKE ? OR rr.customer_name LIKE ? OR rr.customer_email LIKE ?)');
+      const like = `%${search}%`;
+      params.push(like, like, like);
     }
     if (technician_id) {
       conditions.push('rr.technician_id = ?');

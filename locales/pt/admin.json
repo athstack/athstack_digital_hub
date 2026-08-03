@@ -245,7 +245,9 @@
     "rolePermissionsUpdated": "Permissões da função atualizadas com sucesso.",
     "permissionAdded": "Permissão adicionada com sucesso.",
     "invalidPermissionName": "Nome de permissão inválido. Use apenas letras minúsculas, números e sublinhados.",
-    "invalidOrderId": "ID de pedido inválido."
+    "invalidOrderId": "ID de pedido inválido.",
+    "invalidRepairId": "ID de reparo inválido.",
+    "repairNotFound": "Solicitação de reparo não encontrada."
   },
   "validation": {
     "productNameRequired": "O nome do produto é obrigatório",
@@ -462,7 +464,28 @@
     "selectTechnician": "Selecionar Técnico",
     "chooseTechnician": "Escolher técnico...",
     "noTechnicians": "Não foram encontrados técnicos — adicione um na gestão de Utilizadores",
-    "assign": "Atribuir"
+    "assign": "Atribuir",
+    "filterStatus": "Todos os estados",
+    "refresh": "Atualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primeira página",
+    "prev": "Página anterior",
+    "next": "Página seguinte",
+    "last": "Última página",
+    "updateFailed": "Falha ao atualizar",
+    "networkError": "Erro de rede",
+    "searchPlaceholder": "Referência, nome ou e-mail...",
+    "noRepairsMatch": "Nenhuma solicitação de reparo corresponde aos filtros atuais.",
+    "viewDetail": "Ver reparo",
+    "detailTitle": "Detalhes do reparo",
+    "issue": "Descrição do problema",
+    "appointment": "Data do agendamento",
+    "priority": "Prioridade",
+    "estimatedCost": "Custo estimado",
+    "actualCost": "Custo real",
+    "timeline": "Histórico de atualizações",
+    "noTimeline": "Nenhuma atualização registrada ainda.",
+    "updatedBy": "Atualizado por"
   },
   "services": {
     "heading": "Gerir Serviços",

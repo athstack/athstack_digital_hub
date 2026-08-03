@@ -245,7 +245,9 @@
     "rolePermissionsUpdated": "भूमिका अनुमतियाँ सफलतापूर्वक अपडेट की गईं।",
     "permissionAdded": "अनुमति सफलतापूर्वक जोड़ी गई।",
     "invalidPermissionName": "अमान्य अनुमति नाम। केवल लोअरकेस अक्षर, संख्याएँ और अंडरस्कोर उपयोग करें।",
-    "invalidOrderId": "अमान्य ऑर्डर आईडी।"
+    "invalidOrderId": "अमान्य ऑर्डर आईडी।",
+    "invalidRepairId": "अमान्य मरम्मत आईडी।",
+    "repairNotFound": "मरम्मत अनुरोध नहीं मिला।"
   },
   "validation": {
     "productNameRequired": "प्रोडक्ट का नाम आवश्यक है",
@@ -462,7 +464,28 @@
     "selectTechnician": "तकनीशियन चुनें",
     "chooseTechnician": "तकनीशियन चुनें...",
     "noTechnicians": "कोई तकनीशियन नहीं मिला — उपयोगकर्ता प्रबंधन में एक जोड़ें",
-    "assign": "नियुक्त करें"
+    "assign": "नियुक्त करें",
+    "filterStatus": "सभी स्थितियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ",
+    "updateFailed": "अपडेट विफल",
+    "networkError": "नेटवर्क त्रुटि",
+    "searchPlaceholder": "संदर्भ, नाम या ईमेल...",
+    "noRepairsMatch": "वर्तमान फ़िल्टर से कोई मरम्मत अनुरोध मेल नहीं खाता।",
+    "viewDetail": "मरम्मत देखें",
+    "detailTitle": "मरम्मत विवरण",
+    "issue": "समस्या विवरण",
+    "appointment": "अपॉइंटमेंट तिथि",
+    "priority": "प्राथमिकता",
+    "estimatedCost": "अनुमानित लागत",
+    "actualCost": "वास्तविक लागत",
+    "timeline": "अपडेट समयरेखा",
+    "noTimeline": "अभी तक कोई अपडेट दर्ज नहीं है।",
+    "updatedBy": "अपडेटकर्ता"
   },
   "services": {
     "heading": "सेवाएं प्रबंधित करें",
