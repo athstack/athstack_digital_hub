@@ -180,6 +180,12 @@
     "productUpdated": "Bidhaa imesasishwa kwa mafanikio.",
     "productDeleted": "Bidhaa imefutwa.",
     "productSkuDuplicate": "SKU tayari ipo. Tafadhali jaribu tena.",
+    "productNameRequired": "Jina la bidhaa linahitajika.",
+    "productPriceInvalid": "Bei sahihi inahitajika.",
+    "productCategoryRequired": "Tafadhali chagua kategoria.",
+    "serviceTitleRequired": "Kichwa cha huduma kinahitajika.",
+    "serviceCategoryRequired": "Tafadhali chagua kategoria.",
+    "servicePriceInvalid": "Bei ya msingi sahihi inahitajika.",
     "selectTechnician": "Tafadhali chagua fundi.",
     "reassignRestricted": "Msimamizi mkuu pekee anaweza kugawa upya fundi.",
     "technicianAssigned": "Fundi amekabidhiwa ombi la urekebishaji.",
@@ -303,7 +309,16 @@
     "deleting": "Inafuta...",
     "deleteFailed": "Imeshindwa kufuta bidhaa.",
     "updateStatusFailed": "Imeshindwa kusasisha hali.",
-    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena."
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "searchPlaceholder": "Tafuta bidhaa...",
+    "filterCategory": "Kategoria zote",
+    "filterStatus": "Hali zote",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho"
   },
   "productForm": {
     "headingAdd": "Ongeza Bidhaa Mpya",
@@ -422,7 +437,8 @@
     "noServicesHint": "Ongeza huduma za urekebishaji kuanza.",
     "basePrice": "Bei ya Msingi",
     "iconClass": "Darasa la Ikoni",
-    "createService": "Unda Huduma"
+    "createService": "Unda Huduma",
+    "refresh": "Onyesha upya"
   },
   "training": {
     "heading": "Akademia ya Mafunzo",

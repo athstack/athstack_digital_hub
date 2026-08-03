@@ -36,6 +36,18 @@
         onerror="this.remove();var f=document.createElement('script');f.src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js';document.body.appendChild(f);"></script>
 <script src="/assets/js/main.js"></script>
 <script src="/assets/js/reviews.js"></script>
+<script src="/assets/js/crud.js"></script>
+<script>
+    window.CRUD_CSRF = <%- JSON.stringify(typeof csrfToken !== 'undefined' ? csrfToken : '') %>;
+    window.CRUD_I18N = {
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>',
+        confirmTitle: '<%= t('common:confirm.areYouSure') %>',
+        requestFailed: '<%= t('common:notifications.failedToLoad') %>',
+        networkError: '<%= t('common:words.networkError', { defaultValue: 'Network error. Please try again.' }) %>',
+        loadFailed: '<%= t('common:notifications.failedToLoad') %>'
+    };
+</script>
 <script>
 (function() {
     var i18nStrings = {

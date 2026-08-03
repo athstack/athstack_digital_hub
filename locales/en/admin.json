@@ -186,6 +186,9 @@
     "productUpdated": "Product updated successfully.",
     "productDeleted": "Product deleted.",
     "productSkuDuplicate": "SKU already exists. Please try again.",
+    "productNameRequired": "Product name is required.",
+    "productPriceInvalid": "A valid price is required.",
+    "productCategoryRequired": "Please select a category.",
     "selectTechnician": "Please select a technician.",
     "reassignRestricted": "Only super admin can reassign a technician.",
     "technicianAssigned": "Technician assigned to repair request.",
@@ -210,6 +213,9 @@
     "replyFailed": "Failed to send reply. Please try again.",
     "settingsUpdated": "Settings updated successfully.",
     "serviceRequiredFields": "Title, category, and price are required.",
+    "serviceTitleRequired": "Service title is required.",
+    "serviceCategoryRequired": "Please select a category.",
+    "servicePriceInvalid": "A valid base price is required.",
     "serviceCreated": "Service created.",
     "serviceNotFound": "Service not found.",
     "serviceUpdated": "Service updated.",
@@ -309,7 +315,16 @@
     "deleting": "Deleting...",
     "deleteFailed": "Failed to delete product.",
     "updateStatusFailed": "Failed to update status.",
-    "networkError": "Network error. Please try again."
+    "networkError": "Network error. Please try again.",
+    "searchPlaceholder": "Search products...",
+    "filterCategory": "All Categories",
+    "filterStatus": "All Statuses",
+    "refresh": "Refresh",
+    "paginationInfo": "{{from}}–{{to}} of {{total}}",
+    "first": "First page",
+    "prev": "Previous page",
+    "next": "Next page",
+    "last": "Last page"
   },
   "productForm": {
     "headingAdd": "Add New Product",
@@ -428,7 +443,8 @@
     "noServicesHint": "Add repair services to get started.",
     "basePrice": "Base Price",
     "iconClass": "Icon Class",
-    "createService": "Create Service"
+    "createService": "Create Service",
+    "refresh": "Refresh"
   },
   "training": {
     "heading": "Training Academy",

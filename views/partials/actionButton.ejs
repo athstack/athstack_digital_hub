@@ -24,7 +24,7 @@ Params (all optional except the ones you need):
   abConfirm    -> message for the existing [data-confirm] native confirm handling
   abButton     -> render as <button type="button"> (no form, no link)
   abClassExtra -> extra classes appended to the button (e.g. JS hook classes)
-  abAttrs      -> extra HTML attributes (must be pre-escaped in the caller)
+  abAttrs      -> extra HTML attributes (must be pre-escaped in the caller via escapeAttr)
   abOn         -> truthy adds the 'is-on' filled state
   abDisabled   -> truthy adds the 'disabled' attribute
 %>
@@ -42,12 +42,12 @@ var abAttrs = typeof abAttrs === 'undefined' ? '' : abAttrs;
 var abDisabled = (typeof abDisabled !== 'undefined' && abDisabled) ? ' disabled' : '';
 %>
 <% if (typeof abButton !== 'undefined' && abButton) { %>
-<button type="button" class="<%= abClass %>" title="<%= abTitle %>" aria-label="<%= abAria %>"<%= abDisabled %><%= abAttrs ? ' ' + abAttrs : '' %>><i class="fa-solid <%= abIcon %>"></i></button>
+<button type="button" class="<%= abClass %>" title="<%= abTitle %>" aria-label="<%= abAria %>"<%= abDisabled %><% if (abAttrs) { %> <%- abAttrs %><% } %>><i class="fa-solid <%= abIcon %>"></i></button>
 <% } else if (typeof abFormAction !== 'undefined' && abFormAction) { %>
 <form method="POST" action="<%= abFormAction %>" class="d-inline"<% if (typeof abConfirm !== 'undefined' && abConfirm) { %> data-confirm="<%= abConfirm %>"<% } %>>
     <input type="hidden" name="csrf_token" value="<%= abFormCsrf || '' %>"><% if (typeof abFormExtra !== 'undefined' && abFormExtra) { %><%- abFormExtra %><% } %>
     <button type="submit" class="<%= abClass %>" title="<%= abTitle %>" aria-label="<%= abAria %>"<%= abDisabled %>><i class="fa-solid <%= abIcon %>"></i></button>
 </form>
 <% } else { %>
-<a href="<%= abHref || '#' %>" class="<%= abClass %>" title="<%= abTitle %>" aria-label="<%= abAria %>"<%= abAttrs ? ' ' + abAttrs : '' %>><i class="fa-solid <%= abIcon %>"></i></a>
+<a href="<%= abHref || '#' %>" class="<%= abClass %>" title="<%= abTitle %>" aria-label="<%= abAria %>"<% if (abAttrs) { %> <%- abAttrs %><% } %>><i class="fa-solid <%= abIcon %>"></i></a>
 <% } %>

@@ -171,6 +171,14 @@ app.use((req, res, next) => {
   res.locals.flashInfo = req.flash('info');
   res.locals.userStatus = (req.session && req.session.userId) ? (req.session.userStatus || 'active') : null;
   res.locals.formatDisplayName = formatDisplayName;
+  res.locals.escapeAttr = function(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/'/g, '&#39;');
+  };
   res.locals.getStatusBadgeClass = require('./utils/helpers').getStatusBadgeClass;
   res.locals.imageUrl = function(path, folder) {
     if (!path) return `/uploads/${folder}/product-placeholder.svg`;

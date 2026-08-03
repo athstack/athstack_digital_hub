@@ -180,6 +180,12 @@
     "productUpdated": "商品更新成功。",
     "productDeleted": "商品已删除。",
     "productSkuDuplicate": "SKU 已存在。请重试。",
+    "productNameRequired": "商品名称必填。",
+    "productPriceInvalid": "请输入有效的价格。",
+    "productCategoryRequired": "请选择分类。",
+    "serviceTitleRequired": "服务标题必填。",
+    "serviceCategoryRequired": "请选择分类。",
+    "servicePriceInvalid": "请输入有效的基准价格。",
     "selectTechnician": "请选择一名技术人员。",
     "reassignRestricted": "只有超级管理员才能重新分配技术人员。",
     "technicianAssigned": "技术人员已分配给维修请求。",
@@ -303,7 +309,16 @@
     "deleting": "删除中...",
     "deleteFailed": "删除商品失败。",
     "updateStatusFailed": "更新状态失败。",
-    "networkError": "网络错误，请重试。"
+    "networkError": "网络错误，请重试。",
+    "searchPlaceholder": "搜索商品...",
+    "filterCategory": "所有分类",
+    "filterStatus": "所有状态",
+    "refresh": "刷新",
+    "paginationInfo": "共 {{total}} 项，第 {{from}}–{{to}} 项",
+    "first": "第一页",
+    "prev": "上一页",
+    "next": "下一页",
+    "last": "最后一页"
   },
   "productForm": {
     "headingAdd": "添加新商品",
@@ -422,7 +437,8 @@
     "noServicesHint": "添加维修服务即可开始。",
     "basePrice": "基础价格",
     "iconClass": "图标类名",
-    "createService": "创建服务"
+    "createService": "创建服务",
+    "refresh": "刷新"
   },
   "training": {
     "heading": "培训学院",

@@ -180,6 +180,12 @@
     "productUpdated": "Producto actualizado con éxito.",
     "productDeleted": "Producto eliminado.",
     "productSkuDuplicate": "El SKU ya existe. Inténtalo de nuevo.",
+    "productNameRequired": "El nombre del producto es obligatorio.",
+    "productPriceInvalid": "Se requiere un precio válido.",
+    "productCategoryRequired": "Por favor seleccione una categoría.",
+    "serviceTitleRequired": "El título del servicio es obligatorio.",
+    "serviceCategoryRequired": "Por favor seleccione una categoría.",
+    "servicePriceInvalid": "Se requiere un precio base válido.",
     "selectTechnician": "Por favor, selecciona un técnico.",
     "reassignRestricted": "Solo el súper admin puede reasignar un técnico.",
     "technicianAssigned": "Técnico asignado a la solicitud de reparación.",
@@ -303,7 +309,16 @@
     "deleting": "Eliminando...",
     "deleteFailed": "No se pudo eliminar el producto.",
     "updateStatusFailed": "No se pudo actualizar el estado.",
-    "networkError": "Error de red. Por favor, inténtalo de nuevo."
+    "networkError": "Error de red. Por favor, inténtalo de nuevo.",
+    "searchPlaceholder": "Buscar productos...",
+    "filterCategory": "Todas las categorías",
+    "filterStatus": "Todos los estados",
+    "refresh": "Actualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primera página",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página"
   },
   "productForm": {
     "headingAdd": "Añadir Nuevo Producto",
@@ -422,7 +437,8 @@
     "noServicesHint": "Añade servicios de reparación para empezar.",
     "basePrice": "Precio Base",
     "iconClass": "Clase del Ícono",
-    "createService": "Crear Servicio"
+    "createService": "Crear Servicio",
+    "refresh": "Actualizar"
   },
   "training": {
     "heading": "Academia de Formación",

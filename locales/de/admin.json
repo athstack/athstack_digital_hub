@@ -180,6 +180,12 @@
     "productUpdated": "Produkt erfolgreich aktualisiert.",
     "productDeleted": "Produkt gelöscht.",
     "productSkuDuplicate": "SKU existiert bereits. Bitte versuchen Sie es erneut.",
+    "productNameRequired": "Produktname ist erforderlich.",
+    "productPriceInvalid": "Ein gültiger Preis ist erforderlich.",
+    "productCategoryRequired": "Bitte wählen Sie eine Kategorie.",
+    "serviceTitleRequired": "Servicetitel ist erforderlich.",
+    "serviceCategoryRequired": "Bitte wählen Sie eine Kategorie.",
+    "servicePriceInvalid": "Ein gültiger Basispreis ist erforderlich.",
     "selectTechnician": "Bitte wählen Sie einen Techniker.",
     "reassignRestricted": "Nur der Super Admin kann einen Techniker neu zuweisen.",
     "technicianAssigned": "Techniker der Reparaturanfrage zugewiesen.",
@@ -303,7 +309,16 @@
     "deleting": "Wird gelöscht...",
     "deleteFailed": "Produkt konnte nicht gelöscht werden.",
     "updateStatusFailed": "Status konnte nicht aktualisiert werden.",
-    "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
+    "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "searchPlaceholder": "Produkte suchen...",
+    "filterCategory": "Alle Kategorien",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite"
   },
   "productForm": {
     "headingAdd": "Neues Produkt hinzufügen",
@@ -422,7 +437,8 @@
     "noServicesHint": "Fügen Sie Reparaturdienste hinzu, um zu starten.",
     "basePrice": "Grundpreis",
     "iconClass": "Icon-Klasse",
-    "createService": "Dienst erstellen"
+    "createService": "Dienst erstellen",
+    "refresh": "Aktualisieren"
   },
   "training": {
     "heading": "Trainingsakademie",

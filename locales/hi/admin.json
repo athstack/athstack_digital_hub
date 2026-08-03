@@ -180,6 +180,12 @@
     "productUpdated": "प्रोडक्ट सफलतापूर्वक अपडेट हुआ।",
     "productDeleted": "प्रोडक्ट हटा दिया गया।",
     "productSkuDuplicate": "SKU पहले से मौजूद है। कृपया पुनः प्रयास करें।",
+    "productNameRequired": "प्रोडक्ट का नाम आवश्यक है।",
+    "productPriceInvalid": "मान्य मूल्य आवश्यक है।",
+    "productCategoryRequired": "कृपया एक श्रेणी चुनें।",
+    "serviceTitleRequired": "सेवा का शीर्षक आवश्यक है।",
+    "serviceCategoryRequired": "कृपया एक श्रेणी चुनें।",
+    "servicePriceInvalid": "मान्य आधार मूल्य आवश्यक है।",
     "selectTechnician": "कृपया एक तकनीशियन चुनें।",
     "reassignRestricted": "केवल सुपर एडमिन ही तकनीशियन पुनः नियुक्त कर सकता है।",
     "technicianAssigned": "मरम्मत अनुरोध पर तकनीशियन नियुक्त किया गया।",
@@ -303,7 +309,16 @@
     "deleting": "हटाया जा रहा है...",
     "deleteFailed": "प्रोडक्ट हटाने में विफल।",
     "updateStatusFailed": "स्थिति अपडेट करने में विफल।",
-    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।"
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
+    "searchPlaceholder": "प्रोडक्ट खोजें...",
+    "filterCategory": "सभी श्रेणियाँ",
+    "filterStatus": "सभी स्थितियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ"
   },
   "productForm": {
     "headingAdd": "नया प्रोडक्ट जोड़ें",
@@ -422,7 +437,8 @@
     "noServicesHint": "शुरू करने के लिए मरम्मत सेवाएं जोड़ें।",
     "basePrice": "आधार मूल्य",
     "iconClass": "आइकन क्लास",
-    "createService": "सेवा बनाएं"
+    "createService": "सेवा बनाएं",
+    "refresh": "रीफ़्रेश करें"
   },
   "training": {
     "heading": "प्रशिक्षण अकादमी",

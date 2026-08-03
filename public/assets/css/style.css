@@ -5012,3 +5012,179 @@ input[type="date"]:not(:focus):placeholder-shown {
 .action-btn--approve.is-on { --ab-bg: #10B981; --ab-border: #10B981; --ab-glow: rgba(16, 185, 129, 0.50); }
 .action-btn--hide.is-on { --ab-bg: #F59E0B; --ab-border: #F59E0B; --ab-glow: rgba(245, 158, 11, 0.50); }
 .action-btn--reject.is-on { --ab-bg: #EF4444; --ab-border: #EF4444; --ab-glow: rgba(239, 68, 68, 0.50); }
+
+/* ==========================================================================
+   CRUD DESIGN SYSTEM (crud.js)
+   ========================================================================== */
+
+/* -- Toast stack ------------------------------------------------------- */
+.crud-toast-stack {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1090;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: min(360px, calc(100vw - 2rem));
+    pointer-events: none;
+}
+[dir="rtl"] .crud-toast-stack { right: auto; left: 1rem; }
+
+.crud-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-lg, 0.75rem);
+    background: var(--bg-elevated, #0f172a);
+    border: 1px solid var(--border-glass, rgba(148, 163, 184, 0.2));
+    box-shadow: var(--shadow-xl, 0 20px 60px rgba(0,0,0,0.4));
+    color: var(--text-main, #f8fafc);
+    font-size: var(--font-sm, 0.875rem);
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.crud-toast.is-visible { opacity: 1; transform: translateY(0); }
+.crud-toast--success { border-color: rgba(16, 185, 129, 0.45); }
+.crud-toast--error { border-color: rgba(239, 68, 68, 0.5); }
+.crud-toast--warning { border-color: rgba(245, 158, 11, 0.5); }
+.crud-toast--info { border-color: rgba(56, 189, 248, 0.45); }
+.crud-toast__icon { line-height: 1.3; }
+.crud-toast--success .crud-toast__icon { color: #34D399; }
+.crud-toast--error .crud-toast__icon { color: #F87171; }
+.crud-toast--warning .crud-toast__icon { color: #FBBF24; }
+.crud-toast--info .crud-toast__icon { color: #38BDF8; }
+.crud-toast__msg { flex: 1 1 auto; word-break: break-word; }
+.crud-toast__close {
+    background: none;
+    border: none;
+    color: var(--text-dim, #64748b);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0.1rem 0.15rem;
+    cursor: pointer;
+}
+.crud-toast__close:hover { color: var(--text-main, #f8fafc); }
+
+/* -- Confirm dialog ------------------------------------------------------ */
+.crud-confirm .modal-dialog { max-width: 440px; }
+
+/* -- CRUD form modal (Bootstrap) ----------------------------------------- */
+.crud-modal .modal-content { background: var(--bg-elevated); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); }
+.crud-modal .modal-header,
+.crud-modal .modal-footer { border-color: var(--border-glass); }
+.crud-modal .modal-title { font-weight: var(--weight-bold); color: var(--text-main); }
+.crud-modal .modal-body { max-height: min(70vh, 42rem); overflow-y: auto; }
+.crud-modal .modal-body .form-label { color: var(--text-secondary); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.06em; }
+.crud-modal .modal-body .form-control,
+.crud-modal .modal-body .form-select {
+    background-color: var(--bg-card, #0b1220);
+    border: 1px solid var(--border-glass);
+    color: var(--text-main);
+}
+.crud-modal .modal-body .form-control:focus,
+.crud-modal .modal-body .form-select:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15); }
+.crud-modal .modal-body textarea.form-control { resize: vertical; }
+
+/* -- Image uploader ------------------------------------------------------ */
+.crud-uploader {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.crud-uploader__preview {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md, 0.5rem);
+    overflow: hidden;
+    border: 1px solid var(--border-glass);
+    background: rgba(148, 163, 184, 0.08);
+}
+.crud-uploader__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.crud-uploader__preview--existing { border-color: rgba(16, 185, 129, 0.4); }
+
+/* -- Table toolbar --------------------------------------------------------- */
+.crud-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.crud-toolbar .crud-toolbar__grow { flex: 1 1 auto; min-width: 220px; }
+.crud-toolbar .form-control,
+.crud-toolbar .form-select {
+    background-color: var(--bg-card, #0b1220);
+    border: 1px solid var(--border-glass);
+    color: var(--text-main);
+    border-radius: var(--radius-md, 0.5rem);
+    font-size: var(--font-sm, 0.875rem);
+    padding: 0.5rem 0.85rem;
+}
+.crud-toolbar .form-control::placeholder { color: var(--text-dim, #64748b); }
+.crud-toolbar .form-control:focus,
+.crud-toolbar .form-select:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15); }
+
+/* -- Pagination ------------------------------------------------------------ */
+.crud-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+.crud-pagination__info { color: var(--text-dim); font-size: var(--font-xs, 0.8rem); margin-inline-end: auto; }
+.crud-pagination button {
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--bg-card, #0b1220);
+    color: var(--text-secondary);
+    font-size: var(--font-sm, 0.875rem);
+    transition: all 0.2s ease;
+}
+.crud-pagination button:hover:not(:disabled) { border-color: var(--bs-primary); color: var(--text-main); }
+.crud-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.crud-pagination button.is-active { background: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
+
+/* -- Table loading state ---------------------------------------------------- */
+[data-crud-table].crud-table--loading { position: relative; }
+[data-crud-table].crud-table--loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.35);
+    backdrop-filter: blur(1px);
+    z-index: 5;
+    border-radius: var(--radius-lg);
+}
+[data-crud-table].crud-table--loading::before {
+    content: '';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 3px solid rgba(37, 99, 235, 0.2);
+    border-top-color: var(--bs-primary);
+    border-radius: 50%;
+    animation: crudSpin 0.7s linear infinite;
+    z-index: 6;
+}
+@keyframes crudSpin { to { transform: rotate(360deg); } }

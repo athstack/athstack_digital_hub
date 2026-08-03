@@ -180,6 +180,12 @@
     "productUpdated": "تم تحديث المنتج بنجاح.",
     "productDeleted": "تم حذف المنتج.",
     "productSkuDuplicate": "رمز SKU موجود بالفعل. يرجى المحاولة مرة أخرى.",
+    "productNameRequired": "اسم المنتج مطلوب.",
+    "productPriceInvalid": "يُرجى إدخال سعر صحيح.",
+    "productCategoryRequired": "يرجى اختيار فئة.",
+    "serviceTitleRequired": "عنوان الخدمة مطلوب.",
+    "serviceCategoryRequired": "يرجى اختيار فئة.",
+    "servicePriceInvalid": "يُرجى إدخال سعر أساسي صحيح.",
     "selectTechnician": "يرجى اختيار فني.",
     "reassignRestricted": "يمكن للمشرف العام فقط إعادة إسناد الفني.",
     "technicianAssigned": "تم إسناد فني إلى طلب الإصلاح.",
@@ -303,7 +309,16 @@
     "deleting": "جارٍ الحذف...",
     "deleteFailed": "فشل حذف المنتج.",
     "updateStatusFailed": "فشل تحديث الحالة.",
-    "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى."
+    "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    "searchPlaceholder": "البحث عن المنتجات...",
+    "filterCategory": "جميع الفئات",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة"
   },
   "productForm": {
     "headingAdd": "إضافة منتج جديد",
@@ -422,7 +437,8 @@
     "noServicesHint": "أضف خدمات إصلاح للبدء.",
     "basePrice": "السعر الأساسي",
     "iconClass": "فئة الأيقونة",
-    "createService": "إنشاء خدمة"
+    "createService": "إنشاء خدمة",
+    "refresh": "تحديث"
   },
   "training": {
     "heading": "الأكاديمية التدريبية",

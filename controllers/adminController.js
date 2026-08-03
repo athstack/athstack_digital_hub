@@ -26,6 +26,29 @@ const {
   addCatalogPermission
 } = require('../helpers/rbac');
 
+// Dual-mode request helpers: every CRUD action answers HTML redirects (no-JS)
+// and JSON (fetch + XHR) depending on what the client asked for.
+const isAjaxRequest = (req) =>
+  req.xhr ||
+  (req.headers.accept && req.headers.accept.includes('application/json')) ||
+  req.query.ajax === '1';
+
+const flashFor = (req, type, key, data) => {
+  const message = req.t(key, data);
+  req.flash(type, message);
+  return message;
+};
+
+const rejectWith = (res, status, message, errors) =>
+  res.status(status).json({ success: false, message, errors: errors || undefined });
+
+const toImageUrl = (path, folder) => {
+  if (!path) return `/uploads/${folder}/product-placeholder.svg`;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/')) return path;
+  return `/uploads/${folder}/${path}`;
+};
+
 exports.getDashboard = async (req, res, next) => {
   try {
     const totalClients = await UserModel.countAll({ role: 'customer' });
@@ -460,14 +483,59 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await ProductModel.getFiltered({ allStatuses: true });
-    const categories = await CategoryModel.getAll();
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const status = req.query.status && ['active', 'inactive'].includes(req.query.status) ? req.query.status : null;
+    const category = req.query.category ? String(req.query.category).trim().slice(0, 80) : null;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10;
 
-    res.render('admin/products', {
-      title: req.t('admin:title.products'),
-      products: products.products,
-      categories
+    const result = await ProductModel.getFiltered({
+      allStatuses: true,
+      search,
+      status,
+      category,
+      page,
+      limit
     });
+    const categories = await CategoryModel.getAll();
+    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
+
+    const viewData = {
+      title: req.t('admin:title.products'),
+      products: result.products,
+      categories,
+      pagination: {
+        page: result.page,
+        total: result.total,
+        totalPages,
+        hasNext: result.page < totalPages,
+        hasPrev: result.page > 1
+      },
+      currentSearch: search || '',
+      currentStatus: status || '',
+      currentCategory: category || ''
+    };
+
+    // Fragment: server-rendered toolbar + table for instant in-place refresh.
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/productsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    // Plain JSON list for API consumers.
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        products: result.products,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/products', viewData);
   } catch (err) {
     next(err);
   }
@@ -517,10 +585,21 @@ exports.getAddProduct = async (req, res, next) => {
 
 exports.createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
+    const { name, description, price, discount_price, category_id, stock_quantity, sku, status } = req.body;
+    const ajax = isAjaxRequest(req);
 
-    if (!name || !price || !category_id) {
-      req.flash('error', req.t('admin:flash.productRequiredFields'));
+    const errors = {};
+    if (!name || !String(name).trim()) errors.name = req.t('admin:flash.productNameRequired');
+    if (price === undefined || price === '' || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
+      errors.price = req.t('admin:flash.productPriceInvalid');
+    }
+    if (!category_id || isNaN(parseInt(category_id, 10))) {
+      errors.category_id = req.t('admin:flash.productCategoryRequired');
+    }
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.productRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.productRequiredFields');
       return res.redirect('/admin/products/new');
     }
 
@@ -555,12 +634,13 @@ exports.createProduct = async (req, res, next) => {
         stock_quantity: parseInt(stock_quantity) || 0,
         main_image: mainImage,
         technician_id: req.session.userId,
-        status: 'active',
+        status: status === 'inactive' ? 'inactive' : 'active',
         featured: 0,
         sku: finalSku || null
       });
     } catch (err) {
       if (err && (err.code === 'ER_DUP_ENTRY' || err.errno === 1062)) {
+        if (ajax) return rejectWith(res, 422, req.t('admin:flash.productSkuDuplicate'));
         req.flash('error', req.t('admin:flash.productSkuDuplicate'));
         return res.redirect('/admin/products/new');
       }
@@ -575,6 +655,13 @@ exports.createProduct = async (req, res, next) => {
       }
     }
 
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.productCreated'),
+        product: { id: created.id, name: created.name }
+      });
+    }
     req.flash('success', req.t('admin:flash.productCreated'));
     res.redirect('/admin/products');
   } catch (err) {
@@ -586,12 +673,29 @@ exports.getEditProduct = async (req, res, next) => {
   try {
     const product = await ProductModel.findById(parseInt(req.params.id));
     if (!product) {
+      if (isAjaxRequest(req)) return rejectWith(res, 404, req.t('admin:flash.productNotFound'));
       req.flash('error', req.t('admin:flash.productNotFound'));
       return res.redirect('/admin/products');
     }
 
     const categories = await CategoryModel.getAll();
     const gallery = await ProductImageModel.getByProduct(product.id);
+
+    // JSON detail (used by the modal CRUD edit flow).
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        product: Object.assign({}, product, {
+          main_image_url: toImageUrl(product.main_image, 'products'),
+          gallery: (gallery || []).map((g) => ({
+            id: g.id,
+            url: toImageUrl(g.image_path, 'products')
+          }))
+        }),
+        categories
+      });
+    }
+
     res.render('admin/product-form', {
       title: req.t('admin:title.editProduct'),
       product,
@@ -608,13 +712,26 @@ exports.updateProduct = async (req, res, next) => {
   try {
     const productId = parseInt(req.params.id);
     const product = await ProductModel.findById(productId);
+    const ajax = isAjaxRequest(req);
 
     if (!product) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.productNotFound'));
       req.flash('error', req.t('admin:flash.productNotFound'));
       return res.redirect('/admin/products');
     }
 
-    const { name, description, price, discount_price, category_id, stock_quantity, sku } = req.body;
+    const { name, description, price, discount_price, category_id, stock_quantity, sku, status } = req.body;
+
+    const errors = {};
+    if (name !== undefined && !String(name).trim()) errors.name = req.t('admin:flash.productNameRequired');
+    if (price !== undefined && (price === '' || isNaN(parseFloat(price)) || parseFloat(price) < 0)) {
+      errors.price = req.t('admin:flash.productPriceInvalid');
+    }
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.productRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.productRequiredFields');
+      return res.redirect('/admin/products/edit/' + productId);
+    }
 
     let mainImage = req.body.existing_image || product.main_image;
     const mainImageFile = req.files && req.files['product_image'] && req.files['product_image'][0];
@@ -641,10 +758,12 @@ exports.updateProduct = async (req, res, next) => {
         discount_price: discount_price !== undefined ? (discount_price ? parseFloat(discount_price) : null) : product.discount_price,
         stock_quantity: parseInt(stock_quantity) || 0,
         main_image: mainImage,
+        status: status === 'active' || status === 'inactive' ? status : product.status,
         sku: finalSku
       });
     } catch (err) {
       if (err && (err.code === 'ER_DUP_ENTRY' || err.errno === 1062)) {
+        if (ajax) return rejectWith(res, 422, req.t('admin:flash.productSkuDuplicate'));
         req.flash('error', req.t('admin:flash.productSkuDuplicate'));
         return res.redirect('/admin/products/edit/' + productId);
       }
@@ -657,6 +776,13 @@ exports.updateProduct = async (req, res, next) => {
       await ProductImageModel.addMultiple(productId, galleryPaths);
     }
 
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.productUpdated'),
+        product: { id: productId, name: name || product.name }
+      });
+    }
     req.flash('success', req.t('admin:flash.productUpdated'));
     res.redirect('/admin/products');
   } catch (err) {
@@ -1007,10 +1133,20 @@ exports.updateSettings = async (req, res, next) => {
 exports.getServices = async (req, res, next) => {
   try {
     const services = await ServiceModel.getAllAdmin();
-    res.render('admin/services', {
-      title: req.t('admin:title.services'),
-      services
-    });
+    const viewData = { title: req.t('admin:title.services'), services };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/servicesTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, services });
+    }
+
+    res.render('admin/services', viewData);
   } catch (err) {
     next(err);
   }
@@ -1019,14 +1155,26 @@ exports.getServices = async (req, res, next) => {
 exports.createService = async (req, res, next) => {
   try {
     const { title, category, description, base_price, icon_class, status } = req.body;
-    if (!title || !category || !base_price) {
-      req.flash('error', req.t('admin:flash.serviceRequiredFields'));
+    const ajax = isAjaxRequest(req);
+
+    const errors = {};
+    if (!title || !String(title).trim()) errors.title = req.t('admin:flash.serviceTitleRequired');
+    if (!category || !['computer', 'phone'].includes(category)) errors.category = req.t('admin:flash.serviceCategoryRequired');
+    if (base_price === undefined || base_price === '' || isNaN(parseFloat(base_price)) || parseFloat(base_price) < 0) {
+      errors.base_price = req.t('admin:flash.servicePriceInvalid');
+    }
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.serviceRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.serviceRequiredFields');
       return res.redirect('/admin/services');
     }
+
     const slug = generateSlug(title);
     await ServiceModel.create({
       title, slug, category, description, base_price: parseFloat(base_price), icon_class: icon_class || 'fa-tools', status: status || 'active'
     });
+
+    if (ajax) return res.json({ success: true, message: req.t('admin:flash.serviceCreated') });
     req.flash('success', req.t('admin:flash.serviceCreated'));
     res.redirect('/admin/services');
   } catch (err) {
@@ -1038,11 +1186,27 @@ exports.updateService = async (req, res, next) => {
   try {
     const serviceId = parseInt(req.params.id);
     const service = await ServiceModel.findById(serviceId);
+    const ajax = isAjaxRequest(req);
+
     if (!service) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.serviceNotFound'));
       req.flash('error', req.t('admin:flash.serviceNotFound'));
       return res.redirect('/admin/services');
     }
+
     const { title, category, description, base_price, icon_class, status } = req.body;
+
+    const errors = {};
+    if (title !== undefined && !String(title).trim()) errors.title = req.t('admin:flash.serviceTitleRequired');
+    if (base_price !== undefined && (base_price === '' || isNaN(parseFloat(base_price)) || parseFloat(base_price) < 0)) {
+      errors.base_price = req.t('admin:flash.servicePriceInvalid');
+    }
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.serviceRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.serviceRequiredFields');
+      return res.redirect('/admin/services');
+    }
+
     await ServiceModel.update(serviceId, {
       title: title || service.title,
       slug: title ? generateSlug(title) : service.slug,
@@ -1052,6 +1216,8 @@ exports.updateService = async (req, res, next) => {
       icon_class: icon_class || service.icon_class,
       status: status || service.status
     });
+
+    if (ajax) return res.json({ success: true, message: req.t('admin:flash.serviceUpdated') });
     req.flash('success', req.t('admin:flash.serviceUpdated'));
     res.redirect('/admin/services');
   } catch (err) {
@@ -1062,7 +1228,17 @@ exports.updateService = async (req, res, next) => {
 exports.deleteService = async (req, res, next) => {
   try {
     const serviceId = parseInt(req.params.id);
+    const service = await ServiceModel.findById(serviceId);
+    const ajax = isAjaxRequest(req);
+
+    if (!service) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.serviceNotFound'));
+      req.flash('error', req.t('admin:flash.serviceNotFound'));
+      return res.redirect('/admin/services');
+    }
+
     await ServiceModel.delete(serviceId);
+    if (ajax) return res.json({ success: true, message: req.t('admin:flash.serviceDeleted') });
     req.flash('success', req.t('admin:flash.serviceDeleted'));
     res.redirect('/admin/services');
   } catch (err) {

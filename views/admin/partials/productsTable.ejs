@@ -1,0 +1,97 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:products.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:products.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="category" aria-label="<%= t('common:words.category') %>">
+        <option value=""><%= t('admin:products.filterCategory') %></option>
+        <% (categories || []).forEach(cat => { %>
+        <option value="<%= cat.slug %>" <%= currentCategory === cat.slug ? 'selected' : '' %>><%= cat.name %></option>
+        <% }) %>
+    </select>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('common:words.status') %>">
+        <option value=""><%= t('admin:products.filterStatus') %></option>
+        <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+        <option value="inactive" <%= currentStatus === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:products.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (products && products.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table products-table">
+            <thead>
+                <tr><th class="col-product"><%= t('admin:products.colProduct') %></th><th><%= t('admin:words.listedBy') %></th><th class="col-category"><%= t('common:words.category') %></th><th class="col-price"><%= t('common:words.price') %></th><th class="col-stock"><%= t('admin:words.stock') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% products.forEach(product => { %>
+                <tr data-product-id="<%= product.id %>">
+                    <td class="col-product">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="col-thumb">
+                                 <%- include('../../partials/productImage', { src: product.main_image ? imageUrl(product.main_image, 'products') : '', alt: product.name, style: 'max-height:44px;max-width:44px;object-fit:contain;' }) %>
+                            </div>
+                            <span class="text-white fw-bold col-product-name"><%= product.name %></span>
+                        </div>
+                    </td>
+                    <td>
+                        <% if (product.technician_first_name) { %>
+                            <span class="text-white"><%= formatDisplayName(product.technician_first_name, product.technician_last_name) %></span>
+                        <% } else { %>
+                            <span class="text-white-50"><%= t('admin:words.admin') %></span>
+                        <% } %>
+                    </td>
+                    <td class="col-category text-white-50"><%= product.category_name || 'N/A' %></td>
+                    <td class="col-price text-primary"><%= formatCurrency(product.price) %></td>
+                    <td class="col-stock text-white-50"><%= product.stock_quantity %></td>
+                    <td class="col-status">
+                        <button type="button"
+                            class="action-btn action-btn--publish status-toggle <%= product.status === 'active' ? 'is-on' : '' %>"
+                            data-id="<%= product.id %>"
+                            data-status="<%= product.status %>"
+                            title="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>"
+                            aria-label="<%= product.status === 'active' ? t('admin:products.clickDeactivate') : t('admin:products.clickActivate') %>">
+                            <i class="fa-solid fa-<%= product.status === 'active' ? 'toggle-on' : 'toggle-off' %>"></i>
+                        </button>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abAttrs:'data-edit-product data-id="' + product.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abAttrs:'data-delete-product data-id="' + product.id + '" data-name="' + escapeAttr(product.name) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:products.paginationInfo', { from: (pagination.page - 1) * 10 + 1, to: Math.min(pagination.page * 10, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:products.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:products.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:products.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:products.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-box-open fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('admin:products.noProducts') %></h4>
+    <p class="text-white-50"><%= t('admin:products.noProductsListed') %></p>
+</div>
+<% } %>

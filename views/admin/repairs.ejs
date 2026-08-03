@@ -39,7 +39,7 @@
                                     <td>
                                         <% if (can('assign_repairs')) { %>
                                         <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-user-plus', abClassExtra:'assign-trigger', abTitle: repair.technician_first_name ? t('admin:repairs.reassign') : t('admin:repairs.assign'), abAttrs:'data-bs-toggle="modal" data-bs-target="#assignTechnicianModal" data-repair-id="' + repair.id + '" data-reference="' + (repair.reference_number || '') + '"' }) %>
+                                            <%- include('../partials/actionButton', { abVariant:'info', abButton:true, abIcon:'fa-user-plus', abClassExtra:'assign-trigger', abTitle: repair.technician_first_name ? t('admin:repairs.reassign') : t('admin:repairs.assign'), abAttrs:'data-bs-toggle="modal" data-bs-target="#assignTechnicianModal" data-repair-id="' + repair.id + '" data-reference="' + escapeAttr(repair.reference_number || '') + '"' }) %>
                                         </div>
                                         <% } else { %>
                                         <span class="text-success small"><i class="fa-solid fa-check-circle me-1"></i><%= repair.technician_first_name ? t('admin:status.assigned') : t('admin:repairs.unassigned') %></span>

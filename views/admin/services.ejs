@@ -22,84 +22,88 @@
                     </div>
                 </div>
 
-                <% if (services && services.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover align-middle mb-0 premium-table">
-                            <thead>
-                                <tr><th><%= t('admin:words.title') %></th><th><%= t('common:words.category') %></th><th><%= t('common:words.price') %></th><th><%= t('common:words.status') %></th><th class="text-end"><%= t('common:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% services.forEach(service => { %>
-                                <tr>
-                                    <td class="text-white fw-bold"><i class="fa-solid <%= service.icon_class || 'fa-tools' %> me-2 text-primary"></i><%= service.title %></td>
-                                    <td><span class="badge bg-secondary rounded-pill"><%= service.category === 'computer' ? t('admin:words.computer') : t('admin:words.phone') %></span></td>
-                                    <td class="text-white"><%= formatCurrency(service.base_price) %></td>
-                                    <td><span class="badge bg-<%= service.status === 'active' ? 'success' : 'secondary' %>"><%= t('admin:status.' + (service.status||'').toLowerCase(), {defaultValue: service.status}) %></span></td>
-                                    <td class="text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abTitle:t('common:words.edit'), abAttrs:'data-bs-toggle="modal" data-bs-target="#editService' + service.id + '"' }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-trash-can', abFormAction:'/admin/services/delete/' + service.id, abFormCsrf:csrfToken, abConfirm:t('admin:services.deleteConfirm'), abTitle:t('common:words.delete') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/admin/services">
+                    <%- include('./partials/servicesTable') %>
                 </div>
-                <% } else { %>
-                <div class="empty-state glass-card p-5">
-                    <i class="fa-solid fa-screwdriver-wrench fa-3x mb-3"></i>
-                    <h5 class="text-white fw-bold"><%= t('admin:services.noServices') %></h5>
-                    <p class="text-white-50"><%= t('admin:services.noServicesHint') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
 
-<% if (typeof services !== 'undefined' && services && services.length > 0) { services.forEach(function(service) { %>
-<div class="modal fade" id="editService<%= service.id %>" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-            <form method="POST" action="/admin/services/edit/<%= service.id %>">
+<!-- Add service modal -->
+<div class="modal fade crud-modal" id="addServiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="/admin/services/add" data-crud-form novalidate>
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold"><%= t('admin:services.editService') %></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                    <div class="mb-3"><label class="form-label"><%= t('admin:words.title') %></label><input type="text" name="title" class="form-control" value="<%= service.title %>" required></div>
-                    <div class="mb-3"><label class="form-label"><%= t('common:words.category') %></label><select name="category" class="form-select"><option value="computer" <%= service.category==='computer'?'selected':'' %>><%= t('admin:words.computer') %></option><option value="phone" <%= service.category==='phone'?'selected':'' %>><%= t('admin:words.phone') %></option></select></div>
-                    <div class="mb-3"><label class="form-label"><%= t('common:words.description') %></label><textarea name="description" class="form-control" rows="2"><%= service.description || '' %></textarea></div>
-                    <div class="mb-3"><label class="form-label"><%= t('admin:services.basePrice') %></label><input type="number" name="base_price" class="form-control" step="0.01" value="<%= service.base_price %>" required></div>
-                    <div class="mb-3"><label class="form-label"><%= t('admin:services.iconClass') %></label><input type="text" name="icon_class" class="form-control" value="<%= service.icon_class || 'fa-tools' %>"></div>
-                    <div class="mb-3"><label class="form-label"><%= t('common:words.status') %></label><select name="status" class="form-select"><option value="active" <%= service.status==='active'?'selected':'' %>><%= t('admin:status.active') %></option><option value="inactive" <%= service.status==='inactive'?'selected':'' %>><%= t('admin:status.inactive') %></option></select></div>
-                </div>
-                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('common:words.saveChanges') %></button></div>
-            </form>
-        </div>
-    </div>
-</div>
-<% }) } %>
-
-<div class="modal fade" id="addServiceModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-            <form method="POST" action="/admin/services/add">
-                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <div class="modal-header border-secondary"><h5 class="modal-title text-white fw-bold"><%= t('admin:services.addService') %></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title text-white fw-bold"><%= t('admin:services.addService') %></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label"><%= t('admin:words.title') %></label><input type="text" name="title" class="form-control" required></div>
                     <div class="mb-3"><label class="form-label"><%= t('common:words.category') %></label><select name="category" class="form-select"><option value="computer"><%= t('admin:words.computer') %></option><option value="phone"><%= t('admin:words.phone') %></option></select></div>
                     <div class="mb-3"><label class="form-label"><%= t('common:words.description') %></label><textarea name="description" class="form-control" rows="2"></textarea></div>
-                    <div class="mb-3"><label class="form-label"><%= t('admin:services.basePrice') %></label><input type="number" name="base_price" class="form-control" step="0.01" required></div>
+                    <div class="mb-3"><label class="form-label"><%= t('admin:services.basePrice') %></label><input type="number" name="base_price" class="form-control" step="0.01" min="0" required></div>
                     <div class="mb-3"><label class="form-label"><%= t('admin:services.iconClass') %></label><input type="text" name="icon_class" class="form-control" value="fa-tools"></div>
                     <div class="mb-3"><label class="form-label"><%= t('common:words.status') %></label><select name="status" class="form-select"><option value="active"><%= t('admin:status.active') %></option><option value="inactive"><%= t('admin:status.inactive') %></option></select></div>
                 </div>
-                <div class="modal-footer border-secondary"><button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:services.createService') %></button></div>
+                <div class="modal-footer"><button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-1"></i><%= t('admin:services.createService') %></button></div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        serviceCreated: '<%= t('admin:flash.serviceCreated') %>',
+        serviceUpdated: '<%= t('admin:flash.serviceUpdated') %>',
+        serviceDeleted: '<%= t('admin:flash.serviceDeleted') %>',
+        deleteConfirm: '<%= t('admin:services.deleteConfirm') %>',
+        delete: '<%= t('common:words.delete') %>',
+        networkError: '<%= t('common:notifications.failedToLoad') %>'
+    };
+
+    tableWrap.addEventListener('click', function (e) {
+        var delBtn = e.target.closest('[data-delete-service]');
+        if (!delBtn) return;
+        e.preventDefault();
+        var id = delBtn.getAttribute('data-id');
+        var name = delBtn.getAttribute('data-name');
+        Crud.confirm({
+            title: i18n.delete,
+            message: i18n.deleteConfirm + (name ? ' <strong class="text-white">' + name + '</strong>' : ''),
+            confirmText: i18n.delete
+        }).then(function (ok) {
+            if (!ok) return;
+            Crud.post('/admin/services/delete/' + id)
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.serviceDeleted, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/admin/services' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.networkError, 'error');
+                });
+        });
+    });
+
+    document.addEventListener('submit', function (e) {
+        var form = e.target.closest('form[data-crud-form]');
+        if (!form) return;
+        e.preventDefault();
+        var modal = form.closest('.modal');
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                if (modal) Crud.closeModal(modal);
+                Crud.toast(data.message || i18n.serviceCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/services' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

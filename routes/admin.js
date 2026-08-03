@@ -39,6 +39,7 @@ router.post('/products/new',
   adminController.createProduct
 );
 router.get('/products/edit/:id', requirePermission('manage_products'), adminController.getEditProduct);
+router.get('/products/:id', requirePermission('manage_products'), adminController.getEditProduct);
 router.post('/products/edit/:id',
   requirePermission('manage_products'),
   withUpload(uploadProductImages.fields([
