@@ -6,7 +6,10 @@
     "products": "Mes produits",
     "repairs": "Réparations",
     "orders": "Commandes",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "reports": "Rapports",
+    "messages": "Messages",
+    "profile": "Profil"
   },
   "title": {
     "dashboard": "Tableau de bord du technicien - TechBridge Digital Hub",
@@ -14,7 +17,10 @@
     "addProduct": "Ajouter un produit - TechBridge Digital Hub",
     "editProduct": "Modifier un produit - TechBridge Digital Hub",
     "repairs": "Réparations assignées - TechBridge Digital Hub",
-    "orders": "Commandes de produits - TechBridge Digital Hub"
+    "orders": "Commandes de produits - TechBridge Digital Hub",
+    "reports": "Mes rapports - TechBridge Digital Hub",
+    "messages": "Messages - TechBridge Digital Hub",
+    "profile": "Mon profil - TechBridge Digital Hub"
   },
   "words": {
     "reference": "Référence",
@@ -24,7 +30,8 @@
     "device": "Appareil",
     "action": "Action",
     "general": "Général",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "product": "Produit"
   },
   "status": {
     "pending": "En attente",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "Statut de la réparation mis à jour.",
     "repairStatusUpdatedTitle": "Statut de la réparation mis à jour",
     "repairStatusMessage": "Votre réparation {{ref}} est maintenant : {{status}}",
-    "notesSuffix": "Notes : {{notes}}"
+    "notesSuffix": "Notes : {{notes}}",
+    "userNotFound": "Utilisateur introuvable.",
+    "profileRequiredFields": "Le prénom et le nom sont requis.",
+    "currentPasswordWrong": "Le mot de passe actuel est incorrect.",
+    "passwordTooShort": "Le nouveau mot de passe doit contenir au moins 8 caractères.",
+    "profileUpdated": "Profil mis à jour avec succès."
   },
   "dashboard": {
     "heading": "Tableau de bord du technicien",
@@ -130,5 +142,44 @@
     "updateProduct": "Mettre à jour le produit",
     "productNotFound": "Produit introuvable",
     "backToProducts": "Retour aux produits"
+  },
+  "reports": {
+    "heading": "Mes rapports",
+    "totalOrders": "Commandes totales",
+    "totalRevenue": "Revenu total",
+    "completedRepairs": "Réparations terminées",
+    "noReports": "Aucun rapport pour le moment",
+    "noReportsHint": "Vos rapports de ventes et de performance des réparations apparaîtront ici dès que vous aurez de l'activité."
+  },
+  "messages": {
+    "heading": "Mes messages",
+    "subject": "Objet",
+    "status": "Statut",
+    "noSubject": "Sans objet",
+    "replied": "Répondu",
+    "unreadReply": "Nouvelle réponse",
+    "pending": "En attente",
+    "markRead": "Marquer comme lu",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "noMessages": "Aucun message",
+    "noMessagesHint": "Les messages envoyés au support TechBridge depuis votre compte apparaîtront ici."
+  },
+  "profile": {
+    "heading": "Mon profil",
+    "avatar": "Photo de profil",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "emailHint": "L'e-mail ne peut pas être modifié.",
+    "phone": "Téléphone",
+    "specialization": "Spécialisation",
+    "bio": "Biographie",
+    "bioPlaceholder": "Parlez aux clients de vos compétences et de votre expérience...",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "passwordHint": "8 caractères minimum. Laissez vide pour conserver le mot de passe actuel.",
+    "save": "Enregistrer les modifications"
   }
 }

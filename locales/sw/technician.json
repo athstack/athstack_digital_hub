@@ -6,7 +6,10 @@
     "products": "Bidhaa Zangu",
     "repairs": "Urekebishaji",
     "orders": "Oda",
-    "logout": "Toka"
+    "logout": "Toka",
+    "reports": "Ripoti",
+    "messages": "Ujumbe",
+    "profile": "Wasifu"
   },
   "title": {
     "dashboard": "Dashibodi ya Fundi - TechBridge Digital Hub",
@@ -14,7 +17,10 @@
     "addProduct": "Ongeza Bidhaa - TechBridge Digital Hub",
     "editProduct": "Hariri Bidhaa - TechBridge Digital Hub",
     "repairs": "Urekebishaji Uliokabidhiwa - TechBridge Digital Hub",
-    "orders": "Oda za Bidhaa - TechBridge Digital Hub"
+    "orders": "Oda za Bidhaa - TechBridge Digital Hub",
+    "reports": "Ripoti zangu - TechBridge Digital Hub",
+    "messages": "Ujumbe - TechBridge Digital Hub",
+    "profile": "Wasifu wangu - TechBridge Digital Hub"
   },
   "words": {
     "reference": "Rejeleo",
@@ -24,7 +30,8 @@
     "device": "Kifaa",
     "action": "Kitendo",
     "general": "Jumla",
-    "unknown": "Haijulikani"
+    "unknown": "Haijulikani",
+    "product": "Bidhaa"
   },
   "status": {
     "pending": "Inasubiri",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "Hali ya urekebishaji imesasishwa.",
     "repairStatusUpdatedTitle": "Hali ya Urekebishaji Imesasishwa",
     "repairStatusMessage": "Urekebishaji wako {{ref}} sasa uko: {{status}}",
-    "notesSuffix": "Maelezo: {{notes}}"
+    "notesSuffix": "Maelezo: {{notes}}",
+    "userNotFound": "Mtumiaji hajapatikana.",
+    "profileRequiredFields": "Jina la kwanza na la mwisho vinahitajika.",
+    "currentPasswordWrong": "Nenosiri la sasa si sahihi.",
+    "passwordTooShort": "Nenosiri jipya lazima liwe na angalau herufi 8.",
+    "profileUpdated": "Wasifu umesasishwa kwa mafanikio."
   },
   "dashboard": {
     "heading": "Dashibodi ya Fundi",
@@ -130,5 +142,44 @@
     "updateProduct": "Sasisha Bidhaa",
     "productNotFound": "Bidhaa Haipatikani",
     "backToProducts": "Rudi kwenye Bidhaa"
+  },
+  "reports": {
+    "heading": "Ripoti zangu",
+    "totalOrders": "Jumla ya maagizo",
+    "totalRevenue": "Jumla ya mapato",
+    "completedRepairs": "Matengenezo yaliyokamilika",
+    "noReports": "Hakuna Ripoti Bado",
+    "noReportsHint": "Ripoti zako za mauzo na utendaji wa matengenezo zitaonekana hapa mara tu utakapokuwa na shughuli."
+  },
+  "messages": {
+    "heading": "Ujumbe wangu",
+    "subject": "Mada",
+    "status": "Hali",
+    "noSubject": "Hakuna mada",
+    "replied": "Imejibiwa",
+    "unreadReply": "Jibu jipya",
+    "pending": "Inasubiri",
+    "markRead": "Weka kama imesomwa",
+    "prev": "Nyuma",
+    "next": "Mbele",
+    "noMessages": "Hakuna Ujumbe",
+    "noMessagesHint": "Ujumbe unaotumwa kwa usaidizi wa TechBridge kutoka kwa akaunti yako utaonekana hapa."
+  },
+  "profile": {
+    "heading": "Wasifu wangu",
+    "avatar": "Picha ya wasifu",
+    "firstName": "Jina la kwanza",
+    "lastName": "Jina la mwisho",
+    "email": "Barua pepe",
+    "emailHint": "Barua pepe haiwezi kubadilishwa.",
+    "phone": "Simu",
+    "specialization": "Utaalamu",
+    "bio": "Maelezo",
+    "bioPlaceholder": "Mwambie wateja kuhusu ujuzi wako na uzoefu...",
+    "changePassword": "Badilisha nenosiri",
+    "currentPassword": "Nenosiri la sasa",
+    "newPassword": "Nenosiri jipya",
+    "passwordHint": "Angalau herufi 8. Acha wazi ili kuweka nenosiri la sasa.",
+    "save": "Hifadhi Mabadiliko"
   }
 }

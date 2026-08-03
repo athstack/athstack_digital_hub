@@ -6,7 +6,10 @@
     "products": "मेरे प्रोडक्ट",
     "repairs": "मरम्मत",
     "orders": "ऑर्डर",
-    "logout": "लॉगआउट"
+    "logout": "लॉगआउट",
+    "reports": "रिपोर्ट",
+    "messages": "संदेश",
+    "profile": "प्रोफ़ाइल"
   },
   "title": {
     "dashboard": "तकनीशियन डैशबोर्ड - TechBridge Digital Hub",
@@ -14,7 +17,10 @@
     "addProduct": "प्रोडक्ट जोड़ें - TechBridge Digital Hub",
     "editProduct": "प्रोडक्ट संपादित करें - TechBridge Digital Hub",
     "repairs": "नियुक्त मरम्मत - TechBridge Digital Hub",
-    "orders": "प्रोडक्ट ऑर्डर - TechBridge Digital Hub"
+    "orders": "प्रोडक्ट ऑर्डर - TechBridge Digital Hub",
+    "reports": "मेरी रिपोर्ट - टेकब्रिज डिजिटल हब",
+    "messages": "संदेश - टेकब्रिज डिजिटल हब",
+    "profile": "मेरी प्रोफ़ाइल - टेकब्रिज डिजिटल हब"
   },
   "words": {
     "reference": "संदर्भ",
@@ -24,7 +30,8 @@
     "device": "डिवाइस",
     "action": "क्रिया",
     "general": "सामान्य",
-    "unknown": "अज्ञात"
+    "unknown": "अज्ञात",
+    "product": "उत्पाद"
   },
   "status": {
     "pending": "लंबित",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "मरम्मत की स्थिति अपडेट हो गई।",
     "repairStatusUpdatedTitle": "मरम्मत की स्थिति अपडेट हुई",
     "repairStatusMessage": "आपकी मरम्मत {{ref}} अब: {{status}} है",
-    "notesSuffix": "नोट: {{notes}}"
+    "notesSuffix": "नोट: {{notes}}",
+    "userNotFound": "उपयोगकर्ता नहीं मिला।",
+    "profileRequiredFields": "पहला और अंतिम नाम आवश्यक हैं।",
+    "currentPasswordWrong": "वर्तमान पासवर्ड गलत है।",
+    "passwordTooShort": "नया पासवर्ड कम से कम 8 अक्षरों का होना चाहिए।",
+    "profileUpdated": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई।"
   },
   "dashboard": {
     "heading": "तकनीशियन डैशबोर्ड",
@@ -130,5 +142,44 @@
     "updateProduct": "प्रोडक्ट अपडेट करें",
     "productNotFound": "प्रोडक्ट नहीं मिला",
     "backToProducts": "प्रोडक्ट पर वापस"
+  },
+  "reports": {
+    "heading": "मेरी रिपोर्ट",
+    "totalOrders": "कुल ऑर्डर",
+    "totalRevenue": "कुल राजस्व",
+    "completedRepairs": "पूर्ण मरम्मत",
+    "noReports": "अभी तक कोई रिपोर्ट नहीं",
+    "noReportsHint": "गतिविधि होते ही आपकी बिक्री और मरम्मत प्रदर्शन रिपोर्ट यहाँ दिखाई देंगी।"
+  },
+  "messages": {
+    "heading": "मेरे संदेश",
+    "subject": "विषय",
+    "status": "स्थिति",
+    "noSubject": "कोई विषय नहीं",
+    "replied": "उत्तर दिया गया",
+    "unreadReply": "नया उत्तर",
+    "pending": "लंबित",
+    "markRead": "पढ़ा हुआ चिह्नित करें",
+    "prev": "पिछला",
+    "next": "अगला",
+    "noMessages": "कोई संदेश नहीं",
+    "noMessagesHint": "आपके खाते से टेकब्रिज सहायता को भेजे गए संदेश यहाँ दिखाई देंगे।"
+  },
+  "profile": {
+    "heading": "मेरी प्रोफ़ाइल",
+    "avatar": "प्रोफ़ाइल चित्र",
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "email": "ईमेल",
+    "emailHint": "ईमेल नहीं बदला जा सकता।",
+    "phone": "फ़ोन",
+    "specialization": "विशेषज्ञता",
+    "bio": "परिचय",
+    "bioPlaceholder": "ग्राहकों को अपने कौशल और अनुभव के बारे में बताएँ...",
+    "changePassword": "पासवर्ड बदलें",
+    "currentPassword": "वर्तमान पासवर्ड",
+    "newPassword": "नया पासवर्ड",
+    "passwordHint": "न्यूनतम 8 अक्षर। वर्तमान पासवर्ड रखने के लिए खाली छोड़ें।",
+    "save": "परिवर्तन सहेजें"
   }
 }

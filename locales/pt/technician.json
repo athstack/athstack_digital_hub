@@ -6,7 +6,10 @@
     "products": "Os Meus Produtos",
     "repairs": "Reparações",
     "orders": "Encomendas",
-    "logout": "Terminar Sessão"
+    "logout": "Terminar Sessão",
+    "reports": "Relatórios",
+    "messages": "Mensagens",
+    "profile": "Perfil"
   },
   "title": {
     "dashboard": "Painel do Técnico - TechBridge Digital Hub",
@@ -14,7 +17,10 @@
     "addProduct": "Adicionar Produto - TechBridge Digital Hub",
     "editProduct": "Editar Produto - TechBridge Digital Hub",
     "repairs": "Reparações Atribuídas - TechBridge Digital Hub",
-    "orders": "Encomendas de Produtos - TechBridge Digital Hub"
+    "orders": "Encomendas de Produtos - TechBridge Digital Hub",
+    "reports": "Meus relatórios - TechBridge Digital Hub",
+    "messages": "Mensagens - TechBridge Digital Hub",
+    "profile": "Meu perfil - TechBridge Digital Hub"
   },
   "words": {
     "reference": "Referência",
@@ -24,7 +30,8 @@
     "device": "Dispositivo",
     "action": "Ação",
     "general": "Geral",
-    "unknown": "Desconhecido"
+    "unknown": "Desconhecido",
+    "product": "Produto"
   },
   "status": {
     "pending": "Pendente",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "Estado da reparação atualizado.",
     "repairStatusUpdatedTitle": "Estado da Reparação Atualizado",
     "repairStatusMessage": "A sua reparação {{ref}} está agora: {{status}}",
-    "notesSuffix": "Notas: {{notes}}"
+    "notesSuffix": "Notas: {{notes}}",
+    "userNotFound": "Usuário não encontrado.",
+    "profileRequiredFields": "Nome e sobrenome são obrigatórios.",
+    "currentPasswordWrong": "A senha atual está incorreta.",
+    "passwordTooShort": "A nova senha deve ter pelo menos 8 caracteres.",
+    "profileUpdated": "Perfil atualizado com sucesso."
   },
   "dashboard": {
     "heading": "Painel do Técnico",
@@ -130,5 +142,44 @@
     "updateProduct": "Atualizar Produto",
     "productNotFound": "Produto Não Encontrado",
     "backToProducts": "Voltar aos Produtos"
+  },
+  "reports": {
+    "heading": "Meus relatórios",
+    "totalOrders": "Total de pedidos",
+    "totalRevenue": "Receita total",
+    "completedRepairs": "Reparos concluídos",
+    "noReports": "Ainda não há relatórios",
+    "noReportsHint": "Seus relatórios de vendas e desempenho de reparos aparecerão aqui assim que houver atividade."
+  },
+  "messages": {
+    "heading": "Minhas mensagens",
+    "subject": "Assunto",
+    "status": "Status",
+    "noSubject": "Sem assunto",
+    "replied": "Respondido",
+    "unreadReply": "Nova resposta",
+    "pending": "Pendente",
+    "markRead": "Marcar como lida",
+    "prev": "Anterior",
+    "next": "Próximo",
+    "noMessages": "Sem mensagens",
+    "noMessagesHint": "Mensagens enviadas ao suporte da TechBridge a partir da sua conta aparecerão aqui."
+  },
+  "profile": {
+    "heading": "Meu perfil",
+    "avatar": "Foto de perfil",
+    "firstName": "Nome",
+    "lastName": "Sobrenome",
+    "email": "E-mail",
+    "emailHint": "O e-mail não pode ser alterado.",
+    "phone": "Telefone",
+    "specialization": "Especialização",
+    "bio": "Biografia",
+    "bioPlaceholder": "Conte aos clientes sobre suas habilidades e experiência...",
+    "changePassword": "Alterar senha",
+    "currentPassword": "Senha atual",
+    "newPassword": "Nova senha",
+    "passwordHint": "Mínimo 8 caracteres. Deixe em branco para manter a senha atual.",
+    "save": "Salvar alterações"
   }
 }

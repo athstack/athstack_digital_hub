@@ -6,7 +6,10 @@
     "products": "منتجاتي",
     "repairs": "الإصلاحات",
     "orders": "الطلبات",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "reports": "التقارير",
+    "messages": "الرسائل",
+    "profile": "الملف الشخصي"
   },
   "title": {
     "dashboard": "لوحة تحكم الفني - TechBridge Digital Hub",
@@ -14,7 +17,10 @@
     "addProduct": "إضافة منتج - TechBridge Digital Hub",
     "editProduct": "تعديل منتج - TechBridge Digital Hub",
     "repairs": "الإصلاحات المسندة - TechBridge Digital Hub",
-    "orders": "طلبات المنتجات - TechBridge Digital Hub"
+    "orders": "طلبات المنتجات - TechBridge Digital Hub",
+    "reports": "تقاريري - تيك بريدج ديجيتال هاب",
+    "messages": "الرسائل - تيك بريدج ديجيتال هاب",
+    "profile": "ملفي الشخصي - تيك بريدج ديجيتال هاب"
   },
   "words": {
     "reference": "المرجع",
@@ -24,7 +30,8 @@
     "device": "الجهاز",
     "action": "الإجراء",
     "general": "عام",
-    "unknown": "غير معروف"
+    "unknown": "غير معروف",
+    "product": "المنتج"
   },
   "status": {
     "pending": "قيد الانتظار",
@@ -67,7 +74,12 @@
     "repairStatusUpdated": "تم تحديث حالة الإصلاح.",
     "repairStatusUpdatedTitle": "تم تحديث حالة الإصلاح",
     "repairStatusMessage": "إصلاحك {{ref}} الآن: {{status}}",
-    "notesSuffix": "الملاحظات: {{notes}}"
+    "notesSuffix": "الملاحظات: {{notes}}",
+    "userNotFound": "المستخدم غير موجود.",
+    "profileRequiredFields": "الاسم الأول واسم العائلة مطلوبان.",
+    "currentPasswordWrong": "كلمة المرور الحالية غير صحيحة.",
+    "passwordTooShort": "يجب أن تكون كلمة المرور الجديدة 8 أحرف على الأقل.",
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح."
   },
   "dashboard": {
     "heading": "لوحة تحكم الفني",
@@ -130,5 +142,44 @@
     "updateProduct": "تحديث المنتج",
     "productNotFound": "المنتج غير موجود",
     "backToProducts": "العودة إلى المنتجات"
+  },
+  "reports": {
+    "heading": "تقاريري",
+    "totalOrders": "إجمالي الطلبات",
+    "totalRevenue": "إجمالي الإيرادات",
+    "completedRepairs": "الإصلاحات المكتملة",
+    "noReports": "لا توجد تقارير بعد",
+    "noReportsHint": "ستظهر تقارير مبيعاتك وأداء إصلاحاتك هنا بمجرد وجود نشاط."
+  },
+  "messages": {
+    "heading": "رسائلي",
+    "subject": "الموضوع",
+    "status": "الحالة",
+    "noSubject": "بدون موضوع",
+    "replied": "تم الرد",
+    "unreadReply": "رد جديد",
+    "pending": "معلق",
+    "markRead": "وضع علامة كمقروء",
+    "prev": "السابق",
+    "next": "التالي",
+    "noMessages": "لا توجد رسائل",
+    "noMessagesHint": "ستظهر الرسائل المرسلة إلى دعم تيك بريدج من حسابك هنا."
+  },
+  "profile": {
+    "heading": "ملفي الشخصي",
+    "avatar": "الصورة الشخصية",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "emailHint": "لا يمكن تغيير البريد الإلكتروني.",
+    "phone": "الهاتف",
+    "specialization": "التخصص",
+    "bio": "نبذة",
+    "bioPlaceholder": "أخبر العملاء عن مهاراتك وخبراتك...",
+    "changePassword": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "passwordHint": "8 أحرف على الأقل. اتركه فارغًا للاحتفاظ بكلمة المرور الحالية.",
+    "save": "حفظ التغييرات"
   }
 }
