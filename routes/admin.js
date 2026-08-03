@@ -19,6 +19,7 @@ router.get('/users', requirePermission('manage_users'), adminController.getUsers
 router.get('/users/new', requirePermission('manage_users'), adminController.getCreateUser);
 router.post('/users', requirePermission('manage_users'), validateCsrf, adminController.createUser);
 router.get('/users/:id/edit', requirePermission('manage_users'), adminController.getEditUser);
+router.get('/users/:id', requirePermission('manage_users'), adminController.getEditUser);
 router.post('/users/:id', requirePermission('manage_users'), validateCsrf, adminController.updateUser);
 router.post('/users/:id/delete', requirePermission('manage_users'), validateCsrf, adminController.deleteUser);
 // Role assignment requires role management rights (super admin only).

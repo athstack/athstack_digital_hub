@@ -1,0 +1,117 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:users.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:users.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="role" aria-label="<%= t('admin:users.roleLabel') %>">
+        <option value=""><%= t('admin:users.filterRole') %></option>
+        <option value="customer" <%= currentRole === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
+        <option value="technician" <%= currentRole === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
+        <option value="marketing_officer" <%= currentRole === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
+        <option value="admin" <%= currentRole === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
+        <option value="super_admin" <%= currentRole === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
+    </select>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('common:words.status') %>">
+        <option value=""><%= t('admin:users.filterStatus') %></option>
+        <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+        <option value="inactive" <%= currentStatus === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
+        <option value="suspended" <%= currentStatus === 'suspended' ? 'selected' : '' %>><%= t('admin:status.suspended') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:users.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (users && users.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table users-table">
+            <thead>
+                <tr><th><%= t('admin:words.user') %></th><th><%= t('common:words.email') %></th><th><%= t('admin:users.roleLabel') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:users.joined') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% users.forEach(u => { %>
+                <% var isSuperAdmin = u.role === 'super_admin'; var protectRow = isSuperAdmin && (!user || user.role !== 'super_admin'); %>
+                <tr data-user-id="<%= u.id %>">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
+                                <% if (u.avatar) { %>
+                                <img src="<%= imageUrl(u.avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                <i class="fa-solid fa-user text-white small" style="display:none;"></i>
+                                <% } else { %>
+                                <i class="fa-solid fa-user text-white small"></i>
+                                <% } %>
+                            </div>
+                            <span class="text-white fw-bold"><%= formatDisplayName(u.first_name, u.last_name) %></span>
+                            <% if (isSuperAdmin) { %><span class="badge bg-warning text-dark ms-2"><i class="fa-solid fa-shield-halved"></i></span><% } %>
+                        </div>
+                    </td>
+                    <td class="text-white-50"><%= u.email %></td>
+                    <td>
+                        <% if (can('manage_roles')) { %>
+                        <select class="form-select form-select-sm bg-dark text-white border-secondary role-select" style="width:130px;" data-user-id="<%= u.id %>" data-original="<%= u.role %>" <%= protectRow ? 'disabled' : '' %>>
+                            <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
+                            <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
+                            <option value="marketing_officer" <%= u.role === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
+                            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                            <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
+                            <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
+                            <% } %>
+                        </select>
+                        <% } else { %>
+                        <span class="badge bg-secondary text-capitalize"><%= t('admin:roles.' + u.role, { defaultValue: u.role }) %></span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary status-select" style="width:110px;" data-user-id="<%= u.id %>" data-original="<%= u.status %>" <%= protectRow ? 'disabled' : '' %>>
+                                <option value="active" <%= u.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+                                <option value="inactive" <%= u.status === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
+                                <option value="suspended" <%= u.status === 'suspended' ? 'selected' : '' %>><%= t('admin:status.suspended') %></option>
+                            </select>
+                            <% var statusColors = { active: 'bg-success', inactive: 'bg-secondary', suspended: 'bg-danger' }; %>
+                            <span class="badge text-capitalize <%= statusColors[u.status] || 'bg-secondary' %>"><%= t('admin:status.' + (u.status||'').toLowerCase(), {defaultValue: u.status}) %></span>
+                        </div>
+                    </td>
+                    <td class="text-white-50"><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : '' %></td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <% if (!protectRow) { %>
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abAttrs:'data-edit-user data-id="' + u.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abAttrs:'data-delete-user data-id="' + u.id + '" data-name="' + escapeAttr(formatDisplayName(u.first_name, u.last_name)) + '"', abTitle:t('common:words.delete') }) %>
+                            <% } %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:users.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:users.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:users.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:users.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:users.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-users fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('admin:users.noUsersFound') %></h4>
+    <p class="text-white-50"><%= t('admin:users.noUsersMatch') %></p>
+</div>
+<% } %>

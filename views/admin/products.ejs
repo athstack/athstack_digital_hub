@@ -214,7 +214,7 @@
             var name = delBtn.getAttribute('data-name');
             Crud.confirm({
                 title: i18n.deleteTitle,
-                message: i18n.deleteConfirm + ' <strong class="text-white">' + (name || '') + '</strong>?',
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (name || '') + '</strong>?',
                 confirmText: i18n.delete
             }).then(function (ok) {
                 if (!ok) return;

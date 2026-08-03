@@ -1,15 +1,5 @@
 <%- include('../partials/header') %>
 
-<style>
-.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.toast-msg{padding:10px 20px;border-radius:6px;color:#fff;font-size:14px;opacity:0;transform:translateX(30px);animation:toastIn .3s forwards}
-.toast-msg.success{background:#198754}
-.toast-msg.error{background:#dc3545}
-@keyframes toastIn{to{opacity:1;transform:translateX(0)}}
-@keyframes toastOut{to{opacity:0;transform:translateX(30px)}}
-</style>
-<div class="toast-container" id="toastContainer"></div>
-
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
@@ -28,178 +18,253 @@
                     <span class="section-badge"><%= t('admin:words.users') %></span>
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-users me-2 text-primary"></i><%= t('admin:users.heading') %></h2>
                     <div class="ms-auto">
-                        <a href="/admin/users/new" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:users.addUser') %></a>
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addUserBtn"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:users.addUser') %></button>
                     </div>
                 </div>
 
-                <div class="glass-card p-4 mb-4">
-                    <form method="GET" action="/admin/users" class="row g-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label"><%= t('common:words.search') %></label>
-                            <input type="text" name="search" class="form-control" placeholder="<%= t('admin:users.searchPlaceholder') %>" value="<%= searchQuery || '' %>">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label"><%= t('admin:users.roleLabel') %></label>
-                                <select name="role" class="form-select">
-                                    <option value=""><%= t('admin:users.allRoles') %></option>
-                                    <option value="customer" <%= currentRole === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
-                                    <option value="technician" <%= currentRole === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
-                                    <option value="marketing_officer" <%= currentRole === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
-                                    <option value="admin" <%= currentRole === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
-                                    <option value="super_admin" <%= currentRole === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
-                                </select>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> <%= t('admin:words.filter') %></button>
-                        </div>
-                    </form>
+                <div data-crud-table data-crud-url="/admin/users">
+                    <%- include('./partials/usersTable') %>
                 </div>
-
-                <% if (users && users.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr><th><%= t('admin:words.user') %></th><th><%= t('common:words.email') %></th><th><%= t('admin:users.roleLabel') %></th><th><%= t('common:words.status') %></th><th><%= t('admin:users.joined') %></th><th><%= t('common:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% users.forEach(u => { %>
-                                <% var isSuperAdmin = u.role === 'super_admin'; var protectRow = isSuperAdmin && (!user || user.role !== 'super_admin'); %>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
-                                                 <% if (u.avatar) { %>
-                                                     <img src="<%= imageUrl(u.avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                                     <i class="fa-solid fa-user text-white small" style="display:none;"></i>
-                                                 <% } else { %>
-                                                     <i class="fa-solid fa-user text-white small"></i>
-                                                 <% } %>
-                                             </div>
-                                            <span class="text-white fw-bold"><%= formatDisplayName(u.first_name, u.last_name) %></span>
-                                            <% if (isSuperAdmin) { %><span class="badge bg-warning text-dark ms-2"><i class="fa-solid fa-shield-halved"></i></span><% } %>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50"><%= u.email %></td>
-                                    <td>
-                                        <% if (can('manage_roles')) { %>
-                                        <select class="form-select form-select-sm bg-dark text-white border-secondary role-select" style="width:120px;" data-user-id="<%= u.id %>" data-original="<%= u.role %>" <%= protectRow ? 'disabled' : '' %>>
-                                            <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>><%= t('admin:roles.customer') %></option>
-                                            <option value="technician" <%= u.role === 'technician' ? 'selected' : '' %>><%= t('admin:roles.technician') %></option>
-                                            <option value="marketing_officer" <%= u.role === 'marketing_officer' ? 'selected' : '' %>><%= t('admin:roles.marketingOfficer') %></option>
-                                            <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>><%= t('admin:roles.admin') %></option>
-                                            <option value="super_admin" <%= u.role === 'super_admin' ? 'selected' : '' %>><%= t('admin:roles.superAdmin') %></option>
-                                        </select>
-                                        <% } else { %>
-                                        <span class="badge bg-secondary text-capitalize"><%= t('admin:roles.' + u.role) %></span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <select class="form-select form-select-sm bg-dark text-white border-secondary status-select" style="width:110px;" data-user-id="<%= u.id %>" data-original="<%= u.status %>" <%= protectRow ? 'disabled' : '' %>>
-                                                <option value="active" <%= u.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
-                                                <option value="inactive" <%= u.status === 'inactive' ? 'selected' : '' %>><%= t('admin:status.inactive') %></option>
-                                                <option value="suspended" <%= u.status === 'suspended' ? 'selected' : '' %>><%= t('admin:status.suspended') %></option>
-                                            </select>
-                                            <% var statusColors = { active: 'bg-success', inactive: 'bg-secondary', suspended: 'bg-danger' }; %>
-                                            <span class="badge text-capitalize <%= statusColors[u.status] || 'bg-secondary' %>"><%= t('admin:status.' + (u.status||'').toLowerCase(), {defaultValue: u.status}) %></span>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50"><%= u.created_at ? new Date(u.created_at).toLocaleDateString() : '' %></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/users/' + u.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <% if (!protectRow) { %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/admin/users/' + u.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('admin:users.deleteConfirm', {name: u.first_name + ' ' + u.last_name}), abTitle:t('common:words.delete') }) %>
-                                            <% } %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <% if (pagination && pagination.totalPages > 1) { %>
-                <nav class="mt-3">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
-                            <a class="page-link bg-dark border-secondary text-white-50" href="/admin/users?page=<%= pagination.page - 1 %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&laquo;</a>
-                        </li>
-                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-                        <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
-                            <a class="page-link <%= i === pagination.page ? 'bg-primary border-primary' : 'bg-dark border-secondary' %>" href="/admin/users?page=<%= i %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a>
-                        </li>
-                        <% } %>
-                        <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
-                            <a class="page-link bg-dark border-secondary text-white-50" href="/admin/users?page=<%= pagination.page + 1 %><%= currentRole ? '&role=' + currentRole : '' %><%= searchQuery ? '&search=' + searchQuery : '' %>">&raquo;</a>
-                        </li>
-                    </ul>
-                </nav>
-                <% } %>
-
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-users fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:users.noUsersFound') %></h4>
-                    <p class="text-white-50"><%= t('admin:users.noUsersMatch') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
 
+<!-- User add / edit modal -->
+<div class="modal fade crud-modal" id="userModal" tabindex="-1" aria-labelledby="userModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="userForm" method="POST" action="/admin/users" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle"><%= t('admin:userForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-first-name"><%= t('admin:userForm.firstName') %></label>
+                            <input type="text" class="form-control" id="pf-first-name" name="first_name" placeholder="<%= t('admin:userForm.firstNamePlaceholder') %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-last-name"><%= t('admin:userForm.lastName') %></label>
+                            <input type="text" class="form-control" id="pf-last-name" name="last_name" placeholder="<%= t('admin:userForm.lastNamePlaceholder') %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-email"><%= t('common:words.email') %></label>
+                            <input type="email" class="form-control" id="pf-email" name="email" placeholder="user@example.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-phone"><%= t('common:words.phone') %></label>
+                            <input type="text" class="form-control" id="pf-phone" name="phone" placeholder="+255 7XX XXX XXX">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-role"><%= t('admin:users.roleLabel') %></label>
+                            <select class="form-select" id="pf-role" name="role" required>
+                                <option value="customer"><%= t('admin:roles.customer') %></option>
+                                <option value="technician"><%= t('admin:roles.technician') %></option>
+                                <option value="marketing_officer"><%= t('admin:roles.marketingOfficer') %></option>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                <option value="admin"><%= t('admin:roles.admin') %></option>
+                                <option value="super_admin"><%= t('admin:roles.superAdmin') %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="pf-status" name="status" required>
+                                <option value="active"><%= t('admin:status.active') %></option>
+                                <option value="inactive"><%= t('admin:status.inactive') %></option>
+                                <option value="suspended"><%= t('admin:status.suspended') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-password"><%= t('admin:userForm.password') %> <span class="text-white-50" id="pf-password-hint" style="display:none;"><%= t('admin:userForm.leaveBlank') %></span></label>
+                            <input type="password" class="form-control" id="pf-password" name="password" placeholder="<%= t('admin:userForm.enterPassword') %>" minlength="6" autocomplete="new-password">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="userSubmitBtn"><i class="fa-solid fa-user-plus me-1"></i><%= t('admin:userForm.createUser') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 (function() {
-    const CSRF = <%- JSON.stringify(csrfToken) %>;
+    'use strict';
+    var modalEl = document.getElementById('userModal');
+    var form = document.getElementById('userForm');
+    var titleEl = document.getElementById('userModalTitle');
+    var submitBtn = document.getElementById('userSubmitBtn');
+    var addBtn = document.getElementById('addUserBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
 
-    function showToast(msg, type) {
-        var c = document.getElementById('toastContainer');
-        var t = document.createElement('div');
-        t.className = 'toast-msg ' + type;
-        t.textContent = msg;
-        c.appendChild(t);
-        setTimeout(function() { t.style.animation = 'toastOut .3s forwards'; setTimeout(function() { t.remove(); }, 300); }, 2500);
+    var i18n = {
+        headingCreate: '<%= t('admin:userForm.headingCreate') %>',
+        headingEdit: '<%= t('admin:userForm.headingEdit') %>',
+        createUser: '<%= t('admin:userForm.createUser') %>',
+        updateUser: '<%= t('admin:userForm.updateUser') %>',
+        userCreated: '<%= t('admin:flash.userCreated', { name: '' }) %>',
+        userUpdated: '<%= t('admin:flash.userUpdated') %>',
+        userDeleted: '<%= t('admin:flash.userDeleted', { name: '' }) %>',
+        deleteTitle: '<%= t('admin:users.deleteTitle') %>',
+        deleteConfirm: '<%= t('admin:users.deleteConfirm') %>',
+        deleteFailed: '<%= t('admin:users.deleteFailed') %>',
+        updateFailed: '<%= t('admin:users.updateFailed') %>',
+        networkError: '<%= t('admin:users.networkError') %>',
+        roleUpdated: '<%= t('admin:flash.roleUpdated') %>',
+        statusUpdated: '<%= t('admin:flash.statusUpdated') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>',
+        enterPassword: '<%= t('admin:userForm.enterPassword') %>',
+        leaveBlank: '<%= t('admin:userForm.leaveBlankPlaceholder') %>'
+    };
+
+    var currentUserId = <%- JSON.stringify(user ? user.id : null) %>;
+    var isSuperAdmin = <%- JSON.stringify(typeof isSuperAdmin !== 'undefined' && isSuperAdmin) %>;
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/admin/users';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-user-plus me-1"></i>' + i18n.createUser;
+        form.elements['password'].required = true;
+        form.elements['password'].placeholder = i18n.enterPassword;
+        document.getElementById('pf-password-hint').style.display = 'none';
+        form.elements['role'].disabled = false;
+        form.elements['status'].disabled = false;
     }
 
-    function sendUpdate(url, field, value, select) {
-        var orig = select.getAttribute('data-original');
-        var body = {};
-        body[field] = value;
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-            body: JSON.stringify(body)
-        })
-        .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
-        .then(function(res) {
-            if (res.ok && res.data.success) {
-                select.setAttribute('data-original', value);
-                showToast(res.data.message, 'success');
-            } else {
-                select.value = orig;
-                showToast(res.data.message || '<%= t('admin:users.updateFailed') %>', 'error');
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/admin/users/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.user) return;
+                resetForm();
+                var u = data.user;
+                form.action = '/admin/users/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateUser;
+                form.elements['password'].required = false;
+                form.elements['password'].placeholder = i18n.leaveBlank;
+                document.getElementById('pf-password-hint').style.display = 'inline';
+
+                form.elements['first_name'].value = u.first_name || '';
+                form.elements['last_name'].value = u.last_name || '';
+                form.elements['email'].value = u.email || '';
+                form.elements['phone'].value = u.phone || '';
+                form.elements['status'].value = u.status || 'active';
+
+                var roleSel = form.elements['role'];
+                var existingOpt = roleSel.querySelector('option[value="' + u.role + '"]');
+                if (!existingOpt) {
+                    var opt = document.createElement('option');
+                    opt.value = u.role;
+                    opt.textContent = u.role.replace(/_/g, ' ');
+                    roleSel.appendChild(opt);
+                }
+                roleSel.value = u.role;
+
+                var isSelf = String(u.id) === String(currentUserId);
+                roleSel.disabled = isSelf;
+                form.elements['status'].disabled = isSelf;
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-user]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-user]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            var name = delBtn.getAttribute('data-name');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                messageHtml: i18n.deleteConfirm.replace('{{name}}', '<strong class="text-white">' + (name || '') + '</strong>'),
+                confirmText: i18n.delete
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/admin/users/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.userDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/admin/users' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    tableWrap.addEventListener('change', function (e) {
+        var roleSel = e.target.closest('.role-select');
+        if (roleSel) {
+            var origRole = roleSel.getAttribute('data-original');
+            var uid = roleSel.getAttribute('data-user-id');
+            Crud.post('/admin/users/' + uid + '/role', { role: roleSel.value })
+                .then(function (data) {
+                    roleSel.setAttribute('data-original', roleSel.value);
+                    Crud.toast(data.message || i18n.roleUpdated, 'success');
+                })
+                .catch(function (err) {
+                    roleSel.value = origRole;
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                });
+            return;
+        }
+
+        var statusSel = e.target.closest('.status-select');
+        if (statusSel) {
+            var origStatus = statusSel.getAttribute('data-original');
+            var suid = statusSel.getAttribute('data-user-id');
+            Crud.post('/admin/users/' + suid + '/status', { status: statusSel.value })
+                .then(function (data) {
+                    statusSel.setAttribute('data-original', statusSel.value);
+                    Crud.toast(data.message || i18n.statusUpdated, 'success');
+                })
+                .catch(function (err) {
+                    statusSel.value = origStatus;
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.userCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/users' });
             }
-        })
-        .catch(function() {
-            select.value = orig;
-            showToast('<%= t('admin:users.networkError') %>', 'error');
-        });
-    }
-
-    document.querySelectorAll('.role-select').forEach(function(sel) {
-        sel.addEventListener('change', function() {
-            sendUpdate('/admin/users/' + this.dataset.userId + '/role', 'role', this.value, this);
         });
     });
 
-    document.querySelectorAll('.status-select').forEach(function(sel) {
-        sel.addEventListener('change', function() {
-            sendUpdate('/admin/users/' + this.dataset.userId + '/status', 'status', this.value, this);
-        });
-    });
+    Crud.initTable(tableWrap);
 })();
 </script>
 

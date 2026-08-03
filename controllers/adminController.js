@@ -150,20 +150,52 @@ exports.getDashboard = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const role = req.query.role || null;
-    const search = req.query.search || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const role = req.query.role && ['customer', 'technician', 'admin', 'super_admin', 'marketing_officer'].includes(req.query.role) ? req.query.role : null;
+    const status = req.query.status && ['active', 'inactive', 'suspended'].includes(req.query.status) ? req.query.status : null;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10;
 
-    const { users, total, limit } = await UserModel.getAll({ role, search, page, limit: 20 });
-    const totalPages = Math.ceil(total / limit);
+    const result = await UserModel.getAll({ role, status, search, page, limit });
+    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
 
-    res.render('admin/users', {
+    const viewData = {
       title: req.t('admin:title.users'),
-      users,
-      pagination: { page, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
-      currentRole: role,
-      searchQuery: search
-    });
+      users: result.users,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages,
+        hasNext: result.page < totalPages,
+        hasPrev: result.page > 1
+      },
+      currentRole: role || '',
+      currentStatus: status || '',
+      currentSearch: search || '',
+      isSuperAdmin: req.session.userRole === 'super_admin'
+    };
+
+    // Fragment: server-rendered toolbar + table for instant in-place refresh.
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/usersTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    // Plain JSON list for API consumers.
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        users: result.users,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/users', viewData);
   } catch (err) {
     next(err);
   }
@@ -296,14 +328,25 @@ exports.getCreateUser = (req, res) => {
 exports.createUser = async (req, res, next) => {
   try {
     const { first_name, last_name, email, phone, role, status, password } = req.body;
+    const ajax = isAjaxRequest(req);
 
-    if (!first_name || !last_name || !email || !password) {
-      req.flash('error', req.t('admin:flash.userRequiredFields'));
+    const errors = {};
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!first_name || !String(first_name).trim()) errors.first_name = req.t('admin:flash.userFirstNameRequired');
+    if (!last_name || !String(last_name).trim()) errors.last_name = req.t('admin:flash.userLastNameRequired');
+    if (!email || !emailRe.test(String(email).trim())) errors.email = req.t('admin:flash.userEmailInvalid');
+    if (!password || String(password).length < 6) errors.password = req.t('admin:flash.userPasswordRequired');
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.userRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.userRequiredFields');
       return res.redirect('/admin/users/new');
     }
 
-    const existing = await UserModel.findByEmail(email);
+    const cleanEmail = String(email).trim();
+    const existing = await UserModel.findByEmail(cleanEmail);
     if (existing) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.emailExists'), { email: req.t('admin:flash.emailExists') });
       req.flash('error', req.t('admin:flash.emailExists'));
       return res.redirect('/admin/users/new');
     }
@@ -314,25 +357,38 @@ exports.createUser = async (req, res, next) => {
     const userStatus = validStatuses.includes(status) ? status : 'active';
 
     if (userRole === 'admin' && req.session.userRole !== 'super_admin') {
+      if (ajax) return rejectWith(res, 403, req.t('admin:flash.createAdminRestricted'));
       req.flash('error', req.t('admin:flash.createAdminRestricted'));
       return res.redirect('/admin/users/new');
     }
 
     if (userRole === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (ajax) return rejectWith(res, 403, req.t('admin:flash.createSuperAdminRestricted'));
       req.flash('error', req.t('admin:flash.createSuperAdminRestricted'));
       return res.redirect('/admin/users/new');
     }
 
     await UserModel.create({
-      first_name, last_name, email, phone, password, role: userRole
+      first_name: String(first_name).trim(),
+      last_name: String(last_name).trim(),
+      email: cleanEmail,
+      phone: phone ? String(phone).trim() : null,
+      password,
+      role: userRole
     });
 
     if (userStatus !== 'active') {
-      const created = await UserModel.findByEmail(email);
+      const created = await UserModel.findByEmail(cleanEmail);
       if (created) await UserModel.updateStatus(created.id, userStatus);
     }
 
-    req.flash('success', req.t('admin:flash.userCreated', { name: first_name + ' ' + last_name }));
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.userCreated', { name: String(first_name).trim() + ' ' + String(last_name).trim() })
+      });
+    }
+    req.flash('success', req.t('admin:flash.userCreated', { name: String(first_name).trim() + ' ' + String(last_name).trim() }));
     res.redirect('/admin/users');
   } catch (err) {
     next(err);
@@ -343,6 +399,7 @@ exports.getEditUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
+      if (isAjaxRequest(req)) return rejectWith(res, 400, req.t('admin:flash.invalidUserId'));
       req.flash('error', req.t('admin:flash.invalidUserId'));
       return res.redirect('/admin/users');
     }
@@ -350,13 +407,32 @@ exports.getEditUser = async (req, res, next) => {
     const target = await UserModel.findById(userId);
 
     if (!target) {
+      if (isAjaxRequest(req)) return rejectWith(res, 404, req.t('admin:flash.userNotFound'));
       req.flash('error', req.t('admin:flash.userNotFound'));
       return res.redirect('/admin/users');
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (isAjaxRequest(req)) return rejectWith(res, 403, req.t('admin:flash.cannotEditSuperAdmin'));
       req.flash('error', req.t('admin:flash.cannotEditSuperAdmin'));
       return res.redirect('/admin/users');
+    }
+
+    // JSON detail (used by the modal CRUD edit flow).
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        user: {
+          id: target.id,
+          first_name: target.first_name,
+          last_name: target.last_name,
+          email: target.email,
+          phone: target.phone || '',
+          role: target.role,
+          status: target.status,
+          avatar_url: target.avatar ? toImageUrl(target.avatar, 'profiles') : null
+        }
+      });
     }
 
     res.render('admin/user-form', {
@@ -374,7 +450,10 @@ exports.getEditUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
+
     if (isNaN(userId)) {
+      if (ajax) return rejectWith(res, 400, req.t('admin:flash.invalidUserId'));
       req.flash('error', req.t('admin:flash.invalidUserId'));
       return res.redirect('/admin/users');
     }
@@ -383,64 +462,90 @@ exports.updateUser = async (req, res, next) => {
 
     const target = await UserModel.findById(userId);
     if (!target) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.userNotFound'));
       req.flash('error', req.t('admin:flash.userNotFound'));
       return res.redirect('/admin/users');
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (ajax) return rejectWith(res, 403, req.t('admin:flash.cannotModifySuperAdmin'));
       req.flash('error', req.t('admin:flash.cannotModifySuperAdmin'));
       return res.redirect('/admin/users');
     }
 
     if (userId === Number(req.session.userId) && role && role !== target.role) {
+      if (ajax) return rejectWith(res, 403, req.t('admin:flash.cannotChangeOwnRole'));
       req.flash('error', req.t('admin:flash.cannotChangeOwnRole'));
       return res.redirect('/admin/users');
     }
 
     if (userId === Number(req.session.userId) && status && status !== target.status) {
+      if (ajax) return rejectWith(res, 403, req.t('admin:flash.cannotChangeOwnStatus'));
       req.flash('error', req.t('admin:flash.cannotChangeOwnStatus'));
       return res.redirect('/admin/users');
     }
 
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const errors = {};
+    if (first_name !== undefined && !String(first_name).trim()) errors.first_name = req.t('admin:flash.userFirstNameRequired');
+    if (last_name !== undefined && !String(last_name).trim()) errors.last_name = req.t('admin:flash.userLastNameRequired');
+    if (email !== undefined && (!String(email).trim() || !emailRe.test(String(email).trim()))) errors.email = req.t('admin:flash.userEmailInvalid');
+    if (password && String(password).length < 6) errors.password = req.t('admin:flash.userPasswordWeak');
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.userRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.userRequiredFields');
+      return res.redirect('/admin/users/' + userId + '/edit');
+    }
+
     if (role && !['customer', 'technician', 'admin', 'super_admin', 'marketing_officer'].includes(role)) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.invalidRole'), { role: req.t('admin:flash.invalidRole') });
       req.flash('error', req.t('admin:flash.invalidRole'));
       return res.redirect('/admin/users');
     }
 
     if (status && !['active', 'inactive', 'suspended'].includes(status)) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.invalidStatus'), { status: req.t('admin:flash.invalidStatus') });
       req.flash('error', req.t('admin:flash.invalidStatus'));
       return res.redirect('/admin/users');
     }
 
     if (role && role !== target.role) {
       if (role === 'admin' && req.session.userRole !== 'super_admin') {
+        if (ajax) return rejectWith(res, 403, req.t('admin:flash.adminRoleRestricted'));
         req.flash('error', req.t('admin:flash.adminRoleRestricted'));
         return res.redirect('/admin/users');
       }
       if (role === 'super_admin' && req.session.userRole !== 'super_admin') {
+        if (ajax) return rejectWith(res, 403, req.t('admin:flash.superAdminRoleRestricted'));
         req.flash('error', req.t('admin:flash.superAdminRoleRestricted'));
         return res.redirect('/admin/users');
       }
     }
 
-    if (email !== target.email) {
-      const existing = await UserModel.findByEmail(email);
+    const cleanEmail = email !== undefined ? String(email).trim() : target.email;
+    if (cleanEmail !== target.email) {
+      const existing = await UserModel.findByEmail(cleanEmail);
       if (existing) {
+        if (ajax) return rejectWith(res, 422, req.t('admin:flash.emailExists'), { email: req.t('admin:flash.emailExists') });
         req.flash('error', req.t('admin:flash.emailExists'));
         return res.redirect('/admin/users/' + userId + '/edit');
       }
     }
 
     await UserModel.adminUpdate(userId, {
-      first_name: first_name || target.first_name,
-      last_name: last_name || target.last_name,
-      email: email || target.email,
-      phone: phone || target.phone,
+      first_name: first_name !== undefined ? String(first_name).trim() : target.first_name,
+      last_name: last_name !== undefined ? String(last_name).trim() : target.last_name,
+      email: cleanEmail,
+      phone: phone !== undefined ? (String(phone).trim() || null) : target.phone,
       role: role || target.role,
       status: status || target.status,
       password: password || null
     });
 
+    if (ajax) {
+      return res.json({ success: true, message: req.t('admin:flash.userUpdated') });
+    }
     req.flash('success', req.t('admin:flash.userUpdated'));
     res.redirect('/admin/users');
   } catch (err) {
@@ -450,33 +555,44 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
+    const isAjax = req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'));
+    const respond = (code, data) => isAjax ? res.status(code).json(data) : res.redirect('/admin/users');
+
     const userId = parseInt(req.params.id);
 
     if (isNaN(userId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidUserId') });
       req.flash('error', req.t('admin:flash.invalidUserId'));
-      return res.redirect('/admin/users');
+      return respond(400, {});
     }
 
     if (userId === Number(req.session.userId)) {
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotDeleteOwn') });
       req.flash('error', req.t('admin:flash.cannotDeleteOwn'));
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     const target = await UserModel.findById(userId);
     if (!target) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.userNotFound') });
       req.flash('error', req.t('admin:flash.userNotFound'));
-      return res.redirect('/admin/users');
+      return respond(404, {});
     }
 
     if (target.role === 'super_admin' && req.session.userRole !== 'super_admin') {
+      if (isAjax) return respond(403, { success: false, message: req.t('admin:flash.cannotDeleteSuperAdmin') });
       req.flash('error', req.t('admin:flash.cannotDeleteSuperAdmin'));
-      return res.redirect('/admin/users');
+      return respond(403, {});
     }
 
     await UserModel.delete(userId);
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.userDeleted', { name: target.first_name + ' ' + target.last_name }) });
     req.flash('success', req.t('admin:flash.userDeleted', { name: target.first_name + ' ' + target.last_name }));
-    res.redirect('/admin/users');
+    respond(200, {});
   } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(500).json({ success: false, message: req.t('admin:flash.serverError') });
+    }
     next(err);
   }
 };
