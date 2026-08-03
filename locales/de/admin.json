@@ -247,7 +247,11 @@
     "invalidPermissionName": "Ungültiger Berechtigungsname. Verwenden Sie nur Kleinbuchstaben, Zahlen und Unterstriche.",
     "invalidOrderId": "Ungültige Bestell-ID.",
     "invalidRepairId": "Ungültige Reparatur-ID.",
-    "repairNotFound": "Reparaturanfrage nicht gefunden."
+    "repairNotFound": "Reparaturanfrage nicht gefunden.",
+    "invalidCourseId": "Ungültige Kurs-ID.",
+    "invalidCourseStatus": "Ungültiger Kursstatus.",
+    "courseStatusUpdated": "Kursstatus aktualisiert.",
+    "courseRequiredFields": "Bitte füllen Sie die Pflichtfelder aus."
   },
   "validation": {
     "productNameRequired": "Produktname ist erforderlich",
@@ -521,7 +525,26 @@
     "updateCourse": "Kurs aktualisieren",
     "editCourseModal": "Kurs bearbeiten",
     "editCourse": "Bearbeiten",
-    "status": "Status"
+    "status": "Status",
+    "filterStatus": "Alle Status",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "searchPlaceholder": "Kurse suchen...",
+    "viewDetail": "Kurs ansehen",
+    "detailTitle": "Kursdetails",
+    "noCoursesMatch": "Keine Kurse entsprechen Ihrer Suche.",
+    "instructor": "Dozent",
+    "createdOn": "Erstellt am",
+    "noDescription": "Keine Beschreibung vorhanden.",
+    "noInstructor": "Nicht zugewiesen",
+    "deleteTitle": "Kurs löschen",
+    "deleteFailed": "Kurs konnte nicht gelöscht werden.",
+    "updateFailed": "Kursstatus konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen."
   },
   "inbox": {
     "heading": "Kontakt-Posteingang",

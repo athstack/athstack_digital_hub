@@ -18,174 +18,344 @@
                     <span class="section-badge"><%= t('admin:words.training') %></span>
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i><%= t('admin:training.heading') %></h2>
                     <div class="ms-auto">
-                        <button type="button" class="btn btn-premium-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="fa-solid fa-plus me-2"></i><%= t('admin:training.addCourse') %></button>
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addCourseBtn"><i class="fa-solid fa-plus me-2"></i><%= t('admin:training.addCourse') %></button>
                     </div>
                 </div>
 
-                <div class="modal fade" id="addCourseModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-                            <form method="POST" action="/admin/training/add" enctype="multipart/form-data">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <div class="modal-header border-secondary">
-                                    <h5 class="text-white fw-bold"><%= t('admin:training.createCourseModal') %></h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <label class="form-label"><%= t('admin:training.courseTitle') %> *</label>
-                                            <input type="text" name="title" class="form-control" required placeholder="<%= t('admin:training.courseTitlePlaceholder') %>">
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label"><%= t('common:words.description') %></label>
-                                            <textarea name="description" class="form-control" rows="3" placeholder="<%= t('admin:training.descriptionPlaceholder') %>"></textarea>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.duration') %></label>
-                                            <input type="text" name="duration" class="form-control" placeholder="<%= t('admin:training.durationPlaceholder') %>">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.level') %></label>
-                                            <select name="level" class="form-select">
-                                                <option value="Beginner"><%= t('admin:training.levelBeginner') %></option>
-                                                <option value="Intermediate"><%= t('admin:training.levelIntermediate') %></option>
-                                                <option value="Advanced"><%= t('admin:training.levelAdvanced') %></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.price') %></label>
-                                            <input type="number" name="price" class="form-control" min="0" step="0.01" value="0">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.status') %></label>
-                                            <select name="status" class="form-select">
-                                                <option value="active" selected><%= t('admin:status.active') %></option>
-                                                <option value="draft"><%= t('admin:status.draft') %></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12">
-                                            <%- include('../partials/fileUpload', {
-                                                name: 'course_image',
-                                                label: t('admin:training.courseImage'),
-                                                hint: t('admin:fileUpload.hint'),
-                                                accept: 'image/*'
-                                            }) %>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer border-secondary">
-                                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
-                                    <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:training.createCourse') %></button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                <div data-crud-table data-crud-url="/admin/training">
+                    <%- include('./partials/coursesTable') %>
                 </div>
-
-                <% if (modules && modules.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr><th><%= t('admin:words.course') %></th><th><%= t('admin:training.level') %></th><th><%= t('admin:training.duration') %></th><th><%= t('common:words.price') %></th><th><%= t('admin:words.enrollments') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% modules.forEach(mod => { %>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
-                                                 <%- include('../partials/productImage', { src: mod.image_path ? imageUrl(mod.image_path, 'courses') : '', alt: mod.title, style: 'max-height:38px;object-fit:contain;' }) %>
-                                            </div>
-                                            <div>
-                                                <span class="text-white fw-bold"><%= mod.title %></span>
-                                                <% if (mod.instructor_first_name) { %><br><small class="text-white-50"><%= formatDisplayName(mod.instructor_first_name, mod.instructor_last_name) %></small><% } %>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><span class="badge bg-primary rounded-pill"><%= mod.level === 'Intermediate' ? t('admin:training.levelIntermediate') : mod.level === 'Advanced' ? t('admin:training.levelAdvanced') : t('admin:training.levelBeginner') %></span></td>
-                                    <td class="text-white-50"><%= mod.duration || 'N/A' %></td>
-                                    <td class="text-primary fw-bold"><%= formatCurrency(mod.price) %></td>
-                                    <td class="text-white-50"><%= mod.enrollment_count || 0 %></td>
-                                    <td><span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('admin:status.' + (mod.status||'').toLowerCase(), {defaultValue: mod.status}) %></span></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen', abTitle:t('admin:training.editCourse'), abAttrs:'data-bs-toggle="modal" data-bs-target="#editCourseModal' + mod.id + '"' }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/admin/training/delete/' + mod.id, abFormCsrf:csrfToken, abConfirm:t('admin:training.deleteConfirm'), abTitle:t('common:words.delete') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <% modules.forEach(mod => { %>
-                <div class="modal fade" id="editCourseModal<%= mod.id %>" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-glass);">
-                            <form method="POST" action="/admin/training/edit/<%= mod.id %>" enctype="multipart/form-data">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <div class="modal-header border-secondary">
-                                    <h5 class="text-white fw-bold"><%= t('admin:training.editCourseModal') %></h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <label class="form-label"><%= t('admin:training.courseTitle') %> *</label>
-                                            <input type="text" name="title" class="form-control" required value="<%= mod.title %>">
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label"><%= t('common:words.description') %></label>
-                                            <textarea name="description" class="form-control" rows="3"><%= mod.description || '' %></textarea>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.duration') %></label>
-                                            <input type="text" name="duration" class="form-control" value="<%= mod.duration || '' %>">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.level') %></label>
-                                            <select name="level" class="form-select">
-                                                <option value="Beginner" <%= mod.level === 'Beginner' ? 'selected' : '' %>><%= t('admin:training.levelBeginner') %></option>
-                                                <option value="Intermediate" <%= mod.level === 'Intermediate' ? 'selected' : '' %>><%= t('admin:training.levelIntermediate') %></option>
-                                                <option value="Advanced" <%= mod.level === 'Advanced' ? 'selected' : '' %>><%= t('admin:training.levelAdvanced') %></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.price') %></label>
-                                            <input type="number" name="price" class="form-control" min="0" step="0.01" value="<%= mod.price %>">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label"><%= t('admin:training.status') %></label>
-                                            <select name="status" class="form-select">
-                                                <option value="active" <%= mod.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
-                                                <option value="draft" <%= mod.status === 'draft' ? 'selected' : '' %>><%= t('admin:status.draft') %></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer border-secondary">
-                                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
-                                    <button type="submit" class="btn btn-premium-primary rounded-pill"><%= t('admin:training.updateCourse') %></button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <% }) %>
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:training.noCourses') %></h4>
-                    <p class="text-white-50"><%= t('admin:training.noCoursesHint') %></p>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Course add / edit modal -->
+<div class="modal fade crud-modal" id="courseModal" tabindex="-1" aria-labelledby="courseModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="courseForm" method="POST" action="/admin/training/add" enctype="multipart/form-data" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="courseModalTitle"><%= t('admin:training.createCourseModal') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="cf-title"><%= t('admin:training.courseTitle') %> *</label>
+                            <input type="text" class="form-control" id="cf-title" name="title" placeholder="<%= t('admin:training.courseTitlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="cf-description"><%= t('common:words.description') %></label>
+                            <textarea name="description" id="cf-description" class="form-control" rows="3" placeholder="<%= t('admin:training.descriptionPlaceholder') %>"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="cf-duration"><%= t('admin:training.duration') %></label>
+                            <input type="text" name="duration" id="cf-duration" class="form-control" placeholder="<%= t('admin:training.durationPlaceholder') %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="cf-level"><%= t('admin:training.level') %></label>
+                            <select name="level" id="cf-level" class="form-select">
+                                <option value="Beginner"><%= t('admin:training.levelBeginner') %></option>
+                                <option value="Intermediate"><%= t('admin:training.levelIntermediate') %></option>
+                                <option value="Advanced"><%= t('admin:training.levelAdvanced') %></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="cf-price"><%= t('admin:training.price') %></label>
+                            <input type="number" name="price" id="cf-price" class="form-control" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="cf-status"><%= t('admin:training.status') %></label>
+                            <select name="status" id="cf-status" class="form-select">
+                                <option value="active" selected><%= t('admin:status.active') %></option>
+                                <option value="draft"><%= t('admin:status.draft') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <%- include('../partials/fileUpload', {
+                                name: 'course_image',
+                                label: t('admin:training.courseImage'),
+                                hint: t('admin:fileUpload.hint'),
+                                accept: 'image/*'
+                            }) %>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="courseSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('admin:training.createCourse') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Course detail modal -->
+<div class="modal fade crud-modal" id="courseDetailModal" tabindex="-1" aria-labelledby="courseDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="courseDetailTitle"><%= t('admin:training.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="courseDetailBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('courseModal');
+    var form = document.getElementById('courseForm');
+    var titleEl = document.getElementById('courseModalTitle');
+    var submitBtn = document.getElementById('courseSubmitBtn');
+    var addBtn = document.getElementById('addCourseBtn');
+    var detailModalEl = document.getElementById('courseDetailModal');
+    var detailTitleEl = document.getElementById('courseDetailTitle');
+    var detailBodyEl = document.getElementById('courseDetailBody');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('admin:training.createCourseModal') %>',
+        headingEdit: '<%= t('admin:training.editCourseModal') %>',
+        createCourse: '<%= t('admin:training.createCourse') %>',
+        updateCourse: '<%= t('admin:training.updateCourse') %>',
+        courseCreated: '<%= t('admin:flash.courseCreated') %>',
+        courseUpdated: '<%= t('admin:flash.courseUpdated') %>',
+        courseDeleted: '<%= t('admin:flash.courseDeleted') %>',
+        courseStatusUpdated: '<%= t('admin:flash.courseStatusUpdated') %>',
+        deleteTitle: '<%= t('admin:training.deleteTitle') %>',
+        deleteConfirm: '<%= t('admin:training.deleteConfirm') %>',
+        deleteFailed: '<%= t('admin:training.deleteFailed') %>',
+        updateFailed: '<%= t('admin:training.updateFailed') %>',
+        networkError: '<%= t('admin:training.networkError') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>',
+        detailTitle: '<%= t('admin:training.detailTitle') %>',
+        courseTitle: '<%= t('admin:training.courseTitle') %>',
+        level: '<%= t('admin:training.level') %>',
+        duration: '<%= t('admin:training.duration') %>',
+        price: '<%= t('admin:training.price') %>',
+        status: '<%= t('admin:training.status') %>',
+        instructor: '<%= t('admin:training.instructor') %>',
+        enrollments: '<%= t('admin:words.enrollments') %>',
+        description: '<%= t('common:words.description') %>',
+        createdOn: '<%= t('admin:training.createdOn') %>',
+        noDescription: '<%= t('admin:training.noDescription') %>',
+        noInstructor: '<%= t('admin:training.noInstructor') %>',
+        levelBeginner: '<%= t('admin:training.levelBeginner') %>',
+        levelIntermediate: '<%= t('admin:training.levelIntermediate') %>',
+        levelAdvanced: '<%= t('admin:training.levelAdvanced') %>'
+    };
+
+    var statusColors = { active: 'bg-success', draft: 'bg-secondary' };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function statusBadge(status) {
+        var key = String(status || '').toLowerCase();
+        var color = statusColors[key] || 'bg-secondary';
+        return '<span class="badge text-capitalize ' + color + '">' + esc(status || '') + '</span>';
+    }
+
+    function levelLabel(level) {
+        if (level === 'Intermediate') return i18n.levelIntermediate;
+        if (level === 'Advanced') return i18n.levelAdvanced;
+        return i18n.levelBeginner;
+    }
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/admin/training/add';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createCourse;
+        form.elements['price'].value = '0';
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/admin/training/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.course) return;
+                resetForm();
+                var c = data.course;
+                form.action = '/admin/training/edit/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateCourse;
+                form.elements['title'].value = c.title || '';
+                form.elements['description'].value = c.description || '';
+                form.elements['duration'].value = c.duration || '';
+                form.elements['level'].value = c.level || 'Beginner';
+                form.elements['price'].value = c.price != null ? c.price : '0';
+                form.elements['status'].value = c.status || 'draft';
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    function openDetail(id) {
+        Crud.get('/admin/training/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.course) return;
+                var c = data.course;
+                detailTitleEl.textContent = i18n.detailTitle + ': ' + c.title;
+                var imgHtml = c.image_url
+                    ? '<img src="' + esc(c.image_url) + '" class="img-fluid rounded mb-3" style="max-height:220px;object-fit:contain;" alt="' + esc(c.title) + '">'
+                    : '';
+                var descHtml = c.description
+                    ? '<p class="text-white-50 mb-0">' + esc(c.description) + '</p>'
+                    : '<p class="text-white-50 fst-italic mb-0">' + i18n.noDescription + '</p>';
+                var instructorHtml = c.instructor_first_name
+                    ? esc([c.instructor_first_name, c.instructor_last_name].filter(Boolean).join(' '))
+                    : '<span class="text-white-50 fst-italic">' + i18n.noInstructor + '</span>';
+
+                var html =
+                    imgHtml +
+                    '<div class="row g-3">' +
+                    '<div class="col-md-6">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.courseTitle + '</small>' +
+                    '<span class="text-white fw-bold">' + esc(c.title) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-6">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.instructor + '</small>' +
+                    '<span class="text-white">' + instructorHtml + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.level + '</small>' +
+                    '<span class="text-white">' + esc(levelLabel(c.level)) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.duration + '</small>' +
+                    '<span class="text-white">' + (c.duration ? esc(c.duration) : '—') + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.price + '</small>' +
+                    '<span class="text-primary fw-bold">' + esc(c.price_formatted) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.enrollments + '</small>' +
+                    '<span class="text-white fw-bold">' + esc(c.enrollment_count) + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.status + '</small>' +
+                    statusBadge(c.status) +
+                    '</div></div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block">' + i18n.createdOn + '</small>' +
+                    '<span class="text-white">' + (c.created_at_formatted ? esc(c.created_at_formatted) : '—') + '</span>' +
+                    '</div></div>' +
+                    '<div class="col-12">' +
+                    '<div class="glass-card p-3 h-100">' +
+                    '<small class="text-white-50 d-block mb-1">' + i18n.description + '</small>' +
+                    descHtml +
+                    '</div></div>' +
+                    '</div>';
+
+                detailBodyEl.innerHTML = html;
+                Crud.openModal(detailModalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-course]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var editBtn = e.target.closest('[data-edit-course]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-course]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                message: i18n.deleteConfirm,
+                confirmText: i18n.delete
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/admin/training/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.courseDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/admin/training' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    tableWrap.addEventListener('change', function (e) {
+        var statusSel = e.target.closest('.course-status-select');
+        if (!statusSel) return;
+        var orig = statusSel.getAttribute('data-original');
+        var cid = statusSel.getAttribute('data-course-id');
+        Crud.post('/admin/training/' + cid + '/status', { status: statusSel.value })
+            .then(function (data) {
+                statusSel.setAttribute('data-original', statusSel.value);
+                Crud.toast(data.message || i18n.courseStatusUpdated, 'success');
+            })
+            .catch(function (err) {
+                statusSel.value = orig;
+                Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+            });
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.courseCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/training' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

@@ -11,14 +11,43 @@ class CourseModel {
     );
   }
 
-  async getAll() {
-    return query(
+  async getAll({ status, search, page = 1, limit = 20 } = {}) {
+    const conditions = [];
+    const params = [];
+
+    if (status && ['active', 'draft'].includes(status)) {
+      conditions.push('tc.status = ?');
+      params.push(status);
+    }
+    if (search) {
+      conditions.push('(tc.title LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)');
+      const like = `%${search}%`;
+      params.push(like, like, like);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const offset = (page - 1) * limit;
+
+    const rows = await query(
       `SELECT tc.*, u.first_name AS instructor_first_name, u.last_name AS instructor_last_name,
               (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = tc.id) AS enrollment_count
        FROM training_courses tc
        LEFT JOIN users u ON tc.instructor_id = u.id
-       ORDER BY tc.created_at DESC`
+       ${where}
+       ORDER BY tc.created_at DESC
+       LIMIT ? OFFSET ?`,
+      [...params, limit, offset]
     );
+
+    const countRow = await queryOne(
+      `SELECT COUNT(*) AS total
+       FROM training_courses tc
+       LEFT JOIN users u ON tc.instructor_id = u.id
+       ${where}`,
+      params
+    );
+
+    return { courses: rows, total: countRow.total, page, limit };
   }
 
   async findBySlug(slug) {

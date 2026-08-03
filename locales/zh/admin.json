@@ -247,7 +247,11 @@
     "invalidPermissionName": "权限名称无效。请仅使用小写字母、数字和下划线。",
     "invalidOrderId": "无效的订单 ID。",
     "invalidRepairId": "无效的维修 ID。",
-    "repairNotFound": "未找到维修请求。"
+    "repairNotFound": "未找到维修请求。",
+    "invalidCourseId": "无效的课程 ID。",
+    "invalidCourseStatus": "无效的课程状态。",
+    "courseStatusUpdated": "课程状态已更新。",
+    "courseRequiredFields": "请填写必填字段。"
   },
   "validation": {
     "productNameRequired": "请填写商品名称",
@@ -521,7 +525,26 @@
     "updateCourse": "更新课程",
     "editCourseModal": "编辑课程",
     "editCourse": "编辑",
-    "status": "状态"
+    "status": "状态",
+    "filterStatus": "所有状态",
+    "refresh": "刷新",
+    "paginationInfo": "共 {{total}} 项，第 {{from}}–{{to}} 项",
+    "first": "第一页",
+    "prev": "上一页",
+    "next": "下一页",
+    "last": "最后一页",
+    "searchPlaceholder": "搜索课程...",
+    "viewDetail": "查看课程",
+    "detailTitle": "课程详情",
+    "noCoursesMatch": "没有与您的搜索匹配的课程。",
+    "instructor": "讲师",
+    "createdOn": "创建日期",
+    "noDescription": "未提供描述。",
+    "noInstructor": "未分配",
+    "deleteTitle": "删除课程",
+    "deleteFailed": "删除课程失败。",
+    "updateFailed": "更新课程状态失败。",
+    "networkError": "网络错误。请重试。"
   },
   "inbox": {
     "heading": "联系收件箱",

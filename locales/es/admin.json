@@ -247,7 +247,11 @@
     "invalidPermissionName": "Nombre de permiso no válido. Utilice solo letras minúsculas, números y guiones bajos.",
     "invalidOrderId": "ID de pedido no válida.",
     "invalidRepairId": "ID de reparación no válida.",
-    "repairNotFound": "Solicitud de reparación no encontrada."
+    "repairNotFound": "Solicitud de reparación no encontrada.",
+    "invalidCourseId": "ID de curso no válida.",
+    "invalidCourseStatus": "Estado de curso no válido.",
+    "courseStatusUpdated": "Estado del curso actualizado.",
+    "courseRequiredFields": "Por favor complete los campos obligatorios."
   },
   "validation": {
     "productNameRequired": "El nombre del producto es obligatorio",
@@ -521,7 +525,26 @@
     "updateCourse": "Actualizar Curso",
     "editCourseModal": "Editar Curso",
     "editCourse": "Editar",
-    "status": "Estado"
+    "status": "Estado",
+    "filterStatus": "Todos los estados",
+    "refresh": "Actualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primera página",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página",
+    "searchPlaceholder": "Buscar cursos...",
+    "viewDetail": "Ver curso",
+    "detailTitle": "Detalles del curso",
+    "noCoursesMatch": "No hay cursos que coincidan con su búsqueda.",
+    "instructor": "Instructor",
+    "createdOn": "Creado el",
+    "noDescription": "No se proporcionó descripción.",
+    "noInstructor": "Sin asignar",
+    "deleteTitle": "Eliminar curso",
+    "deleteFailed": "No se pudo eliminar el curso.",
+    "updateFailed": "No se pudo actualizar el estado del curso.",
+    "networkError": "Error de red. Inténtelo de nuevo."
   },
   "inbox": {
     "heading": "Bandeja de Contacto",

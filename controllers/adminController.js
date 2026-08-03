@@ -1261,11 +1261,129 @@ exports.updateOrderStatus = async (req, res, next) => {
 
 exports.getCourses = async (req, res, next) => {
   try {
-    const modules = await CourseModel.getAll();
-    res.render('admin/training', {
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    const status = req.query.status && ['active', 'draft'].includes(req.query.status) ? req.query.status : null;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10;
+
+    const result = await CourseModel.getAll({ status, search, page, limit });
+    const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
+
+    const viewData = {
       title: req.t('admin:title.training'),
-      modules
+      modules: result.courses,
+      pagination: {
+        page: result.page,
+        limit: result.limit,
+        total: result.total,
+        totalPages,
+        hasNext: result.page < totalPages,
+        hasPrev: result.page > 1
+      },
+      currentStatus: status || '',
+      currentSearch: search || ''
+    };
+
+    // Fragment: server-rendered toolbar + table for instant in-place refresh.
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/coursesTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    // Plain JSON list for API consumers.
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        courses: result.courses,
+        total: result.total,
+        page: result.page,
+        totalPages
+      });
+    }
+
+    res.render('admin/training', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCourseDetail = async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (status, data) => isAjax ? res.status(status).json(data) : res.redirect('/admin/training');
+
+    if (isNaN(courseId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidCourseId') });
+      req.flash('error', req.t('admin:flash.invalidCourseId'));
+      return respond(400, {});
+    }
+
+    const course = await CourseModel.findById(courseId);
+    if (!course) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.courseNotFound') });
+      req.flash('error', req.t('admin:flash.courseNotFound'));
+      return respond(404, {});
+    }
+
+    const lang = req.language;
+    res.json({
+      success: true,
+      course: {
+        id: course.id,
+        title: course.title,
+        slug: course.slug,
+        description: course.description,
+        duration: course.duration,
+        level: course.level,
+        price: course.price,
+        price_formatted: formatCurrency(course.price, lang),
+        status: course.status,
+        instructor_first_name: course.instructor_first_name,
+        instructor_last_name: course.instructor_last_name,
+        enrollment_count: course.enrollment_count || 0,
+        image_url: toImageUrl(course.image_path, 'courses'),
+        created_at_formatted: formatDate(course.created_at, lang)
+      }
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateCourseStatus = async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.id);
+    const { status } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/training');
+
+    if (isNaN(courseId)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidCourseId') });
+      req.flash('error', req.t('admin:flash.invalidCourseId'));
+      return respond(400, {});
+    }
+
+    if (!['active', 'draft'].includes(status)) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidCourseStatus') });
+      req.flash('error', req.t('admin:flash.invalidCourseStatus'));
+      return respond(400, {});
+    }
+
+    const course = await CourseModel.findById(courseId);
+    if (!course) {
+      if (isAjax) return respond(404, { success: false, message: req.t('admin:flash.courseNotFound') });
+      req.flash('error', req.t('admin:flash.courseNotFound'));
+      return respond(404, {});
+    }
+
+    await CourseModel.update(courseId, { status });
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.courseStatusUpdated') });
+    req.flash('success', req.t('admin:flash.courseStatusUpdated'));
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -1273,19 +1391,23 @@ exports.getCourses = async (req, res, next) => {
 
 exports.createCourse = async (req, res, next) => {
   try {
-    const { title, description, duration, level, price, status, instructor } = req.body;
+    const { title, description, duration, level, price, status } = req.body;
+    const ajax = isAjaxRequest(req);
 
-    if (!title) {
-      req.flash('error', req.t('admin:flash.courseTitleRequired'));
+    const errors = {};
+    if (!title || !String(title).trim()) errors.title = req.t('admin:flash.courseTitleRequired');
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.courseRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.courseTitleRequired');
       return res.redirect('/admin/training');
     }
 
-    const slug = generateSlug(title);
-
+    const slug = generateSlug(String(title).trim());
     const courseImage = req.file ? await processUploadedFile(req.file, 'courses') : '';
 
-    await CourseModel.create({
-      title,
+    const course = await CourseModel.create({
+      title: String(title).trim(),
       slug,
       description: description || '',
       duration: duration || '',
@@ -1295,6 +1417,13 @@ exports.createCourse = async (req, res, next) => {
       image_path: courseImage
     });
 
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.courseCreated'),
+        course: { id: course.id, title: course.title }
+      });
+    }
     req.flash('success', req.t('admin:flash.courseCreated'));
     res.redirect('/admin/training');
   } catch (err) {
@@ -1306,23 +1435,41 @@ exports.updateCourse = async (req, res, next) => {
   try {
     const courseId = parseInt(req.params.id);
     const course = await CourseModel.findById(courseId);
+    const ajax = isAjaxRequest(req);
 
     if (!course) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.courseNotFound'));
       req.flash('error', req.t('admin:flash.courseNotFound'));
       return res.redirect('/admin/training');
     }
 
     const { title, description, duration, status, level, price } = req.body;
 
+    const errors = {};
+    if (title !== undefined && !String(title).trim()) errors.title = req.t('admin:flash.courseTitleRequired');
+
+    if (Object.keys(errors).length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('admin:flash.courseRequiredFields'), errors);
+      flashFor(req, 'error', 'admin:flash.courseTitleRequired');
+      return res.redirect('/admin/training');
+    }
+
     await CourseModel.update(courseId, {
-      title: title || course.title,
-      description: description || course.description,
-      duration: duration || course.duration,
-      status: status || course.status,
-      level: level || course.level,
-      price: parseFloat(price) || course.price
+      title: title ? String(title).trim() : course.title,
+      description: description !== undefined ? description : course.description,
+      duration: duration !== undefined ? duration : course.duration,
+      status: status === 'active' || status === 'draft' ? status : course.status,
+      level: level !== undefined && level ? level : course.level,
+      price: price !== undefined && price !== '' ? parseFloat(price) : course.price
     });
 
+    if (ajax) {
+      return res.json({
+        success: true,
+        message: req.t('admin:flash.courseUpdated'),
+        course: { id: courseId, title: title || course.title }
+      });
+    }
     req.flash('success', req.t('admin:flash.courseUpdated'));
     res.redirect('/admin/training');
   } catch (err) {
@@ -1333,14 +1480,26 @@ exports.updateCourse = async (req, res, next) => {
 exports.deleteCourse = async (req, res, next) => {
   try {
     const courseId = parseInt(req.params.id);
-    const course = await CourseModel.findById(courseId);
+    const ajax = isAjaxRequest(req);
 
+    if (isNaN(courseId)) {
+      if (ajax) return rejectWith(res, 400, req.t('admin:flash.invalidCourseId'));
+      req.flash('error', req.t('admin:flash.invalidCourseId'));
+      return res.redirect('/admin/training');
+    }
+
+    const course = await CourseModel.findById(courseId);
     if (!course) {
+      if (ajax) return rejectWith(res, 404, req.t('admin:flash.courseNotFound'));
       req.flash('error', req.t('admin:flash.courseNotFound'));
       return res.redirect('/admin/training');
     }
 
     await CourseModel.delete(courseId);
+
+    if (ajax) {
+      return res.json({ success: true, message: req.t('admin:flash.courseDeleted') });
+    }
     req.flash('success', req.t('admin:flash.courseDeleted'));
     res.redirect('/admin/training');
   } catch (err) {

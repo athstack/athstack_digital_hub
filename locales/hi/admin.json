@@ -247,7 +247,11 @@
     "invalidPermissionName": "अमान्य अनुमति नाम। केवल लोअरकेस अक्षर, संख्याएँ और अंडरस्कोर उपयोग करें।",
     "invalidOrderId": "अमान्य ऑर्डर आईडी।",
     "invalidRepairId": "अमान्य मरम्मत आईडी।",
-    "repairNotFound": "मरम्मत अनुरोध नहीं मिला।"
+    "repairNotFound": "मरम्मत अनुरोध नहीं मिला।",
+    "invalidCourseId": "अमान्य पाठ्यक्रम आईडी।",
+    "invalidCourseStatus": "अमान्य पाठ्यक्रम स्थिति।",
+    "courseStatusUpdated": "पाठ्यक्रम स्थिति अपडेट हो गई।",
+    "courseRequiredFields": "कृपया आवश्यक फ़ील्ड भरें।"
   },
   "validation": {
     "productNameRequired": "प्रोडक्ट का नाम आवश्यक है",
@@ -521,7 +525,26 @@
     "updateCourse": "कोर्स अपडेट करें",
     "editCourseModal": "कोर्स संपादित करें",
     "editCourse": "संपाدित करें",
-    "status": "स्थिتि"
+    "status": "स्थिتि",
+    "filterStatus": "सभी स्थितियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ",
+    "searchPlaceholder": "पाठ्यक्रम खोजें...",
+    "viewDetail": "पाठ्यक्रम देखें",
+    "detailTitle": "पाठ्यक्रम विवरण",
+    "noCoursesMatch": "आपकी खोज से कोई पाठ्यक्रम मेल नहीं खाता।",
+    "instructor": "प्रशिक्षक",
+    "createdOn": "निर्मित तिथि",
+    "noDescription": "कोई विवरण नहीं दिया गया।",
+    "noInstructor": "अनअसाइन्ड",
+    "deleteTitle": "पाठ्यक्रम हटाएं",
+    "deleteFailed": "पाठ्यक्रम हटाना विफल रहा।",
+    "updateFailed": "पाठ्यक्रम स्थिति अपडेट करने में विफल।",
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।"
   },
   "inbox": {
     "heading": "संपर्क इनबॉक्स",

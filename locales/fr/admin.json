@@ -247,7 +247,11 @@
     "invalidPermissionName": "Nom de permission invalide. Utilisez uniquement des lettres minuscules, des chiffres et des underscores.",
     "invalidOrderId": "ID de commande invalide.",
     "invalidRepairId": "ID de réparation invalide.",
-    "repairNotFound": "Demande de réparation introuvable."
+    "repairNotFound": "Demande de réparation introuvable.",
+    "invalidCourseId": "ID de cours invalide.",
+    "invalidCourseStatus": "Statut de cours invalide.",
+    "courseStatusUpdated": "Statut du cours mis à jour.",
+    "courseRequiredFields": "Veuillez remplir les champs obligatoires."
   },
   "validation": {
     "productNameRequired": "Le nom du produit est requis",
@@ -521,7 +525,26 @@
     "updateCourse": "Mettre à jour le cours",
     "editCourseModal": "Modifier le cours",
     "editCourse": "Modifier",
-    "status": "Statut"
+    "status": "Statut",
+    "filterStatus": "Tous les statuts",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "last": "Dernière page",
+    "searchPlaceholder": "Rechercher des cours...",
+    "viewDetail": "Voir le cours",
+    "detailTitle": "Détails du cours",
+    "noCoursesMatch": "Aucun cours ne correspond à votre recherche.",
+    "instructor": "Instructeur",
+    "createdOn": "Créé le",
+    "noDescription": "Aucune description fournie.",
+    "noInstructor": "Non assigné",
+    "deleteTitle": "Supprimer le cours",
+    "deleteFailed": "Échec de la suppression du cours.",
+    "updateFailed": "Échec de la mise à jour du statut du cours.",
+    "networkError": "Erreur réseau. Veuillez réessayer."
   },
   "inbox": {
     "heading": "Boîte de réception des contacts",

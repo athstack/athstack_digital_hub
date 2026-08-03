@@ -247,7 +247,11 @@
     "invalidPermissionName": "Jina la ruhusa batili. Tumia herufi ndogo, namba na michakato ya chini pekee.",
     "invalidOrderId": "Kitambulisho cha agizo si sahihi.",
     "invalidRepairId": "Kitambulisho cha ukarabati si sahihi.",
-    "repairNotFound": "Ombi la ukarabati halikupatikana."
+    "repairNotFound": "Ombi la ukarabati halikupatikana.",
+    "invalidCourseId": "Kitambulisho cha kozi si sahihi.",
+    "invalidCourseStatus": "Hali ya kozi si sahihi.",
+    "courseStatusUpdated": "Hali ya kozi imesasishwa.",
+    "courseRequiredFields": "Tafadhali jaza sehemu zinazohitajika."
   },
   "validation": {
     "productNameRequired": "Jina la bidhaa linahitajika",
@@ -521,7 +525,26 @@
     "updateCourse": "Sasisha Kozi",
     "editCourseModal": "Hariri Kozi",
     "editCourse": "Hariri",
-    "status": "Hali"
+    "status": "Hali",
+    "filterStatus": "Hali zote",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho",
+    "searchPlaceholder": "Tafuta kozi...",
+    "viewDetail": "Angalia Kozi",
+    "detailTitle": "Maelezo ya Kozi",
+    "noCoursesMatch": "Hakuna kozi inayolingana na utafutaji wako.",
+    "instructor": "Mkufunzi",
+    "createdOn": "Imeundwa",
+    "noDescription": "Hakuna maelezo yaliyotolewa.",
+    "noInstructor": "Haijachaguliwa",
+    "deleteTitle": "Futa Kozi",
+    "deleteFailed": "Imeshindwa kufuta kozi.",
+    "updateFailed": "Imeshindwa kusasisha hali ya kozi.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena."
   },
   "inbox": {
     "heading": "Kikasha cha Mawasiliano",

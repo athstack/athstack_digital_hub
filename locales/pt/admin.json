@@ -247,7 +247,11 @@
     "invalidPermissionName": "Nome de permissão inválido. Use apenas letras minúsculas, números e sublinhados.",
     "invalidOrderId": "ID de pedido inválido.",
     "invalidRepairId": "ID de reparo inválido.",
-    "repairNotFound": "Solicitação de reparo não encontrada."
+    "repairNotFound": "Solicitação de reparo não encontrada.",
+    "invalidCourseId": "ID de curso inválido.",
+    "invalidCourseStatus": "Status de curso inválido.",
+    "courseStatusUpdated": "Status do curso atualizado.",
+    "courseRequiredFields": "Preencha os campos obrigatórios."
   },
   "validation": {
     "productNameRequired": "O nome do produto é obrigatório",
@@ -521,7 +525,26 @@
     "updateCourse": "Atualizar Curso",
     "editCourseModal": "Editar Curso",
     "editCourse": "Editar",
-    "status": "Status"
+    "status": "Status",
+    "filterStatus": "Todos os estados",
+    "refresh": "Atualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primeira página",
+    "prev": "Página anterior",
+    "next": "Página seguinte",
+    "last": "Última página",
+    "searchPlaceholder": "Pesquisar cursos...",
+    "viewDetail": "Ver curso",
+    "detailTitle": "Detalhes do curso",
+    "noCoursesMatch": "Nenhum curso corresponde à sua pesquisa.",
+    "instructor": "Instrutor",
+    "createdOn": "Criado em",
+    "noDescription": "Nenhuma descrição fornecida.",
+    "noInstructor": "Não atribuído",
+    "deleteTitle": "Excluir curso",
+    "deleteFailed": "Falha ao excluir o curso.",
+    "updateFailed": "Falha ao atualizar o status do curso.",
+    "networkError": "Erro de rede. Tente novamente."
   },
   "inbox": {
     "heading": "Caixa de Entrada de Contactos",

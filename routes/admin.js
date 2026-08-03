@@ -66,13 +66,19 @@ router.post('/orders/:id/status', requirePermission('manage_orders'), validateCs
 
 // -- Training ---------------------------------------------------------------------
 router.get('/training', requirePermission('manage_training'), adminController.getCourses);
+router.get('/training/:id', requirePermission('manage_training'), adminController.getCourseDetail);
+router.post('/training/:id/status', requirePermission('manage_training'), validateCsrf, adminController.updateCourseStatus);
 router.post('/training/add',
   requirePermission('manage_training'),
   withUpload(uploadProductImages.single('course_image')),
   validateCsrf,
   adminController.createCourse
 );
-router.post('/training/edit/:id', requirePermission('manage_training'), validateCsrf, adminController.updateCourse);
+router.post('/training/edit/:id',
+  requirePermission('manage_training'),
+  withUpload(uploadProductImages.single('course_image')),
+  validateCsrf,
+  adminController.updateCourse);
 router.post('/training/delete/:id', requirePermission('manage_training'), validateCsrf, adminController.deleteCourse);
 
 // -- Support inbox ---------------------------------------------------------------

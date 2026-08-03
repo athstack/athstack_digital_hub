@@ -1,0 +1,93 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:training.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:training.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('admin:training.filterStatus') %>">
+        <option value=""><%= t('admin:training.filterStatus') %></option>
+        <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+        <option value="draft" <%= currentStatus === 'draft' ? 'selected' : '' %>><%= t('admin:status.draft') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:training.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (modules && modules.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table courses-table">
+            <thead>
+                <tr><th><%= t('admin:words.course') %></th><th><%= t('admin:training.level') %></th><th><%= t('admin:training.duration') %></th><th><%= t('common:words.price') %></th><th><%= t('admin:words.enrollments') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% modules.forEach(mod => { %>
+                <tr data-course-id="<%= mod.id %>">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded bg-dark me-2 d-flex align-items-center justify-content-center" style="width:42px;height:42px;overflow:hidden;flex-shrink:0;">
+                                 <%- include('../../partials/productImage', { src: mod.image_path ? imageUrl(mod.image_path, 'courses') : '', alt: mod.title, style: 'max-height:38px;object-fit:contain;' }) %>
+                            </div>
+                            <div>
+                                <span class="text-white fw-bold"><%= mod.title %></span>
+                                <% if (mod.instructor_first_name) { %><br><small class="text-white-50"><i class="fa-solid fa-user-pen me-1"></i><%= formatDisplayName(mod.instructor_first_name, mod.instructor_last_name) %></small><% } %>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-primary rounded-pill"><%= mod.level === 'Intermediate' ? t('admin:training.levelIntermediate') : mod.level === 'Advanced' ? t('admin:training.levelAdvanced') : t('admin:training.levelBeginner') %></span></td>
+                    <td class="text-white-50"><%= mod.duration || '—' %></td>
+                    <td class="text-primary fw-bold"><%= formatCurrency(mod.price) %></td>
+                    <td class="text-white-50"><%= mod.enrollment_count || 0 %></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary course-status-select" style="width:120px;" data-course-id="<%= mod.id %>" data-original="<%= mod.status %>">
+                                <option value="active" <%= mod.status === 'active' ? 'selected' : '' %>><%= t('admin:status.active') %></option>
+                                <option value="draft" <%= mod.status === 'draft' ? 'selected' : '' %>><%= t('admin:status.draft') %></option>
+                            </select>
+                            <span class="badge <%= mod.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('admin:status.' + mod.status.toLowerCase(), {defaultValue: mod.status}) %></span>
+                        </div>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abButton:true, abIcon:'fa-eye', abAttrs:'data-view-course data-id="' + mod.id + '"', abTitle:t('admin:training.viewDetail') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen', abAttrs:'data-edit-course data-id="' + mod.id + '"', abTitle:t('admin:training.editCourse') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-course data-id="' + mod.id + '" data-title="' + escapeAttr(mod.title) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:training.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:training.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:training.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:training.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:training.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-graduation-cap fa-4x mb-3"></i>
+    <% if (currentSearch || currentStatus) { %>
+    <h4 class="text-white fw-bold"><%= t('admin:training.noCourses') %></h4>
+    <p class="text-white-50"><%= t('admin:training.noCoursesMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('admin:training.noCourses') %></h4>
+    <p class="text-white-50"><%= t('admin:training.noCoursesHint') %></p>
+    <% } %>
+</div>
+<% } %>

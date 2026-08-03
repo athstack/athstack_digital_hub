@@ -247,7 +247,11 @@
     "invalidPermissionName": "اسم صلاحية غير صالح. استخدم الأحرف الصغيرة والأرقام والشرطات السفلية فقط.",
     "invalidOrderId": "معرف الطلب غير صالح.",
     "invalidRepairId": "معرف الإصلاح غير صالح.",
-    "repairNotFound": "طلب الإصلاح غير موجود."
+    "repairNotFound": "طلب الإصلاح غير موجود.",
+    "invalidCourseId": "معرف الدورة غير صالح.",
+    "invalidCourseStatus": "حالة الدورة غير صالحة.",
+    "courseStatusUpdated": "تم تحديث حالة الدورة.",
+    "courseRequiredFields": "يرجى ملء الحقول المطلوبة."
   },
   "validation": {
     "productNameRequired": "اسم المنتج مطلوب",
@@ -521,7 +525,26 @@
     "updateCourse": "تحديث الدورة",
     "editCourseModal": "تعديل الدورة",
     "editCourse": "تعديل",
-    "status": "الحالة"
+    "status": "الحالة",
+    "filterStatus": "جميع الحالات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "searchPlaceholder": "ابحث في الدورات...",
+    "viewDetail": "عرض الدورة",
+    "detailTitle": "تفاصيل الدورة",
+    "noCoursesMatch": "لا توجد دورات تطابق البحث.",
+    "instructor": "المدرب",
+    "createdOn": "تاريخ الإنشاء",
+    "noDescription": "لا يوجد وصف.",
+    "noInstructor": "غير معين",
+    "deleteTitle": "حذف الدورة",
+    "deleteFailed": "فشل حذف الدورة.",
+    "updateFailed": "فشل تحديث حالة الدورة.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى."
   },
   "inbox": {
     "heading": "صندوق الوارد للتواصل",
