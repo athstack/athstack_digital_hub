@@ -1,0 +1,48 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <span class="text-white-50 small"><%= t('admin:roles.permissionsGranted') %></span>
+    </div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:roles.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (roles && roles.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('admin:words.role') %></th><th><%= t('admin:roles.permissionsGranted') %></th><th class="col-actions"><%= t('common:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% roles.forEach(entry => { %>
+                <tr data-role-row="<%= entry.role %>">
+                    <td>
+                        <div class="text-white fw-bold"><%= t(entry.nameKey) %></div>
+                        <small class="text-white-50"><%= entry.role %></small>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill role-perm-count" data-role="<%= entry.role %>"><%= entry.permissions.length %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <% if (entry.role === 'super_admin') { %>
+                            <span class="text-white-50 small" title="<%= t('admin:roles.superAdminNote') %>"><i class="fa-solid fa-crown me-1"></i><%= t('admin:roles.superAdminNote') %></span>
+                            <% } else { %>
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-sliders', abAttrs:'data-edit-role-permissions data-role="' + entry.role + '"', abTitle:t('admin:roles.editPermissions') }) %>
+                            <% } %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-user-shield fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('admin:words.role') %></h4>
+    <p class="text-white-50">—</p>
+</div>
+<% } %>

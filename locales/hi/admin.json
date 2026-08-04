@@ -145,7 +145,10 @@
     "permissionsGranted": "अनुमतियाँ प्रदान की गईं",
     "editPermissions": "अनुमतियाँ संपादित करें",
     "superAdminNote": "सुपर एडमिनिस्ट्रेटर को सभी अनुमतियों तक अप्रतिबंधित पहुँच होती है और उन्हें संशोधित नहीं किया जा सकता।",
-    "saveRole": "भूमिका सहेजें"
+    "saveRole": "भूमिका सहेजें",
+    "refresh": "रीफ़्रेश करें",
+    "updateFailed": "अपडेट विफल",
+    "permissionSaved": "अनुमतियाँ सफलतापूर्वक सहेजी गईं।"
   },
   "flash": {
     "invalidUserId": "अमान्य उपयोगकर्ता ID।",
@@ -635,7 +638,10 @@
     "addPermission": "अनुमति जोड़ें",
     "permissionName": "अनुमति",
     "module": "मॉड्यूल",
-    "description": "विवरण"
+    "description": "विवरण",
+    "refresh": "रीफ़्रेश करें",
+    "updateFailed": "अपडेट विफल",
+    "modulePlaceholder": "मॉड्यूल"
   },
   "marketingOfficers": {
     "heading": "मार्केटिंग अधिकारी",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "कोई मार्केटिंग अधिकारी आपके वर्तमान फ़िल्टर से मेल नहीं खाता।",
     "editOfficer": "संपादित करें",
     "resetPassword": "पासवर्ड रीसेट करें",
-    "managePermissions": "अनुमतियाँ प्रबंधित करें"
+    "managePermissions": "अनुमतियाँ प्रबंधित करें",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "prev": "पिछला पृष्ठ",
+    "next": "अगला पृष्ठ",
+    "last": "अंतिम पृष्ठ",
+    "updateFailed": "अपडेट विफल",
+    "permissionsSaved": "अनुमतियाँ सफलतापूर्वक सहेजी गईं।",
+    "passwordResetTitle": "पासवर्ड रीसेट करें"
   },
   "marketingOfficerForm": {
     "headingCreate": "मार्केटिंग अधिकारी बनाएँ",
@@ -700,6 +715,10 @@
     "prev": "पिछला",
     "next": "अगला",
     "pageOf": "पृष्ठ {{page}} / {{totalPages}}",
-    "showingTotal": "कुल {{total}} प्रविष्टियाँ"
+    "showingTotal": "कुल {{total}} प्रविष्टियाँ",
+    "refresh": "रीफ़्रेश करें",
+    "paginationInfo": "कुल {{total}} में से {{from}}–{{to}}",
+    "first": "पहला पृष्ठ",
+    "last": "अंतिम पृष्ठ"
   }
 }

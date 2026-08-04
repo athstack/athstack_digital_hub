@@ -20,12 +20,12 @@
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('admin:marketingOfficers.heading') %></h2>
                     <div class="ms-auto">
                         <a href="/admin/activity-logs" class="btn btn-premium-outline rounded-pill me-2"><i class="fa-solid fa-clock-rotate-left me-2"></i><%= t('admin:marketingOfficers.activityLogs') %></a>
-                        <a href="/admin/marketing-officers/new" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:marketingOfficers.addOfficer') %></a>
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addOfficerBtn"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:marketingOfficers.addOfficer') %></button>
                     </div>
                 </div>
 
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="glass-card p-3 d-flex align-items-center gap-3">
                             <div class="rounded-circle bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
                                 <i class="fa-solid fa-users text-primary"></i>
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="glass-card p-3 d-flex align-items-center gap-3">
                             <div class="rounded-circle bg-success bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
                                 <i class="fa-solid fa-file-circle-check text-success"></i>
@@ -49,81 +49,318 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-4 mb-4">
-                    <form method="GET" action="/admin/marketing-officers" class="row g-2 align-items-end">
-                        <div class="col-md-8">
-                            <label class="form-label"><%= t('common:words.search') %></label>
-                            <input type="text" name="search" class="form-control" placeholder="<%= t('admin:marketingOfficers.searchPlaceholder') %>" value="<%= searchQuery || '' %>">
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-1"></i> <%= t('admin:words.filter') %></button>
-                        </div>
-                    </form>
+                <div data-crud-table data-crud-url="/admin/marketing-officers">
+                    <%- include('./partials/officersTable') %>
                 </div>
-
-                <% if (officers && officers.length > 0) { %>
-                <div class="glass-card p-4">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr>
-                                    <th><%= t('admin:words.user') %></th>
-                                    <th><%= t('common:words.email') %></th>
-                                    <th><%= t('admin:marketingOfficers.status') %></th>
-                                    <th><%= t('admin:marketingOfficers.joined') %></th>
-                                    <th><%= t('common:words.actions') %></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% officers.forEach(o => { %>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;flex-shrink:0;">
-                                                <% if (o.avatar) { %>
-                                                <img src="<%= imageUrl(o.avatar, 'profiles') %>" alt="" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                                <i class="fa-solid fa-bullhorn text-white small" style="display:none;"></i>
-                                                <% } else { %>
-                                                <i class="fa-solid fa-bullhorn text-white small"></i>
-                                                <% } %>
-                                            </div>
-                                            <div>
-                                                <span class="text-white fw-bold"><%= formatDisplayName(o.first_name, o.last_name) %></span>
-                                                <% if (o.status === 'inactive') { %><span class="badge bg-secondary ms-1"><%= t('admin:status.inactive') %></span><% } %>
-                                                <% if (o.status === 'suspended') { %><span class="badge bg-danger ms-1"><%= t('admin:status.suspended') %></span><% } %>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50"><%= o.email %></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/admin/marketing-officers/' + o.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (o.status === 'active' ? 'inactive' : 'active') + '">', abOn: o.status === 'active', abIcon: o.status === 'active' ? 'fa-toggle-on' : 'fa-toggle-off', abTitle: o.status === 'active' ? t('admin:status.inactive') : t('admin:status.active') }) %>
-                                        </div>
-                                    </td>
-                                    <td class="text-white-50"><%= o.created_at ? new Date(o.created_at).toLocaleDateString() : '' %></td>
-                                    <td>
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/admin/marketing-officers/' + o.id + '/edit', abTitle:t('admin:marketingOfficers.editOfficer') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'info', abIcon:'fa-key', abHref:'/admin/marketing-officers/' + o.id + '/permissions', abTitle:t('admin:marketingOfficers.managePermissions') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <% } else { %>
-                <div class="empty-state">
-                    <i class="fa-solid fa-bullhorn fa-4x mb-3"></i>
-                    <h4 class="text-white fw-bold"><%= t('admin:marketingOfficers.noOfficers') %></h4>
-                    <p class="text-white-50"><%= t('admin:marketingOfficers.noOfficersMatch') %></p>
-                    <a href="/admin/marketing-officers/new" class="btn btn-premium-primary rounded-pill mt-2"><i class="fa-solid fa-user-plus me-2"></i><%= t('admin:marketingOfficers.addOfficer') %></a>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Officer create/edit modal -->
+<div class="modal fade crud-modal" id="officerFormModal" tabindex="-1" aria-labelledby="officerFormModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="officerForm" method="POST" action="/admin/marketing-officers" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="officerFormModalTitle"><%= t('admin:marketingOfficerForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="of-first-name"><%= t('admin:marketingOfficerForm.firstName') %> *</label>
+                            <input type="text" name="first_name" id="of-first-name" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.firstNamePlaceholder') %>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="of-last-name"><%= t('admin:marketingOfficerForm.lastName') %> *</label>
+                            <input type="text" name="last_name" id="of-last-name" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.lastNamePlaceholder') %>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="of-email"><%= t('common:words.email') %> *</label>
+                            <input type="email" name="email" id="of-email" class="form-control" required placeholder="user@example.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="of-phone"><%= t('common:words.phone') %></label>
+                            <input type="text" name="phone" id="of-phone" class="form-control" placeholder="+255 7XX XXX XXX">
+                        </div>
+                        <div class="col-md-6" id="officerPasswordField">
+                            <label class="form-label" for="of-password"><%= t('admin:marketingOfficerForm.password') %> *</label>
+                            <input type="password" name="password" id="of-password" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.enterPassword') %>" minlength="6">
+                            <small class="text-white-50"><%= t('admin:marketingOfficerForm.passwordHint') %></small>
+                        </div>
+                        <div class="col-md-6" id="officerStatusField" style="display:none;">
+                            <label class="form-label" for="of-status"><%= t('admin:marketingOfficerForm.status') %> *</label>
+                            <select name="status" id="of-status" class="form-select">
+                                <option value="active"><%= t('admin:status.active') %></option>
+                                <option value="inactive"><%= t('admin:status.inactive') %></option>
+                                <option value="suspended"><%= t('admin:status.suspended') %></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary opacity-25 my-4">
+
+                    <h6 class="text-white fw-semibold mb-1"><i class="fa-solid fa-key me-2 text-primary"></i><%= t('admin:marketingOfficerForm.permissionsLabel') %></h6>
+                    <p class="text-white-50 small mb-3"><%= t('admin:marketingOfficerForm.permissionsHint') %></p>
+                    <div id="officerPermGrid" class="row g-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-user-plus me-2"></i><span id="officerSubmitLabel"><%= t('admin:marketingOfficerForm.createOfficer') %></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Manage permissions modal -->
+<div class="modal fade crud-modal" id="officerPermissionsModal" tabindex="-1" aria-labelledby="officerPermissionsModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="officerPermissionsForm" method="POST" action="/admin/marketing-officers/0/permissions" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="officerPermissionsModalTitle"><i class="fa-solid fa-key me-2 text-primary"></i><%= t('admin:marketingOfficers.managePermissions') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-white-50 small" id="officerPermissionsName"></p>
+                    <div id="permOnlyGrid" class="row g-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-save me-2"></i><%= t('admin:marketingOfficers.managePermissions') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reset password modal -->
+<div class="modal fade crud-modal" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="resetPasswordForm" method="POST" action="/admin/marketing-officers/0/reset-password" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalTitle"><i class="fa-solid fa-rotate me-2 text-primary"></i><%= t('admin:marketingOfficers.passwordResetTitle') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label" for="rp-password"><%= t('admin:marketingOfficerForm.password') %> *</label>
+                    <input type="password" name="password" id="rp-password" class="form-control" required placeholder="<%= t('admin:marketingOfficerForm.enterPassword') %>" minlength="6">
+                    <small class="text-white-50"><%= t('admin:marketingOfficerForm.passwordHint') %></small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-rotate me-2"></i><%= t('admin:marketingOfficers.resetPassword') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var officerForm = document.getElementById('officerForm');
+    var officerFormModal = document.getElementById('officerFormModal');
+    var officerPermGrid = document.getElementById('officerPermGrid');
+    var permsForm = document.getElementById('officerPermissionsForm');
+    var permsModal = document.getElementById('officerPermissionsModal');
+    var permOnlyGrid = document.getElementById('permOnlyGrid');
+    var resetForm = document.getElementById('resetPasswordForm');
+    var resetModal = document.getElementById('resetPasswordModal');
+    var passwordField = document.getElementById('officerPasswordField');
+    var statusField = document.getElementById('officerStatusField');
+
+    var MARKETING_PERMS = <%- JSON.stringify(marketingPermissions) %>;
+
+    var i18n = {
+        createTitle: '<%= t('admin:marketingOfficerForm.headingCreate') %>',
+        editTitle: '<%= t('admin:marketingOfficerForm.headingEdit') %>',
+        createLabel: '<%= t('admin:marketingOfficerForm.createOfficer') %>',
+        updateLabel: '<%= t('admin:marketingOfficerForm.updateOfficer') %>',
+        default_: '<%= t('admin:marketingOfficerForm.default') %>',
+        allow: '<%= t('admin:marketingOfficerForm.allow') %>',
+        deny: '<%= t('admin:marketingOfficerForm.deny') %>',
+        created: '<%= t('admin:flash.marketingOfficerCreated', { name: '' }) %>',
+        updated: '<%= t('admin:flash.marketingOfficerUpdated') %>',
+        permissionsSaved: '<%= t('admin:marketingOfficers.permissionsSaved') %>',
+        passwordReset: '<%= t('admin:flash.passwordReset') %>',
+        statusUpdated: '<%= t('admin:flash.marketingOfficerStatusUpdated') %>',
+        updateFailed: '<%= t('admin:marketingOfficers.updateFailed') %>',
+        networkError: '<%= t('admin:inbox.networkError', { defaultValue: 'Network error. Please try again.' }) %>',
+        statusActive: '<%= t('admin:status.active') %>',
+        statusInactive: '<%= t('admin:status.inactive') %>',
+        statusSuspended: '<%= t('admin:status.suspended') %>'
+    };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function buildPermGrid(container, values) {
+        container.innerHTML = '';
+        var row = document.createElement('div');
+        row.className = 'row g-3';
+        MARKETING_PERMS.forEach(function (p) {
+            var state = values && values[p.key];
+            var selVal = state === 1 ? 'allow' : (state === 0 ? 'deny' : 'default');
+            var options = [
+                ['default', i18n.default_],
+                ['allow', i18n.allow],
+                ['deny', i18n.deny]
+            ].map(function (o) {
+                return '<option value="' + o[0] + '"' + (o[0] === selVal ? ' selected' : '') + '>' + esc(o[1]) + '</option>';
+            }).join('');
+            var col = document.createElement('div');
+            col.className = 'col-md-6 col-xl-4';
+            col.innerHTML =
+                '<div class="glass-card no-lift p-3 h-100">' +
+                '<div class="d-flex justify-content-between align-items-center mb-2 gap-2">' +
+                '<span class="text-white small fw-semibold text-truncate">' + esc(p.label) + '</span>' +
+                '<select name="permissions[' + esc(p.key) + ']" class="form-select form-select-sm bg-dark text-white border-secondary" style="width:110px;flex-shrink:0;">' + options + '</select>' +
+                '</div>' +
+                '<small class="text-white-50 text-break" style="font-size:11px;">' + esc(p.key) + '</small>' +
+                '</div>';
+            row.appendChild(col);
+        });
+        container.appendChild(row);
+    }
+
+    function setOfficerMode(mode) {
+        var create = mode === 'create';
+        document.getElementById('officerFormModalTitle').textContent = create ? i18n.createTitle : i18n.editTitle;
+        document.getElementById('officerSubmitLabel').textContent = create ? i18n.createLabel : i18n.updateLabel;
+        passwordField.style.display = create ? '' : 'none';
+        statusField.style.display = create ? 'none' : '';
+        document.getElementById('of-password').required = create;
+        if (!create) document.getElementById('of-password').value = '';
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-officer]');
+        if (editBtn) {
+            e.preventDefault();
+            var id = editBtn.getAttribute('data-id');
+            Crud.get('/admin/marketing-officers/' + id)
+                .then(function (data) {
+                    if (!data || !data.success || !data.user) return;
+                    var u = data.user;
+                    document.getElementById('of-first-name').value = u.first_name || '';
+                    document.getElementById('of-last-name').value = u.last_name || '';
+                    document.getElementById('of-email').value = u.email || '';
+                    document.getElementById('of-phone').value = u.phone || '';
+                    document.getElementById('of-status').value = u.status || 'active';
+                    officerForm.setAttribute('action', '/admin/marketing-officers/' + id);
+                    buildPermGrid(officerPermGrid, data.permissions || {});
+                    setOfficerMode('edit');
+                    Crud.clearErrors(officerForm);
+                    Crud.openModal(officerFormModal);
+                })
+                .catch(function () {
+                    Crud.toast(i18n.networkError, 'error');
+                });
+            return;
+        }
+
+        var permBtn = e.target.closest('[data-manage-officer-permissions]');
+        if (permBtn) {
+            e.preventDefault();
+            var pid = permBtn.getAttribute('data-id');
+            Crud.get('/admin/marketing-officers/' + pid)
+                .then(function (data) {
+                    if (!data || !data.success || !data.user) return;
+                    permsForm.setAttribute('action', '/admin/marketing-officers/' + pid + '/permissions');
+                    document.getElementById('officerPermissionsName').textContent = data.user.first_name + ' ' + data.user.last_name;
+                    buildPermGrid(permOnlyGrid, data.permissions || {});
+                    Crud.clearErrors(permsForm);
+                    Crud.openModal(permsModal);
+                })
+                .catch(function () {
+                    Crud.toast(i18n.networkError, 'error');
+                });
+            return;
+        }
+
+        var resetBtn = e.target.closest('[data-reset-officer-password]');
+        if (resetBtn) {
+            e.preventDefault();
+            resetForm.setAttribute('action', '/admin/marketing-officers/' + resetBtn.getAttribute('data-id') + '/reset-password');
+            resetForm.reset();
+            Crud.clearErrors(resetForm);
+            Crud.openModal(resetModal);
+            return;
+        }
+
+        var toggleBtn = e.target.closest('[data-toggle-officer-status]');
+        if (toggleBtn) {
+            e.preventDefault();
+            var oid = toggleBtn.getAttribute('data-id');
+            var newStatus = toggleBtn.getAttribute('data-status');
+            Crud.post('/admin/marketing-officers/' + oid + '/status', { status: newStatus })
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.statusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/admin/marketing-officers' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                });
+            return;
+        }
+    });
+
+    document.getElementById('addOfficerBtn').addEventListener('click', function () {
+        officerForm.reset();
+        officerForm.setAttribute('action', '/admin/marketing-officers');
+        buildPermGrid(officerPermGrid, {});
+        setOfficerMode('create');
+        Crud.clearErrors(officerForm);
+        Crud.openModal(officerFormModal);
+    });
+
+    officerForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(officerForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(officerFormModal);
+                Crud.toast(data.message || i18n.updated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/marketing-officers' });
+            }
+        });
+    });
+
+    permsForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(permsForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(permsModal);
+                Crud.toast(data.message || i18n.permissionsSaved, 'success');
+            }
+        });
+    });
+
+    resetForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(resetForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(resetModal);
+                Crud.toast(data.message || i18n.passwordReset, 'success');
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

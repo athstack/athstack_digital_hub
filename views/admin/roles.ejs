@@ -20,59 +20,116 @@
                 <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                 <% } %>
 
-                <% roles.forEach((entry, index) => { %>
-                <div class="glass-card no-lift p-4 mb-4">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:44px;height:44px;flex-shrink:0;">
-                            <i class="fa-solid fa-id-badge text-primary"></i>
-                        </div>
-                        <div class="me-auto">
-                            <h5 class="text-white fw-bold mb-0"><%= t(entry.nameKey) %></h5>
-                            <small class="text-white-50"><%= entry.permissions.length %> <%= t('admin:roles.permissionsGranted') %></small>
-                        </div>
-                        <button class="btn btn-premium-outline rounded-pill" type="button" data-bs-toggle="collapse" data-bs-target="#roleForm<%= index %>" aria-expanded="<%= entry.role === 'admin' ? 'true' : 'false' %>">
-                            <i class="fa-solid fa-sliders me-2"></i><%= t('admin:roles.editPermissions') %>
-                        </button>
-                    </div>
-
-                    <% if (entry.role === 'super_admin') { %>
-                    <div class="collapse mt-4" id="roleForm<%= index %>">
-                        <div class="alert alert-info mb-0">
-                            <i class="fa-solid fa-crown me-2"></i><%= t('admin:roles.superAdminNote') %>
-                        </div>
-                    </div>
-                    <% } else { %>
-                    <div class="collapse <%= entry.role === 'admin' ? 'show' : '' %> mt-4" id="roleForm<%= index %>">
-                        <form method="POST" action="/admin/roles/<%= entry.role %>/permissions">
-                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                            <div class="row g-4">
-                                <% modulePermissions.forEach(mod => { %>
-                                <div class="col-md-6 col-xl-4">
-                                    <div class="glass-card no-lift p-3 h-100">
-                                        <h6 class="text-primary fw-bold mb-3"><%= t(mod.label) %></h6>
-                                        <% mod.permissions.forEach(perm => { %>
-                                        <% const checked = entry.permissions.includes(perm) ? 'checked' : ''; %>
-                                        <div class="form-check form-switch mb-2">
-                                            <input class="form-check-input" type="checkbox" name="permissions" value="<%= perm %>" id="perm-<%= entry.role %>-<%= perm %>" <%= checked %>>
-                                            <label class="form-check-label text-white-50 small" for="perm-<%= entry.role %>-<%= perm %>"><%= t('permissions:labels.' + perm) %></label>
-                                        </div>
-                                        <% }) %>
-                                    </div>
-                                </div>
-                                <% }) %>
-                            </div>
-                            <div class="d-flex gap-2 mt-4">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-save me-2"></i><%= t('admin:roles.saveRole') %></button>
-                                <a href="/admin/roles" class="btn btn-outline-secondary rounded-pill px-4"><%= t('common:words.cancel') %></a>
-                            </div>
-                        </form>
-                    </div>
-                    <% } %>
+                <div data-crud-table data-crud-url="/admin/roles">
+                    <%- include('./partials/rolesTable') %>
                 </div>
-                <% }) %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Role permissions modal -->
+<div class="modal fade crud-modal" id="rolePermissionsModal" tabindex="-1" aria-labelledby="rolePermissionsModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="rolePermissionsForm" method="POST" action="/admin/roles/0/permissions" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rolePermissionsModalTitle"><i class="fa-solid fa-sliders me-2 text-primary"></i><%= t('admin:roles.editPermissions') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-white-50 small" id="rolePermissionsRoleName"></p>
+                    <div id="permissionsGrid" class="row g-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-save me-2"></i><%= t('admin:roles.saveRole') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var modalEl = document.getElementById('rolePermissionsModal');
+    var form = document.getElementById('rolePermissionsForm');
+    var grid = document.getElementById('permissionsGrid');
+
+    var ROLE_PERMS = <%- JSON.stringify(rolePermissionMap) %>;
+    var MODULES = <%- JSON.stringify(modulePermissions.map(m => ({ key: m.key, label: t(m.label), permissions: m.permissions }))) %>;
+    var PERM_LABELS = <%- JSON.stringify(Object.fromEntries(modulePermissions.flatMap(m => m.permissions.map(p => [p, t('permissions:labels.' + p)])))) %>;
+    var ROLE_NAMES_UI = <%- JSON.stringify(Object.fromEntries(roles.map(e => [e.role, t(e.nameKey)]))) %>;
+
+    var i18n = {
+        permissionSaved: '<%= t('admin:roles.permissionSaved') %>',
+        updateFailed: '<%= t('admin:roles.updateFailed') %>',
+        editPermissions: '<%= t('admin:roles.editPermissions') %>'
+    };
+
+    function esc(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function buildGrid(checkedSet) {
+        grid.innerHTML = '';
+        MODULES.forEach(function (mod) {
+            var card = document.createElement('div');
+            card.className = 'col-md-6 col-xl-4';
+            var inner = '<div class="glass-card no-lift p-3 h-100"><h6 class="text-primary fw-bold mb-3">' + esc(mod.label) + '</h6>';
+            mod.permissions.forEach(function (perm) {
+                var checked = checkedSet.indexOf(perm) !== -1 ? 'checked' : '';
+                inner += '<div class="form-check form-switch mb-2">' +
+                    '<input class="form-check-input" type="checkbox" name="permissions" value="' + esc(perm) + '" id="rp-' + esc(mod.key) + '-' + esc(perm) + '" ' + checked + '>' +
+                    '<label class="form-check-label text-white-50 small" for="rp-' + esc(mod.key) + '-' + esc(perm) + '">' + esc(PERM_LABELS[perm] || perm) + '</label>' +
+                    '</div>';
+            });
+            inner += '</div>';
+            card.innerHTML = inner;
+            grid.appendChild(card);
+        });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-edit-role-permissions]');
+        if (!btn) return;
+        e.preventDefault();
+        var role = btn.getAttribute('data-role');
+        form.setAttribute('action', '/admin/roles/' + role + '/permissions');
+        document.getElementById('rolePermissionsRoleName').textContent = ROLE_NAMES_UI[role] || role;
+        buildGrid(ROLE_PERMS[role] || []);
+        Crud.clearErrors(form);
+        Crud.openModal(modalEl);
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var parts = form.getAttribute('action').split('/').filter(Boolean);
+        var role = parts[parts.length - 2];
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.permissionSaved, 'success');
+                if (data.permissions && ROLE_PERMS[role]) {
+                    ROLE_PERMS[role] = data.permissions;
+                    var count = document.querySelector('[data-role="' + role + '"].role-perm-count');
+                    if (count) count.textContent = data.permissions.length;
+                }
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/roles' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

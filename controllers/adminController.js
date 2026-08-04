@@ -1730,6 +1730,9 @@ exports.updateSettings = async (req, res, next) => {
       contact_email: contact_email || '',
       site_description: site_description || ''
     });
+    if (isAjaxRequest(req)) {
+      return res.status(200).json({ success: true, message: req.t('admin:flash.settingsUpdated') });
+    }
     req.flash('success', req.t('admin:flash.settingsUpdated'));
     res.redirect('/admin/settings');
   } catch (err) {
@@ -2441,15 +2444,59 @@ async function getMarketingPermissionMap(userId) {
 exports.getMarketingOfficers = async (req, res, next) => {
   try {
     const search = req.query.search || null;
-    const { users } = await UserModel.getAll({ role: 'marketing_officer', search, page: 1, limit: 200 });
+    const page = parseInt(req.query.page) || 1;
+    const { users, total } = await UserModel.getAll({ role: 'marketing_officer', search, page, limit: 20 });
+    const totalPages = Math.ceil(total / 20);
     const [activityCount] = await pool.execute(
       "SELECT COUNT(*) AS count FROM activity_logs WHERE role = 'marketing_officer'"
     );
-    res.render('admin/marketing-officers', {
+
+    const viewData = {
       title: req.t('admin:title.marketingOfficers'),
       officers: users,
-      searchQuery: search,
-      activityCount: activityCount[0].count
+      currentSearch: search,
+      activityCount: activityCount[0].count,
+      pagination: { page, limit: 20, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
+      marketingPermissions: MARKETING_PERMISSIONS.map((p) => ({ key: p.key, label: req.t(p.label) }))
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/officersTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, officers: users, total, page, totalPages });
+    }
+
+    res.render('admin/marketing-officers', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getMarketingOfficerDetail = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const target = await UserModel.findById(userId);
+    if (!target || target.role !== 'marketing_officer') {
+      return res.status(404).json({ success: false, message: req.t('admin:flash.userNotFound') });
+    }
+    const permissions = await getMarketingPermissionMap(userId);
+    res.json({
+      success: true,
+      user: {
+        id: target.id,
+        first_name: target.first_name,
+        last_name: target.last_name,
+        email: target.email,
+        phone: target.phone || '',
+        status: target.status,
+        created_at_formatted: target.created_at ? formatDate(target.created_at, req.language) : null
+      },
+      permissions
     });
   } catch (err) {
     next(err);
@@ -2469,16 +2516,27 @@ exports.getCreateMarketingOfficer = (req, res) => {
 exports.createMarketingOfficer = async (req, res, next) => {
   try {
     const { first_name, last_name, email, phone, password } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/marketing-officers');
 
-    if (!first_name || !last_name || !email || !password) {
-      req.flash('error', req.t('admin:flash.userRequiredFields'));
-      return res.redirect('/admin/marketing-officers/new');
+    const errors = {};
+    if (!first_name) errors.first_name = req.t('admin:flash.userRequiredFields');
+    if (!last_name) errors.last_name = req.t('admin:flash.userRequiredFields');
+    if (!email) errors.email = req.t('admin:flash.userRequiredFields');
+    if (!password || password.length < 6) errors.password = req.t('admin:flash.passwordTooShort');
+    if (Object.keys(errors).length > 0) {
+      const message = req.t('admin:flash.userRequiredFields');
+      if (isAjax) return respond(422, { success: false, message, errors });
+      req.flash('error', message);
+      return respond(422, {});
     }
 
     const existing = await UserModel.findByEmail(email);
     if (existing) {
-      req.flash('error', req.t('admin:flash.emailExists'));
-      return res.redirect('/admin/marketing-officers/new');
+      const message = req.t('admin:flash.emailExists');
+      if (isAjax) return respond(422, { success: false, message, errors: { email: message } });
+      req.flash('error', message);
+      return respond(422, {});
     }
 
     const bcrypt = require('bcryptjs');
@@ -2489,8 +2547,11 @@ exports.createMarketingOfficer = async (req, res, next) => {
 
     await applyMarketingPermissions(created.id, extractPermissions(req.body));
     await logActivity(req, 'create', 'marketing_officer', created.id);
-    req.flash('success', req.t('admin:flash.marketingOfficerCreated', { name: first_name + ' ' + last_name }));
-    res.redirect('/admin/marketing-officers');
+
+    const message = req.t('admin:flash.marketingOfficerCreated', { name: first_name + ' ' + last_name });
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2551,11 +2612,26 @@ exports.updateMarketingOfficer = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { first_name, last_name, email, phone, status, password } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/marketing-officers');
 
     const target = await UserModel.findById(userId);
     if (!target || target.role !== 'marketing_officer') {
-      req.flash('error', req.t('admin:flash.userNotFound'));
-      return res.redirect('/admin/marketing-officers');
+      const message = req.t('admin:flash.userNotFound');
+      if (isAjax) return respond(404, { success: false, message });
+      req.flash('error', message);
+      return respond(404, {});
+    }
+
+    const errors = {};
+    if (!first_name) errors.first_name = req.t('admin:flash.userRequiredFields');
+    if (!last_name) errors.last_name = req.t('admin:flash.userRequiredFields');
+    if (password && password.length < 6) errors.password = req.t('admin:flash.passwordTooShort');
+    if (Object.keys(errors).length > 0) {
+      const message = req.t('admin:flash.userRequiredFields');
+      if (isAjax) return respond(422, { success: false, message, errors });
+      req.flash('error', message);
+      return respond(422, {});
     }
 
     const validStatuses = ['active', 'inactive', 'suspended'];
@@ -2564,8 +2640,10 @@ exports.updateMarketingOfficer = async (req, res, next) => {
     if (email && email !== target.email) {
       const existing = await UserModel.findByEmail(email);
       if (existing && existing.id !== userId) {
-        req.flash('error', req.t('admin:flash.emailExists'));
-        return res.redirect('/admin/marketing-officers/' + userId + '/edit');
+        const message = req.t('admin:flash.emailExists');
+        if (isAjax) return respond(422, { success: false, message, errors: { email: message } });
+        req.flash('error', message);
+        return respond(422, {});
       }
     }
 
@@ -2585,8 +2663,11 @@ exports.updateMarketingOfficer = async (req, res, next) => {
     }
 
     await logActivity(req, 'update', 'marketing_officer', userId);
-    req.flash('success', req.t('admin:flash.marketingOfficerUpdated'));
-    res.redirect('/admin/marketing-officers');
+
+    const message = req.t('admin:flash.marketingOfficerUpdated');
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2596,23 +2677,32 @@ exports.updateMarketingOfficerStatus = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { status } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/marketing-officers');
     const validStatuses = ['active', 'inactive', 'suspended'];
 
     if (!validStatuses.includes(status)) {
-      req.flash('error', req.t('admin:flash.invalidStatus'));
-      return res.redirect('/admin/marketing-officers');
+      const message = req.t('admin:flash.invalidStatus');
+      if (isAjax) return respond(400, { success: false, message });
+      req.flash('error', message);
+      return respond(400, {});
     }
 
     const target = await UserModel.findById(userId);
     if (!target || target.role !== 'marketing_officer') {
-      req.flash('error', req.t('admin:flash.userNotFound'));
-      return res.redirect('/admin/marketing-officers');
+      const message = req.t('admin:flash.userNotFound');
+      if (isAjax) return respond(404, { success: false, message });
+      req.flash('error', message);
+      return respond(404, {});
     }
 
     await UserModel.updateStatus(userId, status);
     await logActivity(req, status === 'active' ? 'activate' : 'deactivate', 'marketing_officer', userId);
-    req.flash('success', req.t('admin:flash.marketingOfficerStatusUpdated'));
-    res.redirect('/admin/marketing-officers');
+
+    const message = req.t('admin:flash.marketingOfficerStatusUpdated');
+    if (isAjax) return respond(200, { success: true, message, status });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2622,24 +2712,33 @@ exports.resetMarketingOfficerPassword = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { password } = req.body;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/marketing-officers');
 
     const target = await UserModel.findById(userId);
     if (!target || target.role !== 'marketing_officer') {
-      req.flash('error', req.t('admin:flash.userNotFound'));
-      return res.redirect('/admin/marketing-officers');
+      const message = req.t('admin:flash.userNotFound');
+      if (isAjax) return respond(404, { success: false, message });
+      req.flash('error', message);
+      return respond(404, {});
     }
 
     if (!password || password.length < 6) {
+      const errors = { password: req.t('admin:flash.passwordTooShort') };
+      if (isAjax) return respond(422, { success: false, message: req.t('admin:flash.passwordTooShort'), errors });
       req.flash('error', req.t('admin:flash.passwordTooShort'));
-      return res.redirect('/admin/marketing-officers/' + userId + '/edit');
+      return respond(422, {});
     }
 
     const bcrypt = require('bcryptjs');
     const hashed = await bcrypt.hash(password, 10);
     await UserModel.updatePassword(userId, hashed);
     await logActivity(req, 'reset_password', 'marketing_officer', userId);
-    req.flash('success', req.t('admin:flash.passwordReset'));
-    res.redirect('/admin/marketing-officers/' + userId + '/edit');
+
+    const message = req.t('admin:flash.passwordReset');
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2668,15 +2767,23 @@ exports.getMarketingOfficerPermissions = async (req, res, next) => {
 exports.updateMarketingOfficerPermissions = async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/marketing-officers');
+
     const target = await UserModel.findById(userId);
     if (!target || target.role !== 'marketing_officer') {
-      req.flash('error', req.t('admin:flash.userNotFound'));
-      return res.redirect('/admin/marketing-officers');
+      const message = req.t('admin:flash.userNotFound');
+      if (isAjax) return respond(404, { success: false, message });
+      req.flash('error', message);
+      return respond(404, {});
     }
     await applyMarketingPermissions(userId, extractPermissions(req.body));
     await logActivity(req, 'update_permissions', 'marketing_officer', userId);
-    req.flash('success', req.t('admin:flash.permissionsUpdated'));
-    res.redirect('/admin/marketing-officers/' + userId + '/permissions');
+
+    const message = req.t('admin:flash.permissionsUpdated');
+    if (isAjax) return respond(200, { success: true, message });
+    req.flash('success', message);
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2694,9 +2801,11 @@ exports.getRoles = async (req, res, next) => {
     }));
 
     const rolesWithPermissions = [];
+    const rolePermissionMap = {};
     for (const entry of roles) {
       const current = await getRolePermissions(entry.role);
       rolesWithPermissions.push({ ...entry, permissions: current });
+      rolePermissionMap[entry.role] = current;
     }
 
     const modulePermissions = PERMISSION_MODULES.map((mod) => ({
@@ -2705,12 +2814,26 @@ exports.getRoles = async (req, res, next) => {
       permissions: mod.permissions
     }));
 
-    res.render('admin/roles', {
+    const viewData = {
       title: req.t('admin:title.roleManagement'),
       roles: rolesWithPermissions,
       modulePermissions,
+      rolePermissionMap,
       ALL_PERMISSIONS: modulePermissions.flatMap((m) => m.permissions)
-    });
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/rolesTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, roles: rolesWithPermissions, rolePermissionMap });
+    }
+
+    res.render('admin/roles', viewData);
   } catch (err) {
     next(err);
   }
@@ -2719,9 +2842,13 @@ exports.getRoles = async (req, res, next) => {
 exports.updateRolePermissions = async (req, res, next) => {
   try {
     const role = req.params.role;
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/roles');
+
     if (!ROLE_NAMES[role]) {
+      if (isAjax) return respond(400, { success: false, message: req.t('admin:flash.invalidRole') });
       req.flash('error', req.t('admin:flash.invalidRole'));
-      return res.redirect('/admin/roles');
+      return respond(400, {});
     }
 
     // Never allow a role to be stripped to nothing unexpectedly; super_admin is
@@ -2738,8 +2865,10 @@ exports.updateRolePermissions = async (req, res, next) => {
 
     await setRolePermissions(role, selected);
     await logActivity(req, 'update_permissions', 'role', null);
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.rolePermissionsUpdated'), permissions: selected });
     req.flash('success', req.t('admin:flash.rolePermissionsUpdated'));
-    res.redirect('/admin/roles');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2752,10 +2881,23 @@ exports.updateRolePermissions = async (req, res, next) => {
 exports.getPermissions = async (req, res, next) => {
   try {
     const rows = await getCatalogPermissions();
-    res.render('admin/permissions', {
+    const viewData = {
       title: req.t('admin:title.permissionManagement'),
       permissions: rows
-    });
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/permissionsList', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, permissions: rows });
+    }
+
+    res.render('admin/permissions', viewData);
   } catch (err) {
     next(err);
   }
@@ -2763,19 +2905,26 @@ exports.getPermissions = async (req, res, next) => {
 
 exports.addPermission = async (req, res, next) => {
   try {
+    const isAjax = isAjaxRequest(req);
+    const respond = (statusCode, data) => isAjax ? res.status(statusCode).json(data) : res.redirect('/admin/permissions');
+
     const permission = String(req.body.permission || '').trim();
     const module = String(req.body.module || 'general').trim() || 'general';
     const description = String(req.body.description || '').trim() || null;
 
     if (!/^[a-z][a-z0-9_]{1,99}$/.test(permission)) {
+      const errors = { permission: req.t('admin:flash.invalidPermissionName') };
+      if (isAjax) return respond(422, { success: false, message: req.t('admin:flash.invalidPermissionName'), errors });
       req.flash('error', req.t('admin:flash.invalidPermissionName'));
-      return res.redirect('/admin/permissions');
+      return respond(422, {});
     }
 
     await addCatalogPermission(permission, module, description);
     await logActivity(req, 'create', 'permission', null);
+
+    if (isAjax) return respond(200, { success: true, message: req.t('admin:flash.permissionAdded') });
     req.flash('success', req.t('admin:flash.permissionAdded'));
-    res.redirect('/admin/permissions');
+    respond(200, {});
   } catch (err) {
     next(err);
   }
@@ -2822,16 +2971,35 @@ exports.getActivityLogs = async (req, res, next) => {
     const [actions] = await pool.execute('SELECT DISTINCT action FROM activity_logs ORDER BY action');
     const [roles] = await pool.execute('SELECT DISTINCT role FROM activity_logs ORDER BY role');
 
-    res.render('admin/activity-logs', {
+    const viewData = {
       title: req.t('admin:title.activityLogs'),
       logs,
-      pagination: { page, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
+      pagination: { page, limit, totalPages, total, hasNext: page < totalPages, hasPrev: page > 1 },
       currentRole: roleFilter,
       currentAction: actionFilter,
-      searchQuery: search,
+      currentSearch: search,
       actions: actions.map((a) => a.action),
       roles: roles.map((r) => r.role)
-    });
+    };
+
+    if (req.query.fragment === '1') {
+      return res.render('admin/partials/activityLogsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+
+    if (isAjaxRequest(req)) {
+      return res.json({
+        success: true,
+        logs,
+        total,
+        page,
+        totalPages
+      });
+    }
+
+    res.render('admin/activity-logs', viewData);
   } catch (err) {
     next(err);
   }

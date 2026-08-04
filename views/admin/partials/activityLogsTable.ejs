@@ -1,0 +1,77 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('admin:activityLogs.searchPlaceholder') %>"
+                   value="<%= currentSearch %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('admin:activityLogs.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="role" aria-label="<%= t('admin:activityLogs.role') %>">
+        <option value=""><%= t('admin:activityLogs.allRoles') %></option>
+        <% (roles || []).forEach(r => { %>
+        <option value="<%= r %>" <%= currentRole === r ? 'selected' : '' %>><%= t('admin:roles.' + r, { defaultValue: r }) %></option>
+        <% }) %>
+    </select>
+    <select class="form-select w-auto" data-crud-filter name="action" aria-label="<%= t('admin:activityLogs.action') %>">
+        <option value=""><%= t('admin:activityLogs.allActions') %></option>
+        <% (actions || []).forEach(a => { %>
+        <option value="<%= a %>" <%= currentAction === a ? 'selected' : '' %>><%= a %></option>
+        <% }) %>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('admin:activityLogs.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (logs && logs.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr>
+                    <th><%= t('admin:activityLogs.username') %></th>
+                    <th><%= t('admin:activityLogs.role') %></th>
+                    <th><%= t('admin:activityLogs.action') %></th>
+                    <th><%= t('admin:activityLogs.resource') %></th>
+                    <th><%= t('admin:activityLogs.resourceId') %></th>
+                    <th><%= t('admin:activityLogs.date') %></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% logs.forEach(log => { %>
+                <tr>
+                    <td class="text-white fw-semibold"><%= log.username || '—' %></td>
+                    <td><span class="badge bg-primary bg-opacity-25 text-primary text-capitalize"><%= log.role || '—' %></span></td>
+                    <td><span class="badge bg-success bg-opacity-25 text-success"><%= log.action %></span></td>
+                    <td class="text-white-50 text-capitalize"><%= log.resource || '—' %></td>
+                    <td class="text-white-50"><%= log.resource_id || '—' %></td>
+                    <td><small class="text-white-50"><%= log.created_at ? new Date(log.created_at).toLocaleString() : '' %></small></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% if (pagination && pagination.totalPages > 1) { %>
+<div class="crud-pagination">
+    <span class="crud-pagination__info"><%= t('admin:activityLogs.paginationInfo', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }, { defaultValue: pagination.page + ' / ' + pagination.totalPages }) %></span>
+    <button type="button" data-crud-page="1" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:activityLogs.first') %>"><i class="fa-solid fa-angles-left"></i></button>
+    <button type="button" data-crud-page="<%= pagination.page - 1 %>" <%= pagination.hasPrev ? '' : 'disabled' %> title="<%= t('admin:activityLogs.prev') %>"><i class="fa-solid fa-chevron-left"></i></button>
+    <button type="button" class="is-active"><%= pagination.page %></button>
+    <button type="button" data-crud-page="<%= pagination.page + 1 %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:activityLogs.next') %>"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" data-crud-page="<%= pagination.totalPages %>" <%= pagination.hasNext ? '' : 'disabled' %> title="<%= t('admin:activityLogs.last') %>"><i class="fa-solid fa-angles-right"></i></button>
+</div>
+<% } %>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-clock-rotate-left fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('admin:activityLogs.noLogs') %></h4>
+    <p class="text-white-50"><%= t('admin:activityLogs.noLogsMatch') %></p>
+</div>
+<% } %>

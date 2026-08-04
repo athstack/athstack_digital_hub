@@ -11,71 +11,91 @@
                 <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
                     <span class="section-badge"><%= t('admin:words.users') %></span>
                     <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-key me-2 text-primary"></i><%= t('admin:title.permissionManagement') %></h2>
+                    <button type="button" class="btn btn-premium-primary btn-sm rounded-pill ms-auto" id="addPermissionBtn"><i class="fa-solid fa-plus me-1"></i><%= t('admin:permissionManagement.addPermission') %></button>
                 </div>
 
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-plus me-2 text-primary"></i><%= t('admin:permissionManagement.addPermission') %></h5>
-                    <form method="POST" action="/admin/permissions/add">
-                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4">
-                                <label class="form-label"><%= t('admin:permissionManagement.permissionName') %></label>
-                                <input type="text" name="permission" class="form-control" placeholder="e.g. manage_coupons" pattern="[a-z][a-z0-9_]{1,99}" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label"><%= t('admin:permissionManagement.module') %></label>
-                                <select name="module" class="form-select bg-dark text-white border-secondary">
-                                    <% const modules = [...new Set(permissions.map(p => p.module || 'general'))]; %>
-                                    <% modules.forEach(m => { %>
-                                    <option value="<%= m %>"><%= m %></option>
-                                    <% }) %>
-                                    <option value="general">general</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label"><%= t('admin:permissionManagement.description') %></label>
-                                <input type="text" name="description" class="form-control">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-premium-primary rounded-pill px-4 mt-3"><i class="fa-solid fa-plus me-2"></i><%= t('admin:permissionManagement.addPermission') %></button>
-                    </form>
+                <div data-crud-table data-crud-url="/admin/permissions">
+                    <%- include('./partials/permissionsList') %>
                 </div>
-
-                <% const grouped = {}; %>
-                <% permissions.forEach(p => { const key = p.module || 'general'; if (!grouped[key]) grouped[key] = []; grouped[key].push(p); }); %>
-                <% Object.keys(grouped).forEach(mod => { %>
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h5 class="text-primary fw-bold mb-3 text-uppercase"><%= mod %></h5>
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0 premium-table">
-                            <thead>
-                                <tr>
-                                    <th><%= t('admin:permissionManagement.permissionName') %></th>
-                                    <th><%= t('admin:permissionManagement.description') %></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% grouped[mod].forEach(p => { %>
-                                <tr>
-                                    <td><code class="text-info"><%= p.permission %></code></td>
-                                    <td class="text-white-50"><%= p.description || '' %></td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <% }) %>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Add Permission modal -->
+<div class="modal fade crud-modal" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addPermissionForm" method="POST" action="/admin/permissions/add" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPermissionModalTitle"><i class="fa-solid fa-plus me-2 text-primary"></i><%= t('admin:permissionManagement.addPermission') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="ap-permission"><%= t('admin:permissionManagement.permissionName') %></label>
+                        <input type="text" name="permission" id="ap-permission" class="form-control" placeholder="manage_coupons" pattern="[a-z][a-z0-9_]{1,99}" required>
+                        <div class="invalid-feedback"><%= t('admin:flash.invalidPermissionName') %></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="ap-module"><%= t('admin:permissionManagement.module') %></label>
+                        <select name="module" id="ap-module" class="form-select bg-dark text-white border-secondary">
+                            <% const modules = [...new Set(permissions.map(p => p.module || 'general'))]; %>
+                            <% modules.forEach(m => { %>
+                            <option value="<%= m %>"><%= m %></option>
+                            <% }) %>
+                            <option value="general">general</option>
+                        </select>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label" for="ap-description"><%= t('admin:permissionManagement.description') %></label>
+                        <input type="text" name="description" id="ap-description" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('admin:permissionManagement.addPermission') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+    var addBtn = document.getElementById('addPermissionBtn');
+    var addModalEl = document.getElementById('addPermissionModal');
+    var addForm = document.getElementById('addPermissionForm');
+
+    var i18n = {
+        permissionAdded: '<%= t('admin:flash.permissionAdded') %>',
+        updateFailed: '<%= t('admin:permissionManagement.updateFailed') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        add: '<%= t('admin:permissionManagement.addPermission') %>'
+    };
+
+    addBtn.addEventListener('click', function () {
+        addForm.reset();
+        Crud.clearErrors(addForm);
+        Crud.openModal(addModalEl);
+    });
+
+    addForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(addForm, {
+            onSuccess: function (data) {
+                Crud.closeModal(addModalEl);
+                Crud.toast(data.message || i18n.permissionAdded, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/admin/permissions' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

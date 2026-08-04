@@ -145,7 +145,10 @@
     "permissionsGranted": "permissões concedidas",
     "editPermissions": "Editar permissões",
     "superAdminNote": "Os superadministradores têm acesso irrestrito a todas as permissões e não podem ser modificados.",
-    "saveRole": "Salvar função"
+    "saveRole": "Salvar função",
+    "refresh": "Atualizar",
+    "updateFailed": "Falha na atualização",
+    "permissionSaved": "Permissões salvas com sucesso."
   },
   "flash": {
     "invalidUserId": "ID de utilizador inválido.",
@@ -635,7 +638,10 @@
     "addPermission": "Adicionar permissão",
     "permissionName": "Permissão",
     "module": "Módulo",
-    "description": "Descrição"
+    "description": "Descrição",
+    "refresh": "Atualizar",
+    "updateFailed": "Falha na atualização",
+    "modulePlaceholder": "Módulo"
   },
   "marketingOfficers": {
     "heading": "Oficiais de Marketing",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "Nenhum oficial de marketing corresponde aos seus filtros atuais.",
     "editOfficer": "Editar",
     "resetPassword": "Redefinir senha",
-    "managePermissions": "Gerenciar permissões"
+    "managePermissions": "Gerenciar permissões",
+    "refresh": "Atualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primeira página",
+    "prev": "Página anterior",
+    "next": "Página seguinte",
+    "last": "Última página",
+    "updateFailed": "Falha na atualização",
+    "permissionsSaved": "Permissões salvas com sucesso.",
+    "passwordResetTitle": "Redefinir senha"
   },
   "marketingOfficerForm": {
     "headingCreate": "Criar oficial de marketing",
@@ -700,6 +715,10 @@
     "prev": "Anterior",
     "next": "Próximo",
     "pageOf": "Página {{page}} de {{totalPages}}",
-    "showingTotal": "{{total}} entradas no total"
+    "showingTotal": "{{total}} entradas no total",
+    "refresh": "Atualizar",
+    "paginationInfo": "{{from}}–{{to}} de {{total}}",
+    "first": "Primeira página",
+    "last": "Última página"
   }
 }

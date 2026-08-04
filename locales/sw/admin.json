@@ -145,7 +145,10 @@
     "permissionsGranted": "ruhusa zimetolewa",
     "editPermissions": "Hariri ruhusa",
     "superAdminNote": "Wasimamizi Wakuu wana ufikiaji usiozuiliwa wa kila ruhusa na hawawezi kubadilishwa.",
-    "saveRole": "Hifadhi jukumu"
+    "saveRole": "Hifadhi jukumu",
+    "refresh": "Onyesha upya",
+    "updateFailed": "Usasishaji umeshindikana",
+    "permissionSaved": "Ruhusa zimehifadhiwa kwa mafanikio."
   },
   "flash": {
     "invalidUserId": "Kitambulisho cha mtumiaji batili.",
@@ -635,7 +638,10 @@
     "addPermission": "Ongeza ruhusa",
     "permissionName": "Ruhusa",
     "module": "Moduli",
-    "description": "Maelezo"
+    "description": "Maelezo",
+    "refresh": "Onyesha upya",
+    "updateFailed": "Usasishaji umeshindikana",
+    "modulePlaceholder": "Moduli"
   },
   "marketingOfficers": {
     "heading": "Maafisa wa Masoko",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "Hakuna afisa wa masoko anayelingana na vichujio vyako vya sasa.",
     "editOfficer": "Hariri",
     "resetPassword": "Weka upya nenosiri",
-    "managePermissions": "Simamia ruhusa"
+    "managePermissions": "Simamia ruhusa",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "prev": "Ukurasa uliopita",
+    "next": "Ukurasa unaofuata",
+    "last": "Ukurasa wa mwisho",
+    "updateFailed": "Usasishaji umeshindikana",
+    "permissionsSaved": "Ruhusa zimehifadhiwa kwa mafanikio.",
+    "passwordResetTitle": "Weka upya nenosiri"
   },
   "marketingOfficerForm": {
     "headingCreate": "Unda afisa wa masoko",
@@ -700,6 +715,10 @@
     "prev": "Nyuma",
     "next": "Mbele",
     "pageOf": "Ukurasa {{page}} wa {{totalPages}}",
-    "showingTotal": "Jumla ya viingizo {{total}}"
+    "showingTotal": "Jumla ya viingizo {{total}}",
+    "refresh": "Onyesha upya",
+    "paginationInfo": "{{from}}–{{to}} kati ya {{total}}",
+    "first": "Ukurasa wa kwanza",
+    "last": "Ukurasa wa mwisho"
   }
 }

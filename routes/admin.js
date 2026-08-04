@@ -120,6 +120,7 @@ router.get('/marketing-officers', requireAllPermissions('manage_roles', 'manage_
 router.get('/marketing-officers/new', requireAllPermissions('manage_roles', 'manage_permissions'), adminController.getCreateMarketingOfficer);
 router.post('/marketing-officers', requireAllPermissions('manage_roles', 'manage_permissions'), validateCsrf, adminController.createMarketingOfficer);
 router.get('/marketing-officers/:id/edit', requireAllPermissions('manage_roles', 'manage_permissions'), adminController.getEditMarketingOfficer);
+router.get('/marketing-officers/:id', requireAllPermissions('manage_roles', 'manage_permissions'), adminController.getMarketingOfficerDetail);
 router.post('/marketing-officers/:id', requireAllPermissions('manage_roles', 'manage_permissions'), validateCsrf, adminController.updateMarketingOfficer);
 router.post('/marketing-officers/:id/status', requireAllPermissions('manage_roles', 'manage_permissions'), validateCsrf, adminController.updateMarketingOfficerStatus);
 router.post('/marketing-officers/:id/reset-password', requireAllPermissions('manage_roles', 'manage_permissions'), validateCsrf, adminController.resetMarketingOfficerPassword);

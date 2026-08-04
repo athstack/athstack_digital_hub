@@ -145,7 +145,10 @@
     "permissionsGranted": "permissions accordées",
     "editPermissions": "Modifier les permissions",
     "superAdminNote": "Les super administrateurs ont un accès illimité à toutes les permissions et ne peuvent pas être modifiés.",
-    "saveRole": "Enregistrer le rôle"
+    "saveRole": "Enregistrer le rôle",
+    "refresh": "Actualiser",
+    "updateFailed": "Échec de la mise à jour",
+    "permissionSaved": "Autorisations enregistrées avec succès."
   },
   "flash": {
     "invalidUserId": "Identifiant utilisateur invalide.",
@@ -635,7 +638,10 @@
     "addPermission": "Ajouter une permission",
     "permissionName": "Permission",
     "module": "Module",
-    "description": "Description"
+    "description": "Description",
+    "refresh": "Actualiser",
+    "updateFailed": "Échec de la mise à jour",
+    "modulePlaceholder": "Module"
   },
   "marketingOfficers": {
     "heading": "Responsables Marketing",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "Aucun responsable marketing ne correspond à vos filtres actuels.",
     "editOfficer": "Modifier",
     "resetPassword": "Réinitialiser le mot de passe",
-    "managePermissions": "Gérer les permissions"
+    "managePermissions": "Gérer les permissions",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "last": "Dernière page",
+    "updateFailed": "Échec de la mise à jour",
+    "permissionsSaved": "Autorisations enregistrées avec succès.",
+    "passwordResetTitle": "Réinitialiser le mot de passe"
   },
   "marketingOfficerForm": {
     "headingCreate": "Créer un responsable marketing",
@@ -700,6 +715,10 @@
     "prev": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {{page}} sur {{totalPages}}",
-    "showingTotal": "{{total}} entrées au total"
+    "showingTotal": "{{total}} entrées au total",
+    "refresh": "Actualiser",
+    "paginationInfo": "{{from}}–{{to}} sur {{total}}",
+    "first": "Première page",
+    "last": "Dernière page"
   }
 }

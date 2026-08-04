@@ -145,7 +145,10 @@
     "permissionsGranted": "Berechtigungen gewährt",
     "editPermissions": "Berechtigungen bearbeiten",
     "superAdminNote": "Super-Administratoren haben uneingeschränkten Zugriff auf alle Berechtigungen und können nicht geändert werden.",
-    "saveRole": "Rolle speichern"
+    "saveRole": "Rolle speichern",
+    "refresh": "Aktualisieren",
+    "updateFailed": "Aktualisierung fehlgeschlagen",
+    "permissionSaved": "Berechtigungen erfolgreich gespeichert."
   },
   "flash": {
     "invalidUserId": "Ungültige Benutzer-ID.",
@@ -635,7 +638,10 @@
     "addPermission": "Berechtigung hinzufügen",
     "permissionName": "Berechtigung",
     "module": "Modul",
-    "description": "Beschreibung"
+    "description": "Beschreibung",
+    "refresh": "Aktualisieren",
+    "updateFailed": "Aktualisierung fehlgeschlagen",
+    "modulePlaceholder": "Modul"
   },
   "marketingOfficers": {
     "heading": "Marketing-Beauftragte",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "Keine Marketing-Beauftragten entsprechen Ihren aktuellen Filtern.",
     "editOfficer": "Bearbeiten",
     "resetPassword": "Passwort zurücksetzen",
-    "managePermissions": "Berechtigungen verwalten"
+    "managePermissions": "Berechtigungen verwalten",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "prev": "Vorherige Seite",
+    "next": "Nächste Seite",
+    "last": "Letzte Seite",
+    "updateFailed": "Aktualisierung fehlgeschlagen",
+    "permissionsSaved": "Berechtigungen erfolgreich gespeichert.",
+    "passwordResetTitle": "Passwort zurücksetzen"
   },
   "marketingOfficerForm": {
     "headingCreate": "Marketing-Beauftragten erstellen",
@@ -700,6 +715,10 @@
     "prev": "Zurück",
     "next": "Weiter",
     "pageOf": "Seite {{page}} von {{totalPages}}",
-    "showingTotal": "{{total}} Einträge insgesamt"
+    "showingTotal": "{{total}} Einträge insgesamt",
+    "refresh": "Aktualisieren",
+    "paginationInfo": "{{from}}–{{to}} von {{total}}",
+    "first": "Erste Seite",
+    "last": "Letzte Seite"
   }
 }

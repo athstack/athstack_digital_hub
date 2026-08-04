@@ -145,7 +145,10 @@
     "permissionsGranted": "الصلاحيات الممنوحة",
     "editPermissions": "تعديل الصلاحيات",
     "superAdminNote": "يتمتع مديرو النظام بوصول غير مقيد إلى جميع الصلاحيات ولا يمكن تعديلهم.",
-    "saveRole": "حفظ الدور"
+    "saveRole": "حفظ الدور",
+    "refresh": "تحديث",
+    "updateFailed": "فشل التحديث",
+    "permissionSaved": "تم حفظ الصلاحيات بنجاح."
   },
   "flash": {
     "invalidUserId": "معرّف مستخدم غير صالح.",
@@ -635,7 +638,10 @@
     "addPermission": "إضافة صلاحية",
     "permissionName": "الصلاحية",
     "module": "الوحدة",
-    "description": "الوصف"
+    "description": "الوصف",
+    "refresh": "تحديث",
+    "updateFailed": "فشل التحديث",
+    "modulePlaceholder": "الوحدة"
   },
   "marketingOfficers": {
     "heading": "مسؤولو التسويق",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "لا يوجد مسؤولو تسويق يطابقون عوامل التصفية الحالية.",
     "editOfficer": "تعديل",
     "resetPassword": "إعادة تعيين كلمة المرور",
-    "managePermissions": "إدارة الصلاحيات"
+    "managePermissions": "إدارة الصلاحيات",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "prev": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "last": "الصفحة الأخيرة",
+    "updateFailed": "فشل التحديث",
+    "permissionsSaved": "تم حفظ الصلاحيات بنجاح.",
+    "passwordResetTitle": "إعادة تعيين كلمة المرور"
   },
   "marketingOfficerForm": {
     "headingCreate": "إنشاء مسؤول تسويق",
@@ -700,6 +715,10 @@
     "prev": "السابق",
     "next": "التالي",
     "pageOf": "الصفحة {{page}} من {{totalPages}}",
-    "showingTotal": "{{total}} إدخالًا إجمالاً"
+    "showingTotal": "{{total}} إدخالًا إجمالاً",
+    "refresh": "تحديث",
+    "paginationInfo": "{{from}}–{{to}} من {{total}}",
+    "first": "الصفحة الأولى",
+    "last": "الصفحة الأخيرة"
   }
 }

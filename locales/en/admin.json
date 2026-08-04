@@ -145,13 +145,19 @@
     "permissionsGranted": "permissions granted",
     "editPermissions": "Edit Permissions",
     "superAdminNote": "Super Administrators have unrestricted access to every permission and cannot be modified.",
-    "saveRole": "Save Role"
+    "saveRole": "Save Role",
+    "refresh": "Refresh",
+    "updateFailed": "Update failed.",
+    "permissionSaved": "Permissions saved successfully."
   },
   "permissionManagement": {
     "addPermission": "Add Permission",
     "permissionName": "Permission",
     "module": "Module",
-    "description": "Description"
+    "description": "Description",
+    "refresh": "Refresh",
+    "updateFailed": "Update failed.",
+    "modulePlaceholder": "Module"
   },
   "flash": {
     "invalidUserId": "Invalid user ID.",
@@ -651,7 +657,16 @@
     "noOfficersMatch": "No marketing officers match your current filters.",
     "editOfficer": "Edit",
     "resetPassword": "Reset Password",
-    "managePermissions": "Manage Permissions"
+    "managePermissions": "Manage Permissions",
+    "refresh": "Refresh",
+    "paginationInfo": "{{from}}–{{to}} of {{total}}",
+    "first": "First",
+    "prev": "Previous",
+    "next": "Next",
+    "last": "Last",
+    "updateFailed": "Update failed.",
+    "permissionsSaved": "Permissions saved successfully.",
+    "passwordResetTitle": "Reset Password"
   },
   "marketingOfficerForm": {
     "headingCreate": "Create Marketing Officer",
@@ -700,6 +715,10 @@
     "prev": "Prev",
     "next": "Next",
     "pageOf": "Page {{page}} of {{totalPages}}",
-    "showingTotal": "{{total}} total entries"
+    "showingTotal": "{{total}} total entries",
+    "refresh": "Refresh",
+    "paginationInfo": "{{from}}–{{to}} of {{total}}",
+    "first": "First",
+    "last": "Last"
   }
 }

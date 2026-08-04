@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="glass-card p-5">
-                    <form method="POST" action="/admin/settings">
+                    <form method="POST" action="/admin/settings" id="settingsForm">
                         <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -79,5 +79,25 @@
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    'use strict';
+    var form = document.getElementById('settingsForm');
+    if (!form) return;
+    var i18n = {
+        saved: '<%= t('admin:flash.settingsUpdated') %>',
+        networkError: '<%= t('common:words.networkError', { defaultValue: 'Network error. Please try again.' }) %>'
+    };
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.toast(data.message || i18n.saved, 'success');
+            }
+        });
+    });
+})();
+</script>
 
 <%- include('../partials/footer') %>
