@@ -35,42 +35,6 @@ function generateSku(name, category = '', { random = false } = {}) {
 }
 
 /**
- * Locale-aware currency formatter.
- *
- * Formatting follows the selected language/locale, e.g.:
- *   English:  $25,000.00
- *   French:   25 000,00 €
- *   German:   25.000,00 €
- *   Swahili:  TZS 25,000
- * @param {number} amount
- * @param {string} [lang] - Language code (defaults to English)
- * @returns {string}
- */
-function formatCurrency(amount, lang = DEFAULT_LANG) {
-  const conf = LANG_MAP[lang] || LANG_MAP[DEFAULT_LANG];
-  const value = amount === null || amount === undefined ? 0 : Number(amount);
-  try {
-    if (conf.currency === 'TZS') {
-      return new Intl.NumberFormat(conf.locale, {
-        style: 'currency',
-        currency: 'TZS',
-        currencyDisplay: 'code',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-    return new Intl.NumberFormat(conf.locale, {
-      style: 'currency',
-      currency: conf.currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-  } catch (e) {
-    return '$' + value.toFixed(2);
-  }
-}
-
-/**
  * Locale-aware date formatter.
  * @param {Date|string} date
  * @param {string} [lang] - Language code (defaults to English)
@@ -189,7 +153,6 @@ function paginate(array, page = 1, limit = 10) {
 module.exports = {
   generateSlug,
   generateSku,
-  formatCurrency,
   formatDate,
   truncateText,
   calculateDiscount,

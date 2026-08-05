@@ -322,17 +322,28 @@ function escapeHtml(text) {
 }
 
 // ---------------------------------------------------------------------------
-// Locale-aware currency formatting (client-side live search prices)
+// Locale-aware currency formatting (client-side live search prices). Base
+// prices from /api/search are converted to the active display currency using
+// the server-rendered exchange rate before formatting.
 // ---------------------------------------------------------------------------
 function formatMoney(value) {
   const s = window.i18nStrings || {};
+  const cur = s.currency || 'USD';
+  const rate = parseFloat(s.currencyRate) || 1;
+  const converted = (Number(value) || 0) * rate;
   let nf;
   try {
-    nf = new Intl.NumberFormat(s.locale || 'en-US', { style: 'currency', currency: s.currency || 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    nf = new Intl.NumberFormat(cur === 'TZS' ? 'sw-TZ' : (s.locale || 'en-US'), {
+      style: 'currency',
+      currency: cur,
+      currencyDisplay: cur === 'TZS' ? 'code' : undefined,
+      minimumFractionDigits: cur === 'TZS' ? 0 : 2,
+      maximumFractionDigits: cur === 'TZS' ? 0 : 2
+    });
   } catch (e) {
     nf = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-  return nf.format(Number(value) || 0);
+  return nf.format(converted);
 }
 
 // ---------------------------------------------------------------------------

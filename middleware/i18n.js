@@ -20,7 +20,7 @@ const {
   languageCodeFromTag,
   LANGUAGES
 } = require('../config/languages');
-const { formatCurrency, formatDate } = require('../utils/helpers');
+const { formatDate } = require('../utils/helpers');
 
 const LANG_COOKIE = 'lang';
 
@@ -95,7 +95,6 @@ async function i18nMiddleware(req, res, next) {
     res.locals.dir = LANG_MAP[lang].dir;
     res.locals.currentLang = LANG_MAP[lang];
     res.locals.LANGUAGES = LANGUAGES;
-    res.locals.formatCurrency = (amount) => formatCurrency(amount, lang);
     res.locals.formatDate = (date, options) => formatDate(date, lang, options);
     next();
   } catch (err) {

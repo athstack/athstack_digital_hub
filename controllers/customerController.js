@@ -7,7 +7,8 @@ const ReviewModel = require('../models/ReviewModel');
 const ProductModel = require('../models/ProductModel');
 const ContactModel = require('../models/ContactModel');
 const { pool } = require('../config/db');
-const { formatCurrency, getStatusBadgeClass } = require('../utils/helpers');
+const { getStatusBadgeClass } = require('../utils/helpers');
+const { formatCurrency } = require('../utils/currency');
 
 exports.getDashboard = async (req, res, next) => {
   try {
@@ -28,7 +29,7 @@ exports.getDashboard = async (req, res, next) => {
       orders: orders.orders || orders,
       bookings,
       courses: enrollments,
-      totalSpent: formatCurrency(totalSpent, req.language),
+      totalSpent: formatCurrency(totalSpent, req.currency),
       orderCount: (orders.orders || []).length,
       bookingCount: bookings.length,
       courseCount: enrollments.length

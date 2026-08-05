@@ -4,13 +4,21 @@ const WishlistModel = require('../models/WishlistModel');
 const ReviewModel = require('../models/ReviewModel');
 const ProductImageModel = require('../models/ProductImageModel');
 const { calculateDiscount } = require('../utils/helpers');
+const { convertToBase } = require('../utils/currency');
 
 exports.getShop = async (req, res, next) => {
   try {
     const category = req.query.category || null;
     const search = req.query.search || null;
-    const minPrice = parseFloat(req.query.min_price) || 0;
-    const maxPrice = parseFloat(req.query.max_price) || 999999;
+    let minPrice = parseFloat(req.query.min_price) || 0;
+    let maxPrice = parseFloat(req.query.max_price) || 999999;
+
+    // The price filter form is entered in the user's display currency, but
+    // products are stored in the base currency (USD). Convert before querying.
+    if (req.currency && req.currency !== 'USD') {
+      minPrice = convertToBase(minPrice, req.currency);
+      maxPrice = convertToBase(maxPrice, req.currency);
+    }
     const page = parseInt(req.query.page) || 1;
 
     const result = await ProductModel.getFiltered({

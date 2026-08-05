@@ -158,6 +158,12 @@ const { i18nMiddleware } = require('./middleware/i18n');
 app.use(i18nMiddleware);
 
 // ---------------------------------------------------------------------------
+// Currency (detection + template locals for display prices)
+// ---------------------------------------------------------------------------
+const { currencyMiddleware } = require('./middleware/currency');
+app.use(currencyMiddleware);
+
+// ---------------------------------------------------------------------------
 // Global template variables + CSRF + user attachment
 // ---------------------------------------------------------------------------
 app.use(attachUser);
@@ -230,6 +236,7 @@ app.use((req, res, next) => {
 // ---------------------------------------------------------------------------
 app.use(trackVisit);
 app.use('/', require('./routes/language'));
+app.use('/', require('./routes/currency'));
 app.use('/', require('./routes/home'));
 app.use('/about', require('./routes/about'));
 app.use('/contact', require('./routes/contact'));

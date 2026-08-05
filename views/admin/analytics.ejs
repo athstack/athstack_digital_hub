@@ -197,8 +197,10 @@ function sortTable(col) {
     rows.sort(function(a, b) {
         var va = a.cells[col].textContent.trim();
         var vb = b.cells[col].textContent.trim();
-        var na = parseFloat(va.replace(/[$,]/g, ''));
-        var nb = parseFloat(vb.replace(/[$,]/g, ''));
+        // Strip everything except digits, minus signs and dots so sorting works
+        // regardless of the active currency format ($1,234.56 or TZS 3,086,400).
+        var na = parseFloat(va.replace(/[^0-9.\-]/g, ''));
+        var nb = parseFloat(vb.replace(/[^0-9.\-]/g, ''));
         if (!isNaN(na) && !isNaN(nb)) return (na - nb) * dir;
         return va.localeCompare(vb) * dir;
     });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>" dir="<%= dir %>" style="color-scheme:dark;">
+<html lang="<%= lang %>" dir="<%= dir %>" data-currency="<%= currency %>" style="color-scheme:dark;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +59,7 @@
                 </div>
                 <div class="navbar-icons d-flex align-items-center gap-3">
                     <%- include('../partials/languageSelector') %>
+                    <%- include('../partials/currencySelector') %>
                     <a href="/cart" class="navbar-icon-link position-relative" id="cartLink" aria-label="<%= t('common:nav.cart') %>">
                         <i class="fa-solid fa-bag-shopping fs-5"></i>
                         <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
@@ -197,6 +198,7 @@
             <div class="mobile-drawer-divider"></div>
             <div class="mobile-drawer-lang">
                 <%- include('../partials/languageSelector') %>
+                <%- include('../partials/currencySelector') %>
             </div>
         </div>
     </div>
@@ -221,6 +223,7 @@ if (document.getElementById('msgUnreadBadge')) {
 }
 </script>
 <script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/currency.js"></script>
 <% if (typeof userStatus !== 'undefined' && userStatus === 'inactive') { %>
 <div class="bg-warning bg-opacity-10 border-bottom border-warning border-2 py-2">
     <div class="container text-center">

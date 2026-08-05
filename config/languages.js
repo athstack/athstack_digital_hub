@@ -6,15 +6,15 @@
  */
 
 const LANGUAGES = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧', dir: 'ltr', locale: 'en-US', currency: 'USD' },
-  { code: 'sw', name: 'Kiswahili', nativeName: 'Kiswahili', flag: '🇹🇿', dir: 'ltr', locale: 'sw-TZ', currency: 'TZS' },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr', locale: 'fr-FR', currency: 'EUR' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', dir: 'rtl', locale: 'ar-SA', currency: 'SAR' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', dir: 'ltr', locale: 'es-ES', currency: 'EUR' },
-  { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹', dir: 'ltr', locale: 'pt-PT', currency: 'EUR' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', dir: 'ltr', locale: 'de-DE', currency: 'EUR' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳', dir: 'ltr', locale: 'zh-CN', currency: 'CNY' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳', dir: 'ltr', locale: 'hi-IN', currency: 'INR' }
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧', dir: 'ltr', locale: 'en-US' },
+  { code: 'sw', name: 'Kiswahili', nativeName: 'Kiswahili', flag: '🇹🇿', dir: 'ltr', locale: 'sw-TZ' },
+  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr', locale: 'fr-FR' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', dir: 'rtl', locale: 'ar-SA' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', dir: 'ltr', locale: 'es-ES' },
+  { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹', dir: 'ltr', locale: 'pt-PT' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', dir: 'ltr', locale: 'de-DE' },
+  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳', dir: 'ltr', locale: 'zh-CN' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳', dir: 'ltr', locale: 'hi-IN' }
 ];
 
 const SUPPORTED_LANGS = LANGUAGES.map((l) => l.code);

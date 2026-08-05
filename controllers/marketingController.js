@@ -1,7 +1,8 @@
 const { pool } = require('../config/db');
 const UserModel = require('../models/UserModel');
 const SettingModel = require('../models/SettingModel');
-const { generateSlug, formatCurrency, formatDate } = require('../utils/helpers');
+const { generateSlug, formatDate } = require('../utils/helpers');
+const { formatCurrency } = require('../utils/currency');
 const { logActivity } = require('../helpers/activityLog');
 
 // Dual-mode request helpers: every CRUD action answers HTML redirects (no-JS)
@@ -900,7 +901,7 @@ exports.getFeaturedProductDetail = async (req, res, next) => {
         seller: product.first_name ? product.first_name + ' ' + product.last_name : req.t('marketing:featuredProducts.athstack'),
         total_sales: product.total_sales || 0,
         price: product.price,
-        price_formatted: product.price != null ? formatCurrency(product.price, req.language) : '',
+        price_formatted: product.price != null ? formatCurrency(product.price, req.currency) : '',
         main_image: product.main_image || '',
         featured: !!product.featured,
         is_promoted: !!product.is_promoted

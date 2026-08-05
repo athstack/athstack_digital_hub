@@ -76,7 +76,8 @@
         reviewReported: '<%= t('shop:reviews.reported') %>',
         reviewSelectReason: '<%= t('shop:reviews.selectReason') %>',
         locale: '<%= currentLang.locale %>',
-        currency: '<%= currentLang.currency %>'
+        currency: '<%= currency %>',
+        currencyRate: <%- JSON.stringify(currentCurrency.rate) %>
     };
     window.i18nStrings = i18nStrings;
     const bell = document.getElementById('notifBell');

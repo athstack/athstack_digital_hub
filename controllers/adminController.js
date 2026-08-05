@@ -8,7 +8,8 @@ const OrderModel = require('../models/OrderModel');
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug, generateSku, formatCurrency, formatDate } = require('../utils/helpers');
+const { generateSlug, generateSku, formatDate } = require('../utils/helpers');
+const { formatCurrency } = require('../utils/currency');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
 const { logActivity } = require('../helpers/activityLog');
@@ -1021,9 +1022,9 @@ exports.getRepairDetail = async (req, res, next) => {
         status: repair.status,
         priority: repair.priority,
         estimated_cost: repair.estimated_cost,
-        estimated_cost_formatted: formatCurrency(repair.estimated_cost, lang),
+        estimated_cost_formatted: formatCurrency(repair.estimated_cost, req.currency),
         actual_cost: repair.actual_cost,
-        actual_cost_formatted: formatCurrency(repair.actual_cost, lang),
+        actual_cost_formatted: formatCurrency(repair.actual_cost, req.currency),
         technician_first_name: repair.technician_first_name,
         technician_last_name: repair.technician_last_name,
         updates: (repair.updates || []).map(u => ({
@@ -1189,7 +1190,7 @@ exports.getOrderDetail = async (req, res, next) => {
         payment_method: order.payment_method,
         shipping_address: order.shipping_address,
         total_amount: order.total_amount,
-        total_formatted: formatCurrency(order.total_amount, lang),
+        total_formatted: formatCurrency(order.total_amount, req.currency),
         first_name: order.first_name,
         last_name: order.last_name,
         email: order.email,
@@ -1201,9 +1202,9 @@ exports.getOrderDetail = async (req, res, next) => {
           product_slug: i.product_slug,
           quantity: i.quantity,
           unit_price: i.unit_price,
-          unit_price_formatted: formatCurrency(i.unit_price, lang),
+          unit_price_formatted: formatCurrency(i.unit_price, req.currency),
           total_price: i.total_price,
-          total_price_formatted: formatCurrency(i.total_price, lang)
+          total_price_formatted: formatCurrency(i.total_price, req.currency)
         }))
       }
     });
@@ -1339,7 +1340,7 @@ exports.getCourseDetail = async (req, res, next) => {
         duration: course.duration,
         level: course.level,
         price: course.price,
-        price_formatted: formatCurrency(course.price, lang),
+        price_formatted: formatCurrency(course.price, req.currency),
         status: course.status,
         instructor_first_name: course.instructor_first_name,
         instructor_last_name: course.instructor_last_name,

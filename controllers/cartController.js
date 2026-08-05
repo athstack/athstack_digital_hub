@@ -2,7 +2,7 @@ const ProductModel = require('../models/ProductModel');
 const OrderModel = require('../models/OrderModel');
 const NotificationModel = require('../models/NotificationModel');
 const { pool } = require('../config/db');
-const { formatCurrency } = require('../utils/helpers');
+const { formatCurrency } = require('../utils/currency');
 
 exports.getCart = async (req, res, next) => {
   try {
@@ -157,14 +157,14 @@ exports.checkout = async (req, res, next) => {
 
     await NotificationModel.create(req.session.userId, {
       title: req.t('cart:notification.orderPlacedTitle'),
-      message: req.t('cart:notification.orderPlacedMessage', { id: order.id, total: formatCurrency(totalAmount, req.language) }),
+      message: req.t('cart:notification.orderPlacedMessage', { id: order.id, total: formatCurrency(totalAmount, req.currency) }),
       type: 'order',
       link: `/dashboard/orders/${order.id}`
     });
 
     NotificationModel.notifyAdmins({
       title: req.t('cart:notification.newOrderTitle'),
-      message: req.t('cart:notification.newOrderMessage', { id: order.id, total: formatCurrency(totalAmount, req.language) }),
+      message: req.t('cart:notification.newOrderMessage', { id: order.id, total: formatCurrency(totalAmount, req.currency) }),
       type: 'order',
       link: '/admin/orders'
     }).catch(() => {});
