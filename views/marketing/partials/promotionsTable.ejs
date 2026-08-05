@@ -1,0 +1,44 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow"></div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:promotions.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (promotions && promotions.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:words.subtitle') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% promotions.forEach(promo => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= promo.title %></div>
+                        <% if (promo.link_url) { %><small class="text-white-50"><%= promo.link_url %></small><% } %>
+                    </td>
+                    <td class="text-white-50"><%= promo.subtitle || '—' %></td>
+                    <td>
+                        <span class="badge <%= promo.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + promo.status, { defaultValue: promo.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-promotion data-id="' + promo.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: promo.status === 'active', abIcon: promo.status === 'active' ? 'fa-pause' : 'fa-play', abAttrs:'data-toggle-promotion-status data-id="' + promo.id + '" data-status="' + promo.status + '"', abTitle: promo.status === 'active' ? t('marketing:promotions.pause') : t('marketing:promotions.activate') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-tags fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('marketing:promotions.noPromotions') %></h4>
+    <p class="text-white-50"><%= t('marketing:promotions.empty') %></p>
+</div>
+<% } %>

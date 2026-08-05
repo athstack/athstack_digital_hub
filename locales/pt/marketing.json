@@ -206,7 +206,16 @@
     "pause": "Pausar",
     "activate": "Ativar",
     "archive": "Arquivar",
-    "empty": "Nenhuma campanha encontrada. Crie sua primeira campanha."
+    "empty": "Nenhuma campanha encontrada. Crie sua primeira campanha.",
+    "badge": "Campanhas",
+    "filterStatus": "Filtrar por status",
+    "refresh": "Atualizar",
+    "archiveConfirm": "Arquivar esta campanha? Você pode reativá-la depois.",
+    "archiveFailed": "Não foi possível arquivar a campanha.",
+    "updateFailed": "Não foi possível atualizar a campanha.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noCampaigns": "Nenhuma campanha encontrada",
+    "noCampaignsMatch": "Nenhuma campanha corresponde aos seus filtros."
   },
   "campaignForm": {
     "headingCreate": "Criar campanha",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "Seções promocionais",
     "newPromotion": "Nova promoção",
-    "empty": "Nenhuma promoção criada ainda."
+    "empty": "Nenhuma promoção criada ainda.",
+    "badge": "Promoções",
+    "refresh": "Atualizar",
+    "activate": "Ativar",
+    "pause": "Pausar",
+    "updateFailed": "Não foi possível atualizar a promoção.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noPromotions": "Nenhuma promoção encontrada"
   },
   "promotionForm": {
     "headingCreate": "Criar promoção",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "Banners da página inicial",
     "newBanner": "Novo banner",
-    "empty": "Nenhum banner criado ainda."
+    "empty": "Nenhum banner criado ainda.",
+    "badge": "Banners",
+    "refresh": "Atualizar",
+    "activate": "Ativar",
+    "pause": "Pausar",
+    "updateFailed": "Não foi possível atualizar o banner.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noBanners": "Nenhum banner encontrado"
   },
   "bannerForm": {
     "headingCreate": "Criar banner",
@@ -277,7 +300,14 @@
     "code": "Código",
     "value": "Valor",
     "used": "Usado",
-    "empty": "Nenhum cupom criado ainda."
+    "empty": "Nenhum cupom criado ainda.",
+    "badge": "Cupons",
+    "refresh": "Atualizar",
+    "activate": "Ativar",
+    "pause": "Pausar",
+    "updateFailed": "Não foi possível atualizar o cupom.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noCoupons": "Nenhum cupom encontrado"
   },
   "couponForm": {
     "headingCreate": "Criar cupom",

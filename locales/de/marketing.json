@@ -206,7 +206,16 @@
     "pause": "Pausieren",
     "activate": "Aktivieren",
     "archive": "Archivieren",
-    "empty": "Keine Kampagnen gefunden. Erstellen Sie Ihre erste Kampagne."
+    "empty": "Keine Kampagnen gefunden. Erstellen Sie Ihre erste Kampagne.",
+    "badge": "Kampagnen",
+    "filterStatus": "Nach Status filtern",
+    "refresh": "Aktualisieren",
+    "archiveConfirm": "Diese Kampagne archivieren? Sie kann später reaktiviert werden.",
+    "archiveFailed": "Kampagne konnte nicht archiviert werden.",
+    "updateFailed": "Kampagne konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noCampaigns": "Keine Kampagnen gefunden",
+    "noCampaignsMatch": "Keine Kampagnen entsprechen Ihren Filtern."
   },
   "campaignForm": {
     "headingCreate": "Kampagne erstellen",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "Werbebereiche",
     "newPromotion": "Neue Promotion",
-    "empty": "Noch keine Promotionen erstellt."
+    "empty": "Noch keine Promotionen erstellt.",
+    "badge": "Aktionen",
+    "refresh": "Aktualisieren",
+    "activate": "Aktivieren",
+    "pause": "Pausieren",
+    "updateFailed": "Aktion konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noPromotions": "Keine Aktionen gefunden"
   },
   "promotionForm": {
     "headingCreate": "Promotion erstellen",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "Homepage-Banner",
     "newBanner": "Neues Banner",
-    "empty": "Noch keine Banner erstellt."
+    "empty": "Noch keine Banner erstellt.",
+    "badge": "Banner",
+    "refresh": "Aktualisieren",
+    "activate": "Aktivieren",
+    "pause": "Pausieren",
+    "updateFailed": "Banner konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noBanners": "Keine Banner gefunden"
   },
   "bannerForm": {
     "headingCreate": "Banner erstellen",
@@ -277,7 +300,14 @@
     "code": "Code",
     "value": "Wert",
     "used": "Verwendet",
-    "empty": "Noch keine Gutscheine erstellt."
+    "empty": "Noch keine Gutscheine erstellt.",
+    "badge": "Gutscheine",
+    "refresh": "Aktualisieren",
+    "activate": "Aktivieren",
+    "pause": "Pausieren",
+    "updateFailed": "Gutschein konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noCoupons": "Keine Gutscheine gefunden"
   },
   "couponForm": {
     "headingCreate": "Gutschein erstellen",

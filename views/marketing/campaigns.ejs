@@ -1,90 +1,224 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:campaigns.heading') %></h2>
-                    <a href="/marketing/campaigns/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:campaigns.newCampaign') %></a>
-                </div>
-
-                <div class="glass-card p-3 mb-3">
-                    <form method="GET" action="/marketing/campaigns" class="row g-2 align-items-end">
-                        <div class="col-md-4">
-                            <label class="form-label text-white-50 small mb-1"><%= t('common:words.status') %></label>
-                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="all" <%= currentStatus === 'all' ? 'selected' : '' %>><%= t('marketing:campaigns.allStatuses') %></option>
-                                <option value="draft" <%= currentStatus === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
-                                <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
-                                <option value="paused" <%= currentStatus === 'paused' ? 'selected' : '' %>><%= t('marketing:status.paused') %></option>
-                                <option value="completed" <%= currentStatus === 'completed' ? 'selected' : '' %>><%= t('marketing:status.completed') %></option>
-                                <option value="archived" <%= currentStatus === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label text-white-50 small mb-1"><%= t('marketing:campaigns.search') %></label>
-                            <input type="text" name="search" class="form-control form-control-sm" value="<%= searchQuery %>" placeholder="<%= t('marketing:campaigns.searchPlaceholder') %>">
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-premium-primary btn-sm rounded-pill w-100"><i class="fa-solid fa-filter me-1"></i><%= t('common:words.filter') %></button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.goal') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.budget') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (campaigns.length > 0) { %>
-                                <% campaigns.forEach(campaign => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="text-white fw-semibold"><%= campaign.title %></div>
-                                        <small class="text-muted"><%= formatDate(campaign.starts_at || campaign.created_at) %></small>
-                                    </td>
-                                    <td class="py-3 px-4 text-muted"><%= campaign.goal || '—' %></td>
-                                    <td class="py-3 px-4 text-white"><%= campaign.budget ? formatCurrency(campaign.budget) : '—' %></td>
-                                    <td class="py-3 px-4">
-                                        <span class="badge <%= campaign.status === 'active' ? 'bg-success' : (campaign.status === 'archived' || campaign.status === 'completed' ? 'bg-secondary' : (campaign.status === 'paused' ? 'bg-warning text-dark' : 'bg-info text-dark')) %>"><%= t('marketing:status.' + campaign.status) %></span>
-                                    </td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/campaigns/' + campaign.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/campaigns/' + campaign.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (campaign.status === 'active' ? 'paused' : 'active') + '">', abOn: campaign.status === 'active', abIcon: campaign.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: campaign.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abIcon:'fa-box-archive', abFormAction:'/marketing/campaigns/' + campaign.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="archived">', abTitle:t('marketing:campaigns.archive') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-bullhorn fa-2x mb-2"></i><br>
-                                        <%= t('marketing:campaigns.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:campaigns.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:campaigns.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addCampaignBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:campaigns.newCampaign') %></button>
                     </div>
+                </div>
+
+                <div data-crud-table data-crud-url="/marketing/campaigns">
+                    <%- include('./partials/campaignsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Campaign add / edit modal -->
+<div class="modal fade crud-modal" id="campaignModal" tabindex="-1" aria-labelledby="campaignModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="campaignForm" method="POST" action="/marketing/campaigns" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="campaignModalTitle"><%= t('marketing:campaignForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="cf-title"><%= t('marketing:campaignForm.title') %></label>
+                            <input type="text" class="form-control" id="cf-title" name="title" maxlength="200" placeholder="<%= t('marketing:campaignForm.titlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="cf-goal"><%= t('marketing:campaignForm.goal') %></label>
+                            <input type="text" class="form-control" id="cf-goal" name="goal" maxlength="200">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="cf-budget"><%= t('marketing:campaignForm.budget') %></label>
+                            <input type="number" class="form-control" id="cf-budget" name="budget" min="0" step="0.01">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="cf-starts-at"><%= t('marketing:campaignForm.startDate') %></label>
+                            <input type="datetime-local" class="form-control" id="cf-starts-at" name="starts_at">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="cf-ends-at"><%= t('marketing:campaignForm.endDate') %></label>
+                            <input type="datetime-local" class="form-control" id="cf-ends-at" name="ends_at">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="cf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="cf-status" name="status">
+                                <option value="draft"><%= t('marketing:status.draft') %></option>
+                                <option value="active"><%= t('marketing:status.active') %></option>
+                                <option value="paused"><%= t('marketing:status.paused') %></option>
+                                <option value="completed"><%= t('marketing:status.completed') %></option>
+                                <option value="archived"><%= t('marketing:status.archived') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="cf-description"><%= t('marketing:campaignForm.description') %></label>
+                            <textarea class="form-control" id="cf-description" name="description" rows="3" placeholder="<%= t('marketing:campaignForm.descriptionPlaceholder') %>"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="campaignSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:campaignForm.createCampaign') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('campaignModal');
+    var form = document.getElementById('campaignForm');
+    var titleEl = document.getElementById('campaignModalTitle');
+    var submitBtn = document.getElementById('campaignSubmitBtn');
+    var addBtn = document.getElementById('addCampaignBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:campaignForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:campaignForm.headingEdit') %>',
+        createCampaign: '<%= t('marketing:campaignForm.createCampaign') %>',
+        updateCampaign: '<%= t('marketing:campaignForm.updateCampaign') %>',
+        campaignCreated: '<%= t('marketing:flash.campaignCreated') %>',
+        campaignUpdated: '<%= t('marketing:flash.campaignUpdated') %>',
+        campaignStatusUpdated: '<%= t('marketing:flash.campaignStatusUpdated') %>',
+        archiveTitle: '<%= t('marketing:campaigns.archive') %>',
+        archiveConfirm: '<%= t('marketing:campaigns.archiveConfirm') %>',
+        archiveFailed: '<%= t('marketing:campaigns.archiveFailed') %>',
+        updateFailed: '<%= t('marketing:campaigns.updateFailed') %>',
+        networkError: '<%= t('marketing:campaigns.networkError') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        archive: '<%= t('marketing:campaigns.archive') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/campaigns';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createCampaign;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/campaigns/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.campaign) return;
+                resetForm();
+                var c = data.campaign;
+                form.action = '/marketing/campaigns/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateCampaign;
+
+                form.elements['title'].value = c.title || '';
+                form.elements['goal'].value = c.goal || '';
+                form.elements['budget'].value = c.budget != null ? c.budget : '';
+                form.elements['starts_at'].value = c.starts_at || '';
+                form.elements['ends_at'].value = c.ends_at || '';
+                form.elements['status'].value = c.status || 'draft';
+                form.elements['description'].value = c.description || '';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-campaign]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-campaign-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            var cur = toggle.getAttribute('data-status');
+            var next = cur === 'active' ? 'paused' : 'active';
+            toggle.disabled = true;
+            Crud.post('/marketing/campaigns/' + tid + '/status', { status: next })
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.campaignStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/campaigns' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+
+        var archiveBtn = e.target.closest('[data-archive-campaign]');
+        if (archiveBtn) {
+            e.preventDefault();
+            var aid = archiveBtn.getAttribute('data-id');
+            var atitle = archiveBtn.getAttribute('data-title');
+            Crud.confirm({
+                title: i18n.archiveTitle,
+                messageHtml: i18n.archiveConfirm + ' <strong class="text-white">' + (atitle || '') + '</strong>?',
+                confirmText: i18n.archive,
+                okIcon: 'fa-box-archive'
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/marketing/campaigns/' + aid + '/status', { status: 'archived' })
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.campaignStatusUpdated, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/marketing/campaigns' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.archiveFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.campaignCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/campaigns' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

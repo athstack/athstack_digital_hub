@@ -206,7 +206,16 @@
     "pause": "Pausar",
     "activate": "Activar",
     "archive": "Archivar",
-    "empty": "No se encontraron campañas. Crea tu primera campaña."
+    "empty": "No se encontraron campañas. Crea tu primera campaña.",
+    "badge": "Campañas",
+    "filterStatus": "Filtrar por estado",
+    "refresh": "Actualizar",
+    "archiveConfirm": "¿Archivar esta campaña? Puedes reactivarla más tarde.",
+    "archiveFailed": "No se pudo archivar la campaña.",
+    "updateFailed": "No se pudo actualizar la campaña.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noCampaigns": "No se encontraron campañas",
+    "noCampaignsMatch": "No hay campañas que coincidan con tus filtros."
   },
   "campaignForm": {
     "headingCreate": "Crear campaña",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "Secciones promocionales",
     "newPromotion": "Nueva promoción",
-    "empty": "Aún no se han creado promociones."
+    "empty": "Aún no se han creado promociones.",
+    "badge": "Promociones",
+    "refresh": "Actualizar",
+    "activate": "Activar",
+    "pause": "Pausar",
+    "updateFailed": "No se pudo actualizar la promoción.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noPromotions": "No se encontraron promociones"
   },
   "promotionForm": {
     "headingCreate": "Crear promoción",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "Banners de la página de inicio",
     "newBanner": "Nuevo banner",
-    "empty": "Aún no se han creado banners."
+    "empty": "Aún no se han creado banners.",
+    "badge": "Banners",
+    "refresh": "Actualizar",
+    "activate": "Activar",
+    "pause": "Pausar",
+    "updateFailed": "No se pudo actualizar el banner.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noBanners": "No se encontraron banners"
   },
   "bannerForm": {
     "headingCreate": "Crear banner",
@@ -277,7 +300,14 @@
     "code": "Código",
     "value": "Valor",
     "used": "Usado",
-    "empty": "Aún no se han creado cupones."
+    "empty": "Aún no se han creado cupones.",
+    "badge": "Cupones",
+    "refresh": "Actualizar",
+    "activate": "Activar",
+    "pause": "Pausar",
+    "updateFailed": "No se pudo actualizar el cupón.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noCoupons": "No se encontraron cupones"
   },
   "couponForm": {
     "headingCreate": "Crear cupón",

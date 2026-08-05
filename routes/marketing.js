@@ -14,6 +14,7 @@ router.get('/', requirePermission('view_dashboard'), marketingController.getDash
 router.get('/campaigns', requirePermission('manage_campaigns'), marketingController.getCampaigns);
 router.get('/campaigns/new', requirePermission('manage_campaigns'), marketingController.getCampaignForm);
 router.post('/campaigns', requirePermission('manage_campaigns'), isActive, validateCsrf, marketingController.createCampaign);
+router.get('/campaigns/:id', requirePermission('manage_campaigns'), marketingController.getCampaignDetail);
 router.get('/campaigns/:id/edit', requirePermission('manage_campaigns'), marketingController.getCampaignForm);
 router.post('/campaigns/:id', requirePermission('manage_campaigns'), isActive, validateCsrf, marketingController.updateCampaign);
 router.post('/campaigns/:id/status', requirePermission('manage_campaigns'), isActive, validateCsrf, marketingController.updateCampaignStatus);
@@ -22,6 +23,7 @@ router.post('/campaigns/:id/status', requirePermission('manage_campaigns'), isAc
 router.get('/promotions', requirePermission('manage_promotions'), marketingController.getPromotions);
 router.get('/promotions/new', requirePermission('manage_promotions'), marketingController.getPromotionForm);
 router.post('/promotions', requirePermission('manage_promotions'), isActive, validateCsrf, marketingController.createPromotion);
+router.get('/promotions/:id', requirePermission('manage_promotions'), marketingController.getPromotionDetail);
 router.get('/promotions/:id/edit', requirePermission('manage_promotions'), marketingController.getPromotionForm);
 router.post('/promotions/:id', requirePermission('manage_promotions'), isActive, validateCsrf, marketingController.updatePromotion);
 router.post('/promotions/:id/status', requirePermission('manage_promotions'), isActive, validateCsrf, marketingController.updatePromotionStatus);
@@ -30,6 +32,7 @@ router.post('/promotions/:id/status', requirePermission('manage_promotions'), is
 router.get('/banners', requirePermission('manage_banners'), marketingController.getBanners);
 router.get('/banners/new', requirePermission('manage_banners'), marketingController.getBannerForm);
 router.post('/banners', requirePermission('manage_banners'), isActive, validateCsrf, marketingController.createBanner);
+router.get('/banners/:id', requirePermission('manage_banners'), marketingController.getBannerDetail);
 router.get('/banners/:id/edit', requirePermission('manage_banners'), marketingController.getBannerForm);
 router.post('/banners/:id', requirePermission('manage_banners'), isActive, validateCsrf, marketingController.updateBanner);
 router.post('/banners/:id/status', requirePermission('manage_banners'), isActive, validateCsrf, marketingController.updateBannerStatus);
@@ -38,6 +41,7 @@ router.post('/banners/:id/status', requirePermission('manage_banners'), isActive
 router.get('/coupons', requirePermission('manage_coupons'), marketingController.getCoupons);
 router.get('/coupons/new', requirePermission('manage_coupons'), marketingController.getCouponForm);
 router.post('/coupons', requirePermission('manage_coupons'), isActive, validateCsrf, marketingController.createCoupon);
+router.get('/coupons/:id', requirePermission('manage_coupons'), marketingController.getCouponDetail);
 router.get('/coupons/:id/edit', requirePermission('manage_coupons'), marketingController.getCouponForm);
 router.post('/coupons/:id', requirePermission('manage_coupons'), isActive, validateCsrf, marketingController.updateCoupon);
 router.post('/coupons/:id/status', requirePermission('manage_coupons'), isActive, validateCsrf, marketingController.updateCouponStatus);

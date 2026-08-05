@@ -206,7 +206,16 @@
     "pause": "Sitisha",
     "activate": "Amilisha",
     "archive": "Hifadhi",
-    "empty": "Hakuna kampeni zilizopatikana. Unda kampeni yako ya kwanza."
+    "empty": "Hakuna kampeni zilizopatikana. Unda kampeni yako ya kwanza.",
+    "badge": "Kampeni",
+    "filterStatus": "Chuja kwa hali",
+    "refresh": "Onyesha upya",
+    "archiveConfirm": "Hifadhi kampeni hii? Unaweza kuiwezesha tena baadaye.",
+    "archiveFailed": "Imeshindwa kuhifadhi kampeni.",
+    "updateFailed": "Imeshindwa kusasisha kampeni.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noCampaigns": "Hakuna kampeni zilizopatikana",
+    "noCampaignsMatch": "Hakuna kampeni zinazolingana na vichujio vyako."
   },
   "campaignForm": {
     "headingCreate": "Unda Kampeni",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "Sehemu za Matangazo",
     "newPromotion": "Tangazo Jipya",
-    "empty": "Hakuna matangazo yaliyoundwa bado."
+    "empty": "Hakuna matangazo yaliyoundwa bado.",
+    "badge": "Matangazo",
+    "refresh": "Onyesha upya",
+    "activate": "Wezesha",
+    "pause": "Simamisha",
+    "updateFailed": "Imeshindwa kusasisha tangazo.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noPromotions": "Hakuna matangazo yaliyopatikana"
   },
   "promotionForm": {
     "headingCreate": "Unda Tangazo",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "Mabango ya Ukurasa wa Mwanzo",
     "newBanner": "Bango Jipya",
-    "empty": "Hakuna mabango yaliyoundwa bado."
+    "empty": "Hakuna mabango yaliyoundwa bado.",
+    "badge": "Mabango",
+    "refresh": "Onyesha upya",
+    "activate": "Wezesha",
+    "pause": "Simamisha",
+    "updateFailed": "Imeshindwa kusasisha bango.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noBanners": "Hakuna mabango yaliyopatikana"
   },
   "bannerForm": {
     "headingCreate": "Unda Bango",
@@ -277,7 +300,14 @@
     "code": "Nambari",
     "value": "Thamani",
     "used": "Zimetumika",
-    "empty": "Hakuna kuponi zilizoundwa bado."
+    "empty": "Hakuna kuponi zilizoundwa bado.",
+    "badge": "Kuponi",
+    "refresh": "Onyesha upya",
+    "activate": "Wezesha",
+    "pause": "Simamisha",
+    "updateFailed": "Imeshindwa kusasisha kuponi.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noCoupons": "Hakuna kuponi zilizopatikana"
   },
   "couponForm": {
     "headingCreate": "Unda Kuponi",

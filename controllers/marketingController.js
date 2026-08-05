@@ -4,6 +4,22 @@ const SettingModel = require('../models/SettingModel');
 const { generateSlug } = require('../utils/helpers');
 const { logActivity } = require('../helpers/activityLog');
 
+// Dual-mode request helpers: every CRUD action answers HTML redirects (no-JS)
+// and JSON (fetch + XHR) depending on what the client asked for.
+const isAjaxRequest = (req) =>
+  req.xhr ||
+  (req.headers.accept && req.headers.accept.includes('application/json')) ||
+  req.query.ajax === '1';
+
+const flashFor = (req, type, key, data) => {
+  const message = req.t(key, data);
+  req.flash(type, message);
+  return message;
+};
+
+const rejectWith = (res, status, message, errors) =>
+  res.status(status).json({ success: false, message, errors: errors || undefined });
+
 function pageInfo(req) {
   const pathname = req.originalUrl.split('?')[0];
   const segments = pathname.split('/').filter(Boolean);
@@ -132,7 +148,7 @@ exports.getDashboard = async (req, res, next) => {
 exports.getCampaigns = async (req, res, next) => {
   try {
     const status = req.query.status || null;
-    const search = req.query.search || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
     let sql = 'SELECT * FROM marketing_campaigns';
     const where = [];
     const params = [];
@@ -148,12 +164,47 @@ exports.getCampaigns = async (req, res, next) => {
     if (where.length) sql += ' WHERE ' + where.join(' AND ');
     sql += ' ORDER BY created_at DESC';
     const [campaigns] = await pool.execute(sql, params);
-    res.render('marketing/campaigns', {
+    const viewData = {
       title: req.t('marketing:title.campaigns'),
       campaigns,
       currentStatus: status || 'all',
       searchQuery: search || '',
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/campaignsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, campaigns, total: campaigns.length });
+    }
+    res.render('marketing/campaigns', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCampaignDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.campaignNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM marketing_campaigns WHERE id = ?', [id]);
+    const campaign = rows[0] || null;
+    if (!campaign) return res.status(404).json({ success: false, message: req.t('marketing:flash.campaignNotFound') });
+    res.json({
+      success: true,
+      campaign: {
+        id: campaign.id,
+        title: campaign.title,
+        description: campaign.description || '',
+        goal: campaign.goal || '',
+        budget: campaign.budget,
+        starts_at: campaign.starts_at ? campaign.starts_at.toString().slice(0, 16) : '',
+        ends_at: campaign.ends_at ? campaign.ends_at.toString().slice(0, 16) : '',
+        status: campaign.status || 'draft'
+      }
     });
   } catch (err) {
     next(err);
@@ -187,7 +238,13 @@ exports.getCampaignForm = async (req, res, next) => {
 exports.createCampaign = async (req, res, next) => {
   try {
     const { title, description, goal, budget, starts_at, ends_at } = req.body;
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.campaignRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.campaignRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.campaignRequiredFields'));
       return res.redirect('/marketing/campaigns/new');
     }
@@ -201,7 +258,9 @@ exports.createCampaign = async (req, res, next) => {
       [title, slug, description || null, goal || null, budget || null, starts_at || null, ends_at || null, req.session.userId]
     );
     await logActivity(req, 'create', 'campaign', result.insertId);
-    req.flash('success', req.t('marketing:flash.campaignCreated'));
+    const message = req.t('marketing:flash.campaignCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/campaigns');
   } catch (err) {
     next(err);
@@ -214,7 +273,13 @@ exports.updateCampaign = async (req, res, next) => {
     const { title, description, goal, budget, starts_at, ends_at, status } = req.body;
     const validStatuses = ['draft', 'active', 'paused', 'completed', 'archived'];
     const newStatus = validStatuses.includes(status) ? status : 'draft';
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.campaignRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.campaignRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.campaignRequiredFields'));
       return res.redirect('/marketing/campaigns/' + id + '/edit');
     }
@@ -223,11 +288,14 @@ exports.updateCampaign = async (req, res, next) => {
       [title, description || null, goal || null, budget || null, starts_at || null, ends_at || null, newStatus, id]
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.campaignNotFound'));
       req.flash('error', req.t('marketing:flash.campaignNotFound'));
       return res.redirect('/marketing/campaigns');
     }
     await logActivity(req, 'update', 'campaign', id);
-    req.flash('success', req.t('marketing:flash.campaignUpdated'));
+    const message = req.t('marketing:flash.campaignUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/campaigns');
   } catch (err) {
     next(err);
@@ -239,17 +307,22 @@ exports.updateCampaignStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const validStatuses = ['draft', 'active', 'paused', 'completed', 'archived'];
+    const ajax = isAjaxRequest(req);
     if (!validStatuses.includes(status)) {
+      if (ajax) return rejectWith(res, 422, req.t('marketing:flash.invalidStatus'));
       req.flash('error', req.t('marketing:flash.invalidStatus'));
       return res.redirect('/marketing/campaigns');
     }
     const [result] = await pool.execute('UPDATE marketing_campaigns SET status = ? WHERE id = ?', [status, id]);
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.campaignNotFound'));
       req.flash('error', req.t('marketing:flash.campaignNotFound'));
       return res.redirect('/marketing/campaigns');
     }
     await logActivity(req, status, 'campaign', id);
-    req.flash('success', req.t('marketing:flash.campaignStatusUpdated'));
+    const message = req.t('marketing:flash.campaignStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status });
+    req.flash('success', message);
     res.redirect('/marketing/campaigns');
   } catch (err) {
     next(err);
@@ -265,10 +338,45 @@ exports.getPromotions = async (req, res, next) => {
     const [promotions] = await pool.execute(
       "SELECT * FROM promotions WHERE type = 'section' ORDER BY sort_order ASC, created_at DESC"
     );
-    res.render('marketing/promotions', {
+    const viewData = {
       title: req.t('marketing:title.promotions'),
       promotions,
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/promotionsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, promotions, total: promotions.length });
+    }
+    res.render('marketing/promotions', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getPromotionDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.promotionNotFound') });
+    const [rows] = await pool.execute("SELECT * FROM promotions WHERE id = ? AND type = 'section'", [id]);
+    const promotion = rows[0] || null;
+    if (!promotion) return res.status(404).json({ success: false, message: req.t('marketing:flash.promotionNotFound') });
+    res.json({
+      success: true,
+      promotion: {
+        id: promotion.id,
+        title: promotion.title,
+        subtitle: promotion.subtitle || '',
+        link_url: promotion.link_url || '',
+        sort_order: promotion.sort_order || 0,
+        start_date: promotion.start_date ? promotion.start_date.toString().slice(0, 10) : '',
+        end_date: promotion.end_date ? promotion.end_date.toString().slice(0, 10) : '',
+        status: promotion.status || 'active'
+      }
     });
   } catch (err) {
     next(err);
@@ -303,7 +411,13 @@ exports.getPromotionForm = async (req, res, next) => {
 exports.createPromotion = async (req, res, next) => {
   try {
     const { title, subtitle, link_url, sort_order, start_date, end_date } = req.body;
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.promotionRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.promotionRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.promotionRequiredFields'));
       return res.redirect('/marketing/promotions/new');
     }
@@ -312,7 +426,9 @@ exports.createPromotion = async (req, res, next) => {
       [title, subtitle || null, 'section', link_url || null, parseInt(sort_order) || 0, start_date || null, end_date || null, req.session.userId]
     );
     await logActivity(req, 'create', 'promotion', result.insertId);
-    req.flash('success', req.t('marketing:flash.promotionCreated'));
+    const message = req.t('marketing:flash.promotionCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/promotions');
   } catch (err) {
     next(err);
@@ -324,20 +440,29 @@ exports.updatePromotion = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { title, subtitle, link_url, sort_order, start_date, end_date, status } = req.body;
     const newStatus = status === 'inactive' ? 'inactive' : 'active';
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.promotionRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.promotionRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.promotionRequiredFields'));
       return res.redirect('/marketing/promotions/' + id + '/edit');
     }
     const [result] = await pool.execute(
-      'UPDATE promotions SET title = ?, subtitle = ?, link_url = ?, sort_order = ?, start_date = ?, end_date = ?, status = ? WHERE id = ?',
-      [title, subtitle || null, link_url || null, parseInt(sort_order) || 0, start_date || null, end_date || null, newStatus, id]
+      'UPDATE promotions SET title = ?, subtitle = ?, link_url = ?, sort_order = ?, start_date = ?, end_date = ?, status = ? WHERE id = ? AND type = ?',
+      [title, subtitle || null, link_url || null, parseInt(sort_order) || 0, start_date || null, end_date || null, newStatus, id, 'section']
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.promotionNotFound'));
       req.flash('error', req.t('marketing:flash.promotionNotFound'));
       return res.redirect('/marketing/promotions');
     }
     await logActivity(req, 'update', 'promotion', id);
-    req.flash('success', req.t('marketing:flash.promotionUpdated'));
+    const message = req.t('marketing:flash.promotionUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/promotions');
   } catch (err) {
     next(err);
@@ -349,14 +474,18 @@ exports.updatePromotionStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const [rows] = await pool.execute('SELECT * FROM promotions WHERE id = ?', [id]);
     const promo = rows[0];
+    const ajax = isAjaxRequest(req);
     if (!promo) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.promotionNotFound'));
       req.flash('error', req.t('marketing:flash.promotionNotFound'));
       return res.redirect('/marketing/promotions');
     }
     const newStatus = promo.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE promotions SET status = ? WHERE id = ?', [newStatus, id]);
     await logActivity(req, newStatus === 'active' ? 'activate' : 'deactivate', 'promotion', id);
-    req.flash('success', req.t('marketing:flash.promotionStatusUpdated'));
+    const message = req.t('marketing:flash.promotionStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status: newStatus });
+    req.flash('success', message);
     res.redirect('/marketing/promotions');
   } catch (err) {
     next(err);
@@ -372,10 +501,46 @@ exports.getBanners = async (req, res, next) => {
     const [banners] = await pool.execute(
       "SELECT * FROM promotions WHERE type = 'banner' ORDER BY sort_order ASC, created_at DESC"
     );
-    res.render('marketing/banners', {
+    const viewData = {
       title: req.t('marketing:title.banners'),
       banners,
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/bannersTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, banners, total: banners.length });
+    }
+    res.render('marketing/banners', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getBannerDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.bannerNotFound') });
+    const [rows] = await pool.execute("SELECT * FROM promotions WHERE id = ? AND type = 'banner'", [id]);
+    const banner = rows[0] || null;
+    if (!banner) return res.status(404).json({ success: false, message: req.t('marketing:flash.bannerNotFound') });
+    res.json({
+      success: true,
+      banner: {
+        id: banner.id,
+        title: banner.title,
+        subtitle: banner.subtitle || '',
+        banner_image: banner.banner_image || '',
+        link_url: banner.link_url || '',
+        sort_order: banner.sort_order || 0,
+        start_date: banner.start_date ? banner.start_date.toString().slice(0, 10) : '',
+        end_date: banner.end_date ? banner.end_date.toString().slice(0, 10) : '',
+        status: banner.status || 'active'
+      }
     });
   } catch (err) {
     next(err);
@@ -409,7 +574,13 @@ exports.getBannerForm = async (req, res, next) => {
 exports.createBanner = async (req, res, next) => {
   try {
     const { title, subtitle, banner_image, link_url, sort_order, start_date, end_date } = req.body;
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.bannerRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.bannerRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.bannerRequiredFields'));
       return res.redirect('/marketing/banners/new');
     }
@@ -418,7 +589,9 @@ exports.createBanner = async (req, res, next) => {
       [title, subtitle || null, 'banner', banner_image || null, link_url || null, parseInt(sort_order) || 0, start_date || null, end_date || null, req.session.userId]
     );
     await logActivity(req, 'create', 'banner', result.insertId);
-    req.flash('success', req.t('marketing:flash.bannerCreated'));
+    const message = req.t('marketing:flash.bannerCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/banners');
   } catch (err) {
     next(err);
@@ -430,7 +603,13 @@ exports.updateBanner = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { title, subtitle, banner_image, link_url, sort_order, start_date, end_date, status } = req.body;
     const newStatus = status === 'inactive' ? 'inactive' : 'active';
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.bannerRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.bannerRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.bannerRequiredFields'));
       return res.redirect('/marketing/banners/' + id + '/edit');
     }
@@ -439,11 +618,14 @@ exports.updateBanner = async (req, res, next) => {
       [title, subtitle || null, banner_image || null, link_url || null, parseInt(sort_order) || 0, start_date || null, end_date || null, newStatus, id, 'banner']
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.bannerNotFound'));
       req.flash('error', req.t('marketing:flash.bannerNotFound'));
       return res.redirect('/marketing/banners');
     }
     await logActivity(req, 'update', 'banner', id);
-    req.flash('success', req.t('marketing:flash.bannerUpdated'));
+    const message = req.t('marketing:flash.bannerUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/banners');
   } catch (err) {
     next(err);
@@ -455,14 +637,18 @@ exports.updateBannerStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const [rows] = await pool.execute('SELECT * FROM promotions WHERE id = ?', [id]);
     const banner = rows[0];
+    const ajax = isAjaxRequest(req);
     if (!banner || banner.type !== 'banner') {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.bannerNotFound'));
       req.flash('error', req.t('marketing:flash.bannerNotFound'));
       return res.redirect('/marketing/banners');
     }
     const newStatus = banner.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE promotions SET status = ? WHERE id = ?', [newStatus, id]);
     await logActivity(req, newStatus === 'active' ? 'activate' : 'deactivate', 'banner', id);
-    req.flash('success', req.t('marketing:flash.bannerStatusUpdated'));
+    const message = req.t('marketing:flash.bannerStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status: newStatus });
+    req.flash('success', message);
     res.redirect('/marketing/banners');
   } catch (err) {
     next(err);
@@ -476,10 +662,47 @@ exports.updateBannerStatus = async (req, res, next) => {
 exports.getCoupons = async (req, res, next) => {
   try {
     const [coupons] = await pool.execute('SELECT * FROM coupons ORDER BY created_at DESC');
-    res.render('marketing/coupons', {
+    const viewData = {
       title: req.t('marketing:title.coupons'),
       coupons,
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/couponsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, coupons, total: coupons.length });
+    }
+    res.render('marketing/coupons', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCouponDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.couponNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM coupons WHERE id = ?', [id]);
+    const coupon = rows[0] || null;
+    if (!coupon) return res.status(404).json({ success: false, message: req.t('marketing:flash.couponNotFound') });
+    res.json({
+      success: true,
+      coupon: {
+        id: coupon.id,
+        code: coupon.code,
+        name: coupon.name || '',
+        type: coupon.type || 'percentage',
+        value: coupon.value,
+        min_order: coupon.min_order || '',
+        max_uses: coupon.max_uses || '',
+        starts_at: coupon.starts_at ? coupon.starts_at.toString().slice(0, 16) : '',
+        expires_at: coupon.expires_at ? coupon.expires_at.toString().slice(0, 16) : '',
+        status: coupon.status || 'active'
+      }
     });
   } catch (err) {
     next(err);
@@ -513,13 +736,21 @@ exports.getCouponForm = async (req, res, next) => {
 exports.createCoupon = async (req, res, next) => {
   try {
     const { code, name, type, value, min_order, max_uses, starts_at, expires_at } = req.body;
-    if (!code || !value) {
+    const cleanCode = String(code || '').trim().toUpperCase();
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!cleanCode) errors.code = req.t('marketing:flash.couponRequiredFields');
+    if (!value || isNaN(parseFloat(value))) errors.value = req.t('marketing:flash.couponRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.couponRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.couponRequiredFields'));
       return res.redirect('/marketing/coupons/new');
     }
-    const cleanCode = String(code).trim().toUpperCase();
     const [existing] = await pool.execute('SELECT id FROM coupons WHERE code = ?', [cleanCode]);
     if (existing.length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('marketing:flash.couponCodeExists'), { code: req.t('marketing:flash.couponCodeExists') });
       req.flash('error', req.t('marketing:flash.couponCodeExists'));
       return res.redirect('/marketing/coupons/new');
     }
@@ -529,7 +760,9 @@ exports.createCoupon = async (req, res, next) => {
       [cleanCode, name || null, couponType, value, min_order || null, max_uses || null, starts_at || null, expires_at || null, req.session.userId]
     );
     await logActivity(req, 'create', 'coupon', result.insertId);
-    req.flash('success', req.t('marketing:flash.couponCreated'));
+    const message = req.t('marketing:flash.couponCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/coupons');
   } catch (err) {
     next(err);
@@ -540,13 +773,21 @@ exports.updateCoupon = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const { code, name, type, value, min_order, max_uses, starts_at, expires_at, status } = req.body;
-    if (!code || !value) {
+    const cleanCode = String(code || '').trim().toUpperCase();
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!cleanCode) errors.code = req.t('marketing:flash.couponRequiredFields');
+    if (!value || isNaN(parseFloat(value))) errors.value = req.t('marketing:flash.couponRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.couponRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.couponRequiredFields'));
       return res.redirect('/marketing/coupons/' + id + '/edit');
     }
-    const cleanCode = String(code).trim().toUpperCase();
     const [existing] = await pool.execute('SELECT id FROM coupons WHERE code = ? AND id != ?', [cleanCode, id]);
     if (existing.length > 0) {
+      if (ajax) return rejectWith(res, 422, req.t('marketing:flash.couponCodeExists'), { code: req.t('marketing:flash.couponCodeExists') });
       req.flash('error', req.t('marketing:flash.couponCodeExists'));
       return res.redirect('/marketing/coupons/' + id + '/edit');
     }
@@ -557,11 +798,14 @@ exports.updateCoupon = async (req, res, next) => {
       [cleanCode, name || null, couponType, value, min_order || null, max_uses || null, starts_at || null, expires_at || null, newStatus, id]
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.couponNotFound'));
       req.flash('error', req.t('marketing:flash.couponNotFound'));
       return res.redirect('/marketing/coupons');
     }
     await logActivity(req, 'update', 'coupon', id);
-    req.flash('success', req.t('marketing:flash.couponUpdated'));
+    const message = req.t('marketing:flash.couponUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/coupons');
   } catch (err) {
     next(err);
@@ -573,14 +817,18 @@ exports.updateCouponStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const [rows] = await pool.execute('SELECT * FROM coupons WHERE id = ?', [id]);
     const coupon = rows[0];
+    const ajax = isAjaxRequest(req);
     if (!coupon) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.couponNotFound'));
       req.flash('error', req.t('marketing:flash.couponNotFound'));
       return res.redirect('/marketing/coupons');
     }
     const newStatus = coupon.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE coupons SET status = ? WHERE id = ?', [newStatus, id]);
     await logActivity(req, newStatus === 'active' ? 'activate' : 'deactivate', 'coupon', id);
-    req.flash('success', req.t('marketing:flash.couponStatusUpdated'));
+    const message = req.t('marketing:flash.couponStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status: newStatus });
+    req.flash('success', message);
     res.redirect('/marketing/coupons');
   } catch (err) {
     next(err);

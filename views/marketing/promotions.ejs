@@ -1,60 +1,190 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-tags me-2 text-primary"></i><%= t('marketing:promotions.heading') %></h2>
-                    <a href="/marketing/promotions/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:promotions.newPromotion') %></a>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:promotions.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-tags me-2 text-primary"></i><%= t('marketing:promotions.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addPromotionBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:promotions.newPromotion') %></button>
+                    </div>
                 </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.subtitle') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (promotions.length > 0) { %>
-                                <% promotions.forEach(promo => { %>
-                                <tr>
-                                    <td class="py-3 px-4 text-white fw-semibold"><%= promo.title %></td>
-                                    <td class="py-3 px-4 text-muted"><%= promo.subtitle || '—' %></td>
-                                    <td class="py-3 px-4"><span class="badge <%= promo.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + promo.status) %></span></td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/promotions/' + promo.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/promotions/' + promo.id + '/status', abFormCsrf:csrfToken, abOn: promo.status === 'active', abIcon: promo.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: promo.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-tags fa-2x mb-2"></i><br>
-                                        <%= t('marketing:promotions.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/promotions">
+                    <%- include('./partials/promotionsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Promotion add / edit modal -->
+<div class="modal fade crud-modal" id="promotionModal" tabindex="-1" aria-labelledby="promotionModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="promotionForm" method="POST" action="/marketing/promotions" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="promotionModalTitle"><%= t('marketing:promotionForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="pf-title"><%= t('marketing:promotionForm.title') %></label>
+                            <input type="text" class="form-control" id="pf-title" name="title" maxlength="200" placeholder="<%= t('marketing:promotionForm.titlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-subtitle"><%= t('marketing:promotionForm.subtitle') %></label>
+                            <input type="text" class="form-control" id="pf-subtitle" name="subtitle" maxlength="300" placeholder="<%= t('marketing:promotionForm.subtitlePlaceholder') %>">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-link-url"><%= t('marketing:promotionForm.linkUrl') %></label>
+                            <input type="text" class="form-control" id="pf-link-url" name="link_url" maxlength="500">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-sort-order"><%= t('marketing:promotionForm.sortOrder') %></label>
+                            <input type="number" class="form-control" id="pf-sort-order" name="sort_order" min="0" step="1" value="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="pf-status" name="status">
+                                <option value="active"><%= t('marketing:status.active') %></option>
+                                <option value="inactive"><%= t('marketing:status.inactive') %></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-start-date"><%= t('marketing:promotionForm.startDate') %></label>
+                            <input type="date" class="form-control" id="pf-start-date" name="start_date">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-end-date"><%= t('marketing:promotionForm.endDate') %></label>
+                            <input type="date" class="form-control" id="pf-end-date" name="end_date">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="promotionSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:promotionForm.createPromotion') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('promotionModal');
+    var form = document.getElementById('promotionForm');
+    var titleEl = document.getElementById('promotionModalTitle');
+    var submitBtn = document.getElementById('promotionSubmitBtn');
+    var addBtn = document.getElementById('addPromotionBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:promotionForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:promotionForm.headingEdit') %>',
+        createPromotion: '<%= t('marketing:promotionForm.createPromotion') %>',
+        updatePromotion: '<%= t('marketing:promotionForm.updatePromotion') %>',
+        promotionCreated: '<%= t('marketing:flash.promotionCreated') %>',
+        promotionUpdated: '<%= t('marketing:flash.promotionUpdated') %>',
+        promotionStatusUpdated: '<%= t('marketing:flash.promotionStatusUpdated') %>',
+        updateFailed: '<%= t('marketing:promotions.updateFailed') %>',
+        networkError: '<%= t('marketing:promotions.networkError') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/promotions';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createPromotion;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/promotions/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.promotion) return;
+                resetForm();
+                var p = data.promotion;
+                form.action = '/marketing/promotions/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updatePromotion;
+
+                form.elements['title'].value = p.title || '';
+                form.elements['subtitle'].value = p.subtitle || '';
+                form.elements['link_url'].value = p.link_url || '';
+                form.elements['sort_order'].value = p.sort_order != null ? p.sort_order : 0;
+                form.elements['status'].value = p.status || 'active';
+                form.elements['start_date'].value = p.start_date || '';
+                form.elements['end_date'].value = p.end_date || '';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-promotion]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-promotion-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            toggle.disabled = true;
+            Crud.post('/marketing/promotions/' + tid + '/status')
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.promotionStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/promotions' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.promotionCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/promotions' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

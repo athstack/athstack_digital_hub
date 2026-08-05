@@ -206,7 +206,16 @@
     "pause": "暂停",
     "activate": "启用",
     "archive": "归档",
-    "empty": "未找到活动。创建你的第一个活动吧。"
+    "empty": "未找到活动。创建你的第一个活动吧。",
+    "badge": "活动",
+    "filterStatus": "按状态筛选",
+    "refresh": "刷新",
+    "archiveConfirm": "归档此活动？您可以稍后重新激活。",
+    "archiveFailed": "无法归档活动。",
+    "updateFailed": "无法更新活动。",
+    "networkError": "网络错误，请重试。",
+    "noCampaigns": "未找到活动",
+    "noCampaignsMatch": "没有符合筛选条件的活动。"
   },
   "campaignForm": {
     "headingCreate": "创建活动",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "促销区块",
     "newPromotion": "新建促销",
-    "empty": "暂无已创建的促销。"
+    "empty": "暂无已创建的促销。",
+    "badge": "促销",
+    "refresh": "刷新",
+    "activate": "激活",
+    "pause": "暂停",
+    "updateFailed": "无法更新促销。",
+    "networkError": "网络错误，请重试。",
+    "noPromotions": "未找到促销"
   },
   "promotionForm": {
     "headingCreate": "创建促销",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "首页横幅",
     "newBanner": "新建横幅",
-    "empty": "暂无已创建的横幅。"
+    "empty": "暂无已创建的横幅。",
+    "badge": "横幅",
+    "refresh": "刷新",
+    "activate": "激活",
+    "pause": "暂停",
+    "updateFailed": "无法更新横幅。",
+    "networkError": "网络错误，请重试。",
+    "noBanners": "未找到横幅"
   },
   "bannerForm": {
     "headingCreate": "创建横幅",
@@ -277,7 +300,14 @@
     "code": "代码",
     "value": "价值",
     "used": "已使用",
-    "empty": "暂无已创建的优惠券。"
+    "empty": "暂无已创建的优惠券。",
+    "badge": "优惠券",
+    "refresh": "刷新",
+    "activate": "激活",
+    "pause": "暂停",
+    "updateFailed": "无法更新优惠券。",
+    "networkError": "网络错误，请重试。",
+    "noCoupons": "未找到优惠券"
   },
   "couponForm": {
     "headingCreate": "创建优惠券",

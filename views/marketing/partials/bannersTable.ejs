@@ -1,0 +1,48 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow"></div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:banners.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (banners && banners.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:words.image') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% banners.forEach(banner => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= banner.title %></div>
+                        <% if (banner.subtitle) { %><small class="text-white-50"><%= banner.subtitle %></small><% } %>
+                    </td>
+                    <td>
+                        <% if (banner.banner_image) { %>
+                        <img src="<%= imageUrl(banner.banner_image, 'promotions') %>" alt="" style="height:40px;width:80px;object-fit:cover;border-radius:6px;">
+                        <% } else { %><span class="text-white-50">—</span><% } %>
+                    </td>
+                    <td>
+                        <span class="badge <%= banner.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + banner.status, { defaultValue: banner.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-banner data-id="' + banner.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: banner.status === 'active', abIcon: banner.status === 'active' ? 'fa-pause' : 'fa-play', abAttrs:'data-toggle-banner-status data-id="' + banner.id + '" data-status="' + banner.status + '"', abTitle: banner.status === 'active' ? t('marketing:banners.pause') : t('marketing:banners.activate') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-flag fa-4x mb-3"></i>
+    <h4 class="text-white fw-bold"><%= t('marketing:banners.noBanners') %></h4>
+    <p class="text-white-50"><%= t('marketing:banners.empty') %></p>
+</div>
+<% } %>

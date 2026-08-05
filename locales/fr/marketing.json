@@ -206,7 +206,16 @@
     "pause": "Mettre en pause",
     "activate": "Activer",
     "archive": "Archiver",
-    "empty": "Aucune campagne trouvée. Créez votre première campagne."
+    "empty": "Aucune campagne trouvée. Créez votre première campagne.",
+    "badge": "Campagnes",
+    "filterStatus": "Filtrer par statut",
+    "refresh": "Actualiser",
+    "archiveConfirm": "Archiver cette campagne ? Vous pourrez la réactiver plus tard.",
+    "archiveFailed": "Impossible d'archiver la campagne.",
+    "updateFailed": "Impossible de mettre à jour la campagne.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noCampaigns": "Aucune campagne trouvée",
+    "noCampaignsMatch": "Aucune campagne ne correspond à vos filtres."
   },
   "campaignForm": {
     "headingCreate": "Créer une campagne",
@@ -234,7 +243,14 @@
   "promotions": {
     "heading": "Sections promotionnelles",
     "newPromotion": "Nouvelle promotion",
-    "empty": "Aucune promotion créée pour l'instant."
+    "empty": "Aucune promotion créée pour l'instant.",
+    "badge": "Promotions",
+    "refresh": "Actualiser",
+    "activate": "Activer",
+    "pause": "Mettre en pause",
+    "updateFailed": "Impossible de mettre à jour la promotion.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noPromotions": "Aucune promotion trouvée"
   },
   "promotionForm": {
     "headingCreate": "Créer une promotion",
@@ -253,7 +269,14 @@
   "banners": {
     "heading": "Bannières d'accueil",
     "newBanner": "Nouvelle bannière",
-    "empty": "Aucune bannière créée pour l'instant."
+    "empty": "Aucune bannière créée pour l'instant.",
+    "badge": "Bannières",
+    "refresh": "Actualiser",
+    "activate": "Activer",
+    "pause": "Mettre en pause",
+    "updateFailed": "Impossible de mettre à jour la bannière.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noBanners": "Aucune bannière trouvée"
   },
   "bannerForm": {
     "headingCreate": "Créer une bannière",
@@ -277,7 +300,14 @@
     "code": "Code",
     "value": "Valeur",
     "used": "Utilisé",
-    "empty": "Aucun coupon créé pour l'instant."
+    "empty": "Aucun coupon créé pour l'instant.",
+    "badge": "Coupons",
+    "refresh": "Actualiser",
+    "activate": "Activer",
+    "pause": "Mettre en pause",
+    "updateFailed": "Impossible de mettre à jour le coupon.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noCoupons": "Aucun coupon trouvé"
   },
   "couponForm": {
     "headingCreate": "Créer un coupon",

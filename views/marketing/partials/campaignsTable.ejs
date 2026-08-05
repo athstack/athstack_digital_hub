@@ -1,0 +1,71 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:campaigns.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:campaigns.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('marketing:campaigns.filterStatus') %>">
+        <option value=""><%= t('marketing:campaigns.filterStatus') %></option>
+        <option value="draft" <%= currentStatus === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
+        <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+        <option value="paused" <%= currentStatus === 'paused' ? 'selected' : '' %>><%= t('marketing:status.paused') %></option>
+        <option value="completed" <%= currentStatus === 'completed' ? 'selected' : '' %>><%= t('marketing:status.completed') %></option>
+        <option value="archived" <%= currentStatus === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:campaigns.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (campaigns && campaigns.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:words.goal') %></th><th><%= t('marketing:words.budget') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% campaigns.forEach(campaign => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= campaign.title %></div>
+                        <small class="text-white-50"><%= formatDate(campaign.starts_at || campaign.created_at) %></small>
+                    </td>
+                    <td class="text-white-50"><%= campaign.goal || '—' %></td>
+                    <td class="text-white"><%= campaign.budget ? formatCurrency(campaign.budget) : '—' %></td>
+                    <td>
+                        <% var statusColors = { active: 'bg-success', paused: 'bg-warning text-dark', completed: 'bg-secondary', archived: 'bg-secondary', draft: 'bg-info text-dark' }; %>
+                        <span class="badge <%= statusColors[campaign.status] || 'bg-secondary' %>"><%= t('marketing:status.' + campaign.status, { defaultValue: campaign.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-campaign data-id="' + campaign.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: campaign.status === 'active', abIcon: campaign.status === 'active' ? 'fa-pause' : 'fa-play', abAttrs:'data-toggle-campaign-status data-id="' + campaign.id + '" data-status="' + campaign.status + '"', abTitle: campaign.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-box-archive', abAttrs:'data-archive-campaign data-id="' + campaign.id + '" data-title="' + escapeAttr(campaign.title) + '"', abTitle:t('marketing:campaigns.archive') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-bullhorn fa-4x mb-3"></i>
+    <% if (searchQuery || currentStatus !== 'all') { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:campaigns.noCampaigns') %></h4>
+    <p class="text-white-50"><%= t('marketing:campaigns.noCampaignsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:campaigns.noCampaigns') %></h4>
+    <p class="text-white-50"><%= t('marketing:campaigns.empty') %></p>
+    <% } %>
+</div>
+<% } %>

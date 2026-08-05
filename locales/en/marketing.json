@@ -198,14 +198,23 @@
     "noUpcomingPromotions": "No upcoming promotions scheduled."
   },
   "campaigns": {
+    "badge": "Campaigns",
     "heading": "Marketing Campaigns",
     "newCampaign": "New Campaign",
     "allStatuses": "All Statuses",
     "search": "Search",
     "searchPlaceholder": "Search campaigns...",
+    "filterStatus": "Filter by status",
+    "refresh": "Refresh",
     "pause": "Pause",
     "activate": "Activate",
     "archive": "Archive",
+    "archiveConfirm": "Archive this campaign? You can reactivate it later.",
+    "archiveFailed": "Could not archive the campaign.",
+    "updateFailed": "Could not update the campaign.",
+    "networkError": "Network error. Please try again.",
+    "noCampaigns": "No campaigns found",
+    "noCampaignsMatch": "No campaigns match your filters.",
     "empty": "No campaigns found. Create your first campaign to get started."
   },
   "campaignForm": {
@@ -232,8 +241,15 @@
     "empty": "No campaigns found."
   },
   "promotions": {
+    "badge": "Promotions",
     "heading": "Promotional Sections",
     "newPromotion": "New Promotion",
+    "refresh": "Refresh",
+    "activate": "Activate",
+    "pause": "Pause",
+    "updateFailed": "Could not update the promotion.",
+    "networkError": "Network error. Please try again.",
+    "noPromotions": "No promotions found",
     "empty": "No promotions created yet."
   },
   "promotionForm": {
@@ -251,8 +267,15 @@
     "updatePromotion": "Update Promotion"
   },
   "banners": {
+    "badge": "Banners",
     "heading": "Homepage Banners",
     "newBanner": "New Banner",
+    "refresh": "Refresh",
+    "activate": "Activate",
+    "pause": "Pause",
+    "updateFailed": "Could not update the banner.",
+    "networkError": "Network error. Please try again.",
+    "noBanners": "No banners found",
     "empty": "No banners created yet."
   },
   "bannerForm": {
@@ -272,11 +295,18 @@
     "updateBanner": "Update Banner"
   },
   "coupons": {
+    "badge": "Coupons",
     "heading": "Discount Coupons",
     "newCoupon": "New Coupon",
     "code": "Code",
     "value": "Value",
     "used": "Used",
+    "refresh": "Refresh",
+    "activate": "Activate",
+    "pause": "Pause",
+    "updateFailed": "Could not update the coupon.",
+    "networkError": "Network error. Please try again.",
+    "noCoupons": "No coupons found",
     "empty": "No coupons created yet."
   },
   "couponForm": {

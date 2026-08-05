@@ -1,67 +1,195 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-flag me-2 text-primary"></i><%= t('marketing:banners.heading') %></h2>
-                    <a href="/marketing/banners/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:banners.newBanner') %></a>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:banners.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-flag me-2 text-primary"></i><%= t('marketing:banners.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addBannerBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:banners.newBanner') %></button>
+                    </div>
                 </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.image') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (banners.length > 0) { %>
-                                <% banners.forEach(banner => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="text-white fw-semibold"><%= banner.title %></div>
-                                        <% if (banner.subtitle) { %><small class="text-muted"><%= banner.subtitle %></small><% } %>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <% if (banner.banner_image) { %>
-                                        <img src="<%= imageUrl(banner.banner_image, 'promotions') %>" alt="" style="height:40px;width:80px;object-fit:cover;border-radius:6px;">
-                                        <% } else { %><span class="text-muted">—</span><% } %>
-                                    </td>
-                                    <td class="py-3 px-4"><span class="badge <%= banner.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + banner.status) %></span></td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/banners/' + banner.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/banners/' + banner.id + '/status', abFormCsrf:csrfToken, abOn: banner.status === 'active', abIcon: banner.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: banner.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-flag fa-2x mb-2"></i><br>
-                                        <%= t('marketing:banners.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/banners">
+                    <%- include('./partials/bannersTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Banner add / edit modal -->
+<div class="modal fade crud-modal" id="bannerModal" tabindex="-1" aria-labelledby="bannerModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="bannerForm" method="POST" action="/marketing/banners" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bannerModalTitle"><%= t('marketing:bannerForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="bf-title"><%= t('marketing:bannerForm.title') %></label>
+                            <input type="text" class="form-control" id="bf-title" name="title" maxlength="200" placeholder="<%= t('marketing:bannerForm.titlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="bf-subtitle"><%= t('marketing:bannerForm.subtitle') %></label>
+                            <input type="text" class="form-control" id="bf-subtitle" name="subtitle" maxlength="300" placeholder="<%= t('marketing:bannerForm.subtitlePlaceholder') %>">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="bf-banner-image"><%= t('marketing:bannerForm.imagePath') %></label>
+                            <input type="text" class="form-control" id="bf-banner-image" name="banner_image" maxlength="500" placeholder="<%= t('marketing:bannerForm.imagePathPlaceholder') %>">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="bf-link-url"><%= t('marketing:bannerForm.linkUrl') %></label>
+                            <input type="text" class="form-control" id="bf-link-url" name="link_url" maxlength="500">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="bf-sort-order"><%= t('marketing:bannerForm.sortOrder') %></label>
+                            <input type="number" class="form-control" id="bf-sort-order" name="sort_order" min="0" step="1" value="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="bf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="bf-status" name="status">
+                                <option value="active"><%= t('marketing:status.active') %></option>
+                                <option value="inactive"><%= t('marketing:status.inactive') %></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="bf-start-date"><%= t('marketing:bannerForm.startDate') %></label>
+                            <input type="date" class="form-control" id="bf-start-date" name="start_date">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="bf-end-date"><%= t('marketing:bannerForm.endDate') %></label>
+                            <input type="date" class="form-control" id="bf-end-date" name="end_date">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="bannerSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:bannerForm.createBanner') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('bannerModal');
+    var form = document.getElementById('bannerForm');
+    var titleEl = document.getElementById('bannerModalTitle');
+    var submitBtn = document.getElementById('bannerSubmitBtn');
+    var addBtn = document.getElementById('addBannerBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:bannerForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:bannerForm.headingEdit') %>',
+        createBanner: '<%= t('marketing:bannerForm.createBanner') %>',
+        updateBanner: '<%= t('marketing:bannerForm.updateBanner') %>',
+        bannerCreated: '<%= t('marketing:flash.bannerCreated') %>',
+        bannerUpdated: '<%= t('marketing:flash.bannerUpdated') %>',
+        bannerStatusUpdated: '<%= t('marketing:flash.bannerStatusUpdated') %>',
+        updateFailed: '<%= t('marketing:banners.updateFailed') %>',
+        networkError: '<%= t('marketing:banners.networkError') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/banners';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createBanner;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/banners/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.banner) return;
+                resetForm();
+                var b = data.banner;
+                form.action = '/marketing/banners/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateBanner;
+
+                form.elements['title'].value = b.title || '';
+                form.elements['subtitle'].value = b.subtitle || '';
+                form.elements['banner_image'].value = b.banner_image || '';
+                form.elements['link_url'].value = b.link_url || '';
+                form.elements['sort_order'].value = b.sort_order != null ? b.sort_order : 0;
+                form.elements['status'].value = b.status || 'active';
+                form.elements['start_date'].value = b.start_date || '';
+                form.elements['end_date'].value = b.end_date || '';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-banner]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-banner-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            toggle.disabled = true;
+            Crud.post('/marketing/banners/' + tid + '/status')
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.bannerStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/banners' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.bannerCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/banners' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>
