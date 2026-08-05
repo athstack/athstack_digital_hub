@@ -172,7 +172,15 @@
     "settingsUpdated": "Paramètres marketing mis à jour avec succès.",
     "invalidRating": "La note doit être comprise entre 1 et 5.",
     "testimonialUpdated": "Témoignage mis à jour avec succès.",
-    "announcementUpdated": "Annonce mise à jour avec succès."
+    "announcementUpdated": "Annonce mise à jour avec succès.",
+    "productFeatured": "Produit mis en avant sur la page d'accueil.",
+    "productUnfeatured": "Produit retiré des mises en avant de la page d'accueil.",
+    "productPromoted": "Produit marqué comme promu.",
+    "productUnpromoted": "Le produit n'est plus promu.",
+    "testimonialNotFound": "Témoignage introuvable.",
+    "reviewHidden": "Avis masqué au public.",
+    "reviewUnhidden": "L'avis est désormais visible du public.",
+    "feedbackNotFound": "Message de retour introuvable."
   },
   "dashboard": {
     "heading": "Centre de commandement marketing",
@@ -335,7 +343,18 @@
     "featured": "En vedette",
     "promoted": "Promu",
     "athstack": "Promu TechBridge",
-    "empty": "Aucun produit disponible à mettre en avant."
+    "empty": "Aucun produit disponible à mettre en avant.",
+    "searchPlaceholder": "Rechercher des produits...",
+    "refresh": "Actualiser",
+    "view": "Voir les détails",
+    "detailTitle": "Détails du produit",
+    "category": "Catégorie",
+    "price": "Prix",
+    "sold": "Ventes totales",
+    "updateFailed": "Impossible de mettre à jour le produit.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noProducts": "Aucun produit trouvé",
+    "noProductsMatch": "Aucun produit ne correspond à votre recherche."
   },
   "blog": {
     "heading": "Articles de blog",
@@ -426,14 +445,31 @@
     "unhide": "Afficher",
     "hidden": "Masqué",
     "untitled": "Sans titre",
-    "empty": "Aucun avis à traiter pour l'instant."
+    "empty": "Aucun avis à traiter pour l'instant.",
+    "searchPlaceholder": "Rechercher des avis...",
+    "refresh": "Actualiser",
+    "detailTitle": "Détails de l'avis",
+    "author": "Client",
+    "sendReply": "Envoyer la réponse",
+    "updateFailed": "Impossible de mettre à jour l'avis.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noReviews": "Aucun avis trouvé",
+    "noReviewsMatch": "Aucun avis ne correspond à votre recherche.",
+    "repliedAt": "Répondu",
+    "noReply": "Pas encore de réponse"
   },
   "feedback": {
     "heading": "Retours clients",
     "from": "De",
     "subject": "Sujet",
     "message": "Message",
-    "empty": "Aucun retour reçu pour l'instant."
+    "empty": "Aucun retour reçu pour l'instant.",
+    "searchPlaceholder": "Rechercher des retours...",
+    "refresh": "Actualiser",
+    "detailTitle": "Détails du retour",
+    "view": "Voir le message",
+    "noMessages": "Aucun retour trouvé",
+    "noMessagesMatch": "Aucun retour ne correspond à votre recherche."
   },
   "newsletters": {
     "heading": "Infolettres",
@@ -452,7 +488,14 @@
     "unsubscribed": "Désabonné",
     "sent": "Envoyé",
     "failed": "Échec",
-    "pending": "En attente"
+    "pending": "En attente",
+    "searchPlaceholder": "Rechercher des abonnés...",
+    "refresh": "Actualiser",
+    "noSubscribers": "Aucun abonné trouvé",
+    "noSubscribersMatch": "Aucun abonné ne correspond à votre recherche.",
+    "updateFailed": "Impossible de mettre à jour l'abonné.",
+    "deleteFailed": "Impossible de supprimer l'abonné.",
+    "networkError": "Erreur réseau. Veuillez réessayer."
   },
   "analytics": {
     "badge": "Analytiques",

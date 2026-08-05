@@ -1,0 +1,71 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:featuredProducts.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:featuredProducts.searchPlaceholder') %>">
+        </div>
+    </div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:featuredProducts.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (products && products.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.product') %></th><th><%= t('marketing:words.seller') %></th><th><%= t('marketing:words.sales') %></th><th><%= t('marketing:featuredProducts.price') %></th><th class="text-center"><%= t('marketing:featuredProducts.featured') %></th><th class="text-center"><%= t('marketing:featuredProducts.promoted') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% products.forEach(product => { %>
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <% if (product.main_image) { %>
+                            <img src="<%= imageUrl(product.main_image, 'products') %>" alt="" class="rounded" style="height:36px;width:48px;object-fit:cover;">
+                            <% } %>
+                            <div>
+                                <div class="text-white small fw-semibold"><%= product.name %></div>
+                                <small class="text-white-50"><%= product.category_name || '—' %></small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-white-50"><%= product.first_name ? product.first_name + ' ' + product.last_name : t('marketing:featuredProducts.athstack') %></td>
+                    <td class="text-white"><%= product.total_sales || 0 %></td>
+                    <td class="text-white"><%= product.price != null ? formatCurrency(product.price) : '—' %></td>
+                    <td class="text-center">
+                        <%- include('../../partials/actionButton', { abVariant:'toggle', abButton:true, abOn: !!product.featured, abIcon:'fa-star', abAttrs:'data-toggle-featured data-id="' + product.id + '" data-on="' + (product.featured ? '1' : '0') + '"', abTitle:t('marketing:featuredProducts.featured') }) %>
+                    </td>
+                    <td class="text-center">
+                        <%- include('../../partials/actionButton', { abVariant:'toggle', abButton:true, abOn: !!product.is_promoted, abIcon:'fa-bullhorn', abAttrs:'data-toggle-promoted data-id="' + product.id + '" data-on="' + (product.is_promoted ? '1' : '0') + '"', abTitle:t('marketing:featuredProducts.promoted') }) %>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abButton:true, abIcon:'fa-eye', abAttrs:'data-view-product data-id="' + product.id + '"', abTitle:t('marketing:featuredProducts.view') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-star fa-4x mb-3"></i>
+    <% if (searchQuery) { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:featuredProducts.noProducts') %></h4>
+    <p class="text-white-50"><%= t('marketing:featuredProducts.noProductsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:featuredProducts.noProducts') %></h4>
+    <p class="text-white-50"><%= t('marketing:featuredProducts.empty') %></p>
+    <% } %>
+</div>
+<% } %>

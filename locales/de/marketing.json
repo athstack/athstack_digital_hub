@@ -172,7 +172,15 @@
     "settingsUpdated": "Marketing-Einstellungen erfolgreich aktualisiert.",
     "invalidRating": "Die Bewertung muss zwischen 1 und 5 liegen.",
     "testimonialUpdated": "Kundenstimme erfolgreich aktualisiert.",
-    "announcementUpdated": "Ankündigung erfolgreich aktualisiert."
+    "announcementUpdated": "Ankündigung erfolgreich aktualisiert.",
+    "productFeatured": "Produkt auf der Startseite hervorgehoben.",
+    "productUnfeatured": "Produkt von den Startseiten-Features entfernt.",
+    "productPromoted": "Produkt als beworben markiert.",
+    "productUnpromoted": "Produkt wird nicht mehr beworben.",
+    "testimonialNotFound": "Erfahrungsbericht nicht gefunden.",
+    "reviewHidden": "Bewertung öffentlich ausgeblendet.",
+    "reviewUnhidden": "Bewertung ist wieder öffentlich sichtbar.",
+    "feedbackNotFound": "Feedback-Nachricht nicht gefunden."
   },
   "dashboard": {
     "heading": "Marketing-Kommandozentrale",
@@ -335,7 +343,18 @@
     "featured": "Ausgewählt",
     "promoted": "Beworben",
     "athstack": "Von TechBridge beworben",
-    "empty": "Keine Produkte zum Hervorheben verfügbar."
+    "empty": "Keine Produkte zum Hervorheben verfügbar.",
+    "searchPlaceholder": "Produkte suchen...",
+    "refresh": "Aktualisieren",
+    "view": "Details ansehen",
+    "detailTitle": "Produktdetails",
+    "category": "Kategorie",
+    "price": "Preis",
+    "sold": "Gesamtumsatz",
+    "updateFailed": "Produkt konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noProducts": "Keine Produkte gefunden",
+    "noProductsMatch": "Keine Produkte entsprechen Ihrer Suche."
   },
   "blog": {
     "heading": "Blog-Beiträge",
@@ -426,14 +445,31 @@
     "unhide": "Einblenden",
     "hidden": "Ausgeblendet",
     "untitled": "Ohne Titel",
-    "empty": "Noch keine Bewertungen zu beantworten."
+    "empty": "Noch keine Bewertungen zu beantworten.",
+    "searchPlaceholder": "Bewertungen suchen...",
+    "refresh": "Aktualisieren",
+    "detailTitle": "Bewertungsdetails",
+    "author": "Kunde",
+    "sendReply": "Antwort senden",
+    "updateFailed": "Bewertung konnte nicht aktualisiert werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "noReviews": "Keine Bewertungen gefunden",
+    "noReviewsMatch": "Keine Bewertungen entsprechen Ihrer Suche.",
+    "repliedAt": "Geantwortet",
+    "noReply": "Noch keine Antwort"
   },
   "feedback": {
     "heading": "Kundenfeedback",
     "from": "Von",
     "subject": "Betreff",
     "message": "Nachricht",
-    "empty": "Noch kein Feedback erhalten."
+    "empty": "Noch kein Feedback erhalten.",
+    "searchPlaceholder": "Feedback suchen...",
+    "refresh": "Aktualisieren",
+    "detailTitle": "Feedback-Details",
+    "view": "Nachricht ansehen",
+    "noMessages": "Kein Feedback gefunden",
+    "noMessagesMatch": "Kein Feedback entspricht Ihrer Suche."
   },
   "newsletters": {
     "heading": "Rundschreiben",
@@ -452,7 +488,14 @@
     "unsubscribed": "Abgemeldet",
     "sent": "Gesendet",
     "failed": "Fehlgeschlagen",
-    "pending": "Ausstehend"
+    "pending": "Ausstehend",
+    "searchPlaceholder": "Abonnenten suchen...",
+    "refresh": "Aktualisieren",
+    "noSubscribers": "Keine Abonnenten gefunden",
+    "noSubscribersMatch": "Keine Abonnenten entsprechen Ihrer Suche.",
+    "updateFailed": "Abonnent konnte nicht aktualisiert werden.",
+    "deleteFailed": "Abonnent konnte nicht entfernt werden.",
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen."
   },
   "analytics": {
     "badge": "Analysen",

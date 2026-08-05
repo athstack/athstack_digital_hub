@@ -1,48 +1,106 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-envelope-open-text me-2 text-primary"></i><%= t('marketing:feedback.heading') %></h2>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:feedback.from') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope-open-text me-2 text-primary"></i><%= t('marketing:feedback.heading') %></h2>
+                </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:feedback.from') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:feedback.subject') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:feedback.message') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (messages.length > 0) { %>
-                                <% messages.forEach(message => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="text-white small fw-semibold"><%= message.name %></div>
-                                        <small class="text-muted"><%= message.email %></small>
-                                    </td>
-                                    <td class="py-3 px-4 text-white small"><%= message.subject || '—' %></td>
-                                    <td class="py-3 px-4 text-muted small" style="max-width:320px;"><%= message.message %></td>
-                                    <td class="py-3 px-4 text-muted small"><%= formatDate(message.created_at) %></td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-envelope-open-text fa-2x mb-2"></i><br>
-                                        <%= t('marketing:feedback.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/feedback">
+                    <%- include('./partials/feedbackTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Feedback detail modal -->
+<div class="modal fade crud-modal" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackModalTitle"><%= t('marketing:feedback.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <small class="text-white-50 d-block"><%= t('marketing:feedback.from') %></small>
+                        <span class="text-white" id="fm-name">—</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-white-50 d-block"><%= t('marketing:words.email') %></small>
+                        <span class="text-white" id="fm-email">—</span>
+                    </div>
+                    <div class="col-sm-8">
+                        <small class="text-white-50 d-block"><%= t('marketing:feedback.subject') %></small>
+                        <span class="text-white" id="fm-subject">—</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <small class="text-white-50 d-block"><%= t('common:words.date') %></small>
+                        <span class="text-white" id="fm-date">—</span>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-white-50 d-block"><%= t('marketing:feedback.message') %></small>
+                        <div class="text-white" id="fm-message">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('feedbackModal');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var networkError = '<%= t('marketing:feedback.networkError') %>';
+
+    function openDetail(id) {
+        Crud.get('/marketing/feedback/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.message) return;
+                var m = data.message;
+                document.getElementById('fm-name').textContent = m.name || '—';
+                document.getElementById('fm-email').textContent = m.email || '—';
+                document.getElementById('fm-subject').textContent = m.subject || '—';
+                document.getElementById('fm-date').textContent = m.created_at_formatted || m.created_at || '—';
+                document.getElementById('fm-message').textContent = m.message || '—';
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(networkError, 'error');
+            });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-message]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+        }
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

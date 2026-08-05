@@ -172,7 +172,15 @@
     "settingsUpdated": "Ajustes de marketing actualizados con éxito.",
     "invalidRating": "La puntuación debe estar entre 1 y 5.",
     "testimonialUpdated": "Testimonio actualizado correctamente.",
-    "announcementUpdated": "Anuncio actualizado correctamente."
+    "announcementUpdated": "Anuncio actualizado correctamente.",
+    "productFeatured": "Producto destacado en la página de inicio.",
+    "productUnfeatured": "Producto eliminado de los destacados de la página de inicio.",
+    "productPromoted": "Producto marcado como promocionado.",
+    "productUnpromoted": "El producto ya no está promocionado.",
+    "testimonialNotFound": "Testimonio no encontrado.",
+    "reviewHidden": "Reseña oculta del público.",
+    "reviewUnhidden": "La reseña ya es visible para el público.",
+    "feedbackNotFound": "Mensaje de comentario no encontrado."
   },
   "dashboard": {
     "heading": "Centro de control de marketing",
@@ -335,7 +343,18 @@
     "featured": "Destacado",
     "promoted": "Promocionado",
     "athstack": "Promocionado por TechBridge",
-    "empty": "No hay productos disponibles para destacar."
+    "empty": "No hay productos disponibles para destacar.",
+    "searchPlaceholder": "Buscar productos...",
+    "refresh": "Actualizar",
+    "view": "Ver detalles",
+    "detailTitle": "Detalles del producto",
+    "category": "Categoría",
+    "price": "Precio",
+    "sold": "Ventas totales",
+    "updateFailed": "No se pudo actualizar el producto.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noProducts": "No se encontraron productos",
+    "noProductsMatch": "Ningún producto coincide con tu búsqueda."
   },
   "blog": {
     "heading": "Entradas de blog",
@@ -426,14 +445,31 @@
     "unhide": "Mostrar",
     "hidden": "Oculta",
     "untitled": "Sin título",
-    "empty": "Aún no hay reseñas que responder."
+    "empty": "Aún no hay reseñas que responder.",
+    "searchPlaceholder": "Buscar reseñas...",
+    "refresh": "Actualizar",
+    "detailTitle": "Detalles de la reseña",
+    "author": "Cliente",
+    "sendReply": "Enviar respuesta",
+    "updateFailed": "No se pudo actualizar la reseña.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noReviews": "No se encontraron reseñas",
+    "noReviewsMatch": "Ninguna reseña coincide con tu búsqueda.",
+    "repliedAt": "Respondido",
+    "noReply": "Aún sin respuesta"
   },
   "feedback": {
     "heading": "Comentarios de clientes",
     "from": "De",
     "subject": "Asunto",
     "message": "Mensaje",
-    "empty": "Aún no se han recibido comentarios."
+    "empty": "Aún no se han recibido comentarios.",
+    "searchPlaceholder": "Buscar comentarios...",
+    "refresh": "Actualizar",
+    "detailTitle": "Detalles del comentario",
+    "view": "Ver mensaje",
+    "noMessages": "No se encontraron comentarios",
+    "noMessagesMatch": "Ningún comentario coincide con tu búsqueda."
   },
   "newsletters": {
     "heading": "Newsletters",
@@ -452,7 +488,14 @@
     "unsubscribed": "Dado de baja",
     "sent": "Enviado",
     "failed": "Fallido",
-    "pending": "Pendiente"
+    "pending": "Pendiente",
+    "searchPlaceholder": "Buscar suscriptores...",
+    "refresh": "Actualizar",
+    "noSubscribers": "No se encontraron suscriptores",
+    "noSubscribersMatch": "Ningún suscriptor coincide con tu búsqueda.",
+    "updateFailed": "No se pudo actualizar el suscriptor.",
+    "deleteFailed": "No se pudo eliminar el suscriptor.",
+    "networkError": "Error de red. Inténtalo de nuevo."
   },
   "analytics": {
     "badge": "Análisis",

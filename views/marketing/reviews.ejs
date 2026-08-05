@@ -1,74 +1,174 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:reviews.rating') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star-half-stroke me-2 text-primary"></i><%= t('marketing:reviews.heading') %></h2>
+                </div>
 
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-star-half-stroke me-2 text-primary"></i><%= t('marketing:reviews.heading') %></h2>
-
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:reviews.review') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:reviews.product') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:reviews.rating') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:reviews.reply') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (reviews.length > 0) { %>
-                                <% reviews.forEach(review => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="text-white small fw-semibold"><%= review.title || t('marketing:reviews.untitled') %></div>
-                                        <div class="text-muted small" style="max-width:280px;"><%= review.comment || '' %></div>
-                                        <small class="text-muted"><%= review.first_name ? review.first_name + ' ' + review.last_name : '—' %> · <%= formatDate(review.created_at) %></small>
-                                        <% if (review.is_hidden) { %><span class="badge bg-secondary ms-1"><%= t('marketing:reviews.hidden') %></span><% } %>
-                                    </td>
-                                    <td class="py-3 px-4 text-muted small"><%= review.product_name || '—' %></td>
-                                    <td class="py-3 px-4 text-warning"><%= '★'.repeat(review.rating) %></td>
-                                    <td class="py-3 px-4">
-                                        <% if (review.seller_reply) { %>
-                                        <div class="text-muted small" style="max-width:260px;">
-                                            <span class="text-success"><i class="fa-solid fa-reply me-1"></i></span><%= review.seller_reply %>
-                                        </div>
-                                        <% } else { %>
-                                        <form method="POST" action="/marketing/reviews/<%= review.id %>/reply" class="d-flex gap-1">
-                                            <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                            <input type="text" name="reply" class="form-control form-control-sm" placeholder="<%= t('marketing:reviews.replyPlaceholder') %>" required>
-                                            <button type="submit" class="action-btn action-btn--publish flex-shrink-0" title="<%= t('marketing:reviews.reply') %>" aria-label="<%= t('marketing:reviews.reply') %>"><i class="fa-solid fa-paper-plane"></i></button>
-                                        </form>
-                                        <% } %>
-                                    </td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/marketing/reviews/' + review.id + '/hide', abFormCsrf:csrfToken, abOn: review.is_hidden, abIcon: review.is_hidden ? 'fa-eye-slash' : 'fa-eye', abTitle: review.is_hidden ? t('marketing:reviews.unhide') : t('marketing:reviews.hide') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-star-half-stroke fa-2x mb-2"></i><br>
-                                        <%= t('marketing:reviews.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/reviews">
+                    <%- include('./partials/reviewsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Review detail + reply modal -->
+<div class="modal fade crud-modal" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="reviewReplyForm" method="POST" action="/marketing/reviews/0/reply" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalTitle"><%= t('marketing:reviews.detailTitle') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <small class="text-white-50 d-block"><%= t('marketing:reviews.product') %></small>
+                            <span class="text-white" id="rr-product">—</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-white-50 d-block"><%= t('marketing:reviews.author') %></small>
+                            <span class="text-white" id="rr-author">—</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-white-50 d-block"><%= t('marketing:reviews.rating') %></small>
+                            <span class="text-warning" id="rr-rating">—</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-white-50 d-block"><%= t('common:words.date') %></small>
+                            <span class="text-white" id="rr-date">—</span>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-white-50 d-block"><%= t('marketing:reviews.review') %></small>
+                            <div class="text-white" id="rr-comment">—</div>
+                        </div>
+                        <div class="col-12 d-none" id="rr-reply-wrap">
+                            <hr class="border-secondary opacity-25">
+                            <small class="text-success d-block mb-1"><i class="fa-solid fa-reply me-1"></i><%= t('marketing:reviews.repliedAt') %> <span class="text-white-50" id="rr-reply-date"></span></small>
+                            <div class="text-white-50" id="rr-reply"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="rr-reply-input"><%= t('marketing:reviews.reply') %></label>
+                        <textarea class="form-control" id="rr-reply-input" name="reply" rows="3" placeholder="<%= t('marketing:reviews.replyPlaceholder') %>"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="reviewReplySubmitBtn"><i class="fa-solid fa-paper-plane me-1"></i><%= t('marketing:reviews.sendReply') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('reviewModal');
+    var form = document.getElementById('reviewReplyForm');
+    var submitBtn = document.getElementById('reviewReplySubmitBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        detailTitle: '<%= t('marketing:reviews.detailTitle') %>',
+        review: '<%= t('marketing:reviews.review') %>',
+        reply: '<%= t('marketing:reviews.reply') %>',
+        repliedAt: '<%= t('marketing:reviews.repliedAt') %>',
+        untitled: '<%= t('marketing:reviews.untitled') %>',
+        updateFailed: '<%= t('marketing:reviews.updateFailed') %>',
+        networkError: '<%= t('marketing:reviews.networkError') %>'
+    };
+
+    function openDetail(id) {
+        Crud.get('/marketing/reviews/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.review) return;
+                var r = data.review;
+                form.action = '/marketing/reviews/' + id + '/reply';
+                document.getElementById('rr-product').textContent = r.product_name || '—';
+                document.getElementById('rr-author').textContent = r.author || '—';
+                document.getElementById('rr-rating').textContent = '★'.repeat(r.rating);
+                document.getElementById('rr-date').textContent = r.created_at_formatted || '—';
+                document.getElementById('rr-comment').textContent = (r.title ? r.title + ' — ' : '') + (r.comment || '—');
+                document.getElementById('rr-reply-input').value = '';
+
+                var wrap = document.getElementById('rr-reply-wrap');
+                if (r.seller_reply) {
+                    document.getElementById('rr-reply').textContent = r.seller_reply;
+                    document.getElementById('rr-reply-date').textContent = r.seller_replied_at_formatted || '';
+                    wrap.classList.remove('d-none');
+                } else {
+                    wrap.classList.add('d-none');
+                }
+
+                Crud.clearErrors(form);
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-review]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var hideBtn = e.target.closest('[data-toggle-review-hide]');
+        if (hideBtn) {
+            e.preventDefault();
+            hideBtn.disabled = true;
+            Crud.post('/marketing/reviews/' + hideBtn.getAttribute('data-id') + '/hide')
+                .then(function (data) {
+                    Crud.toast(data.message, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/reviews' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { hideBtn.disabled = false; });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.elements['reply'].value.trim()) {
+            Crud.toast('<%= t('marketing:flash.replyRequired') %>', 'error');
+            return;
+        }
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.reply, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/reviews' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

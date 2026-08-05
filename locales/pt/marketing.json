@@ -172,7 +172,15 @@
     "settingsUpdated": "Configurações de marketing atualizadas com sucesso.",
     "invalidRating": "A avaliação deve estar entre 1 e 5.",
     "testimonialUpdated": "Depoimento atualizado com sucesso.",
-    "announcementUpdated": "Aviso atualizado com sucesso."
+    "announcementUpdated": "Aviso atualizado com sucesso.",
+    "productFeatured": "Produto em destaque na página inicial.",
+    "productUnfeatured": "Produto removido dos destaques da página inicial.",
+    "productPromoted": "Produto marcado como promovido.",
+    "productUnpromoted": "O produto não é mais promovido.",
+    "testimonialNotFound": "Depoimento não encontrado.",
+    "reviewHidden": "Avaliação oculta do público.",
+    "reviewUnhidden": "A avaliação agora está visível ao público.",
+    "feedbackNotFound": "Mensagem de feedback não encontrada."
   },
   "dashboard": {
     "heading": "Centro de comando de marketing",
@@ -335,7 +343,18 @@
     "featured": "Destaque",
     "promoted": "Promovido",
     "athstack": "Promovido pela TechBridge",
-    "empty": "Nenhum produto disponível para destacar."
+    "empty": "Nenhum produto disponível para destacar.",
+    "searchPlaceholder": "Pesquisar produtos...",
+    "refresh": "Atualizar",
+    "view": "Ver detalhes",
+    "detailTitle": "Detalhes do produto",
+    "category": "Categoria",
+    "price": "Preço",
+    "sold": "Vendas totais",
+    "updateFailed": "Não foi possível atualizar o produto.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noProducts": "Nenhum produto encontrado",
+    "noProductsMatch": "Nenhum produto corresponde à sua pesquisa."
   },
   "blog": {
     "heading": "Postagens de blog",
@@ -426,14 +445,31 @@
     "unhide": "Mostrar",
     "hidden": "Oculto",
     "untitled": "Sem título",
-    "empty": "Ainda não há avaliações para responder."
+    "empty": "Ainda não há avaliações para responder.",
+    "searchPlaceholder": "Pesquisar avaliações...",
+    "refresh": "Atualizar",
+    "detailTitle": "Detalhes da avaliação",
+    "author": "Cliente",
+    "sendReply": "Enviar resposta",
+    "updateFailed": "Não foi possível atualizar a avaliação.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noReviews": "Nenhuma avaliação encontrada",
+    "noReviewsMatch": "Nenhuma avaliação corresponde à sua pesquisa.",
+    "repliedAt": "Respondido",
+    "noReply": "Ainda sem resposta"
   },
   "feedback": {
     "heading": "Feedback dos clientes",
     "from": "De",
     "subject": "Assunto",
     "message": "Mensagem",
-    "empty": "Nenhum feedback recebido ainda."
+    "empty": "Nenhum feedback recebido ainda.",
+    "searchPlaceholder": "Pesquisar feedback...",
+    "refresh": "Atualizar",
+    "detailTitle": "Detalhes do feedback",
+    "view": "Ver mensagem",
+    "noMessages": "Nenhum feedback encontrado",
+    "noMessagesMatch": "Nenhum feedback corresponde à sua pesquisa."
   },
   "newsletters": {
     "heading": "Newsletters",
@@ -452,7 +488,14 @@
     "unsubscribed": "Cancelado",
     "sent": "Enviado",
     "failed": "Falhou",
-    "pending": "Pendente"
+    "pending": "Pendente",
+    "searchPlaceholder": "Pesquisar assinantes...",
+    "refresh": "Atualizar",
+    "noSubscribers": "Nenhum assinante encontrado",
+    "noSubscribersMatch": "Nenhum assinante corresponde à sua pesquisa.",
+    "updateFailed": "Não foi possível atualizar o assinante.",
+    "deleteFailed": "Não foi possível remover o assinante.",
+    "networkError": "Erro de rede. Tente novamente."
   },
   "analytics": {
     "badge": "Análises",

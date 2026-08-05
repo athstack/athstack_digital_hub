@@ -1,7 +1,7 @@
 const { pool } = require('../config/db');
 const UserModel = require('../models/UserModel');
 const SettingModel = require('../models/SettingModel');
-const { generateSlug } = require('../utils/helpers');
+const { generateSlug, formatCurrency, formatDate } = require('../utils/helpers');
 const { logActivity } = require('../helpers/activityLog');
 
 // Dual-mode request helpers: every CRUD action answers HTML redirects (no-JS)
@@ -841,18 +841,70 @@ exports.updateCouponStatus = async (req, res, next) => {
 
 exports.getFeaturedProducts = async (req, res, next) => {
   try {
-    const [products] = await pool.execute(
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = `SELECT p.*, u.first_name, u.last_name, c.name AS category_name
+       FROM products p
+       LEFT JOIN users u ON p.technician_id = u.id
+       LEFT JOIN product_categories c ON p.category_id = c.id`;
+    const where = [];
+    const params = [];
+    if (search) {
+      where.push('(p.name LIKE ? OR c.name LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY p.featured DESC, p.is_promoted DESC, p.created_at DESC LIMIT 100';
+    const [products] = await pool.execute(sql, params);
+    const viewData = {
+      title: req.t('marketing:title.featuredProducts'),
+      products,
+      searchQuery: search || '',
+      page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/featuredProductsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, products, total: products.length });
+    }
+    res.render('marketing/featured-products', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getFeaturedProductDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.productNotFound') });
+    const [rows] = await pool.execute(
       `SELECT p.*, u.first_name, u.last_name, c.name AS category_name
        FROM products p
        LEFT JOIN users u ON p.technician_id = u.id
        LEFT JOIN product_categories c ON p.category_id = c.id
-       ORDER BY p.featured DESC, p.is_promoted DESC, p.created_at DESC
-       LIMIT 100`
+       WHERE p.id = ?`,
+      [id]
     );
-    res.render('marketing/featured-products', {
-      title: req.t('marketing:title.featuredProducts'),
-      products,
-      page: pageInfo(req),
+    const product = rows[0] || null;
+    if (!product) return res.status(404).json({ success: false, message: req.t('marketing:flash.productNotFound') });
+    res.json({
+      success: true,
+      product: {
+        id: product.id,
+        name: product.name,
+        category_name: product.category_name || '',
+        seller: product.first_name ? product.first_name + ' ' + product.last_name : req.t('marketing:featuredProducts.athstack'),
+        total_sales: product.total_sales || 0,
+        price: product.price,
+        price_formatted: product.price != null ? formatCurrency(product.price, req.language) : '',
+        main_image: product.main_image || '',
+        featured: !!product.featured,
+        is_promoted: !!product.is_promoted
+      }
     });
   } catch (err) {
     next(err);
@@ -862,16 +914,20 @@ exports.getFeaturedProducts = async (req, res, next) => {
 exports.toggleProductFeatured = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
     const [rows] = await pool.execute('SELECT * FROM products WHERE id = ?', [id]);
     const product = rows[0];
     if (!product) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.productNotFound'));
       req.flash('error', req.t('marketing:flash.productNotFound'));
       return res.redirect('/marketing/featured-products');
     }
     const newVal = product.featured ? 0 : 1;
     await pool.execute('UPDATE products SET featured = ? WHERE id = ?', [newVal, id]);
     await logActivity(req, newVal ? 'feature' : 'unfeature', 'product', id);
-    req.flash('success', req.t(newVal ? 'marketing:flash.productFeatured' : 'marketing:flash.productUnfeatured'));
+    const message = req.t(newVal ? 'marketing:flash.productFeatured' : 'marketing:flash.productUnfeatured');
+    if (ajax) return res.json({ success: true, message, featured: newVal });
+    req.flash('success', message);
     res.redirect('/marketing/featured-products');
   } catch (err) {
     next(err);
@@ -881,16 +937,20 @@ exports.toggleProductFeatured = async (req, res, next) => {
 exports.toggleProductPromoted = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
     const [rows] = await pool.execute('SELECT * FROM products WHERE id = ?', [id]);
     const product = rows[0];
     if (!product) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.productNotFound'));
       req.flash('error', req.t('marketing:flash.productNotFound'));
       return res.redirect('/marketing/featured-products');
     }
     const newVal = product.is_promoted ? 0 : 1;
     await pool.execute('UPDATE products SET is_promoted = ? WHERE id = ?', [newVal, id]);
     await logActivity(req, newVal ? 'promote' : 'unpromote', 'product', id);
-    req.flash('success', req.t(newVal ? 'marketing:flash.productPromoted' : 'marketing:flash.productUnpromoted'));
+    const message = req.t(newVal ? 'marketing:flash.productPromoted' : 'marketing:flash.productUnpromoted');
+    if (ajax) return res.json({ success: true, message, is_promoted: newVal });
+    req.flash('success', message);
     res.redirect('/marketing/featured-products');
   } catch (err) {
     next(err);
@@ -1470,17 +1530,70 @@ exports.deleteAnnouncement = async (req, res, next) => {
 
 exports.getReviews = async (req, res, next) => {
   try {
-    const [reviews] = await pool.execute(
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = `SELECT r.*, u.first_name, u.last_name, p.name AS product_name
+       FROM reviews r
+       LEFT JOIN users u ON r.user_id = u.id
+       LEFT JOIN products p ON r.product_id = p.id`;
+    const where = [];
+    const params = [];
+    if (search) {
+      where.push('(r.title LIKE ? OR r.comment LIKE ? OR p.name LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY r.created_at DESC LIMIT 100';
+    const [reviews] = await pool.execute(sql, params);
+    const viewData = {
+      title: req.t('marketing:title.reviews'),
+      reviews,
+      searchQuery: search || '',
+      page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/reviewsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, reviews, total: reviews.length });
+    }
+    res.render('marketing/reviews', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getReviewDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.reviewNotFound') });
+    const [rows] = await pool.execute(
       `SELECT r.*, u.first_name, u.last_name, p.name AS product_name
        FROM reviews r
        LEFT JOIN users u ON r.user_id = u.id
        LEFT JOIN products p ON r.product_id = p.id
-       ORDER BY r.created_at DESC LIMIT 100`
+       WHERE r.id = ?`,
+      [id]
     );
-    res.render('marketing/reviews', {
-      title: req.t('marketing:title.reviews'),
-      reviews,
-      page: pageInfo(req),
+    const review = rows[0] || null;
+    if (!review) return res.status(404).json({ success: false, message: req.t('marketing:flash.reviewNotFound') });
+    res.json({
+      success: true,
+      review: {
+        id: review.id,
+        title: review.title || '',
+        comment: review.comment || '',
+        product_name: review.product_name || '',
+        rating: review.rating || 0,
+        author: review.first_name ? review.first_name + ' ' + review.last_name : '',
+        seller_reply: review.seller_reply || '',
+        is_hidden: !!review.is_hidden,
+        created_at_formatted: review.created_at ? formatDate(review.created_at, req.language) : '',
+        seller_replied_at_formatted: review.seller_replied_at ? formatDate(review.seller_replied_at, req.language) : ''
+      }
     });
   } catch (err) {
     next(err);
@@ -1491,20 +1604,30 @@ exports.replyToReview = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const { reply } = req.body;
-    if (!reply || !reply.trim()) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!reply || !reply.trim()) errors.reply = req.t('marketing:flash.replyRequired');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.replyRequired'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.replyRequired'));
       return res.redirect('/marketing/reviews');
     }
-    const [result] = await pool.execute(
-      'UPDATE reviews SET seller_reply = ?, seller_replied_at = NOW(), seller_replied_by = ? WHERE id = ?',
-      [reply.trim(), req.session.userId, id]
-    );
-    if (result.affectedRows === 0) {
+    const [rows] = await pool.execute('SELECT id FROM reviews WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.reviewNotFound'));
       req.flash('error', req.t('marketing:flash.reviewNotFound'));
       return res.redirect('/marketing/reviews');
     }
+    await pool.execute(
+      'UPDATE reviews SET seller_reply = ?, seller_replied_at = NOW(), seller_replied_by = ? WHERE id = ?',
+      [reply.trim(), req.session.userId, id]
+    );
     await logActivity(req, 'reply', 'review', id);
-    req.flash('success', req.t('marketing:flash.reviewReplied'));
+    const message = req.t('marketing:flash.reviewReplied');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/reviews');
   } catch (err) {
     next(err);
@@ -1514,16 +1637,20 @@ exports.replyToReview = async (req, res, next) => {
 exports.toggleReviewHidden = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
     const [rows] = await pool.execute('SELECT * FROM reviews WHERE id = ?', [id]);
     const review = rows[0];
     if (!review) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.reviewNotFound'));
       req.flash('error', req.t('marketing:flash.reviewNotFound'));
       return res.redirect('/marketing/reviews');
     }
     const newVal = review.is_hidden ? 0 : 1;
     await pool.execute('UPDATE reviews SET is_hidden = ? WHERE id = ?', [newVal, id]);
     await logActivity(req, newVal ? 'hide' : 'unhide', 'review', id);
-    req.flash('success', req.t(newVal ? 'marketing:flash.reviewHidden' : 'marketing:flash.reviewUnhidden'));
+    const message = req.t(newVal ? 'marketing:flash.reviewHidden' : 'marketing:flash.reviewUnhidden');
+    if (ajax) return res.json({ success: true, message, is_hidden: newVal });
+    req.flash('success', message);
     res.redirect('/marketing/reviews');
   } catch (err) {
     next(err);
@@ -1532,13 +1659,57 @@ exports.toggleReviewHidden = async (req, res, next) => {
 
 exports.getFeedback = async (req, res, next) => {
   try {
-    const [messages] = await pool.execute(
-      'SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 100'
-    );
-    res.render('marketing/feedback', {
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = 'SELECT * FROM contact_messages';
+    const where = [];
+    const params = [];
+    if (search) {
+      where.push('(name LIKE ? OR email LIKE ? OR subject LIKE ? OR message LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term, term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY created_at DESC LIMIT 100';
+    const [messages] = await pool.execute(sql, params);
+    const viewData = {
       title: req.t('marketing:title.feedback'),
       messages,
+      searchQuery: search || '',
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/feedbackTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, messages, total: messages.length });
+    }
+    res.render('marketing/feedback', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getFeedbackDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.feedbackNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM contact_messages WHERE id = ?', [id]);
+    const message = rows[0] || null;
+    if (!message) return res.status(404).json({ success: false, message: req.t('marketing:flash.feedbackNotFound') });
+    res.json({
+      success: true,
+      message: {
+        id: message.id,
+        name: message.name || '',
+        email: message.email || '',
+        subject: message.subject || '',
+        message: message.message || '',
+        created_at: message.created_at,
+        created_at_formatted: message.created_at ? formatDate(message.created_at, req.language) : ''
+      }
     });
   } catch (err) {
     next(err);
@@ -1551,18 +1722,37 @@ exports.getFeedback = async (req, res, next) => {
 
 exports.getNewsletters = async (req, res, next) => {
   try {
-    const [subscribers] = await pool.execute(
-      'SELECT * FROM newsletter_subscribers ORDER BY created_at DESC LIMIT 200'
-    );
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = 'SELECT * FROM newsletter_subscribers';
+    const where = [];
+    const params = [];
+    if (search) {
+      where.push('email LIKE ?');
+      params.push('%' + search + '%');
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY created_at DESC LIMIT 200';
+    const [subscribers] = await pool.execute(sql, params);
     const [sends] = await pool.execute(
       'SELECT * FROM newsletter_sends ORDER BY created_at DESC LIMIT 50'
     );
-    res.render('marketing/newsletters', {
+    const viewData = {
       title: req.t('marketing:title.newsletters'),
       subscribers,
       sends,
+      searchQuery: search || '',
       page: pageInfo(req),
-    });
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/newslettersTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, subscribers, sends, total: subscribers.length });
+    }
+    res.render('marketing/newsletters', viewData);
   } catch (err) {
     next(err);
   }
@@ -1571,7 +1761,15 @@ exports.getNewsletters = async (req, res, next) => {
 exports.createSubscriber = async (req, res, next) => {
   try {
     const { email } = req.body;
+    const ajax = isAjaxRequest(req);
+    const errors = {};
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = req.t('marketing:flash.invalidEmail');
+    }
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.invalidEmail'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.invalidEmail'));
       return res.redirect('/marketing/newsletters');
     }
@@ -1580,7 +1778,9 @@ exports.createSubscriber = async (req, res, next) => {
       [String(email).trim().toLowerCase()]
     );
     await logActivity(req, 'add', 'subscriber');
-    req.flash('success', req.t('marketing:flash.subscriberAdded'));
+    const message = req.t('marketing:flash.subscriberAdded');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/newsletters');
   } catch (err) {
     next(err);
@@ -1590,16 +1790,20 @@ exports.createSubscriber = async (req, res, next) => {
 exports.updateSubscriberStatus = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
     const [rows] = await pool.execute('SELECT * FROM newsletter_subscribers WHERE id = ?', [id]);
     const subscriber = rows[0];
     if (!subscriber) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.subscriberNotFound'));
       req.flash('error', req.t('marketing:flash.subscriberNotFound'));
       return res.redirect('/marketing/newsletters');
     }
     const newStatus = subscriber.status === 'subscribed' ? 'unsubscribed' : 'subscribed';
     await pool.execute('UPDATE newsletter_subscribers SET status = ? WHERE id = ?', [newStatus, id]);
     await logActivity(req, newStatus === 'subscribed' ? 'subscribe' : 'unsubscribe', 'subscriber', id);
-    req.flash('success', req.t('marketing:flash.subscriberStatusUpdated'));
+    const message = req.t('marketing:flash.subscriberStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status: newStatus });
+    req.flash('success', message);
     res.redirect('/marketing/newsletters');
   } catch (err) {
     next(err);
@@ -1609,9 +1813,17 @@ exports.updateSubscriberStatus = async (req, res, next) => {
 exports.deleteSubscriber = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
-    await pool.execute('DELETE FROM newsletter_subscribers WHERE id = ?', [id]);
+    const ajax = isAjaxRequest(req);
+    const [result] = await pool.execute('DELETE FROM newsletter_subscribers WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.subscriberNotFound'));
+      req.flash('error', req.t('marketing:flash.subscriberNotFound'));
+      return res.redirect('/marketing/newsletters');
+    }
     await logActivity(req, 'delete', 'subscriber', id);
-    req.flash('success', req.t('marketing:flash.subscriberDeleted'));
+    const message = req.t('marketing:flash.subscriberDeleted');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/newsletters');
   } catch (err) {
     next(err);
@@ -1621,7 +1833,13 @@ exports.deleteSubscriber = async (req, res, next) => {
 exports.sendNewsletter = async (req, res, next) => {
   try {
     const { subject, body } = req.body;
-    if (!subject) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!subject || !String(subject).trim()) errors.subject = req.t('marketing:flash.newsletterRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.newsletterRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.newsletterRequiredFields'));
       return res.redirect('/marketing/newsletters');
     }
@@ -1630,10 +1848,12 @@ exports.sendNewsletter = async (req, res, next) => {
     );
     const [result] = await pool.execute(
       'INSERT INTO newsletter_sends (subject, body, recipient_count, sent_by) VALUES (?, ?, ?, ?)',
-      [subject, body || null, countRow[0].count, req.session.userId]
+      [String(subject).trim(), body || null, countRow[0].count, req.session.userId]
     );
     await logActivity(req, 'send', 'newsletter', result.insertId);
-    req.flash('success', req.t('marketing:flash.newsletterSent'));
+    const message = req.t('marketing:flash.newsletterSent');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/newsletters');
   } catch (err) {
     next(err);

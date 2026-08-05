@@ -1,111 +1,124 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-envelope-circle-check me-2 text-primary"></i><%= t('marketing:newsletters.heading') %></h2>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:newsletters.subscribed') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-envelope-circle-check me-2 text-primary"></i><%= t('marketing:newsletters.heading') %></h2>
                 </div>
 
-                <div class="row g-3 mb-4">
-                    <div class="col-lg-5">
-                        <div class="glass-card no-lift p-4 h-100">
-                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-plus me-2 text-primary"></i><%= t('marketing:newsletters.addSubscriber') %></h6>
-                            <form method="POST" action="/marketing/newsletters/subscribers" class="d-flex gap-2">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <input type="email" name="email" class="form-control" required placeholder="<%= t('marketing:newsletters.emailPlaceholder') %>">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-plus"></i></button>
-                            </form>
-
-                            <hr class="border-secondary opacity-25 my-3">
-                            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-paper-plane me-2 text-primary"></i><%= t('marketing:newsletters.sendNewsletter') %></h6>
-                            <form method="POST" action="/marketing/newsletters/send">
-                                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                                <div class="mb-2">
-                                    <input type="text" name="subject" class="form-control" required placeholder="<%= t('marketing:newsletters.subjectPlaceholder') %>">
-                                </div>
-                                <div class="mb-2">
-                                    <textarea name="body" class="form-control" rows="4" placeholder="<%= t('marketing:newsletters.bodyPlaceholder') %>"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-premium-primary rounded-pill w-100"><i class="fa-solid fa-paper-plane me-2"></i><%= t('marketing:newsletters.send') %></button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="glass-card p-0">
-                            <div class="table-responsive">
-                                <table class="table table-dark align-middle mb-0">
-                                    <thead>
-                                        <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.email') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (subscribers.length > 0) { %>
-                                        <% subscribers.forEach(sub => { %>
-                                        <tr>
-                                            <td class="py-3 px-4 text-white small"><%= sub.email %></td>
-                                            <td class="py-3 px-4"><span class="badge <%= sub.status === 'subscribed' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:newsletters.' + sub.status) %></span></td>
-                                            <td class="py-3 px-4 text-muted small"><%= formatDate(sub.created_at) %></td>
-                                            <td class="py-3 px-4 text-end">
-                                                <div class="action-cell">
-                                                    <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/newsletters/subscribers/' + sub.id + '/status', abFormCsrf:csrfToken, abOn: sub.status === 'subscribed', abIcon: sub.status === 'subscribed' ? 'fa-user-slash' : 'fa-user-check', abTitle: sub.status === 'subscribed' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
-                                                    <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/newsletters/subscribers/' + sub.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                        <% } else { %>
-                                        <tr>
-                                            <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                                <i class="fa-solid fa-envelope-circle-check fa-2x mb-2"></i><br>
-                                                <%= t('marketing:newsletters.empty') %>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/newsletters">
+                    <%- include('./partials/newslettersTable') %>
                 </div>
-
-                <% if (sends.length > 0) { %>
-                <div class="glass-card p-0">
-                    <div class="px-4 pt-3">
-                        <h6 class="text-white fw-bold mb-0"><%= t('marketing:newsletters.sendHistory') %></h6>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.subject') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:newsletters.recipients') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% sends.forEach(send => { %>
-                                <tr>
-                                    <td class="py-3 px-4 text-white small"><%= send.subject %></td>
-                                    <td class="py-3 px-4 text-muted"><%= send.recipient_count %></td>
-                                    <td class="py-3 px-4"><span class="badge <%= send.status === 'sent' ? 'bg-success' : (send.status === 'failed' ? 'bg-danger' : 'bg-secondary') %>"><%= t('marketing:newsletters.' + send.status) %></span></td>
-                                    <td class="py-3 px-4 text-muted small"><%= formatDate(send.created_at) %></td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <% } %>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    'use strict';
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        updateFailed: '<%= t('marketing:newsletters.updateFailed') %>',
+        deleteFailed: '<%= t('marketing:newsletters.deleteFailed') %>',
+        networkError: '<%= t('marketing:newsletters.networkError') %>',
+        subscriberStatusUpdated: '<%= t('marketing:flash.subscriberStatusUpdated') %>',
+        subscriberAdded: '<%= t('marketing:flash.subscriberAdded') %>',
+        subscriberDeleted: '<%= t('marketing:flash.subscriberDeleted') %>',
+        newsletterSent: '<%= t('marketing:flash.newsletterSent') %>',
+        deleteTitle: '<%= t('common:words.delete') %>',
+        deleteConfirm: '<%= t('common:confirm.areYouSure') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function refresh() {
+        return Crud.refreshTable({ wrap: tableWrap, url: '/marketing/newsletters' });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var toggleBtn = e.target.closest('[data-toggle-subscriber]');
+        if (toggleBtn) {
+            e.preventDefault();
+            toggleBtn.disabled = true;
+            Crud.post('/marketing/newsletters/subscribers/' + toggleBtn.getAttribute('data-id') + '/status')
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.subscriberStatusUpdated, 'success');
+                    return refresh();
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggleBtn.disabled = false; });
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-subscriber]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            var email = delBtn.getAttribute('data-email');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (email || '') + '</strong>?',
+                confirmText: i18n.delete,
+                okIcon: 'fa-trash'
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/marketing/newsletters/subscribers/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.subscriberDeleted, 'success');
+                        return refresh();
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+        }
+    });
+
+    tableWrap.addEventListener('submit', function (e) {
+        var addForm = e.target.closest('.newsletter-add-form');
+        if (addForm) {
+            e.preventDefault();
+            Crud.submitForm(addForm, {
+                onSuccess: function (data) {
+                    addForm.reset();
+                    Crud.toast(data.message || i18n.subscriberAdded, 'success');
+                    refresh();
+                }
+            });
+            return;
+        }
+
+        var sendForm = e.target.closest('.newsletter-send-form');
+        if (sendForm) {
+            e.preventDefault();
+            Crud.submitForm(sendForm, {
+                onSuccess: function (data) {
+                    sendForm.reset();
+                    Crud.toast(data.message || i18n.newsletterSent, 'success');
+                    refresh();
+                }
+            });
+        }
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

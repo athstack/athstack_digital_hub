@@ -1,76 +1,177 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <div>
-                        <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-star me-2 text-primary"></i><%= t('marketing:featuredProducts.heading') %></h2>
-                        <p class="text-muted small mb-0 mt-1"><%= t('marketing:featuredProducts.hint') %></p>
-                    </div>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:featuredProducts.featured') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-star me-2 text-primary"></i><%= t('marketing:featuredProducts.heading') %></h2>
                 </div>
+                <p class="text-muted small mb-4"><%= t('marketing:featuredProducts.hint') %></p>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.product') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.seller') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.sales') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;"><%= t('marketing:featuredProducts.featured') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-center" style="font-size:0.65rem;"><%= t('marketing:featuredProducts.promoted') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (products.length > 0) { %>
-                                <% products.forEach(product => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <% if (product.main_image) { %>
-                                            <img src="<%= imageUrl(product.main_image, 'products') %>" alt="" style="height:36px;width:48px;object-fit:cover;border-radius:6px;">
-                                            <% } %>
-                                            <div>
-                                                <div class="text-white small fw-semibold"><%= product.name %></div>
-                                                <small class="text-muted"><%= product.category_name || '—' %></small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-muted"><%= product.first_name ? product.first_name + ' ' + product.last_name : t('marketing:featuredProducts.athstack') %></td>
-                                    <td class="py-3 px-4 text-white"><%= product.total_sales %></td>
-                                    <td class="py-3 px-4 text-center">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'hide', abFormAction:'/marketing/products/' + product.id + '/featured', abFormCsrf:csrfToken, abOn: product.featured, abIcon:'fa-star', abTitle:t('marketing:featuredProducts.featured') }) %>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-center">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'view', abFormAction:'/marketing/products/' + product.id + '/promoted', abFormCsrf:csrfToken, abOn: product.is_promoted, abIcon:'fa-bullhorn', abTitle:t('marketing:featuredProducts.promoted') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-box-open fa-2x mb-2"></i><br>
-                                        <%= t('marketing:featuredProducts.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/featured-products">
+                    <%- include('./partials/featuredProductsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Product detail modal -->
+<div class="modal fade crud-modal" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalTitle"><%= t('marketing:featuredProducts.detailTitle') %></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="<%= t('common:words.close') %>"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <img id="pd-image" src="" alt="" class="img-fluid rounded w-100" style="height:180px;object-fit:cover;">
+                    </div>
+                    <div class="col-md-8">
+                        <h5 class="text-white fw-bold mb-3" id="pd-name"></h5>
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-6">
+                                <small class="text-white-50 d-block"><%= t('marketing:featuredProducts.category') %></small>
+                                <span class="text-white" id="pd-category">—</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-white-50 d-block"><%= t('marketing:words.seller') %></small>
+                                <span class="text-white" id="pd-seller">—</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-white-50 d-block"><%= t('marketing:featuredProducts.price') %></small>
+                                <span class="text-white" id="pd-price">—</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-white-50 d-block"><%= t('marketing:featuredProducts.sold') %></small>
+                                <span class="text-white" id="pd-sold">—</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-secondary" id="pd-featured"><%= t('marketing:featuredProducts.featured') %></span>
+                            <span class="badge bg-secondary" id="pd-promoted"><%= t('marketing:featuredProducts.promoted') %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.close') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('productDetailModal');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        updateFailed: '<%= t('marketing:featuredProducts.updateFailed') %>',
+        networkError: '<%= t('marketing:featuredProducts.networkError') %>',
+        featured: '<%= t('marketing:featuredProducts.featured') %>',
+        promoted: '<%= t('marketing:featuredProducts.promoted') %>'
+    };
+
+    function imgUrl(path, folder) {
+        if (!path) return '/uploads/' + folder + '/product-placeholder.svg';
+        if (path.indexOf('http://') === 0 || path.indexOf('https://') === 0) return path;
+        if (path.charAt(0) === '/') return path;
+        return '/uploads/' + folder + '/' + path;
+    }
+
+    function openDetail(id) {
+        Crud.get('/marketing/featured-products/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.product) return;
+                var p = data.product;
+                var imgEl = document.getElementById('pd-image');
+                if (p.main_image) {
+                    imgEl.src = imgUrl(p.main_image, 'products');
+                    imgEl.classList.remove('d-none');
+                } else {
+                    imgEl.src = '/uploads/products/product-placeholder.svg';
+                    imgEl.classList.remove('d-none');
+                }
+                document.getElementById('pd-name').textContent = p.name || '';
+                document.getElementById('pd-category').textContent = p.category_name || '—';
+                document.getElementById('pd-seller').textContent = p.seller || '—';
+                document.getElementById('pd-price').textContent = p.price_formatted || '—';
+                document.getElementById('pd-sold').textContent = p.total_sales || 0;
+
+                var feat = document.getElementById('pd-featured');
+                feat.className = 'badge ' + (p.featured ? 'bg-success' : 'bg-secondary');
+                feat.textContent = i18n.featured;
+
+                var promo = document.getElementById('pd-promoted');
+                promo.className = 'badge ' + (p.is_promoted ? 'bg-primary' : 'bg-secondary');
+                promo.textContent = i18n.promoted;
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    tableWrap.addEventListener('click', function (e) {
+        var viewBtn = e.target.closest('[data-view-product]');
+        if (viewBtn) {
+            e.preventDefault();
+            openDetail(viewBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var featBtn = e.target.closest('[data-toggle-featured]');
+        if (featBtn) {
+            e.preventDefault();
+            featBtn.disabled = true;
+            Crud.post('/marketing/products/' + featBtn.getAttribute('data-id') + '/featured')
+                .then(function (data) {
+                    Crud.toast(data.message, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/featured-products' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { featBtn.disabled = false; });
+            return;
+        }
+
+        var promoBtn = e.target.closest('[data-toggle-promoted]');
+        if (promoBtn) {
+            e.preventDefault();
+            promoBtn.disabled = true;
+            Crud.post('/marketing/products/' + promoBtn.getAttribute('data-id') + '/promoted')
+                .then(function (data) {
+                    Crud.toast(data.message, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/featured-products' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { promoBtn.disabled = false; });
+            return;
+        }
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

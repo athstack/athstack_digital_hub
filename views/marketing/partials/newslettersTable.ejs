@@ -1,0 +1,107 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:newsletters.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:newsletters.searchPlaceholder') %>">
+        </div>
+    </div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:newsletters.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-5">
+        <div class="glass-card no-lift p-4 h-100">
+            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-plus me-2 text-primary"></i><%= t('marketing:newsletters.addSubscriber') %></h6>
+            <form method="POST" action="/marketing/newsletters/subscribers" class="d-flex gap-2 newsletter-add-form" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <input type="email" name="email" class="form-control" required placeholder="<%= t('marketing:newsletters.emailPlaceholder') %>">
+                <button type="submit" class="btn btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-plus"></i></button>
+            </form>
+
+            <hr class="border-secondary opacity-25 my-3">
+            <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-paper-plane me-2 text-primary"></i><%= t('marketing:newsletters.sendNewsletter') %></h6>
+            <form method="POST" action="/marketing/newsletters/send" class="newsletter-send-form" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="mb-2">
+                    <input type="text" name="subject" class="form-control" required placeholder="<%= t('marketing:newsletters.subjectPlaceholder') %>">
+                </div>
+                <div class="mb-2">
+                    <textarea name="body" class="form-control" rows="4" placeholder="<%= t('marketing:newsletters.bodyPlaceholder') %>"></textarea>
+                </div>
+                <button type="submit" class="btn btn-premium-primary rounded-pill w-100"><i class="fa-solid fa-paper-plane me-2"></i><%= t('marketing:newsletters.send') %></button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <% if (subscribers && subscribers.length > 0) { %>
+        <div class="glass-card p-4">
+            <div class="table-responsive">
+                <table class="table table-dark align-middle mb-0 premium-table">
+                    <thead>
+                        <tr><th><%= t('marketing:words.email') %></th><th><%= t('marketing:newsletters.status') %></th><th><%= t('common:words.date') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+                    </thead>
+                    <tbody>
+                        <% subscribers.forEach(sub => { %>
+                        <tr>
+                            <td class="text-white small"><%= sub.email %></td>
+                            <td><span class="badge <%= sub.status === 'subscribed' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:newsletters.' + sub.status, { defaultValue: sub.status }) %></span></td>
+                            <td class="text-white-50 small"><%= formatDate(sub.created_at) %></td>
+                            <td class="col-actions">
+                                <div class="action-cell">
+                                    <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: sub.status === 'subscribed', abIcon: sub.status === 'subscribed' ? 'fa-user-slash' : 'fa-user-check', abAttrs:'data-toggle-subscriber data-id="' + sub.id + '" data-status="' + sub.status + '"', abTitle: sub.status === 'subscribed' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
+                                    <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-subscriber data-id="' + sub.id + '" data-email="' + escapeAttr(sub.email) + '"', abTitle:t('common:words.delete') }) %>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="empty-state glass-card p-5">
+            <i class="fa-solid fa-envelope-circle-check fa-4x mb-3"></i>
+            <% if (searchQuery) { %>
+            <h4 class="text-white fw-bold"><%= t('marketing:newsletters.noSubscribers') %></h4>
+            <p class="text-white-50"><%= t('marketing:newsletters.noSubscribersMatch') %></p>
+            <% } else { %>
+            <h4 class="text-white fw-bold"><%= t('marketing:newsletters.noSubscribers') %></h4>
+            <p class="text-white-50"><%= t('marketing:newsletters.empty') %></p>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<% if (sends && sends.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="d-flex align-items-center mb-3">
+        <h6 class="text-white fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i><%= t('marketing:newsletters.sendHistory') %></h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:newsletters.subject') %></th><th><%= t('marketing:newsletters.recipients') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.date') %></th></tr>
+            </thead>
+            <tbody>
+                <% sends.forEach(send => { %>
+                <tr>
+                    <td class="text-white small"><%= send.subject %></td>
+                    <td class="text-white-50"><%= send.recipient_count %></td>
+                    <td><span class="badge <%= send.status === 'sent' ? 'bg-success' : (send.status === 'failed' ? 'bg-danger' : 'bg-secondary') %>"><%= t('marketing:newsletters.' + send.status, { defaultValue: send.status }) %></span></td>
+                    <td class="text-white-50 small"><%= formatDate(send.created_at) %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } %>

@@ -172,7 +172,15 @@
     "settingsUpdated": "Mipangilio ya masoko imesasishwa kwa mafanikio.",
     "invalidRating": "Ukadiriaji lazima uwe kati ya 1 na 5.",
     "testimonialUpdated": "Ushuhuda umesasishwa kwa mafanikio.",
-    "announcementUpdated": "Tangazo limesasishwa kwa mafanikio."
+    "announcementUpdated": "Tangazo limesasishwa kwa mafanikio.",
+    "productFeatured": "Bidhaa imeangaziwa kwenye ukurasa wa mwanzo.",
+    "productUnfeatured": "Bidhaa imeondolewa kwenye viangazio vya ukurasa wa mwanzo.",
+    "productPromoted": "Bidhaa imewekwa alama ya kutangazwa.",
+    "productUnpromoted": "Bidhaa haitangazwi tena.",
+    "testimonialNotFound": "Ushuhuda haukupatikana.",
+    "reviewHidden": "Ukaguzi umefichwa kwa umma.",
+    "reviewUnhidden": "Ukaguzi sasa unaonekana kwa umma.",
+    "feedbackNotFound": "Ujumbe wa maoni haukupatikana."
   },
   "dashboard": {
     "heading": "Kituo cha Uendeshaji cha Masoko",
@@ -335,7 +343,18 @@
     "featured": "Imechaguliwa",
     "promoted": "Imetangazwa",
     "athstack": "Imetangazwa na TechBridge",
-    "empty": "Hakuna bidhaa zinazopatikana za kutangaza."
+    "empty": "Hakuna bidhaa zinazopatikana za kutangaza.",
+    "searchPlaceholder": "Tafuta bidhaa...",
+    "refresh": "Onyesha upya",
+    "view": "Tazama maelezo",
+    "detailTitle": "Maelezo ya bidhaa",
+    "category": "Kategoria",
+    "price": "Bei",
+    "sold": "Jumla ya mauzo",
+    "updateFailed": "Imeshindwa kusasisha bidhaa.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noProducts": "Hakuna bidhaa zilizopatikana",
+    "noProductsMatch": "Hakuna bidhaa inayolingana na utafutaji wako."
   },
   "blog": {
     "heading": "Machapisho ya Blogu",
@@ -426,14 +445,31 @@
     "unhide": "Onyesha",
     "hidden": "Imefichwa",
     "untitled": "Hakuna kichwa",
-    "empty": "Hakuna ukaguzi wa kujibu bado."
+    "empty": "Hakuna ukaguzi wa kujibu bado.",
+    "searchPlaceholder": "Tafuta ukaguzi...",
+    "refresh": "Onyesha upya",
+    "detailTitle": "Maelezo ya ukaguzi",
+    "author": "Mteja",
+    "sendReply": "Tuma jibu",
+    "updateFailed": "Imeshindwa kusasisha ukaguzi.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noReviews": "Hakuna ukaguzi uliopatikana",
+    "noReviewsMatch": "Hakuna ukaguzi unaolingana na utafutaji wako.",
+    "repliedAt": "Imejibiwa",
+    "noReply": "Bado hakuna jibu"
   },
   "feedback": {
     "heading": "Maoni ya Wateja",
     "from": "Kutoka",
     "subject": "Mada",
     "message": "Ujumbe",
-    "empty": "Hakuna maoni yaliyopokelewa bado."
+    "empty": "Hakuna maoni yaliyopokelewa bado.",
+    "searchPlaceholder": "Tafuta maoni...",
+    "refresh": "Onyesha upya",
+    "detailTitle": "Maelezo ya maoni",
+    "view": "Tazama ujumbe",
+    "noMessages": "Hakuna maoni yaliyopatikana",
+    "noMessagesMatch": "Hakuna maoni yanayolingana na utafutaji wako."
   },
   "newsletters": {
     "heading": "Majalada",
@@ -452,7 +488,14 @@
     "unsubscribed": "Amejitenga",
     "sent": "Imetumwa",
     "failed": "Imeshindwa",
-    "pending": "Inasubiri"
+    "pending": "Inasubiri",
+    "searchPlaceholder": "Tafuta watumiaji...",
+    "refresh": "Onyesha upya",
+    "noSubscribers": "Hakuna watumiaji walioandikishwa",
+    "noSubscribersMatch": "Hakuna msajili anayelingana na utafutaji wako.",
+    "updateFailed": "Imeshindwa kusasisha msajili.",
+    "deleteFailed": "Imeshindwa kuondoa msajili.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena."
   },
   "analytics": {
     "badge": "Uchambuzi",

@@ -1,0 +1,69 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:reviews.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:reviews.searchPlaceholder') %>">
+        </div>
+    </div>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:reviews.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (reviews && reviews.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:reviews.review') %></th><th><%= t('marketing:reviews.product') %></th><th><%= t('marketing:reviews.rating') %></th><th><%= t('marketing:reviews.reply') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% reviews.forEach(review => { %>
+                <tr>
+                    <td>
+                        <div class="text-white small fw-semibold"><%= review.title || t('marketing:reviews.untitled') %></div>
+                        <div class="text-white-50 small" style="max-width:280px;"><%= review.comment || '' %></div>
+                        <small class="text-white-50"><%= review.first_name ? review.first_name + ' ' + review.last_name : '—' %> · <%= formatDate(review.created_at) %></small>
+                        <% if (review.is_hidden) { %><span class="badge bg-secondary ms-1"><%= t('marketing:reviews.hidden') %></span><% } %>
+                    </td>
+                    <td class="text-white-50 small"><%= review.product_name || '—' %></td>
+                    <td class="text-warning"><%= '★'.repeat(review.rating) %></td>
+                    <td>
+                        <% if (review.seller_reply) { %>
+                        <div class="text-white-50 small" style="max-width:240px;">
+                            <span class="text-success"><i class="fa-solid fa-reply me-1"></i></span><%= review.seller_reply %>
+                        </div>
+                        <% } else { %>
+                        <span class="text-white-50 small"><%= t('marketing:reviews.noReply') %></span>
+                        <% } %>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abButton:true, abIcon:'fa-eye', abAttrs:'data-view-review data-id="' + review.id + '"', abTitle:t('marketing:reviews.detailTitle') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'hide', abButton:true, abOn: !!review.is_hidden, abIcon: review.is_hidden ? 'fa-eye-slash' : 'fa-eye', abAttrs:'data-toggle-review-hide data-id="' + review.id + '" data-on="' + (review.is_hidden ? '1' : '0') + '"', abTitle: review.is_hidden ? t('marketing:reviews.unhide') : t('marketing:reviews.hide') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-star-half-stroke fa-4x mb-3"></i>
+    <% if (searchQuery) { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:reviews.noReviews') %></h4>
+    <p class="text-white-50"><%= t('marketing:reviews.noReviewsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:reviews.noReviews') %></h4>
+    <p class="text-white-50"><%= t('marketing:reviews.empty') %></p>
+    <% } %>
+</div>
+<% } %>

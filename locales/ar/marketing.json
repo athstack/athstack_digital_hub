@@ -172,7 +172,15 @@
     "settingsUpdated": "تم تحديث إعدادات التسويق بنجاح.",
     "invalidRating": "يجب أن يكون التقييم بين 1 و 5.",
     "testimonialUpdated": "تم تحديث الرأي بنجاح.",
-    "announcementUpdated": "تم تحديث الإعلان بنجاح."
+    "announcementUpdated": "تم تحديث الإعلان بنجاح.",
+    "productFeatured": "تم تمييز المنتج على الصفحة الرئيسية.",
+    "productUnfeatured": "تمت إزالة المنتج من المميزات على الصفحة الرئيسية.",
+    "productPromoted": "تم وضع علامة المنتج كمنتج مُروّج.",
+    "productUnpromoted": "لم يعد المنتج مُروّجًا.",
+    "testimonialNotFound": "لم يتم العثور على الشهادة.",
+    "reviewHidden": "تم إخفاء التقييم عن الجمهور.",
+    "reviewUnhidden": "أصبح التقييم مرئيًا للجمهور الآن.",
+    "feedbackNotFound": "لم يتم العثور على رسالة الملاحظات."
   },
   "dashboard": {
     "heading": "مركز قيادة التسويق",
@@ -335,7 +343,18 @@
     "featured": "مميز",
     "promoted": "مُروَّج",
     "athstack": "مُروَّج من TechBridge",
-    "empty": "لا توجد منتجات متاحة للتمييز."
+    "empty": "لا توجد منتجات متاحة للتمييز.",
+    "searchPlaceholder": "ابحث في المنتجات...",
+    "refresh": "تحديث",
+    "view": "عرض التفاصيل",
+    "detailTitle": "تفاصيل المنتج",
+    "category": "الفئة",
+    "price": "السعر",
+    "sold": "إجمالي المبيعات",
+    "updateFailed": "تعذر تحديث المنتج.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى.",
+    "noProducts": "لم يتم العثور على منتجات",
+    "noProductsMatch": "لا توجد منتجات تطابق بحثك."
   },
   "blog": {
     "heading": "مقالات المدونة",
@@ -426,14 +445,31 @@
     "unhide": "إظهار",
     "hidden": "مخفي",
     "untitled": "بدون عنوان",
-    "empty": "لا توجد تقييمات للرد عليها بعد."
+    "empty": "لا توجد تقييمات للرد عليها بعد.",
+    "searchPlaceholder": "ابحث في التقييمات...",
+    "refresh": "تحديث",
+    "detailTitle": "تفاصيل التقييم",
+    "author": "العميل",
+    "sendReply": "إرسال الرد",
+    "updateFailed": "تعذر تحديث التقييم.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى.",
+    "noReviews": "لم يتم العثور على تقييمات",
+    "noReviewsMatch": "لا توجد تقييمات تطابق بحثك.",
+    "repliedAt": "تم الرد",
+    "noReply": "لا يوجد رد بعد"
   },
   "feedback": {
     "heading": "ملاحظات العملاء",
     "from": "من",
     "subject": "الموضوع",
     "message": "الرسالة",
-    "empty": "لا توجد ملاحظات واردة بعد."
+    "empty": "لا توجد ملاحظات واردة بعد.",
+    "searchPlaceholder": "ابحث في الملاحظات...",
+    "refresh": "تحديث",
+    "detailTitle": "تفاصيل الملاحظة",
+    "view": "عرض الرسالة",
+    "noMessages": "لم يتم العثور على ملاحظات",
+    "noMessagesMatch": "لا توجد ملاحظات تطابق بحثك."
   },
   "newsletters": {
     "heading": "النشرات البريدية",
@@ -452,7 +488,14 @@
     "unsubscribed": "غير مشترك",
     "sent": "تم الإرسال",
     "failed": "فشل",
-    "pending": "قيد الانتظار"
+    "pending": "قيد الانتظار",
+    "searchPlaceholder": "ابحث في المشتركين...",
+    "refresh": "تحديث",
+    "noSubscribers": "لم يتم العثور على مشتركين",
+    "noSubscribersMatch": "لا يوجد مشتركون يطابقون بحثك.",
+    "updateFailed": "تعذر تحديث المشترك.",
+    "deleteFailed": "تعذر إزالة المشترك.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى."
   },
   "analytics": {
     "badge": "التحليلات",

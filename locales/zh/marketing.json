@@ -172,7 +172,15 @@
     "settingsUpdated": "营销设置更新成功。",
     "invalidRating": "评分必须在 1 到 5 之间。",
     "testimonialUpdated": "评价更新成功。",
-    "announcementUpdated": "公告更新成功。"
+    "announcementUpdated": "公告更新成功。",
+    "productFeatured": "产品已在首页上精选展示。",
+    "productUnfeatured": "产品已从首页精选列表中移除。",
+    "productPromoted": "产品已标记为推广。",
+    "productUnpromoted": "产品不再推广。",
+    "testimonialNotFound": "未找到客户评价。",
+    "reviewHidden": "评论已对公众隐藏。",
+    "reviewUnhidden": "评论现对公众可见。",
+    "feedbackNotFound": "未找到反馈消息。"
   },
   "dashboard": {
     "heading": "营销指挥中心",
@@ -335,7 +343,18 @@
     "featured": "精选",
     "promoted": "已推广",
     "athstack": "TechBridge 推广",
-    "empty": "暂无可用产品可展示。"
+    "empty": "暂无可用产品可展示。",
+    "searchPlaceholder": "搜索产品...",
+    "refresh": "刷新",
+    "view": "查看详情",
+    "detailTitle": "产品详情",
+    "category": "分类",
+    "price": "价格",
+    "sold": "总销量",
+    "updateFailed": "无法更新该产品。",
+    "networkError": "网络错误，请重试。",
+    "noProducts": "未找到产品",
+    "noProductsMatch": "没有与您的搜索匹配的产品。"
   },
   "blog": {
     "heading": "博客文章",
@@ -426,14 +445,31 @@
     "unhide": "显示",
     "hidden": "已隐藏",
     "untitled": "无标题",
-    "empty": "暂无需要回复的评论。"
+    "empty": "暂无需要回复的评论。",
+    "searchPlaceholder": "搜索评论...",
+    "refresh": "刷新",
+    "detailTitle": "评论详情",
+    "author": "客户",
+    "sendReply": "发送回复",
+    "updateFailed": "无法更新该评论。",
+    "networkError": "网络错误，请重试。",
+    "noReviews": "未找到评论",
+    "noReviewsMatch": "没有与您的搜索匹配的评论。",
+    "repliedAt": "已回复",
+    "noReply": "暂无回复"
   },
   "feedback": {
     "heading": "客户反馈",
     "from": "来自",
     "subject": "主题",
     "message": "消息",
-    "empty": "暂无收到的反馈。"
+    "empty": "暂无收到的反馈。",
+    "searchPlaceholder": "搜索反馈...",
+    "refresh": "刷新",
+    "detailTitle": "反馈详情",
+    "view": "查看消息",
+    "noMessages": "未找到反馈",
+    "noMessagesMatch": "没有与您的搜索匹配的反馈。"
   },
   "newsletters": {
     "heading": "电子报",
@@ -452,7 +488,14 @@
     "unsubscribed": "已退订",
     "sent": "已发送",
     "failed": "失败",
-    "pending": "待处理"
+    "pending": "待处理",
+    "searchPlaceholder": "搜索订阅者...",
+    "refresh": "刷新",
+    "noSubscribers": "未找到订阅者",
+    "noSubscribersMatch": "没有与您的搜索匹配的订阅者。",
+    "updateFailed": "无法更新该订阅者。",
+    "deleteFailed": "无法移除该订阅者。",
+    "networkError": "网络错误，请重试。"
   },
   "analytics": {
     "badge": "分析",

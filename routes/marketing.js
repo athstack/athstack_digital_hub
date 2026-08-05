@@ -48,6 +48,7 @@ router.post('/coupons/:id/status', requirePermission('manage_coupons'), isActive
 
 // Featured products + promoted technician products
 router.get('/featured-products', requirePermission('manage_featured_products'), marketingController.getFeaturedProducts);
+router.get('/featured-products/:id', requirePermission('manage_featured_products'), marketingController.getFeaturedProductDetail);
 router.post('/products/:id/featured', requirePermission('manage_featured_products'), isActive, validateCsrf, marketingController.toggleProductFeatured);
 router.post('/products/:id/promoted', requirePermission('manage_featured_products'), isActive, validateCsrf, marketingController.toggleProductPromoted);
 
@@ -79,9 +80,11 @@ router.post('/announcements/:id/delete', requirePermission('manage_announcements
 
 // Reviews + feedback
 router.get('/reviews', requirePermission('manage_reviews'), marketingController.getReviews);
+router.get('/reviews/:id', requirePermission('manage_reviews'), marketingController.getReviewDetail);
 router.post('/reviews/:id/reply', requirePermission('manage_reviews'), isActive, validateCsrf, marketingController.replyToReview);
 router.post('/reviews/:id/hide', requirePermission('manage_reviews'), isActive, validateCsrf, marketingController.toggleReviewHidden);
 router.get('/feedback', requirePermission('manage_messages'), marketingController.getFeedback);
+router.get('/feedback/:id', requirePermission('manage_messages'), marketingController.getFeedbackDetail);
 
 // Newsletters
 router.get('/newsletters', requirePermission('manage_newsletters'), marketingController.getNewsletters);
