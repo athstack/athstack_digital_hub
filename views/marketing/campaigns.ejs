@@ -188,7 +188,7 @@
             var atitle = archiveBtn.getAttribute('data-title');
             Crud.confirm({
                 title: i18n.archiveTitle,
-                messageHtml: i18n.archiveConfirm + ' <strong class="text-white">' + (atitle || '') + '</strong>?',
+                messageHtml: i18n.archiveConfirm + ' <strong class="text-white">' + Crud.esc(atitle || '') + '</strong>?',
                 confirmText: i18n.archive,
                 okIcon: 'fa-box-archive'
             }).then(function (ok) {

@@ -133,7 +133,7 @@
     }
 
     window.markNotifRead = async function(id) {
-        try { await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); } catch(e) { console.warn('markNotifRead failed', e); }
+        try { await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':window.CRUD_CSRF},body:JSON.stringify({id})}); } catch(e) { console.warn('markNotifRead failed', e); }
     };
 
     list.addEventListener('click', function(e) {
@@ -163,7 +163,7 @@
     if (markAllBtn) {
         markAllBtn.addEventListener('click', async function() {
             try {
-                await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+                await fetch('/api/notifications/read', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':window.CRUD_CSRF},body:JSON.stringify({})});
                 loadNotifications();
             } catch(e) { console.warn('markAllRead failed', e); }
         });

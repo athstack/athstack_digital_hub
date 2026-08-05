@@ -425,6 +425,7 @@
     put: function (url, body, opts) { return api('PUT', url, body, opts); },
     del: function (url, opts) { return api('DELETE', url, null, opts); },
     ApiError: ApiError,
+    esc: esc,
     toast: toast,
     confirm: confirmDialog,
     openModal: openModal,

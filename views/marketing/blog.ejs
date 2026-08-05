@@ -179,7 +179,7 @@
             var title = delBtn.getAttribute('data-title');
             Crud.confirm({
                 title: i18n.deleteTitle,
-                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (title || '') + '</strong>?',
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + Crud.esc(title || '') + '</strong>?',
                 confirmText: i18n.delete,
                 okIcon: 'fa-trash'
             }).then(function (ok) {

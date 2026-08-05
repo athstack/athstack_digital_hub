@@ -15,7 +15,6 @@ function imageFilter(req, file, cb) {
 const storage = multer.memoryStorage();
 
 const uploadProductImages = multer({ storage, fileFilter: imageFilter, limits: { fileSize: MAX_FILE_SIZE } });
-const uploadServiceImages = multer({ storage, fileFilter: imageFilter, limits: { fileSize: MAX_FILE_SIZE } });
 const uploadProfileImage = multer({ storage, fileFilter: imageFilter, limits: { fileSize: MAX_FILE_SIZE } });
 
 /**
@@ -59,7 +58,6 @@ function withUpload(uploadMiddleware) {
 
 module.exports = {
   uploadProductImages,
-  uploadServiceImages,
   uploadProfileImage,
   handleUploadError,
   withUpload,

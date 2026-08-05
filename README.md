@@ -85,7 +85,6 @@ athstack_digital_hub/
     errorHandler.js         # Global error handler + AppError class
   validators/
     authValidators.js       # Register + login validation
-    productValidators.js    # Product create/update validation
     contactValidator.js     # Contact form validation
   utils/
     helpers.js              # formatCurrency, formatDate, getStatusBadgeClass, generateSlug, paginate

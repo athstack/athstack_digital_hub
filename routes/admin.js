@@ -4,7 +4,6 @@ const adminController = require('../controllers/adminController');
 const { isAdmin, isActive } = require('../middleware/auth');
 const { requirePermission, requireAllPermissions } = require('../middleware/rbac');
 const { validateCsrf } = require('../middleware/csrf');
-const { createProductValidator } = require('../validators/productValidators');
 const { uploadProductImages, withUpload } = require('../middleware/upload');
 
 // Namespace guard: only admin / super_admin reach /admin/*. Every individual

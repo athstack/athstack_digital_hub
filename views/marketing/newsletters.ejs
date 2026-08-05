@@ -73,7 +73,7 @@
             var email = delBtn.getAttribute('data-email');
             Crud.confirm({
                 title: i18n.deleteTitle,
-                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (email || '') + '</strong>?',
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + Crud.esc(email || '') + '</strong>?',
                 confirmText: i18n.delete,
                 okIcon: 'fa-trash'
             }).then(function (ok) {

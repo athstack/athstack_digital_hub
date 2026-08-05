@@ -1,4 +1,5 @@
 const ProductModel = require('../models/ProductModel');
+const UserModel = require('../models/UserModel');
 const RepairModel = require('../models/RepairModel');
 const OrderModel = require('../models/OrderModel');
 const NotificationModel = require('../models/NotificationModel');
