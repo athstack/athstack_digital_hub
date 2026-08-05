@@ -42,7 +42,8 @@
   function api(method, url, body, opts) {
     opts = opts || {};
     var headers = { 'Accept': 'application/json' };
-    if (CSRF) headers['X-CSRF-Token'] = CSRF;
+    var csrf = window.CRUD_CSRF || CSRF;
+    if (csrf) headers['X-CSRF-Token'] = csrf;
 
     var payload = null;
     if (body !== undefined && body !== null) {
