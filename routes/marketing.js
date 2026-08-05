@@ -55,6 +55,7 @@ router.post('/products/:id/promoted', requirePermission('manage_featured_product
 router.get('/blog', requirePermission('manage_blog'), marketingController.getBlog);
 router.get('/blog/new', requirePermission('manage_blog'), marketingController.getBlogForm);
 router.post('/blog', requirePermission('manage_blog'), isActive, validateCsrf, marketingController.createBlogPost);
+router.get('/blog/:id', requirePermission('manage_blog'), marketingController.getBlogDetail);
 router.get('/blog/:id/edit', requirePermission('manage_blog'), marketingController.getBlogForm);
 router.post('/blog/:id', requirePermission('manage_blog'), isActive, validateCsrf, marketingController.updateBlogPost);
 router.post('/blog/:id/status', requirePermission('manage_blog'), isActive, validateCsrf, marketingController.updateBlogPostStatus);
@@ -63,12 +64,16 @@ router.post('/blog/:id/delete', requirePermission('manage_blog'), isActive, vali
 // Testimonials
 router.get('/testimonials', requirePermission('manage_testimonials'), marketingController.getTestimonials);
 router.post('/testimonials', requirePermission('manage_testimonials'), isActive, validateCsrf, marketingController.createTestimonial);
+router.get('/testimonials/:id', requirePermission('manage_testimonials'), marketingController.getTestimonialDetail);
+router.post('/testimonials/:id', requirePermission('manage_testimonials'), isActive, validateCsrf, marketingController.updateTestimonial);
 router.post('/testimonials/:id/status', requirePermission('manage_testimonials'), isActive, validateCsrf, marketingController.updateTestimonialStatus);
 router.post('/testimonials/:id/delete', requirePermission('manage_testimonials'), isActive, validateCsrf, marketingController.deleteTestimonial);
 
 // Announcements
 router.get('/announcements', requirePermission('manage_announcements'), marketingController.getAnnouncements);
 router.post('/announcements', requirePermission('manage_announcements'), isActive, validateCsrf, marketingController.createAnnouncement);
+router.get('/announcements/:id', requirePermission('manage_announcements'), marketingController.getAnnouncementDetail);
+router.post('/announcements/:id', requirePermission('manage_announcements'), isActive, validateCsrf, marketingController.updateAnnouncement);
 router.post('/announcements/:id/status', requirePermission('manage_announcements'), isActive, validateCsrf, marketingController.updateAnnouncementStatus);
 router.post('/announcements/:id/delete', requirePermission('manage_announcements'), isActive, validateCsrf, marketingController.deleteAnnouncement);
 

@@ -169,7 +169,10 @@
     "currentPasswordWrong": "La contraseña actual es incorrecta.",
     "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
     "profileUpdated": "Perfil actualizado con éxito.",
-    "settingsUpdated": "Ajustes de marketing actualizados con éxito."
+    "settingsUpdated": "Ajustes de marketing actualizados con éxito.",
+    "invalidRating": "La puntuación debe estar entre 1 y 5.",
+    "testimonialUpdated": "Testimonio actualizado correctamente.",
+    "announcementUpdated": "Anuncio actualizado correctamente."
   },
   "dashboard": {
     "heading": "Centro de control de marketing",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "Entradas de blog",
     "newPost": "Nueva entrada",
-    "empty": "Aún no hay entradas. Escribe tu primera entrada."
+    "empty": "Aún no hay entradas. Escribe tu primera entrada.",
+    "badge": "Blog",
+    "searchPlaceholder": "Buscar publicaciones...",
+    "filterStatus": "Filtrar por estado",
+    "refresh": "Actualizar",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "deleteTitle": "Eliminar publicación",
+    "deleteConfirm": "Eliminar esta publicación",
+    "deleteFailed": "No se pudo eliminar la publicación.",
+    "updateFailed": "No se pudo actualizar la publicación.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noPosts": "No se encontraron publicaciones",
+    "noPostsMatch": "No hay publicaciones que coincidan con tus filtros."
   },
   "blogForm": {
     "headingCreate": "Nueva entrada de blog",
@@ -362,7 +378,19 @@
     "content": "Testimonio",
     "contentPlaceholder": "Comparte lo que dijo el cliente...",
     "rating": "Valoración",
-    "empty": "Aún no hay testimonios."
+    "empty": "Aún no hay testimonios.",
+    "badge": "Testimonios",
+    "newTestimonial": "Nuevo testimonio",
+    "searchPlaceholder": "Buscar testimonios...",
+    "filterStatus": "Filtrar por estado",
+    "refresh": "Actualizar",
+    "deleteTitle": "Eliminar testimonio",
+    "deleteConfirm": "Eliminar este testimonio",
+    "deleteFailed": "No se pudo eliminar el testimonio.",
+    "updateFailed": "No se pudo actualizar el testimonio.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noTestimonials": "No se encontraron testimonios",
+    "noTestimonialsMatch": "No hay testimonios que coincidan con tus filtros."
   },
   "announcements": {
     "heading": "Anuncios",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "Título del anuncio...",
     "message": "Mensaje",
     "messagePlaceholder": "Escribe el anuncio...",
-    "empty": "Aún no hay anuncios publicados."
+    "empty": "Aún no hay anuncios publicados.",
+    "badge": "Anuncios",
+    "newAnnouncement": "Nuevo anuncio",
+    "searchPlaceholder": "Buscar anuncios...",
+    "filterStatus": "Filtrar por estado",
+    "refresh": "Actualizar",
+    "activate": "Activar",
+    "pause": "Pausar",
+    "deleteTitle": "Eliminar anuncio",
+    "deleteConfirm": "Eliminar este anuncio",
+    "deleteFailed": "No se pudo eliminar el anuncio.",
+    "updateFailed": "No se pudo actualizar el anuncio.",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "noAnnouncements": "No se encontraron anuncios",
+    "noAnnouncementsMatch": "No hay anuncios que coincidan con tus filtros."
   },
   "reviews": {
     "heading": "Respuestas a reseñas",
@@ -485,5 +527,25 @@
     "socialTwitter": "URL de Twitter / X",
     "socialInstagram": "URL de Instagram",
     "save": "Guardar ajustes"
+  },
+  "testimonialForm": {
+    "headingCreate": "Nuevo testimonio",
+    "headingEdit": "Editar testimonio",
+    "authorName": "Nombre del autor",
+    "authorRole": "Rol del autor",
+    "content": "Testimonio",
+    "contentPlaceholder": "Comparte lo que dijo el cliente...",
+    "rating": "Puntuación",
+    "createTestimonial": "Crear testimonio",
+    "updateTestimonial": "Actualizar testimonio"
+  },
+  "announcementForm": {
+    "headingCreate": "Nuevo anuncio",
+    "headingEdit": "Editar anuncio",
+    "title": "Título del anuncio",
+    "message": "Mensaje",
+    "messagePlaceholder": "Escribe el anuncio...",
+    "createAnnouncement": "Crear anuncio",
+    "updateAnnouncement": "Actualizar anuncio"
   }
 }

@@ -1,64 +1,215 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
-                    <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-newspaper me-2 text-primary"></i><%= t('marketing:blog.heading') %></h2>
-                    <a href="/marketing/blog/new" class="btn btn-premium-primary rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:blog.newPost') %></a>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:blog.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-newspaper me-2 text-primary"></i><%= t('marketing:blog.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addPostBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:blog.newPost') %></button>
+                    </div>
                 </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.slug') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.date') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (posts.length > 0) { %>
-                                <% posts.forEach(post => { %>
-                                <tr>
-                                    <td class="py-3 px-4 text-white fw-semibold"><%= post.title %></td>
-                                    <td class="py-3 px-4 text-muted small"><%= post.slug %></td>
-                                    <td class="py-3 px-4">
-                                        <span class="badge <%= post.status === 'published' ? 'bg-success' : (post.status === 'archived' ? 'bg-secondary' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + post.status) %></span>
-                                    </td>
-                                    <td class="py-3 px-4 text-muted"><%= post.published_at ? formatDate(post.published_at) : formatDate(post.created_at) %></td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'edit', abHref:'/marketing/blog/' + post.id + '/edit', abTitle:t('common:words.edit') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'view', abFormAction:'/marketing/blog/' + post.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (post.status === 'published' ? 'draft' : 'published') + '">', abOn: post.status === 'published', abIcon: post.status === 'published' ? 'fa-eye-slash' : 'fa-eye', abTitle: post.status === 'published' ? t('marketing:reviews.hide') : t('marketing:reviews.unhide') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/blog/' + post.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-newspaper fa-2x mb-2"></i><br>
-                                        <%= t('marketing:blog.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/blog">
+                    <%- include('./partials/blogTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Blog post add / edit modal -->
+<div class="modal fade crud-modal" id="postModal" tabindex="-1" aria-labelledby="postModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="postForm" method="POST" action="/marketing/blog" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postModalTitle"><%= t('marketing:blogForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="pf-title"><%= t('marketing:blogForm.title') %></label>
+                            <input type="text" class="form-control" id="pf-title" name="title" maxlength="200" placeholder="<%= t('marketing:blogForm.titlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-excerpt"><%= t('marketing:blogForm.excerpt') %></label>
+                            <input type="text" class="form-control" id="pf-excerpt" name="excerpt" maxlength="255" placeholder="<%= t('marketing:blogForm.excerptPlaceholder') %>">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-cover-image"><%= t('marketing:blogForm.coverImage') %></label>
+                            <input type="text" class="form-control" id="pf-cover-image" name="cover_image" maxlength="255" placeholder="<%= t('marketing:blogForm.coverImagePlaceholder') %>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="pf-status" name="status">
+                                <option value="draft"><%= t('marketing:status.draft') %></option>
+                                <option value="published"><%= t('marketing:status.published') %></option>
+                                <option value="archived"><%= t('marketing:status.archived') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pf-content"><%= t('marketing:blogForm.content') %></label>
+                            <textarea class="form-control" id="pf-content" name="content" rows="6" placeholder="<%= t('marketing:blogForm.contentPlaceholder') %>"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="postSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:blogForm.createPost') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('postModal');
+    var form = document.getElementById('postForm');
+    var titleEl = document.getElementById('postModalTitle');
+    var submitBtn = document.getElementById('postSubmitBtn');
+    var addBtn = document.getElementById('addPostBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:blogForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:blogForm.headingEdit') %>',
+        createPost: '<%= t('marketing:blogForm.createPost') %>',
+        updatePost: '<%= t('marketing:blogForm.updatePost') %>',
+        postCreated: '<%= t('marketing:flash.blogCreated') %>',
+        postUpdated: '<%= t('marketing:flash.blogUpdated') %>',
+        postStatusUpdated: '<%= t('marketing:flash.blogStatusUpdated') %>',
+        postDeleted: '<%= t('marketing:flash.blogDeleted') %>',
+        deleteTitle: '<%= t('marketing:blog.deleteTitle') %>',
+        deleteConfirm: '<%= t('marketing:blog.deleteConfirm') %>',
+        deleteFailed: '<%= t('marketing:blog.deleteFailed') %>',
+        updateFailed: '<%= t('marketing:blog.updateFailed') %>',
+        networkError: '<%= t('marketing:blog.networkError') %>',
+        publish: '<%= t('marketing:blog.publish') %>',
+        unpublish: '<%= t('marketing:blog.unpublish') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/blog';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createPost;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/blog/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.post) return;
+                resetForm();
+                var p = data.post;
+                form.action = '/marketing/blog/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updatePost;
+
+                form.elements['title'].value = p.title || '';
+                form.elements['excerpt'].value = p.excerpt || '';
+                form.elements['cover_image'].value = p.cover_image || '';
+                form.elements['content'].value = p.content || '';
+                form.elements['status'].value = p.status || 'draft';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-post]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-post-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            var cur = toggle.getAttribute('data-status');
+            var next = cur === 'published' ? 'draft' : 'published';
+            toggle.disabled = true;
+            Crud.post('/marketing/blog/' + tid + '/status', { status: next })
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.postStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/blog' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-post]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            var title = delBtn.getAttribute('data-title');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (title || '') + '</strong>?',
+                confirmText: i18n.delete,
+                okIcon: 'fa-trash'
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/marketing/blog/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.postDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/marketing/blog' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.postCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/blog' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

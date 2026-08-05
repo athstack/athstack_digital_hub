@@ -169,7 +169,10 @@
     "currentPasswordWrong": "当前密码不正确。",
     "passwordTooShort": "密码至少需要8个字符。",
     "profileUpdated": "个人资料更新成功。",
-    "settingsUpdated": "营销设置更新成功。"
+    "settingsUpdated": "营销设置更新成功。",
+    "invalidRating": "评分必须在 1 到 5 之间。",
+    "testimonialUpdated": "评价更新成功。",
+    "announcementUpdated": "公告更新成功。"
   },
   "dashboard": {
     "heading": "营销指挥中心",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "博客文章",
     "newPost": "新建文章",
-    "empty": "暂无文章。写下你的第一篇文章吧。"
+    "empty": "暂无文章。写下你的第一篇文章吧。",
+    "badge": "博客",
+    "searchPlaceholder": "搜索文章...",
+    "filterStatus": "按状态筛选",
+    "refresh": "刷新",
+    "publish": "发布",
+    "unpublish": "取消发布",
+    "deleteTitle": "删除文章",
+    "deleteConfirm": "删除这篇博客文章",
+    "deleteFailed": "无法删除文章。",
+    "updateFailed": "无法更新文章。",
+    "networkError": "网络错误，请重试。",
+    "noPosts": "未找到文章",
+    "noPostsMatch": "没有符合筛选条件的文章。"
   },
   "blogForm": {
     "headingCreate": "新建博客文章",
@@ -362,7 +378,19 @@
     "content": "评价",
     "contentPlaceholder": "分享客户的评价...",
     "rating": "评分",
-    "empty": "暂无评价。"
+    "empty": "暂无评价。",
+    "badge": "客户评价",
+    "newTestimonial": "新评价",
+    "searchPlaceholder": "搜索评价...",
+    "filterStatus": "按状态筛选",
+    "refresh": "刷新",
+    "deleteTitle": "删除评价",
+    "deleteConfirm": "删除此评价",
+    "deleteFailed": "无法删除评价。",
+    "updateFailed": "无法更新评价。",
+    "networkError": "网络错误，请重试。",
+    "noTestimonials": "未找到评价",
+    "noTestimonialsMatch": "没有符合筛选条件的评价。"
   },
   "announcements": {
     "heading": "公告",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "公告标题...",
     "message": "消息",
     "messagePlaceholder": "撰写公告...",
-    "empty": "暂无已发布的公告。"
+    "empty": "暂无已发布的公告。",
+    "badge": "公告",
+    "newAnnouncement": "新公告",
+    "searchPlaceholder": "搜索公告...",
+    "filterStatus": "按状态筛选",
+    "refresh": "刷新",
+    "activate": "激活",
+    "pause": "暂停",
+    "deleteTitle": "删除公告",
+    "deleteConfirm": "删除此公告",
+    "deleteFailed": "无法删除公告。",
+    "updateFailed": "无法更新公告。",
+    "networkError": "网络错误，请重试。",
+    "noAnnouncements": "未找到公告",
+    "noAnnouncementsMatch": "没有符合筛选条件的公告。"
   },
   "reviews": {
     "heading": "评论回复",
@@ -485,5 +527,25 @@
     "socialTwitter": "Twitter / X 链接",
     "socialInstagram": "Instagram 链接",
     "save": "保存设置"
+  },
+  "testimonialForm": {
+    "headingCreate": "新评价",
+    "headingEdit": "编辑评价",
+    "authorName": "作者姓名",
+    "authorRole": "作者角色",
+    "content": "评价内容",
+    "contentPlaceholder": "分享客户的评价...",
+    "rating": "评分",
+    "createTestimonial": "创建评价",
+    "updateTestimonial": "更新评价"
+  },
+  "announcementForm": {
+    "headingCreate": "新公告",
+    "headingEdit": "编辑公告",
+    "title": "公告标题",
+    "message": "消息",
+    "messagePlaceholder": "编写公告...",
+    "createAnnouncement": "创建公告",
+    "updateAnnouncement": "更新公告"
   }
 }

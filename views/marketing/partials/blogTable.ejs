@@ -1,0 +1,69 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:blog.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:blog.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('marketing:blog.filterStatus') %>">
+        <option value=""><%= t('marketing:blog.filterStatus') %></option>
+        <option value="draft" <%= currentStatus === 'draft' ? 'selected' : '' %>><%= t('marketing:status.draft') %></option>
+        <option value="published" <%= currentStatus === 'published' ? 'selected' : '' %>><%= t('marketing:status.published') %></option>
+        <option value="archived" <%= currentStatus === 'archived' ? 'selected' : '' %>><%= t('marketing:status.archived') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:blog.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (posts && posts.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:words.slug') %></th><th><%= t('common:words.status') %></th><th><%= t('common:words.date') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% posts.forEach(post => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= post.title %></div>
+                        <% if (post.cover_image) { %><small class="text-white-50"><%= post.cover_image %></small><% } %>
+                    </td>
+                    <td class="text-white-50 small"><%= post.slug %></td>
+                    <td>
+                        <% var statusColors = { published: 'bg-success', draft: 'bg-warning text-dark', archived: 'bg-secondary' }; %>
+                        <span class="badge <%= statusColors[post.status] || 'bg-secondary' %>"><%= t('marketing:status.' + post.status, { defaultValue: post.status }) %></span>
+                    </td>
+                    <td class="text-white-50"><%= post.published_at ? formatDate(post.published_at) : formatDate(post.created_at) %></td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-post data-id="' + post.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: post.status === 'published', abIcon: post.status === 'published' ? 'fa-eye-slash' : 'fa-eye', abAttrs:'data-toggle-post-status data-id="' + post.id + '" data-status="' + post.status + '"', abTitle: post.status === 'published' ? t('marketing:blog.unpublish') : t('marketing:blog.publish') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-post data-id="' + post.id + '" data-title="' + escapeAttr(post.title) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-newspaper fa-4x mb-3"></i>
+    <% if (searchQuery || currentStatus !== 'all') { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:blog.noPosts') %></h4>
+    <p class="text-white-50"><%= t('marketing:blog.noPostsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:blog.noPosts') %></h4>
+    <p class="text-white-50"><%= t('marketing:blog.empty') %></p>
+    <% } %>
+</div>
+<% } %>

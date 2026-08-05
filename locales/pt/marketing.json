@@ -169,7 +169,10 @@
     "currentPasswordWrong": "A senha atual está incorreta.",
     "passwordTooShort": "A senha deve ter pelo menos 8 caracteres.",
     "profileUpdated": "Perfil atualizado com sucesso.",
-    "settingsUpdated": "Configurações de marketing atualizadas com sucesso."
+    "settingsUpdated": "Configurações de marketing atualizadas com sucesso.",
+    "invalidRating": "A avaliação deve estar entre 1 e 5.",
+    "testimonialUpdated": "Depoimento atualizado com sucesso.",
+    "announcementUpdated": "Aviso atualizado com sucesso."
   },
   "dashboard": {
     "heading": "Centro de comando de marketing",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "Postagens de blog",
     "newPost": "Nova postagem",
-    "empty": "Ainda não há postagens. Escreva sua primeira postagem."
+    "empty": "Ainda não há postagens. Escreva sua primeira postagem.",
+    "badge": "Blog",
+    "searchPlaceholder": "Pesquisar publicações...",
+    "filterStatus": "Filtrar por status",
+    "refresh": "Atualizar",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "deleteTitle": "Excluir publicação",
+    "deleteConfirm": "Excluir esta publicação",
+    "deleteFailed": "Não foi possível excluir a publicação.",
+    "updateFailed": "Não foi possível atualizar a publicação.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noPosts": "Nenhuma publicação encontrada",
+    "noPostsMatch": "Nenhuma publicação corresponde aos seus filtros."
   },
   "blogForm": {
     "headingCreate": "Nova postagem de blog",
@@ -362,7 +378,19 @@
     "content": "Depoimento",
     "contentPlaceholder": "Compartilhe o que o cliente disse...",
     "rating": "Avaliação",
-    "empty": "Ainda não há depoimentos."
+    "empty": "Ainda não há depoimentos.",
+    "badge": "Depoimentos",
+    "newTestimonial": "Novo depoimento",
+    "searchPlaceholder": "Pesquisar depoimentos...",
+    "filterStatus": "Filtrar por status",
+    "refresh": "Atualizar",
+    "deleteTitle": "Excluir depoimento",
+    "deleteConfirm": "Excluir este depoimento",
+    "deleteFailed": "Não foi possível excluir o depoimento.",
+    "updateFailed": "Não foi possível atualizar o depoimento.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noTestimonials": "Nenhum depoimento encontrado",
+    "noTestimonialsMatch": "Nenhum depoimento corresponde aos seus filtros."
   },
   "announcements": {
     "heading": "Avisos",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "Título do aviso...",
     "message": "Mensagem",
     "messagePlaceholder": "Escreva o aviso...",
-    "empty": "Nenhum aviso publicado ainda."
+    "empty": "Nenhum aviso publicado ainda.",
+    "badge": "Avisos",
+    "newAnnouncement": "Novo aviso",
+    "searchPlaceholder": "Pesquisar avisos...",
+    "filterStatus": "Filtrar por status",
+    "refresh": "Atualizar",
+    "activate": "Ativar",
+    "pause": "Pausar",
+    "deleteTitle": "Excluir aviso",
+    "deleteConfirm": "Excluir este aviso",
+    "deleteFailed": "Não foi possível excluir o aviso.",
+    "updateFailed": "Não foi possível atualizar o aviso.",
+    "networkError": "Erro de rede. Tente novamente.",
+    "noAnnouncements": "Nenhum aviso encontrado",
+    "noAnnouncementsMatch": "Nenhum aviso corresponde aos seus filtros."
   },
   "reviews": {
     "heading": "Respostas a avaliações",
@@ -485,5 +527,25 @@
     "socialTwitter": "URL do Twitter / X",
     "socialInstagram": "URL do Instagram",
     "save": "Salvar configurações"
+  },
+  "testimonialForm": {
+    "headingCreate": "Novo depoimento",
+    "headingEdit": "Editar depoimento",
+    "authorName": "Nome do autor",
+    "authorRole": "Função do autor",
+    "content": "Depoimento",
+    "contentPlaceholder": "Compartilhe o que o cliente disse...",
+    "rating": "Avaliação",
+    "createTestimonial": "Criar depoimento",
+    "updateTestimonial": "Atualizar depoimento"
+  },
+  "announcementForm": {
+    "headingCreate": "Novo aviso",
+    "headingEdit": "Editar aviso",
+    "title": "Título do aviso",
+    "message": "Mensagem",
+    "messagePlaceholder": "Escreva o aviso...",
+    "createAnnouncement": "Criar aviso",
+    "updateAnnouncement": "Atualizar aviso"
   }
 }

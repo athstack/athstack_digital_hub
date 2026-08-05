@@ -1,81 +1,202 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:announcements.heading') %></h2>
-
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><%= t('marketing:announcements.addNew') %></h6>
-                    <form method="POST" action="/marketing/announcements">
-                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" name="title" class="form-control" required placeholder="<%= t('marketing:announcements.titlePlaceholder') %>">
-                            </div>
-                            <div class="col-md-3">
-                                <select name="status" class="form-select">
-                                    <option value="active"><%= t('marketing:status.active') %></option>
-                                    <option value="inactive"><%= t('marketing:status.inactive') %></option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <textarea name="message" class="form-control" rows="3" required placeholder="<%= t('marketing:announcements.messagePlaceholder') %>"></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:announcements.add') %></button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:announcements.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-bullhorn me-2 text-primary"></i><%= t('marketing:announcements.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addAnnouncementBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:announcements.newAnnouncement') %></button>
+                    </div>
                 </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.title') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:announcements.message') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (announcements.length > 0) { %>
-                                <% announcements.forEach(announcement => { %>
-                                <tr>
-                                    <td class="py-3 px-4 text-white fw-semibold"><%= announcement.title %></td>
-                                    <td class="py-3 px-4 text-muted" style="max-width:360px;"><%= announcement.message %></td>
-                                    <td class="py-3 px-4"><span class="badge <%= announcement.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + announcement.status) %></span></td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'publish', abFormAction:'/marketing/announcements/' + announcement.id + '/status', abFormCsrf:csrfToken, abOn: announcement.status === 'active', abIcon: announcement.status === 'active' ? 'fa-pause' : 'fa-play', abTitle: announcement.status === 'active' ? t('marketing:campaigns.pause') : t('marketing:campaigns.activate') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/announcements/' + announcement.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="4" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-bullhorn fa-2x mb-2"></i><br>
-                                        <%= t('marketing:announcements.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/announcements">
+                    <%- include('./partials/announcementsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Announcement add / edit modal -->
+<div class="modal fade crud-modal" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="announcementForm" method="POST" action="/marketing/announcements" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="announcementModalTitle"><%= t('marketing:announcementForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="af-title"><%= t('marketing:announcementForm.title') %></label>
+                            <input type="text" class="form-control" id="af-title" name="title" maxlength="200" placeholder="<%= t('marketing:announcements.titlePlaceholder') %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="af-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="af-status" name="status">
+                                <option value="active"><%= t('marketing:status.active') %></option>
+                                <option value="inactive"><%= t('marketing:status.inactive') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="af-message"><%= t('marketing:announcementForm.message') %></label>
+                            <textarea class="form-control" id="af-message" name="message" rows="4" placeholder="<%= t('marketing:announcements.messagePlaceholder') %>" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="announcementSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:announcementForm.createAnnouncement') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('announcementModal');
+    var form = document.getElementById('announcementForm');
+    var titleEl = document.getElementById('announcementModalTitle');
+    var submitBtn = document.getElementById('announcementSubmitBtn');
+    var addBtn = document.getElementById('addAnnouncementBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:announcementForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:announcementForm.headingEdit') %>',
+        createAnnouncement: '<%= t('marketing:announcementForm.createAnnouncement') %>',
+        updateAnnouncement: '<%= t('marketing:announcementForm.updateAnnouncement') %>',
+        announcementCreated: '<%= t('marketing:flash.announcementCreated') %>',
+        announcementUpdated: '<%= t('marketing:flash.announcementUpdated') %>',
+        announcementStatusUpdated: '<%= t('marketing:flash.announcementStatusUpdated') %>',
+        announcementDeleted: '<%= t('marketing:flash.announcementDeleted') %>',
+        deleteTitle: '<%= t('marketing:announcements.deleteTitle') %>',
+        deleteConfirm: '<%= t('marketing:announcements.deleteConfirm') %>',
+        deleteFailed: '<%= t('marketing:announcements.deleteFailed') %>',
+        updateFailed: '<%= t('marketing:announcements.updateFailed') %>',
+        networkError: '<%= t('marketing:announcements.networkError') %>',
+        activate: '<%= t('marketing:announcements.activate') %>',
+        pause: '<%= t('marketing:announcements.pause') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/announcements';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createAnnouncement;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/announcements/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.announcement) return;
+                resetForm();
+                var a = data.announcement;
+                form.action = '/marketing/announcements/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateAnnouncement;
+
+                form.elements['title'].value = a.title || '';
+                form.elements['message'].value = a.message || '';
+                form.elements['status'].value = a.status || 'active';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-announcement]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-announcement-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            toggle.disabled = true;
+            Crud.post('/marketing/announcements/' + tid + '/status')
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.announcementStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/announcements' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-announcement]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            var title = delBtn.getAttribute('data-title');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (title || '') + '</strong>?',
+                confirmText: i18n.delete,
+                okIcon: 'fa-trash'
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/marketing/announcements/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.announcementDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/marketing/announcements' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.announcementCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/announcements' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

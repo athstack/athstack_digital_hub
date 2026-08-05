@@ -169,7 +169,10 @@
     "currentPasswordWrong": "Le mot de passe actuel est incorrect.",
     "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
     "profileUpdated": "Profil mis à jour avec succès.",
-    "settingsUpdated": "Paramètres marketing mis à jour avec succès."
+    "settingsUpdated": "Paramètres marketing mis à jour avec succès.",
+    "invalidRating": "La note doit être comprise entre 1 et 5.",
+    "testimonialUpdated": "Témoignage mis à jour avec succès.",
+    "announcementUpdated": "Annonce mise à jour avec succès."
   },
   "dashboard": {
     "heading": "Centre de commandement marketing",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "Articles de blog",
     "newPost": "Nouvel article",
-    "empty": "Aucun article pour l'instant. Rédigez votre premier article."
+    "empty": "Aucun article pour l'instant. Rédigez votre premier article.",
+    "badge": "Blog",
+    "searchPlaceholder": "Rechercher des articles...",
+    "filterStatus": "Filtrer par statut",
+    "refresh": "Actualiser",
+    "publish": "Publier",
+    "unpublish": "Dépublier",
+    "deleteTitle": "Supprimer l'article",
+    "deleteConfirm": "Supprimer cet article de blog",
+    "deleteFailed": "Impossible de supprimer l'article.",
+    "updateFailed": "Impossible de mettre à jour l'article.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noPosts": "Aucun article trouvé",
+    "noPostsMatch": "Aucun article ne correspond à vos filtres."
   },
   "blogForm": {
     "headingCreate": "Nouvel article de blog",
@@ -362,7 +378,19 @@
     "content": "Témoignage",
     "contentPlaceholder": "Partagez ce que le client a dit...",
     "rating": "Note",
-    "empty": "Aucun témoignage pour l'instant."
+    "empty": "Aucun témoignage pour l'instant.",
+    "badge": "Témoignages",
+    "newTestimonial": "Nouveau témoignage",
+    "searchPlaceholder": "Rechercher des témoignages...",
+    "filterStatus": "Filtrer par statut",
+    "refresh": "Actualiser",
+    "deleteTitle": "Supprimer le témoignage",
+    "deleteConfirm": "Supprimer ce témoignage",
+    "deleteFailed": "Impossible de supprimer le témoignage.",
+    "updateFailed": "Impossible de mettre à jour le témoignage.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noTestimonials": "Aucun témoignage trouvé",
+    "noTestimonialsMatch": "Aucun témoignage ne correspond à vos filtres."
   },
   "announcements": {
     "heading": "Annonces",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "Titre de l'annonce...",
     "message": "Message",
     "messagePlaceholder": "Rédigez l'annonce...",
-    "empty": "Aucune annonce publiée pour l'instant."
+    "empty": "Aucune annonce publiée pour l'instant.",
+    "badge": "Annonces",
+    "newAnnouncement": "Nouvelle annonce",
+    "searchPlaceholder": "Rechercher des annonces...",
+    "filterStatus": "Filtrer par statut",
+    "refresh": "Actualiser",
+    "activate": "Activer",
+    "pause": "Mettre en pause",
+    "deleteTitle": "Supprimer l'annonce",
+    "deleteConfirm": "Supprimer cette annonce",
+    "deleteFailed": "Impossible de supprimer l'annonce.",
+    "updateFailed": "Impossible de mettre à jour l'annonce.",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "noAnnouncements": "Aucune annonce trouvée",
+    "noAnnouncementsMatch": "Aucune annonce ne correspond à vos filtres."
   },
   "reviews": {
     "heading": "Réponses aux avis",
@@ -485,5 +527,25 @@
     "socialTwitter": "URL Twitter / X",
     "socialInstagram": "URL Instagram",
     "save": "Enregistrer les paramètres"
+  },
+  "testimonialForm": {
+    "headingCreate": "Nouveau témoignage",
+    "headingEdit": "Modifier le témoignage",
+    "authorName": "Nom de l'auteur",
+    "authorRole": "Rôle de l'auteur",
+    "content": "Témoignage",
+    "contentPlaceholder": "Partagez ce que le client a dit...",
+    "rating": "Note",
+    "createTestimonial": "Créer le témoignage",
+    "updateTestimonial": "Mettre à jour le témoignage"
+  },
+  "announcementForm": {
+    "headingCreate": "Nouvelle annonce",
+    "headingEdit": "Modifier l'annonce",
+    "title": "Titre de l'annonce",
+    "message": "Message",
+    "messagePlaceholder": "Rédigez l'annonce...",
+    "createAnnouncement": "Créer l'annonce",
+    "updateAnnouncement": "Mettre à jour l'annonce"
   }
 }

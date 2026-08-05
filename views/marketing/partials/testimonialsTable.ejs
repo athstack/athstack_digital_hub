@@ -1,0 +1,68 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:testimonials.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:testimonials.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('marketing:testimonials.filterStatus') %>">
+        <option value=""><%= t('marketing:testimonials.filterStatus') %></option>
+        <option value="pending" <%= currentStatus === 'pending' ? 'selected' : '' %>><%= t('marketing:status.pending') %></option>
+        <option value="approved" <%= currentStatus === 'approved' ? 'selected' : '' %>><%= t('marketing:status.approved') %></option>
+        <option value="rejected" <%= currentStatus === 'rejected' ? 'selected' : '' %>><%= t('marketing:status.rejected') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:testimonials.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (testimonials && testimonials.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.author') %></th><th><%= t('marketing:testimonials.content') %></th><th><%= t('marketing:testimonials.rating') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% testimonials.forEach(testimonial => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= testimonial.author_name %></div>
+                        <% if (testimonial.author_role) { %><small class="text-white-50"><%= testimonial.author_role %></small><% } %>
+                    </td>
+                    <td class="text-white-50" style="max-width:320px;"><%= testimonial.content %></td>
+                    <td class="text-warning"><%= '★'.repeat(testimonial.rating) %></td>
+                    <td>
+                        <span class="badge <%= testimonial.status === 'approved' ? 'bg-success' : (testimonial.status === 'rejected' ? 'bg-danger' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + testimonial.status, { defaultValue: testimonial.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-testimonial data-id="' + testimonial.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'reject', abButton:true, abOn: testimonial.status === 'approved', abIcon: testimonial.status === 'approved' ? 'fa-ban' : 'fa-check', abAttrs:'data-toggle-testimonial-status data-id="' + testimonial.id + '" data-status="' + testimonial.status + '"', abTitle: testimonial.status === 'approved' ? t('admin:reviews.reject') : t('admin:reviews.approve') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-testimonial data-id="' + testimonial.id + '" data-name="' + escapeAttr(testimonial.author_name) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-comment-dots fa-4x mb-3"></i>
+    <% if (searchQuery || currentStatus !== 'all') { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:testimonials.noTestimonials') %></h4>
+    <p class="text-white-50"><%= t('marketing:testimonials.noTestimonialsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:testimonials.noTestimonials') %></h4>
+    <p class="text-white-50"><%= t('marketing:testimonials.empty') %></p>
+    <% } %>
+</div>
+<% } %>

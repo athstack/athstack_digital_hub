@@ -169,7 +169,10 @@
     "currentPasswordWrong": "Nenosiri la sasa si sahihi.",
     "passwordTooShort": "Nenosiri lazima liwe na angalau herufi 8.",
     "profileUpdated": "Wasifu umesasishwa kwa mafanikio.",
-    "settingsUpdated": "Mipangilio ya masoko imesasishwa kwa mafanikio."
+    "settingsUpdated": "Mipangilio ya masoko imesasishwa kwa mafanikio.",
+    "invalidRating": "Ukadiriaji lazima uwe kati ya 1 na 5.",
+    "testimonialUpdated": "Ushuhuda umesasishwa kwa mafanikio.",
+    "announcementUpdated": "Tangazo limesasishwa kwa mafanikio."
   },
   "dashboard": {
     "heading": "Kituo cha Uendeshaji cha Masoko",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "Machapisho ya Blogu",
     "newPost": "Chapisho Jipya",
-    "empty": "Hakuna machapisho bado. Andika chapisho lako la kwanza."
+    "empty": "Hakuna machapisho bado. Andika chapisho lako la kwanza.",
+    "badge": "Blogu",
+    "searchPlaceholder": "Tafuta machapisho...",
+    "filterStatus": "Chuja kwa hali",
+    "refresh": "Onyesha upya",
+    "publish": "Chapisha",
+    "unpublish": "Ondoa uchapishaji",
+    "deleteTitle": "Futa chapisho",
+    "deleteConfirm": "Futa chapisho hili la blogu",
+    "deleteFailed": "Imeshindwa kufuta chapisho.",
+    "updateFailed": "Imeshindwa kusasisha chapisho.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noPosts": "Hakuna machapisho yaliyopatikana",
+    "noPostsMatch": "Hakuna machapisho yanayolingana na vichujio vyako."
   },
   "blogForm": {
     "headingCreate": "Chapisho Jipya la Blogu",
@@ -362,7 +378,19 @@
     "content": "Ushuhuda",
     "contentPlaceholder": "Shiriki kile mteja alichosema...",
     "rating": "Ukadiriaji",
-    "empty": "Hakuna ushuhuda bado."
+    "empty": "Hakuna ushuhuda bado.",
+    "badge": "Ushuhuda",
+    "newTestimonial": "Ushuhuda mpya",
+    "searchPlaceholder": "Tafuta ushuhuda...",
+    "filterStatus": "Chuja kwa hali",
+    "refresh": "Onyesha upya",
+    "deleteTitle": "Futa ushuhuda",
+    "deleteConfirm": "Futa ushuhuda huu",
+    "deleteFailed": "Imeshindwa kufuta ushuhuda.",
+    "updateFailed": "Imeshindwa kusasisha ushuhuda.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noTestimonials": "Hakuna ushuhuda uliopatikana",
+    "noTestimonialsMatch": "Hakuna ushuhuda unaolingana na vichujio vyako."
   },
   "announcements": {
     "heading": "Matangazo",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "Kichwa cha tangazo...",
     "message": "Ujumbe",
     "messagePlaceholder": "Andika tangazo...",
-    "empty": "Hakuna matangazo yaliyochapishwa bado."
+    "empty": "Hakuna matangazo yaliyochapishwa bado.",
+    "badge": "Matangazo",
+    "newAnnouncement": "Tangazo jipya",
+    "searchPlaceholder": "Tafuta matangazo...",
+    "filterStatus": "Chuja kwa hali",
+    "refresh": "Onyesha upya",
+    "activate": "Wezesha",
+    "pause": "Simamisha",
+    "deleteTitle": "Futa tangazo",
+    "deleteConfirm": "Futa tangazo hili",
+    "deleteFailed": "Imeshindwa kufuta tangazo.",
+    "updateFailed": "Imeshindwa kusasisha tangazo.",
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "noAnnouncements": "Hakuna matangazo yaliyopatikana",
+    "noAnnouncementsMatch": "Hakuna matangazo yanayolingana na vichujio vyako."
   },
   "reviews": {
     "heading": "Majibu ya Ukaguzi",
@@ -485,5 +527,25 @@
     "socialTwitter": "URL ya Twitter / X",
     "socialInstagram": "URL ya Instagram",
     "save": "Hifadhi Mipangilio"
+  },
+  "testimonialForm": {
+    "headingCreate": "Ushuhuda mpya",
+    "headingEdit": "Hariri ushuhuda",
+    "authorName": "Jina la mwandishi",
+    "authorRole": "Nafasi ya mwandishi",
+    "content": "Ushuhuda",
+    "contentPlaceholder": "Shiriki kile mteja alichosema...",
+    "rating": "Ukadiriaji",
+    "createTestimonial": "Unda ushuhuda",
+    "updateTestimonial": "Sasisha ushuhuda"
+  },
+  "announcementForm": {
+    "headingCreate": "Tangazo jipya",
+    "headingEdit": "Hariri tangazo",
+    "title": "Kichwa cha tangazo",
+    "message": "Ujumbe",
+    "messagePlaceholder": "Andika tangazo...",
+    "createAnnouncement": "Unda tangazo",
+    "updateAnnouncement": "Sasisha tangazo"
   }
 }

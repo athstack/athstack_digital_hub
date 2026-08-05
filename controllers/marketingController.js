@@ -903,11 +903,62 @@ exports.toggleProductPromoted = async (req, res, next) => {
 
 exports.getBlog = async (req, res, next) => {
   try {
-    const [posts] = await pool.execute('SELECT * FROM blog_posts ORDER BY created_at DESC');
-    res.render('marketing/blog', {
+    const status = req.query.status || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = 'SELECT * FROM blog_posts';
+    const where = [];
+    const params = [];
+    if (status && status !== 'all') {
+      where.push('status = ?');
+      params.push(status);
+    }
+    if (search) {
+      where.push('(title LIKE ? OR slug LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY created_at DESC';
+    const [posts] = await pool.execute(sql, params);
+    const viewData = {
       title: req.t('marketing:title.blog'),
       posts,
+      currentStatus: status || 'all',
+      searchQuery: search || '',
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/blogTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, posts, total: posts.length });
+    }
+    res.render('marketing/blog', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getBlogDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.blogNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM blog_posts WHERE id = ?', [id]);
+    const post = rows[0] || null;
+    if (!post) return res.status(404).json({ success: false, message: req.t('marketing:flash.blogNotFound') });
+    res.json({
+      success: true,
+      post: {
+        id: post.id,
+        title: post.title,
+        excerpt: post.excerpt || '',
+        content: post.content || '',
+        cover_image: post.cover_image || '',
+        status: post.status || 'draft'
+      }
     });
   } catch (err) {
     next(err);
@@ -941,7 +992,13 @@ exports.getBlogForm = async (req, res, next) => {
 exports.createBlogPost = async (req, res, next) => {
   try {
     const { title, excerpt, content, cover_image, status } = req.body;
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.blogRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.blogRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.blogRequiredFields'));
       return res.redirect('/marketing/blog/new');
     }
@@ -956,7 +1013,9 @@ exports.createBlogPost = async (req, res, next) => {
       [title, slug, excerpt || null, content || null, cover_image || null, postStatus, postStatus === 'published' ? new Date() : null, req.session.userId]
     );
     await logActivity(req, 'create', 'blog_post', result.insertId);
-    req.flash('success', req.t('marketing:flash.blogCreated'));
+    const message = req.t('marketing:flash.blogCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
     res.redirect('/marketing/blog');
   } catch (err) {
     next(err);
@@ -967,7 +1026,13 @@ exports.updateBlogPost = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const { title, excerpt, content, cover_image, status } = req.body;
-    if (!title) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.blogRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.blogRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.blogRequiredFields'));
       return res.redirect('/marketing/blog/' + id + '/edit');
     }
@@ -977,11 +1042,14 @@ exports.updateBlogPost = async (req, res, next) => {
       [title, excerpt || null, content || null, cover_image || null, postStatus, postStatus, id]
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.blogNotFound'));
       req.flash('error', req.t('marketing:flash.blogNotFound'));
       return res.redirect('/marketing/blog');
     }
     await logActivity(req, 'update', 'blog_post', id);
-    req.flash('success', req.t('marketing:flash.blogUpdated'));
+    const message = req.t('marketing:flash.blogUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/blog');
   } catch (err) {
     next(err);
@@ -993,7 +1061,9 @@ exports.updateBlogPostStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const valid = ['draft', 'published', 'archived'];
+    const ajax = isAjaxRequest(req);
     if (!valid.includes(status)) {
+      if (ajax) return rejectWith(res, 422, req.t('marketing:flash.invalidStatus'));
       req.flash('error', req.t('marketing:flash.invalidStatus'));
       return res.redirect('/marketing/blog');
     }
@@ -1002,11 +1072,14 @@ exports.updateBlogPostStatus = async (req, res, next) => {
       [status, status, id]
     );
     if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.blogNotFound'));
       req.flash('error', req.t('marketing:flash.blogNotFound'));
       return res.redirect('/marketing/blog');
     }
     await logActivity(req, status, 'blog_post', id);
-    req.flash('success', req.t('marketing:flash.blogStatusUpdated'));
+    const message = req.t('marketing:flash.blogStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status });
+    req.flash('success', message);
     res.redirect('/marketing/blog');
   } catch (err) {
     next(err);
@@ -1016,9 +1089,17 @@ exports.updateBlogPostStatus = async (req, res, next) => {
 exports.deleteBlogPost = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
-    await pool.execute('DELETE FROM blog_posts WHERE id = ?', [id]);
+    const ajax = isAjaxRequest(req);
+    const [result] = await pool.execute('DELETE FROM blog_posts WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.blogNotFound'));
+      req.flash('error', req.t('marketing:flash.blogNotFound'));
+      return res.redirect('/marketing/blog');
+    }
     await logActivity(req, 'delete', 'blog_post', id);
-    req.flash('success', req.t('marketing:flash.blogDeleted'));
+    const message = req.t('marketing:flash.blogDeleted');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/blog');
   } catch (err) {
     next(err);
@@ -1031,11 +1112,62 @@ exports.deleteBlogPost = async (req, res, next) => {
 
 exports.getTestimonials = async (req, res, next) => {
   try {
-    const [testimonials] = await pool.execute('SELECT * FROM testimonials ORDER BY created_at DESC');
-    res.render('marketing/testimonials', {
+    const status = req.query.status || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = 'SELECT * FROM testimonials';
+    const where = [];
+    const params = [];
+    if (status && status !== 'all') {
+      where.push('status = ?');
+      params.push(status);
+    }
+    if (search) {
+      where.push('(author_name LIKE ? OR content LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY created_at DESC';
+    const [testimonials] = await pool.execute(sql, params);
+    const viewData = {
       title: req.t('marketing:title.testimonials'),
       testimonials,
+      currentStatus: status || 'all',
+      searchQuery: search || '',
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/testimonialsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, testimonials, total: testimonials.length });
+    }
+    res.render('marketing/testimonials', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getTestimonialDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.testimonialNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM testimonials WHERE id = ?', [id]);
+    const testimonial = rows[0] || null;
+    if (!testimonial) return res.status(404).json({ success: false, message: req.t('marketing:flash.testimonialNotFound') });
+    res.json({
+      success: true,
+      testimonial: {
+        id: testimonial.id,
+        author_name: testimonial.author_name,
+        author_role: testimonial.author_role || '',
+        content: testimonial.content || '',
+        rating: testimonial.rating || 5,
+        status: testimonial.status || 'pending'
+      }
     });
   } catch (err) {
     next(err);
@@ -1045,7 +1177,17 @@ exports.getTestimonials = async (req, res, next) => {
 exports.createTestimonial = async (req, res, next) => {
   try {
     const { author_name, author_role, content, rating, status } = req.body;
-    if (!author_name || !content) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!author_name) errors.author_name = req.t('marketing:flash.testimonialRequiredFields');
+    if (!content) errors.content = req.t('marketing:flash.testimonialRequiredFields');
+    if (rating && (isNaN(rating) || Number(rating) < 1 || Number(rating) > 5)) {
+      errors.rating = req.t('marketing:flash.invalidRating');
+    }
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.testimonialRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.testimonialRequiredFields'));
       return res.redirect('/marketing/testimonials');
     }
@@ -1055,7 +1197,47 @@ exports.createTestimonial = async (req, res, next) => {
       [author_name, author_role || null, content, parseInt(rating) || 5, testiStatus, req.session.userId]
     );
     await logActivity(req, 'create', 'testimonial', result.insertId);
-    req.flash('success', req.t('marketing:flash.testimonialCreated'));
+    const message = req.t('marketing:flash.testimonialCreated');
+    if (ajax) return res.json({ success: true, message, id: result.insertId });
+    req.flash('success', message);
+    res.redirect('/marketing/testimonials');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateTestimonial = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { author_name, author_role, content, rating, status } = req.body;
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!author_name) errors.author_name = req.t('marketing:flash.testimonialRequiredFields');
+    if (!content) errors.content = req.t('marketing:flash.testimonialRequiredFields');
+    if (rating && (isNaN(rating) || Number(rating) < 1 || Number(rating) > 5)) {
+      errors.rating = req.t('marketing:flash.invalidRating');
+    }
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.testimonialRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
+      req.flash('error', req.t('marketing:flash.testimonialRequiredFields'));
+      return res.redirect('/marketing/testimonials');
+    }
+    const testiStatus = ['pending', 'approved', 'rejected'].includes(status) ? status : 'pending';
+    const [result] = await pool.execute(
+      'UPDATE testimonials SET author_name = ?, author_role = ?, content = ?, rating = ?, status = ? WHERE id = ?',
+      [author_name, author_role || null, content, parseInt(rating) || 5, testiStatus, id]
+    );
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.testimonialNotFound'));
+      req.flash('error', req.t('marketing:flash.testimonialNotFound'));
+      return res.redirect('/marketing/testimonials');
+    }
+    await logActivity(req, 'update', 'testimonial', id);
+    const message = req.t('marketing:flash.testimonialUpdated');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/testimonials');
   } catch (err) {
     next(err);
@@ -1067,13 +1249,22 @@ exports.updateTestimonialStatus = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { status } = req.body;
     const valid = ['pending', 'approved', 'rejected'];
+    const ajax = isAjaxRequest(req);
     if (!valid.includes(status)) {
+      if (ajax) return rejectWith(res, 422, req.t('marketing:flash.invalidStatus'));
       req.flash('error', req.t('marketing:flash.invalidStatus'));
       return res.redirect('/marketing/testimonials');
     }
-    await pool.execute('UPDATE testimonials SET status = ? WHERE id = ?', [status, id]);
+    const [result] = await pool.execute('UPDATE testimonials SET status = ? WHERE id = ?', [status, id]);
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.testimonialNotFound'));
+      req.flash('error', req.t('marketing:flash.testimonialNotFound'));
+      return res.redirect('/marketing/testimonials');
+    }
     await logActivity(req, status === 'approved' ? 'approve' : status, 'testimonial', id);
-    req.flash('success', req.t('marketing:flash.testimonialStatusUpdated'));
+    const message = req.t('marketing:flash.testimonialStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status });
+    req.flash('success', message);
     res.redirect('/marketing/testimonials');
   } catch (err) {
     next(err);
@@ -1083,9 +1274,17 @@ exports.updateTestimonialStatus = async (req, res, next) => {
 exports.deleteTestimonial = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
-    await pool.execute('DELETE FROM testimonials WHERE id = ?', [id]);
+    const ajax = isAjaxRequest(req);
+    const [result] = await pool.execute('DELETE FROM testimonials WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.testimonialNotFound'));
+      req.flash('error', req.t('marketing:flash.testimonialNotFound'));
+      return res.redirect('/marketing/testimonials');
+    }
     await logActivity(req, 'delete', 'testimonial', id);
-    req.flash('success', req.t('marketing:flash.testimonialDeleted'));
+    const message = req.t('marketing:flash.testimonialDeleted');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/testimonials');
   } catch (err) {
     next(err);
@@ -1098,11 +1297,60 @@ exports.deleteTestimonial = async (req, res, next) => {
 
 exports.getAnnouncements = async (req, res, next) => {
   try {
-    const [announcements] = await pool.execute('SELECT * FROM announcements ORDER BY created_at DESC');
-    res.render('marketing/announcements', {
+    const status = req.query.status || null;
+    const search = req.query.search ? String(req.query.search).trim().slice(0, 100) : null;
+    let sql = 'SELECT * FROM announcements';
+    const where = [];
+    const params = [];
+    if (status && status !== 'all') {
+      where.push('status = ?');
+      params.push(status);
+    }
+    if (search) {
+      where.push('(title LIKE ? OR message LIKE ?)');
+      const term = '%' + search + '%';
+      params.push(term, term);
+    }
+    if (where.length) sql += ' WHERE ' + where.join(' AND ');
+    sql += ' ORDER BY created_at DESC';
+    const [announcements] = await pool.execute(sql, params);
+    const viewData = {
       title: req.t('marketing:title.announcements'),
       announcements,
+      currentStatus: status || 'all',
+      searchQuery: search || '',
       page: pageInfo(req),
+    };
+    if (req.query.fragment === '1') {
+      return res.render('marketing/partials/announcementsTable', viewData, (err, html) => {
+        if (err) return next(err);
+        res.json({ success: true, html });
+      });
+    }
+    if (isAjaxRequest(req)) {
+      return res.json({ success: true, announcements, total: announcements.length });
+    }
+    res.render('marketing/announcements', viewData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAnnouncementDetail = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: req.t('marketing:flash.announcementNotFound') });
+    const [rows] = await pool.execute('SELECT * FROM announcements WHERE id = ?', [id]);
+    const announcement = rows[0] || null;
+    if (!announcement) return res.status(404).json({ success: false, message: req.t('marketing:flash.announcementNotFound') });
+    res.json({
+      success: true,
+      announcement: {
+        id: announcement.id,
+        title: announcement.title,
+        message: announcement.message || '',
+        status: announcement.status || 'active'
+      }
     });
   } catch (err) {
     next(err);
@@ -1112,7 +1360,14 @@ exports.getAnnouncements = async (req, res, next) => {
 exports.createAnnouncement = async (req, res, next) => {
   try {
     const { title, message, status } = req.body;
-    if (!title || !message) {
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.announcementRequiredFields');
+    if (!message) errors.message = req.t('marketing:flash.announcementRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.announcementRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
       req.flash('error', req.t('marketing:flash.announcementRequiredFields'));
       return res.redirect('/marketing/announcements');
     }
@@ -1122,7 +1377,44 @@ exports.createAnnouncement = async (req, res, next) => {
       [title, message, newStatus, req.session.userId]
     );
     await logActivity(req, 'create', 'announcement', result.insertId);
-    req.flash('success', req.t('marketing:flash.announcementCreated'));
+    const msg = req.t('marketing:flash.announcementCreated');
+    if (ajax) return res.json({ success: true, message: msg, id: result.insertId });
+    req.flash('success', msg);
+    res.redirect('/marketing/announcements');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateAnnouncement = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { title, message, status } = req.body;
+    const ajax = isAjaxRequest(req);
+    const errors = {};
+    if (!title) errors.title = req.t('marketing:flash.announcementRequiredFields');
+    if (!message) errors.message = req.t('marketing:flash.announcementRequiredFields');
+    if (ajax && Object.keys(errors).length > 0) {
+      return rejectWith(res, 422, req.t('marketing:flash.announcementRequiredFields'), errors);
+    }
+    if (Object.keys(errors).length > 0) {
+      req.flash('error', req.t('marketing:flash.announcementRequiredFields'));
+      return res.redirect('/marketing/announcements');
+    }
+    const newStatus = status === 'inactive' ? 'inactive' : 'active';
+    const [result] = await pool.execute(
+      'UPDATE announcements SET title = ?, message = ?, status = ? WHERE id = ?',
+      [title, message, newStatus, id]
+    );
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.announcementNotFound'));
+      req.flash('error', req.t('marketing:flash.announcementNotFound'));
+      return res.redirect('/marketing/announcements');
+    }
+    await logActivity(req, 'update', 'announcement', id);
+    const msg = req.t('marketing:flash.announcementUpdated');
+    if (ajax) return res.json({ success: true, message: msg });
+    req.flash('success', msg);
     res.redirect('/marketing/announcements');
   } catch (err) {
     next(err);
@@ -1132,16 +1424,20 @@ exports.createAnnouncement = async (req, res, next) => {
 exports.updateAnnouncementStatus = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
+    const ajax = isAjaxRequest(req);
     const [rows] = await pool.execute('SELECT * FROM announcements WHERE id = ?', [id]);
     const announcement = rows[0];
     if (!announcement) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.announcementNotFound'));
       req.flash('error', req.t('marketing:flash.announcementNotFound'));
       return res.redirect('/marketing/announcements');
     }
     const newStatus = announcement.status === 'active' ? 'inactive' : 'active';
     await pool.execute('UPDATE announcements SET status = ? WHERE id = ?', [newStatus, id]);
     await logActivity(req, newStatus === 'active' ? 'activate' : 'deactivate', 'announcement', id);
-    req.flash('success', req.t('marketing:flash.announcementStatusUpdated'));
+    const message = req.t('marketing:flash.announcementStatusUpdated');
+    if (ajax) return res.json({ success: true, message, status: newStatus });
+    req.flash('success', message);
     res.redirect('/marketing/announcements');
   } catch (err) {
     next(err);
@@ -1151,9 +1447,17 @@ exports.updateAnnouncementStatus = async (req, res, next) => {
 exports.deleteAnnouncement = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
-    await pool.execute('DELETE FROM announcements WHERE id = ?', [id]);
+    const ajax = isAjaxRequest(req);
+    const [result] = await pool.execute('DELETE FROM announcements WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      if (ajax) return rejectWith(res, 404, req.t('marketing:flash.announcementNotFound'));
+      req.flash('error', req.t('marketing:flash.announcementNotFound'));
+      return res.redirect('/marketing/announcements');
+    }
     await logActivity(req, 'delete', 'announcement', id);
-    req.flash('success', req.t('marketing:flash.announcementDeleted'));
+    const message = req.t('marketing:flash.announcementDeleted');
+    if (ajax) return res.json({ success: true, message });
+    req.flash('success', message);
     res.redirect('/marketing/announcements');
   } catch (err) {
     next(err);

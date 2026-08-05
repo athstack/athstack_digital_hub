@@ -169,7 +169,10 @@
     "currentPasswordWrong": "كلمة المرور الحالية غير صحيحة.",
     "passwordTooShort": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
     "profileUpdated": "تم تحديث الملف الشخصي بنجاح.",
-    "settingsUpdated": "تم تحديث إعدادات التسويق بنجاح."
+    "settingsUpdated": "تم تحديث إعدادات التسويق بنجاح.",
+    "invalidRating": "يجب أن يكون التقييم بين 1 و 5.",
+    "testimonialUpdated": "تم تحديث الرأي بنجاح.",
+    "announcementUpdated": "تم تحديث الإعلان بنجاح."
   },
   "dashboard": {
     "heading": "مركز قيادة التسويق",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "مقالات المدونة",
     "newPost": "مقال جديد",
-    "empty": "لا توجد مقالات بعد. اكتب مقالك الأول."
+    "empty": "لا توجد مقالات بعد. اكتب مقالك الأول.",
+    "badge": "المدونة",
+    "searchPlaceholder": "ابحث في المقالات...",
+    "filterStatus": "تصفية حسب الحالة",
+    "refresh": "تحديث",
+    "publish": "نشر",
+    "unpublish": "إلغاء النشر",
+    "deleteTitle": "حذف المقالة",
+    "deleteConfirm": "حذف هذه المقالة",
+    "deleteFailed": "تعذر حذف المقالة.",
+    "updateFailed": "تعذر تحديث المقالة.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى.",
+    "noPosts": "لا توجد مقالات",
+    "noPostsMatch": "لا توجد مقالات مطابقة لعوامل التصفية."
   },
   "blogForm": {
     "headingCreate": "مقال مدونة جديد",
@@ -362,7 +378,19 @@
     "content": "الشهادة",
     "contentPlaceholder": "شارك ما قاله العميل...",
     "rating": "التقييم",
-    "empty": "لا توجد شهادات بعد."
+    "empty": "لا توجد شهادات بعد.",
+    "badge": "آراء العملاء",
+    "newTestimonial": "رأي جديد",
+    "searchPlaceholder": "ابحث في الآراء...",
+    "filterStatus": "تصفية حسب الحالة",
+    "refresh": "تحديث",
+    "deleteTitle": "حذف الرأي",
+    "deleteConfirm": "حذف هذا الرأي",
+    "deleteFailed": "تعذر حذف الرأي.",
+    "updateFailed": "تعذر تحديث الرأي.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى.",
+    "noTestimonials": "لا توجد آراء",
+    "noTestimonialsMatch": "لا توجد آراء مطابقة لعوامل التصفية."
   },
   "announcements": {
     "heading": "الإعلانات",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "عنوان الإعلان...",
     "message": "الرسالة",
     "messagePlaceholder": "اكتب الإعلان...",
-    "empty": "لا توجد إعلانات منشورة بعد."
+    "empty": "لا توجد إعلانات منشورة بعد.",
+    "badge": "الإعلانات",
+    "newAnnouncement": "إعلان جديد",
+    "searchPlaceholder": "ابحث في الإعلانات...",
+    "filterStatus": "تصفية حسب الحالة",
+    "refresh": "تحديث",
+    "activate": "تفعيل",
+    "pause": "إيقاف مؤقت",
+    "deleteTitle": "حذف الإعلان",
+    "deleteConfirm": "حذف هذا الإعلان",
+    "deleteFailed": "تعذر حذف الإعلان.",
+    "updateFailed": "تعذر تحديث الإعلان.",
+    "networkError": "خطأ في الشبكة. حاول مرة أخرى.",
+    "noAnnouncements": "لا توجد إعلانات",
+    "noAnnouncementsMatch": "لا توجد إعلانات مطابقة لعوامل التصفية."
   },
   "reviews": {
     "heading": "الردود على التقييمات",
@@ -485,5 +527,25 @@
     "socialTwitter": "رابط Twitter / X",
     "socialInstagram": "رابط Instagram",
     "save": "حفظ الإعدادات"
+  },
+  "testimonialForm": {
+    "headingCreate": "رأي جديد",
+    "headingEdit": "تعديل الرأي",
+    "authorName": "اسم المؤلف",
+    "authorRole": "دور المؤلف",
+    "content": "الرأي",
+    "contentPlaceholder": "شارك ما قاله العميل...",
+    "rating": "التقييم",
+    "createTestimonial": "إضافة الرأي",
+    "updateTestimonial": "تحديث الرأي"
+  },
+  "announcementForm": {
+    "headingCreate": "إعلان جديد",
+    "headingEdit": "تعديل الإعلان",
+    "title": "عنوان الإعلان",
+    "message": "الرسالة",
+    "messagePlaceholder": "اكتب الإعلان...",
+    "createAnnouncement": "إنشاء الإعلان",
+    "updateAnnouncement": "تحديث الإعلان"
   }
 }

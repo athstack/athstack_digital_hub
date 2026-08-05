@@ -1,96 +1,221 @@
 <%- include('../partials/header') %>
 
-<section class="py-5">
+<section class="py-5" data-aos="fade-up">
     <div class="container">
+        <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+        <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <% } %>
+
         <div class="row g-4">
             <div class="col-lg-3">
                 <%- include('../partials/marketingSidebar') %>
             </div>
             <div class="col-lg-9">
-                <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert"><%= flashSuccess %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-                <% if (typeof flashError !== 'undefined' && flashError && flashError.length > 0) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert"><%= flashError %><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <% } %>
-
-                <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-comment-dots me-2 text-primary"></i><%= t('marketing:testimonials.heading') %></h2>
-
-                <div class="glass-card no-lift p-4 mb-4">
-                    <h6 class="text-white fw-bold mb-3"><%= t('marketing:testimonials.addNew') %></h6>
-                    <form method="POST" action="/marketing/testimonials">
-                        <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                        <div class="row g-3">
-                            <div class="col-md-5">
-                                <input type="text" name="author_name" class="form-control" required placeholder="<%= t('marketing:testimonials.authorName') %>">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" name="author_role" class="form-control" placeholder="<%= t('marketing:testimonials.authorRole') %>">
-                            </div>
-                            <div class="col-md-3">
-                                <select name="rating" class="form-select">
-                                    <% for (let i = 5; i >= 1; i--) { %>
-                                    <option value="<%= i %>"><%= i %> ★</option>
-                                    <% } %>
-                                </select>
-                            </div>
-                            <div class="col-md-9">
-                                <textarea name="content" class="form-control" rows="3" required placeholder="<%= t('marketing:testimonials.contentPlaceholder') %>"></textarea>
-                            </div>
-                            <div class="col-md-3">
-                                <select name="status" class="form-select">
-                                    <option value="approved"><%= t('marketing:status.approved') %></option>
-                                    <option value="pending"><%= t('marketing:status.pending') %></option>
-                                    <option value="rejected"><%= t('marketing:status.rejected') %></option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:testimonials.add') %></button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <span class="section-badge"><%= t('marketing:testimonials.badge') %></span>
+                    <h2 class="text-white fw-bold mb-0 tracking-widest"><i class="fa-solid fa-comment-dots me-2 text-primary"></i><%= t('marketing:testimonials.heading') %></h2>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-premium-primary rounded-pill" id="addTestimonialBtn"><i class="fa-solid fa-plus me-2"></i><%= t('marketing:testimonials.newTestimonial') %></button>
+                    </div>
                 </div>
 
-                <div class="glass-card p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark align-middle mb-0">
-                            <thead>
-                                <tr><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:words.author') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:testimonials.content') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('marketing:testimonials.rating') %></th><th class="py-3 px-4 text-white-50 text-uppercase" style="font-size:0.65rem;"><%= t('common:words.status') %></th><th class="py-3 px-4 text-white-50 text-uppercase text-end" style="font-size:0.65rem;"><%= t('marketing:words.actions') %></th></tr>
-                            </thead>
-                            <tbody>
-                                <% if (testimonials.length > 0) { %>
-                                <% testimonials.forEach(testimonial => { %>
-                                <tr>
-                                    <td class="py-3 px-4">
-                                        <div class="text-white fw-semibold"><%= testimonial.author_name %></div>
-                                        <small class="text-muted"><%= testimonial.author_role || '' %></small>
-                                    </td>
-                                    <td class="py-3 px-4 text-muted" style="max-width:320px;"><%= testimonial.content %></td>
-                                    <td class="py-3 px-4 text-warning"><%= '★'.repeat(testimonial.rating) %></td>
-                                    <td class="py-3 px-4"><span class="badge <%= testimonial.status === 'approved' ? 'bg-success' : (testimonial.status === 'rejected' ? 'bg-danger' : 'bg-warning text-dark') %>"><%= t('marketing:status.' + testimonial.status) %></span></td>
-                                    <td class="py-3 px-4 text-end">
-                                        <div class="action-cell">
-                                            <%- include('../partials/actionButton', { abVariant:'reject', abFormAction:'/marketing/testimonials/' + testimonial.id + '/status', abFormCsrf:csrfToken, abFormExtra:'<input type="hidden" name="status" value="' + (testimonial.status === 'approved' ? 'rejected' : 'approved') + '">', abOn: testimonial.status === 'approved', abIcon: testimonial.status === 'approved' ? 'fa-ban' : 'fa-check', abTitle: testimonial.status === 'approved' ? t('admin:reviews.reject') : t('admin:reviews.approve') }) %>
-                                            <%- include('../partials/actionButton', { abVariant:'delete', abFormAction:'/marketing/testimonials/' + testimonial.id + '/delete', abFormCsrf:csrfToken, abConfirm:t('common:confirm.areYouSure'), abTitle:t('common:words.delete') }) %>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                                <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center py-5" style="color:rgba(255,255,255,0.3);">
-                                        <i class="fa-solid fa-comment-dots fa-2x mb-2"></i><br>
-                                        <%= t('marketing:testimonials.empty') %>
-                                    </td>
-                                </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                <div data-crud-table data-crud-url="/marketing/testimonials">
+                    <%- include('./partials/testimonialsTable') %>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Testimonial add / edit modal -->
+<div class="modal fade crud-modal" id="testimonialModal" tabindex="-1" aria-labelledby="testimonialModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="testimonialForm" method="POST" action="/marketing/testimonials" novalidate>
+                <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testimonialModalTitle"><%= t('marketing:testimonialForm.headingCreate') %></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="tf-author-name"><%= t('marketing:testimonialForm.authorName') %></label>
+                            <input type="text" class="form-control" id="tf-author-name" name="author_name" maxlength="120" placeholder="<%= t('marketing:testimonials.authorName') %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="tf-author-role"><%= t('marketing:testimonialForm.authorRole') %></label>
+                            <input type="text" class="form-control" id="tf-author-role" name="author_role" maxlength="120" placeholder="<%= t('marketing:testimonials.authorRole') %>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="tf-rating"><%= t('marketing:testimonialForm.rating') %></label>
+                            <select class="form-select" id="tf-rating" name="rating">
+                                <option value="5">5 ★</option>
+                                <option value="4">4 ★</option>
+                                <option value="3">3 ★</option>
+                                <option value="2">2 ★</option>
+                                <option value="1">1 ★</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="tf-status"><%= t('common:words.status') %></label>
+                            <select class="form-select" id="tf-status" name="status">
+                                <option value="pending"><%= t('marketing:status.pending') %></option>
+                                <option value="approved"><%= t('marketing:status.approved') %></option>
+                                <option value="rejected"><%= t('marketing:status.rejected') %></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="tf-content"><%= t('marketing:testimonialForm.content') %></label>
+                            <textarea class="form-control" id="tf-content" name="content" rows="4" placeholder="<%= t('marketing:testimonials.contentPlaceholder') %>" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+                    <button type="submit" class="btn btn-premium-primary rounded-pill" id="testimonialSubmitBtn"><i class="fa-solid fa-plus me-1"></i><%= t('marketing:testimonialForm.createTestimonial') %></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    var modalEl = document.getElementById('testimonialModal');
+    var form = document.getElementById('testimonialForm');
+    var titleEl = document.getElementById('testimonialModalTitle');
+    var submitBtn = document.getElementById('testimonialSubmitBtn');
+    var addBtn = document.getElementById('addTestimonialBtn');
+    var tableWrap = document.querySelector('[data-crud-table]');
+
+    var i18n = {
+        headingCreate: '<%= t('marketing:testimonialForm.headingCreate') %>',
+        headingEdit: '<%= t('marketing:testimonialForm.headingEdit') %>',
+        createTestimonial: '<%= t('marketing:testimonialForm.createTestimonial') %>',
+        updateTestimonial: '<%= t('marketing:testimonialForm.updateTestimonial') %>',
+        testimonialCreated: '<%= t('marketing:flash.testimonialCreated') %>',
+        testimonialUpdated: '<%= t('marketing:flash.testimonialUpdated') %>',
+        testimonialStatusUpdated: '<%= t('marketing:flash.testimonialStatusUpdated') %>',
+        testimonialDeleted: '<%= t('marketing:flash.testimonialDeleted') %>',
+        deleteTitle: '<%= t('marketing:testimonials.deleteTitle') %>',
+        deleteConfirm: '<%= t('marketing:testimonials.deleteConfirm') %>',
+        deleteFailed: '<%= t('marketing:testimonials.deleteFailed') %>',
+        updateFailed: '<%= t('marketing:testimonials.updateFailed') %>',
+        networkError: '<%= t('marketing:testimonials.networkError') %>',
+        approve: '<%= t('admin:reviews.approve') %>',
+        reject: '<%= t('admin:reviews.reject') %>',
+        cancel: '<%= t('common:words.cancel') %>',
+        delete: '<%= t('common:words.delete') %>'
+    };
+
+    function resetForm() {
+        form.reset();
+        Crud.clearErrors(form);
+        form.action = '/marketing/testimonials';
+        titleEl.textContent = i18n.headingCreate;
+        submitBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i>' + i18n.createTestimonial;
+    }
+
+    function openAdd() {
+        resetForm();
+        Crud.openModal(modalEl);
+    }
+
+    function openEdit(id) {
+        Crud.get('/marketing/testimonials/' + id)
+            .then(function (data) {
+                if (!data || !data.success || !data.testimonial) return;
+                resetForm();
+                var tm = data.testimonial;
+                form.action = '/marketing/testimonials/' + id;
+                titleEl.textContent = i18n.headingEdit;
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>' + i18n.updateTestimonial;
+
+                form.elements['author_name'].value = tm.author_name || '';
+                form.elements['author_role'].value = tm.author_role || '';
+                form.elements['rating'].value = tm.rating != null ? tm.rating : '5';
+                form.elements['content'].value = tm.content || '';
+                form.elements['status'].value = tm.status || 'pending';
+
+                Crud.openModal(modalEl);
+            })
+            .catch(function () {
+                Crud.toast(i18n.networkError, 'error');
+            });
+    }
+
+    addBtn.addEventListener('click', openAdd);
+
+    tableWrap.addEventListener('click', function (e) {
+        var editBtn = e.target.closest('[data-edit-testimonial]');
+        if (editBtn) {
+            e.preventDefault();
+            openEdit(editBtn.getAttribute('data-id'));
+            return;
+        }
+
+        var toggle = e.target.closest('[data-toggle-testimonial-status]');
+        if (toggle) {
+            e.preventDefault();
+            var tid = toggle.getAttribute('data-id');
+            var cur = toggle.getAttribute('data-status');
+            var next = cur === 'approved' ? 'rejected' : 'approved';
+            toggle.disabled = true;
+            Crud.post('/marketing/testimonials/' + tid + '/status', { status: next })
+                .then(function (data) {
+                    Crud.toast(data.message || i18n.testimonialStatusUpdated, 'success');
+                    Crud.refreshTable({ wrap: tableWrap, url: '/marketing/testimonials' });
+                })
+                .catch(function (err) {
+                    Crud.toast((err.data && err.data.message) || i18n.updateFailed, 'error');
+                })
+                .then(function () { toggle.disabled = false; });
+            return;
+        }
+
+        var delBtn = e.target.closest('[data-delete-testimonial]');
+        if (delBtn) {
+            e.preventDefault();
+            var id = delBtn.getAttribute('data-id');
+            var name = delBtn.getAttribute('data-name');
+            Crud.confirm({
+                title: i18n.deleteTitle,
+                messageHtml: i18n.deleteConfirm + ' <strong class="text-white">' + (name || '') + '</strong>?',
+                confirmText: i18n.delete,
+                okIcon: 'fa-trash'
+            }).then(function (ok) {
+                if (!ok) return;
+                Crud.post('/marketing/testimonials/' + id + '/delete')
+                    .then(function (data) {
+                        Crud.toast(data.message || i18n.testimonialDeleted, 'success');
+                        Crud.refreshTable({ wrap: tableWrap, url: '/marketing/testimonials' });
+                    })
+                    .catch(function (err) {
+                        Crud.toast((err.data && err.data.message) || i18n.deleteFailed, 'error');
+                    });
+            });
+            return;
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Crud.submitForm(form, {
+            onSuccess: function (data) {
+                Crud.closeModal(modalEl);
+                Crud.toast(data.message || i18n.testimonialCreated, 'success');
+                Crud.refreshTable({ wrap: tableWrap, url: '/marketing/testimonials' });
+            }
+        });
+    });
+
+    Crud.initTable(tableWrap);
+})();
+</script>
 
 <%- include('../partials/footer') %>

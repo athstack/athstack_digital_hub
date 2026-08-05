@@ -1,0 +1,66 @@
+<div class="crud-toolbar">
+    <div class="crud-toolbar__grow">
+        <div class="position-relative">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+            <input type="search"
+                   class="form-control ps-5"
+                   placeholder="<%= t('marketing:announcements.searchPlaceholder') %>"
+                   value="<%= searchQuery %>"
+                   data-crud-search
+                   data-crud-param="search"
+                   aria-label="<%= t('marketing:announcements.searchPlaceholder') %>">
+        </div>
+    </div>
+    <select class="form-select w-auto" data-crud-filter name="status" aria-label="<%= t('marketing:announcements.filterStatus') %>">
+        <option value=""><%= t('marketing:announcements.filterStatus') %></option>
+        <option value="active" <%= currentStatus === 'active' ? 'selected' : '' %>><%= t('marketing:status.active') %></option>
+        <option value="inactive" <%= currentStatus === 'inactive' ? 'selected' : '' %>><%= t('marketing:status.inactive') %></option>
+    </select>
+    <button type="button" class="btn btn-premium-outline rounded-pill" data-crud-refresh title="<%= t('marketing:announcements.refresh') %>">
+        <i class="fa-solid fa-rotate"></i>
+    </button>
+</div>
+
+<% if (announcements && announcements.length > 0) { %>
+<div class="glass-card p-4">
+    <div class="table-responsive">
+        <table class="table table-dark align-middle mb-0 premium-table">
+            <thead>
+                <tr><th><%= t('marketing:words.title') %></th><th><%= t('marketing:announcements.message') %></th><th><%= t('common:words.status') %></th><th class="col-actions"><%= t('marketing:words.actions') %></th></tr>
+            </thead>
+            <tbody>
+                <% announcements.forEach(announcement => { %>
+                <tr>
+                    <td>
+                        <div class="text-white fw-semibold"><%= announcement.title %></div>
+                        <small class="text-white-50"><%= formatDate(announcement.created_at) %></small>
+                    </td>
+                    <td class="text-white-50" style="max-width:360px;"><%= announcement.message %></td>
+                    <td>
+                        <span class="badge <%= announcement.status === 'active' ? 'bg-success' : 'bg-secondary' %>"><%= t('marketing:status.' + announcement.status, { defaultValue: announcement.status }) %></span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abIcon:'fa-pen-to-square', abAttrs:'data-edit-announcement data-id="' + announcement.id + '"', abTitle:t('common:words.edit') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'publish', abButton:true, abOn: announcement.status === 'active', abIcon: announcement.status === 'active' ? 'fa-pause' : 'fa-play', abAttrs:'data-toggle-announcement-status data-id="' + announcement.id + '" data-status="' + announcement.status + '"', abTitle: announcement.status === 'active' ? t('marketing:announcements.pause') : t('marketing:announcements.activate') }) %>
+                            <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abIcon:'fa-trash', abAttrs:'data-delete-announcement data-id="' + announcement.id + '" data-title="' + escapeAttr(announcement.title) + '"', abTitle:t('common:words.delete') }) %>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } else { %>
+<div class="empty-state glass-card p-5">
+    <i class="fa-solid fa-bullhorn fa-4x mb-3"></i>
+    <% if (searchQuery || currentStatus !== 'all') { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:announcements.noAnnouncements') %></h4>
+    <p class="text-white-50"><%= t('marketing:announcements.noAnnouncementsMatch') %></p>
+    <% } else { %>
+    <h4 class="text-white fw-bold"><%= t('marketing:announcements.noAnnouncements') %></h4>
+    <p class="text-white-50"><%= t('marketing:announcements.empty') %></p>
+    <% } %>
+</div>
+<% } %>

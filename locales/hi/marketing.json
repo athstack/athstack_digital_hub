@@ -169,7 +169,10 @@
     "currentPasswordWrong": "वर्तमान पासवर्ड गलत है।",
     "passwordTooShort": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए।",
     "profileUpdated": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई।",
-    "settingsUpdated": "विपणन सेटिंग्स सफलतापूर्वक अपडेट की गईं।"
+    "settingsUpdated": "विपणन सेटिंग्स सफलतापूर्वक अपडेट की गईं।",
+    "invalidRating": "रेटिंग 1 से 5 के बीच होनी चाहिए।",
+    "testimonialUpdated": "प्रशंसापत्र सफलतापूर्वक अपडेट हुआ।",
+    "announcementUpdated": "घोषणा सफलतापूर्वक अपडेट हुई।"
   },
   "dashboard": {
     "heading": "विपणन कमांड सेंटर",
@@ -337,7 +340,20 @@
   "blog": {
     "heading": "ब्लॉग पोस्ट",
     "newPost": "नई पोस्ट",
-    "empty": "अभी कोई पोस्ट नहीं। अपनी पहली पोस्ट लिखें।"
+    "empty": "अभी कोई पोस्ट नहीं। अपनी पहली पोस्ट लिखें।",
+    "badge": "ब्लॉग",
+    "searchPlaceholder": "पोस्ट खोजें...",
+    "filterStatus": "स्थिति के अनुसार फ़िल्टर करें",
+    "refresh": "रीफ़्रेश",
+    "publish": "प्रकाशित करें",
+    "unpublish": "अप्रकाशित करें",
+    "deleteTitle": "पोस्ट हटाएँ",
+    "deleteConfirm": "इस ब्लॉग पोस्ट को हटाएँ",
+    "deleteFailed": "पोस्ट हटाई नहीं जा सकी।",
+    "updateFailed": "पोस्ट अपडेट नहीं हो सकी।",
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
+    "noPosts": "कोई पोस्ट नहीं मिली",
+    "noPostsMatch": "आपके फ़िल्टर से मेल खाती कोई पोस्ट नहीं।"
   },
   "blogForm": {
     "headingCreate": "नई ब्लॉग पोस्ट",
@@ -362,7 +378,19 @@
     "content": "प्रशंसापत्र",
     "contentPlaceholder": "ग्राहक ने जो कहा उसे साझा करें...",
     "rating": "रेटिंग",
-    "empty": "अभी कोई प्रशंसापत्र नहीं।"
+    "empty": "अभी कोई प्रशंसापत्र नहीं।",
+    "badge": "प्रशंसापत्र",
+    "newTestimonial": "नया प्रशंसापत्र",
+    "searchPlaceholder": "प्रशंसापत्र खोजें...",
+    "filterStatus": "स्थिति के अनुसार फ़िल्टर करें",
+    "refresh": "रीफ़्रेश",
+    "deleteTitle": "प्रशंसापत्र हटाएँ",
+    "deleteConfirm": "इस प्रशंसापत्र को हटाएँ",
+    "deleteFailed": "प्रशंसापत्र हटाया नहीं जा सका।",
+    "updateFailed": "प्रशंसापत्र अपडेट नहीं हो सका।",
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
+    "noTestimonials": "कोई प्रशंसापत्र नहीं मिला",
+    "noTestimonialsMatch": "आपके फ़िल्टर से मेल खाता कोई प्रशंसापत्र नहीं।"
   },
   "announcements": {
     "heading": "घोषणाएँ",
@@ -371,7 +399,21 @@
     "titlePlaceholder": "घोषणा शीर्षक...",
     "message": "संदेश",
     "messagePlaceholder": "घोषणा लिखें...",
-    "empty": "अभी कोई घोषणा प्रकाशित नहीं हुई।"
+    "empty": "अभी कोई घोषणा प्रकाशित नहीं हुई।",
+    "badge": "घोषणाएँ",
+    "newAnnouncement": "नई घोषणा",
+    "searchPlaceholder": "घोषणाएँ खोजें...",
+    "filterStatus": "स्थिति के अनुसार फ़िल्टर करें",
+    "refresh": "रीफ़्रेश",
+    "activate": "सक्रिय करें",
+    "pause": "रोकें",
+    "deleteTitle": "घोषणा हटाएँ",
+    "deleteConfirm": "इस घोषणा को हटाएँ",
+    "deleteFailed": "घोषणा हटाई नहीं जा सकी।",
+    "updateFailed": "घोषणा अपडेट नहीं हो सकी।",
+    "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
+    "noAnnouncements": "कोई घोषणा नहीं मिली",
+    "noAnnouncementsMatch": "आपके फ़िल्टर से मेल खाती कोई घोषणा नहीं।"
   },
   "reviews": {
     "heading": "समीक्षा उत्तर",
@@ -485,5 +527,25 @@
     "socialTwitter": "Twitter / X URL",
     "socialInstagram": "Instagram URL",
     "save": "सेटिंग्स सहेजें"
+  },
+  "testimonialForm": {
+    "headingCreate": "नया प्रशंसापत्र",
+    "headingEdit": "प्रशंसापत्र संपादित करें",
+    "authorName": "लेखक का नाम",
+    "authorRole": "लेखक की भूमिका",
+    "content": "प्रशंसापत्र",
+    "contentPlaceholder": "ग्राहक ने जो कहा उसे साझा करें...",
+    "rating": "रेटिंग",
+    "createTestimonial": "प्रशंसापत्र बनाएँ",
+    "updateTestimonial": "प्रशंसापत्र अपडेट करें"
+  },
+  "announcementForm": {
+    "headingCreate": "नई घोषणा",
+    "headingEdit": "घोषणा संपादित करें",
+    "title": "घोषणा का शीर्षक",
+    "message": "संदेश",
+    "messagePlaceholder": "घोषणा लिखें...",
+    "createAnnouncement": "घोषणा बनाएँ",
+    "updateAnnouncement": "घोषणा अपडेट करें"
   }
 }
