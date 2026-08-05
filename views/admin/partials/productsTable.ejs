@@ -67,6 +67,7 @@
                     </td>
                     <td class="col-actions">
                         <div class="action-cell">
+                            <%- include('../../partials/actionButton', { abVariant:'view', abHref:'/shop/' + product.slug, abTitle:t('common:words.view') }) %>
                             <%- include('../../partials/actionButton', { abVariant:'edit', abButton:true, abAttrs:'data-edit-product data-id="' + product.id + '"', abTitle:t('common:words.edit') }) %>
                             <%- include('../../partials/actionButton', { abVariant:'delete', abButton:true, abAttrs:'data-delete-product data-id="' + product.id + '" data-name="' + escapeAttr(product.name) + '"', abTitle:t('common:words.delete') }) %>
                         </div>

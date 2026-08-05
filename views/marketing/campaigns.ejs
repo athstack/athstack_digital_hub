@@ -88,7 +88,8 @@
 </div>
 
 <script>
-(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     var modalEl = document.getElementById('campaignModal');
     var form = document.getElementById('campaignForm');
@@ -218,7 +219,7 @@
     });
 
     Crud.initTable(tableWrap);
-})();
+});
 </script>
 
 <%- include('../partials/footer') %>

@@ -109,7 +109,8 @@
 </div>
 
 <script>
-(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     var modalEl = document.getElementById('courseModal');
     var form = document.getElementById('courseForm');
@@ -355,7 +356,7 @@
     });
 
     Crud.initTable(tableWrap);
-})();
+});
 </script>
 
 <%- include('../partials/footer') %>

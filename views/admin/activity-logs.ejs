@@ -29,11 +29,12 @@
 </section>
 
 <script>
-(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     var tableWrap = document.querySelector('[data-crud-table]');
     if (tableWrap) Crud.initTable(tableWrap);
-})();
+});
 </script>
 
 <%- include('../partials/footer') %>

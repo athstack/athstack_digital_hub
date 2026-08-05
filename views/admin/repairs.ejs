@@ -72,7 +72,8 @@
 </div>
 
 <script>
-(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     var tableWrap = document.querySelector('[data-crud-table]');
     var assignModalEl = document.getElementById('assignTechnicianModal');
@@ -244,7 +245,7 @@
     });
 
     Crud.initTable(tableWrap);
-})();
+});
 </script>
 
 <%- include('../partials/footer') %>

@@ -81,7 +81,8 @@
 </section>
 
 <script>
-(function() {
+
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     var form = document.getElementById('settingsForm');
     if (!form) return;
@@ -97,7 +98,7 @@
             }
         });
     });
-})();
+});
 </script>
 
 <%- include('../partials/footer') %>
