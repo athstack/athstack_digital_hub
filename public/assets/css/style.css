@@ -661,13 +661,15 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     outline-offset: 4px;
     border-radius: 4px;
 }
-.nav-link-animated {
+.nav-link-text {
+    display: inline-block;
     position: relative;
+    line-height: 1.2;
 }
-.nav-link-animated::after {
+.nav-link-text::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -4px;
     left: 0;
     right: 0;
     height: 2px;
@@ -676,11 +678,11 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     box-shadow: 0 2px 12px rgba(79, 140, 255, 0.45);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
     opacity: 0;
 }
-.nav-link-animated:hover::after,
-.nav-link-animated.active::after {
+.nav-link-animated:hover .nav-link-text::after,
+.nav-link-animated.active .nav-link-text::after {
     transform: scaleX(1);
     opacity: 1;
 }

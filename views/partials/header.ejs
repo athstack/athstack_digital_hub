@@ -54,11 +54,11 @@
                 <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
             </a>
             <ul class="navbar-nav nav-links-center">
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><%= t('common:nav.home') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><%= t('common:nav.shop') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><%= t('common:nav.maintenance') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><%= t('common:nav.training') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><%= t('common:nav.about') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><span class="nav-link-text"><%= t('common:nav.home') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><span class="nav-link-text"><%= t('common:nav.shop') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><span class="nav-link-text"><%= t('common:nav.maintenance') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><span class="nav-link-text"><%= t('common:nav.training') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><span class="nav-link-text"><%= t('common:nav.about') %></span></a></li>
             </ul>
             <div class="nav-main-actions">
                 <div class="position-relative d-none d-md-block search-wrapper">
