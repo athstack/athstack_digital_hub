@@ -31,19 +31,48 @@
 
 <div class="page-wrapper">
 <a href="#main-content" class="skip-link visually-hidden-focusable"><%= t('common:nav.skipToContent') %></a>
-<nav class="navbar navbar-expand-xl navbar-dark navbar-custom sticky-top">
-    <div class="container">
-        <a class="navbar-brand py-1 gap-2" href="/">
-            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" class="d-none d-md-block logo-full">
-            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub" class="d-none d-sm-block d-md-none logo-compact">
-            <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon">
-            <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
-        </a>
-        <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="<%= t('common:nav.toggleMenu') %>">
-            <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="athstackNav">
-            <ul class="navbar-nav mx-auto nav-links-center">
+<nav class="navbar-custom">
+    <div class="nav-utility">
+        <div class="container nav-utility-inner">
+            <div class="nav-utility-left">
+                <%- include('../partials/languageSelector') %>
+                <%- include('../partials/currencySelector') %>
+            </div>
+            <div class="nav-utility-right">
+                <% if (user) { %>
+                <div class="dropdown" id="notifDropdown">
+                    <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="<%= t('common:nav.notifications') %>">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notif-badge d-none" id="notifBadge">0</span>
+                        <span class="notif-badge-msg d-none" id="msgUnreadBadge">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0 shadow-lg">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-3 dropdown-header-bar notification-dropdown-header rounded-top">
+                            <h6 class="mb-0 text-white fw-semibold" style="font-size:0.85rem;letter-spacing:0.02em;"><%= t('common:nav.notifications') %></h6>
+                            <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="markAllRead" style="font-size:0.75rem;"><%= t('common:nav.markAllRead') %></button>
+                        </div>
+                        <div id="notifList" class="notification-dropdown-list p-0">
+                            <div class="text-center py-4 notification-dropdown-loading"><%= t('common:nav.loading') %></div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+                <a href="<%= homePanel %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= user ? t('common:nav.profile') : t('common:nav.signIn') %>">
+                    <% if (user) { %><% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle"><% } else { %><i class="fa-solid fa-user-circle"></i><% } %><% } else { %><i class="fa-solid fa-user-circle"></i><% } %>
+                    <span class="profile-name"><%= user ? formatDisplayName(user.firstName, user.lastName) : t('common:nav.signIn') %></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="nav-main">
+        <div class="container nav-main-inner">
+            <a class="navbar-brand py-1 gap-2" href="/">
+                <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" class="d-none d-md-block logo-full">
+                <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub" class="d-none d-sm-block d-md-none logo-compact">
+                <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon">
+                <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
+            </a>
+            <ul class="navbar-nav nav-links-center">
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><%= t('common:nav.home') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><%= t('common:nav.shop') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><%= t('common:nav.maintenance') %></a></li>
@@ -51,48 +80,20 @@
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><%= t('common:nav.about') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact"><%= t('common:nav.contact') %></a></li>
             </ul>
-            <div class="d-flex align-items-center navbar-actions">
+            <div class="nav-main-actions">
                 <div class="position-relative d-none d-md-block search-wrapper">
                     <i class="fa-solid fa-search search-wrapper-icon"></i>
                     <input type="text" id="globalLiveSearch" class="form-control rounded-pill navbar-search" placeholder="<%= t('common:nav.searchPlaceholder') %>">
                     <div id="searchSuggestionsBox" class="search-results-tray"></div>
                 </div>
-                <div class="navbar-icons d-flex align-items-center">
-                    <%- include('../partials/languageSelector') %>
-                    <%- include('../partials/currencySelector') %>
-                    <a href="/cart" class="navbar-icon-link position-relative" id="cartLink" aria-label="<%= t('common:nav.cart') %>">
-                        <i class="fa-solid fa-bag-shopping fs-5"></i>
-                        <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
-                    </a>
-                    <% if (user) { %>
-                        <div class="dropdown" id="notifDropdown">
-                            <a href="#" class="navbar-icon-link position-relative" data-bs-toggle="dropdown" id="notifBell" aria-label="<%= t('common:nav.notifications') %>">
-                                <i class="fa-solid fa-bell fs-5"></i>
-                                <span class="notif-badge d-none" id="notifBadge">0</span>
-                                <span class="notif-badge-msg d-none" id="msgUnreadBadge">0</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0 shadow-lg">
-                                <div class="d-flex justify-content-between align-items-center px-3 py-3 dropdown-header-bar notification-dropdown-header rounded-top">
-                                    <h6 class="mb-0 text-white fw-semibold" style="font-size:0.85rem;letter-spacing:0.02em;"><%= t('common:nav.notifications') %></h6>
-                                    <button class="btn btn-sm btn-link text-primary p-0 text-decoration-none" id="markAllRead" style="font-size:0.75rem;"><%= t('common:nav.markAllRead') %></button>
-                                </div>
-                                <div id="notifList" class="notification-dropdown-list p-0">
-                                    <div class="text-center py-4 notification-dropdown-loading"><%= t('common:nav.loading') %></div>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="<%= homePanel %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= t('common:nav.profile') %>">
-                            <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:28px;height:28px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
-                            <span class="profile-name"><%= formatDisplayName(user.firstName, user.lastName) %></span>
-                        </a>
-                    <% } else { %>
-                        <a href="/auth/login" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
-                            <i class="fa-solid fa-user-circle fs-5"></i>
-                            <span class="profile-name"><%= t('common:nav.signIn') %></span>
-                        </a>
-                    <% } %>
-                </div>
+                <a href="/cart" class="navbar-icon-link position-relative" id="cartLink" aria-label="<%= t('common:nav.cart') %>">
+                    <i class="fa-solid fa-bag-shopping fs-5"></i>
+                    <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
+                </a>
             </div>
+            <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="<%= t('common:nav.toggleMenu') %>">
+                <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
+            </button>
         </div>
     </div>
 </nav>
