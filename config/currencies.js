@@ -25,6 +25,8 @@ const CURRENCIES = [
     code: 'USD',
     symbol: '$',
     label: 'USD',
+    icon: '💵',
+    fullName: 'US Dollar',
     locale: 'en-US',
     decimals: 2,
     rate: 1
@@ -33,6 +35,8 @@ const CURRENCIES = [
     code: 'TZS',
     symbol: 'TZS',
     label: 'TZS',
+    icon: '💰',
+    fullName: 'Tanzanian Shilling',
     locale: 'sw-TZ',
     decimals: 0,
     rate: parseRate(process.env.USD_TO_TZS_RATE, 2500)

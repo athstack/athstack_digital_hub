@@ -742,6 +742,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     color: #fff;
 }
 .nav-utility .language-selector-btn .fa-globe { font-size: 0.72rem; }
+.nav-utility .currency-selector-icon { font-size: 0.8rem; }
 .nav-utility .language-selector-caret { display: none; }
 
 /* ---- Tier 2: main nav row ---- */
@@ -5236,10 +5237,15 @@ input[type="date"]:not(:focus):placeholder-shown {
 }
 
 .language-selector-current,
-.currency-selector-current,
-.currency-selector-symbol {
+.currency-selector-current {
     color: rgba(255, 255, 255, 0.9);
     font-variant-numeric: tabular-nums;
+}
+
+.currency-selector-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .language-selector-caret {
@@ -5300,19 +5306,12 @@ input[type="date"]:not(:focus):placeholder-shown {
     flex-shrink: 0;
 }
 
-.language-selector-menu .currency-option-symbol {
-    font-size: 0.95rem;
-    font-weight: 600;
+.language-selector-menu .currency-option-icon {
+    font-size: 1.1rem;
     line-height: 1;
     width: 1.5rem;
     text-align: center;
     flex-shrink: 0;
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-}
-.language-selector-menu .currency-option:hover .currency-option-symbol,
-.language-selector-menu .currency-option.active .currency-option-symbol {
-    color: var(--primary-light);
 }
 
 .mobile-drawer-lang {
