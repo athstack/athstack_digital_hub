@@ -616,7 +616,6 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 .navbar-custom {
     --nav-main-h: 74px;
     --nav-accent: #4f8cff;
-    --nav-accent-soft: rgba(79, 140, 255, 0.08);
     background: #0B0F17;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -632,10 +631,10 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 }
 
 .navbar-custom .nav-link {
-    color: rgba(226, 232, 240, 0.82) !important;
+    color: rgba(209, 213, 219, 0.82) !important;
     font-weight: var(--weight-medium);
     font-size: var(--font-sm);
-    transition: color 0.3s ease, background-color 0.3s ease, text-shadow 0.3s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
     position: relative;
     padding: 0.5rem 0.6rem;
     margin: 0 0.15rem;
@@ -647,8 +646,6 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 .navbar-custom .nav-link:hover,
 .navbar-custom .nav-link:focus {
     color: var(--nav-accent) !important;
-    background: var(--nav-accent-soft);
-    text-shadow: 0 0 16px rgba(79, 140, 255, 0.35);
 }
 .navbar-custom .nav-link.active {
     color: var(--nav-accent) !important;
@@ -668,13 +665,12 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 .nav-link-text::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -3px;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, #7faaff 0%, var(--nav-accent) 100%);
+    background: var(--nav-accent);
     border-radius: 9999px;
-    box-shadow: 0 2px 12px rgba(79, 140, 255, 0.45);
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform 0.2s ease, opacity 0.2s ease;

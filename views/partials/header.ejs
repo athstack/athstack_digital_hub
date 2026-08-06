@@ -53,12 +53,23 @@
                 <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon">
                 <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
             </a>
+            <%
+                const isPath = (p) => currentPath === p;
+                const isSection = (p) => isPath(p) || currentPath.startsWith(p + '/');
+                const activeNav = isPath('/') ? 'home'
+                    : isSection('/shop') ? 'shop'
+                    : isSection('/maintenance') ? 'maintenance'
+                    : isSection('/training') ? 'training'
+                    : isPath('/about') ? 'about'
+                    : isPath('/contact') ? 'contact'
+                    : '';
+            %>
             <ul class="navbar-nav nav-links-center">
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><span class="nav-link-text"><%= t('common:nav.home') %></span></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><span class="nav-link-text"><%= t('common:nav.shop') %></span></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><span class="nav-link-text"><%= t('common:nav.maintenance') %></span></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><span class="nav-link-text"><%= t('common:nav.training') %></span></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><span class="nav-link-text"><%= t('common:nav.about') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= activeNav === 'home' ? ' active' : '' %>" href="/"><span class="nav-link-text"><%= t('common:nav.home') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= activeNav === 'shop' ? ' active' : '' %>" href="/shop"><span class="nav-link-text"><%= t('common:nav.shop') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= activeNav === 'maintenance' ? ' active' : '' %>" href="/maintenance"><span class="nav-link-text"><%= t('common:nav.maintenance') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= activeNav === 'training' ? ' active' : '' %>" href="/training"><span class="nav-link-text"><%= t('common:nav.training') %></span></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= activeNav === 'about' ? ' active' : '' %>" href="/about"><span class="nav-link-text"><%= t('common:nav.about') %></span></a></li>
             </ul>
             <div class="nav-main-actions">
                 <div class="position-relative d-none d-md-block search-wrapper">
@@ -126,27 +137,27 @@
         </div>
 
         <nav class="mobile-drawer-nav" aria-label="<%= t('common:nav.mobileNav') %>">
-            <a href="/" class="mobile-nav-item<%= currentPath === '/' ? ' active' : '' %>" data-nav-delay="0">
+            <a href="/" class="mobile-nav-item<%= activeNav === 'home' ? ' active' : '' %>" data-nav-delay="0">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-house"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.home') %></span>
             </a>
-            <a href="/shop" class="mobile-nav-item<%= currentPath.startsWith('/shop') ? ' active' : '' %>" data-nav-delay="1">
+            <a href="/shop" class="mobile-nav-item<%= activeNav === 'shop' ? ' active' : '' %>" data-nav-delay="1">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-store"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.shop') %></span>
             </a>
-            <a href="/maintenance" class="mobile-nav-item<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" data-nav-delay="2">
+            <a href="/maintenance" class="mobile-nav-item<%= activeNav === 'maintenance' ? ' active' : '' %>" data-nav-delay="2">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-wrench"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.maintenance') %></span>
             </a>
-            <a href="/training" class="mobile-nav-item<%= currentPath.startsWith('/training') ? ' active' : '' %>" data-nav-delay="3">
+            <a href="/training" class="mobile-nav-item<%= activeNav === 'training' ? ' active' : '' %>" data-nav-delay="3">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-graduation-cap"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.training') %></span>
             </a>
-            <a href="/about" class="mobile-nav-item<%= currentPath === '/about' ? ' active' : '' %>" data-nav-delay="4">
+            <a href="/about" class="mobile-nav-item<%= activeNav === 'about' ? ' active' : '' %>" data-nav-delay="4">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-circle-info"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.about') %></span>
             </a>
-            <a href="/contact" class="mobile-nav-item<%= currentPath === '/contact' ? ' active' : '' %>" data-nav-delay="5">
+            <a href="/contact" class="mobile-nav-item<%= activeNav === 'contact' ? ' active' : '' %>" data-nav-delay="5">
                 <span class="mobile-nav-icon"><i class="fa-solid fa-envelope"></i></span>
                 <span class="mobile-nav-label"><%= t('common:nav.contact') %></span>
             </a>
