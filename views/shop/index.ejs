@@ -1,8 +1,8 @@
 <%- include('../partials/header') %>
 
-<section class="py-5" data-aos="fade-up">
+<section class="shop-section" data-aos="fade-up">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="text-center mb-4">
             <span class="section-badge"><i class="fa-solid fa-microchip me-2"></i><%= t('shop:index.badge') %></span>
             <h1 class="display-4 text-white fw-bold mt-3"><%= t('shop:index.heading') %></h1>
             <p class="text-white-50 fs-5"><%= t('shop:index.subtitle') %></p>
@@ -10,14 +10,14 @@
 
         <div class="row g-4">
             <div class="col-12">
-                <div class="glass-card no-lift filter-toolbar p-4 mb-4">
-                    <div class="d-flex align-items-center mb-3">
+                <div class="glass-card no-lift filter-toolbar p-3 mb-2">
+                    <div class="d-flex align-items-center mb-2">
                         <i class="fa-solid fa-sliders me-2 text-primary"></i>
                         <h6 class="text-white fw-bold mb-0"><%= t('shop:index.filters') %></h6>
                     </div>
                     <form method="GET" action="/shop" class="filter-toolbar-form">
                         <div class="filter-toolbar-control">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.category') %></label>
+                            <label class="form-label text-white-50 small text-uppercase"><%= t('common:words.category') %></label>
                             <select name="category" class="form-select filter-toolbar-input">
                                 <option value=""><%= t('shop:index.allCategories') %></option>
                                 <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
@@ -26,11 +26,11 @@
                             </select>
                         </div>
                         <div class="filter-toolbar-control">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.minPrice') %></label>
+                            <label class="form-label text-white-50 small text-uppercase"><%= t('shop:index.minPrice') %></label>
                             <input type="number" name="min_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(0) %>" value="<%= minPrice || '' %>">
                         </div>
                         <div class="filter-toolbar-control">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.maxPrice') %></label>
+                            <label class="form-label text-white-50 small text-uppercase"><%= t('shop:index.maxPrice') %></label>
                             <input type="number" name="max_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(9999) %>" value="<%= maxPrice || '' %>">
                         </div>
                         <div class="filter-toolbar-actions">
