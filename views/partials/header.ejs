@@ -54,8 +54,9 @@
                 <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
             </a>
             <%
-                const isPath = (p) => currentPath === p;
-                const isSection = (p) => isPath(p) || currentPath.startsWith(p + '/');
+                const path = currentPath.length > 1 && currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
+                const isPath = (p) => path === p;
+                const isSection = (p) => isPath(p) || path.startsWith(p + '/');
                 const activeNav = isPath('/') ? 'home'
                     : isSection('/shop') ? 'shop'
                     : isSection('/maintenance') ? 'maintenance'
