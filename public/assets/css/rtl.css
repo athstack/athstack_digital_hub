@@ -63,18 +63,18 @@ html[lang="ar"] * {
 [dir="rtl"] .cart-badge,
 [dir="rtl"] .notif-badge {
     right: auto;
-    left: -8px;
+    left: -4px;
 }
 
 [dir="rtl"] .notif-badge-msg {
     left: auto;
-    right: -8px;
+    right: -4px;
 }
 
 [dir="rtl"] .msg-unread-badge,
 [dir="rtl"] #msgUnreadBadge {
     right: auto;
-    left: -8px;
+    left: -4px;
 }
 
 /* --- Directional icons should be mirrored in RTL ------------ */
@@ -103,6 +103,16 @@ html[lang="ar"] * {
 [dir="rtl"] .language-selector-caret {
     margin-right: 4px;
     margin-left: 0;
+}
+
+/* --- Navbar search icon mirrors to the right in RTL ---------- */
+[dir="rtl"] .search-wrapper-icon {
+    left: auto;
+    right: 14px;
+}
+[dir="rtl"] .navbar-search {
+    padding-left: 1rem !important;
+    padding-right: 2.4rem !important;
 }
 
 /* --- Horizontal filter toolbar (shop) in RTL ----------------- */

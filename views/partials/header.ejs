@@ -31,19 +31,19 @@
 
 <div class="page-wrapper">
 <a href="#main-content" class="skip-link visually-hidden-focusable"><%= t('common:nav.skipToContent') %></a>
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+<nav class="navbar navbar-expand-xl navbar-dark navbar-custom sticky-top">
     <div class="container">
-        <a class="navbar-brand py-1 gap-1" href="/">
-            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" class="d-none d-md-block logo-full" style="height:44px;">
-            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub" class="d-none d-sm-block d-md-none logo-compact" style="height:34px;">
-            <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon" style="height:40px;">
-            <span class="text-white fw-bold" style="font-size:clamp(0.9rem,3.5vw,1.2rem);letter-spacing:-0.02em;line-height:1;">Tech<span class="text-primary">Bridge</span></span>
+        <a class="navbar-brand py-1 gap-2" href="/">
+            <img src="/images/techbridge-logo.png" alt="TechBridge Digital Hub" class="d-none d-md-block logo-full">
+            <img src="/images/techbridge-logo-compact.png" alt="TechBridge Digital Hub" class="d-none d-sm-block d-md-none logo-compact">
+            <img src="/images/techbridge-icon.png" alt="TechBridge" class="d-sm-none logo-icon">
+            <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
         </a>
         <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="<%= t('common:nav.toggleMenu') %>">
             <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
         </button>
         <div class="collapse navbar-collapse" id="athstackNav">
-            <ul class="navbar-nav mx-auto nav-links-center gap-2">
+            <ul class="navbar-nav mx-auto nav-links-center">
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><%= t('common:nav.home') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><%= t('common:nav.shop') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><%= t('common:nav.maintenance') %></a></li>
@@ -51,13 +51,13 @@
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><%= t('common:nav.about') %></a></li>
                 <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact"><%= t('common:nav.contact') %></a></li>
             </ul>
-            <div class="d-flex align-items-center navbar-actions gap-4">
+            <div class="d-flex align-items-center navbar-actions">
                 <div class="position-relative d-none d-md-block search-wrapper">
                     <i class="fa-solid fa-search search-wrapper-icon"></i>
                     <input type="text" id="globalLiveSearch" class="form-control rounded-pill navbar-search" placeholder="<%= t('common:nav.searchPlaceholder') %>">
                     <div id="searchSuggestionsBox" class="search-results-tray"></div>
                 </div>
-                <div class="navbar-icons d-flex align-items-center gap-3">
+                <div class="navbar-icons d-flex align-items-center">
                     <%- include('../partials/languageSelector') %>
                     <%- include('../partials/currencySelector') %>
                     <a href="/cart" class="navbar-icon-link position-relative" id="cartLink" aria-label="<%= t('common:nav.cart') %>">
@@ -82,13 +82,13 @@
                             </div>
                         </div>
                         <a href="<%= homePanel %>" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none" aria-label="<%= t('common:nav.profile') %>">
-                            <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:30px;height:30px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
-                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= formatDisplayName(user.firstName, user.lastName) %></span>
+                            <% if (user.avatar) { %><img src="<%= imageUrl(user.avatar, 'profiles') %>" alt="" class="profile-avatar rounded-circle" style="width:28px;height:28px;object-fit:cover;"><% } else { %><i class="fa-solid fa-user-circle fs-5"></i><% } %>
+                            <span class="profile-name"><%= formatDisplayName(user.firstName, user.lastName) %></span>
                         </a>
                     <% } else { %>
                         <a href="/auth/login" class="btn-nav-profile d-flex align-items-center gap-2 text-decoration-none">
                             <i class="fa-solid fa-user-circle fs-5"></i>
-                            <span class="d-none d-lg-inline" style="font-size:0.85rem;font-weight:500;"><%= t('common:nav.signIn') %></span>
+                            <span class="profile-name"><%= t('common:nav.signIn') %></span>
                         </a>
                     <% } %>
                 </div>
