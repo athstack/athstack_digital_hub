@@ -7,6 +7,7 @@
             aria-haspopup="true" aria-label="<%= t('common:currency.select', { defaultValue: 'Select currency' }) %>">
         <i class="fa-solid fa-coins" aria-hidden="true"></i>
         <span class="currency-selector-current d-none d-md-inline"><%= currency %></span>
+        <span class="currency-selector-symbol d-md-none" aria-hidden="true"><% CURRENCIES.forEach((c) => { if (c.code === currency) { %><%= c.symbol %><% } }); %></span>
         <i class="fa-solid fa-chevron-down language-selector-caret" aria-hidden="true"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-end language-selector-menu" aria-labelledby="currencySelectorToggle" role="listbox" aria-label="<%= t('common:currency.select', { defaultValue: 'Select currency' }) %>">

@@ -66,6 +66,11 @@ html[lang="ar"] * {
     left: -8px;
 }
 
+[dir="rtl"] .notif-badge-msg {
+    left: auto;
+    right: -8px;
+}
+
 [dir="rtl"] .msg-unread-badge,
 [dir="rtl"] #msgUnreadBadge {
     right: auto;

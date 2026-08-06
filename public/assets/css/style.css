@@ -521,6 +521,8 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     position: relative;
     padding: 0.5rem 0;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-wrap: nowrap;
 }
 .navbar-custom .nav-link:hover,
 .navbar-custom .nav-link:focus {
@@ -578,7 +580,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 .nav-links-center {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.5rem;
 }
 
 .navbar-actions { gap: 1rem; margin-left: 0; }
@@ -682,11 +684,41 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     justify-content: center;
     line-height: 1;
 }
+.notif-badge-msg {
+    position: absolute;
+    bottom: -6px;
+    left: -8px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: var(--weight-bold);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
 .notification-dropdown {
     background: var(--bg-elevated);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-md) !important;
     box-shadow: var(--shadow-xl);
+    width: 380px;
+    max-height: 460px;
+    overflow-y: auto;
+}
+.notification-dropdown-header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-subtle);
+}
+.notification-dropdown-list {
+    background: transparent;
+}
+.notification-dropdown-loading {
+    color: var(--text-dim);
+    font-size: var(--font-sm);
 }
 .notification-dropdown .dropdown-item {
     color: inherit;
@@ -4869,8 +4901,11 @@ input[type="date"]:not(:focus):placeholder-shown {
     font-size: 0.85rem;
 }
 
-.language-selector-current {
+.language-selector-current,
+.currency-selector-current,
+.currency-selector-symbol {
     color: rgba(255, 255, 255, 0.9);
+    font-variant-numeric: tabular-nums;
 }
 
 .language-selector-caret {
@@ -4893,7 +4928,8 @@ input[type="date"]:not(:focus):placeholder-shown {
     overflow-y: auto;
 }
 
-.language-selector-menu .language-option {
+.language-selector-menu .language-option,
+.language-selector-menu .currency-option {
     display: flex;
     align-items: center;
     gap: 0.625rem;
@@ -4905,16 +4941,20 @@ input[type="date"]:not(:focus):placeholder-shown {
     transition: var(--transition);
 }
 .language-selector-menu .language-option:hover,
-.language-selector-menu .language-option:focus {
+.language-selector-menu .language-option:focus,
+.language-selector-menu .currency-option:hover,
+.language-selector-menu .currency-option:focus {
     background: var(--primary-subtle);
     color: #fff;
 }
-.language-selector-menu .language-option.active {
+.language-selector-menu .language-option.active,
+.language-selector-menu .currency-option.active {
     background: var(--primary-subtle);
     color: #fff;
     font-weight: 600;
 }
-.language-selector-menu .language-option.active .language-option-check {
+.language-selector-menu .language-option.active .language-option-check,
+.language-selector-menu .currency-option.active .language-option-check {
     color: var(--primary-light);
 }
 .language-selector-menu .language-option-flag {
@@ -4925,12 +4965,32 @@ input[type="date"]:not(:focus):placeholder-shown {
     flex-shrink: 0;
 }
 
+.language-selector-menu .currency-option-symbol {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+}
+.language-selector-menu .currency-option:hover .currency-option-symbol,
+.language-selector-menu .currency-option.active .currency-option-symbol {
+    color: var(--primary-light);
+}
+
 .mobile-drawer-lang {
     padding: 0.75rem 1rem 1.25rem;
+    display: grid;
+    gap: 0.625rem;
 }
 .mobile-drawer-lang .language-selector-btn {
     width: 100%;
     justify-content: flex-start;
+}
+.mobile-drawer-lang .language-selector {
+    display: block;
 }
 
 /* ==========================================================================
