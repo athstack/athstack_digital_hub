@@ -7,6 +7,8 @@
     "filters": "الفلاتر",
     "allCategories": "جميع الفئات",
     "priceRange": "نطاق السعر",
+    "minPrice": "أدنى سعر",
+    "maxPrice": "أعلى سعر",
     "applyFilters": "تطبيق الفلاتر",
     "clearAll": "مسح الكل",
     "paginationAria": "ترقيم صفحات المنتجات",

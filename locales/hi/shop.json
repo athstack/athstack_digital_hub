@@ -7,6 +7,8 @@
     "filters": "फ़िल्टर",
     "allCategories": "सभी श्रेणियां",
     "priceRange": "मूल्य सीमा",
+    "minPrice": "न्यूनतम मूल्य",
+    "maxPrice": "अधिकतम मूल्य",
     "applyFilters": "फ़िल्टर लागू करें",
     "clearAll": "सभी साफ़ करें",
     "paginationAria": "प्रोडक्ट पेजिनेशन",

@@ -7,6 +7,8 @@
     "filters": "Vichujio",
     "allCategories": "Kategoria Zote",
     "priceRange": "Kiwango cha Bei",
+    "minPrice": "Bei ya Chini",
+    "maxPrice": "Bei ya Juu",
     "applyFilters": "Tumia Vichujio",
     "clearAll": "Futa Zote",
     "paginationAria": "Kuweka kurasa kwa bidhaa",

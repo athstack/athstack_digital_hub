@@ -7,6 +7,8 @@
     "filters": "Filtros",
     "allCategories": "Todas as Categorias",
     "priceRange": "Intervalo de Preço",
+    "minPrice": "Preço Mínimo",
+    "maxPrice": "Preço Máximo",
     "applyFilters": "Aplicar Filtros",
     "clearAll": "Limpar Tudo",
     "paginationAria": "Paginação de produtos",

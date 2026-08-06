@@ -7,6 +7,8 @@
     "filters": "筛选",
     "allCategories": "全部分类",
     "priceRange": "价格区间",
+    "minPrice": "最低价格",
+    "maxPrice": "最高价格",
     "applyFilters": "应用筛选",
     "clearAll": "清除全部",
     "paginationAria": "产品分页",

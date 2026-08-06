@@ -9,40 +9,39 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-lg-3">
-                <div class="glass-card p-4 mb-4">
+            <div class="col-12">
+                <div class="glass-card no-lift filter-toolbar p-4 mb-4">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fa-solid fa-sliders me-2 text-primary"></i>
                         <h6 class="text-white fw-bold mb-0"><%= t('shop:index.filters') %></h6>
                     </div>
-                    <form method="GET" action="/shop">
-                        <div class="mb-3">
+                    <form method="GET" action="/shop" class="filter-toolbar-form">
+                        <div class="filter-toolbar-control">
                             <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.category') %></label>
-                            <select name="category" class="form-select">
+                            <select name="category" class="form-select filter-toolbar-input">
                                 <option value=""><%= t('shop:index.allCategories') %></option>
                                 <% if (typeof categories !== 'undefined' && categories) { categories.forEach(cat => { %>
                                 <option value="<%= cat.slug %>" <%= activeCategory === cat.slug ? 'selected' : '' %>><%= cat.name %></option>
                                 <% }) } %>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.priceRange') %></label>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <input type="number" name="min_price" class="form-control" placeholder="<%= formatCurrency(0) %>" value="<%= minPrice || '' %>">
-                                </div>
-                                <div class="col-6">
-                                    <input type="number" name="max_price" class="form-control" placeholder="<%= formatCurrency(9999) %>" value="<%= maxPrice || '' %>">
-                                </div>
-                            </div>
+                        <div class="filter-toolbar-control">
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.minPrice') %></label>
+                            <input type="number" name="min_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(0) %>" value="<%= minPrice || '' %>">
                         </div>
-                        <button type="submit" class="btn btn-premium-primary w-100 rounded-pill"><i class="fa-solid fa-search me-2"></i><%= t('shop:index.applyFilters') %></button>
-                        <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline w-100 rounded-pill mt-2"><%= t('shop:index.clearAll') %></a><% } %>
+                        <div class="filter-toolbar-control">
+                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('shop:index.maxPrice') %></label>
+                            <input type="number" name="max_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(9999) %>" value="<%= maxPrice || '' %>">
+                        </div>
+                        <div class="filter-toolbar-actions">
+                            <button type="submit" class="btn btn-premium-primary filter-toolbar-btn rounded-pill"><i class="fa-solid fa-filter me-2"></i><%= t('shop:index.applyFilters') %></button>
+                            <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline filter-toolbar-btn rounded-pill"><%= t('shop:index.clearAll') %></a><% } %>
+                        </div>
                     </form>
                 </div>
             </div>
 
-            <div class="col-lg-9">
+            <div class="col-12">
                 <% if (typeof flashSuccess !== 'undefined' && flashSuccess && flashSuccess.length > 0) { %>
                 <div class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
                     <i class="fa-solid fa-check-circle me-2"></i><%= flashSuccess %>

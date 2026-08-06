@@ -105,6 +105,17 @@ html[lang="ar"] * {
     margin-left: 0;
 }
 
+/* --- Horizontal filter toolbar (shop) in RTL ----------------- */
+[dir="rtl"] .filter-toolbar-input.form-select {
+    background-position: left 0.9rem center;
+    padding-right: 1rem;
+    padding-left: 2.5rem;
+}
+[dir="rtl"] .filter-toolbar-actions {
+    margin-left: 0;
+    margin-right: auto;
+}
+
 /* --- Minor fixes for table/text flows in RTL ---------------- */
 [dir="rtl"] .table {
     --bs-table-bg: transparent;
