@@ -17,10 +17,6 @@
                     </div>
                     <form method="GET" action="/shop">
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.search') %></label>
-                            <input type="text" name="search" class="form-control sidebar-search" placeholder="<%= t('common:nav.searchPlaceholder') %>" value="<%= searchQuery || '' %>">
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('common:words.category') %></label>
                             <select name="category" class="form-select">
                                 <option value=""><%= t('shop:index.allCategories') %></option>
