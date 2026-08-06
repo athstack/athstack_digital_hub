@@ -810,6 +810,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 /* Primary links: perfectly centered over the main row */
 .nav-links-center {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: clamp(0.875rem, 1.8vw, 2.25rem);
     position: absolute;
