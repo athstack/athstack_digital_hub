@@ -429,7 +429,6 @@ function initMobileDrawer() {
   const drawer = document.getElementById('mobileDrawer');
   const overlay = document.getElementById('mobileDrawerOverlay');
   const closeBtn = document.getElementById('mobileDrawerClose');
-  const menuIcon = document.getElementById('mobileMenuIcon');
   const navLinks = drawer ? drawer.querySelectorAll('.mobile-nav-item') : [];
   const body = document.body;
 
@@ -440,11 +439,9 @@ function initMobileDrawer() {
     overlay.classList.add('active');
     drawer.setAttribute('aria-hidden', 'false');
     overlay.setAttribute('aria-hidden', 'false');
-    body.style.overflow = 'hidden';
-    if (menuIcon) {
-      menuIcon.className = 'fa-solid fa-times fs-5';
-    }
+    toggleBtn.classList.add('is-open');
     toggleBtn.setAttribute('aria-expanded', 'true');
+    body.style.overflow = 'hidden';
     closeBtn.focus();
   }
 
@@ -454,9 +451,7 @@ function initMobileDrawer() {
       overlay.classList.remove('active');
       drawer.setAttribute('aria-hidden', 'true');
       overlay.setAttribute('aria-hidden', 'true');
-      if (menuIcon) {
-        menuIcon.className = 'fa-solid fa-bars fs-5';
-      }
+      toggleBtn.classList.remove('is-open');
       toggleBtn.setAttribute('aria-expanded', 'false');
       toggleBtn.focus();
     } catch (e) {}

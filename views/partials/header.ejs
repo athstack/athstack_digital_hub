@@ -73,12 +73,12 @@
                 <span class="text-white fw-bold navbar-wordmark">Tech<span class="text-primary">Bridge</span></span>
             </a>
             <ul class="navbar-nav nav-links-center">
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><%= t('common:nav.home') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><%= t('common:nav.shop') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><%= t('common:nav.maintenance') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><%= t('common:nav.training') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><%= t('common:nav.about') %></a></li>
-                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact"><%= t('common:nav.contact') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/' ? ' active' : '' %>" href="/"><i class="fa-solid fa-house nav-link-icon" aria-hidden="true"></i><%= t('common:nav.home') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/shop') ? ' active' : '' %>" href="/shop"><i class="fa-solid fa-store nav-link-icon" aria-hidden="true"></i><%= t('common:nav.shop') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/maintenance') ? ' active' : '' %>" href="/maintenance"><i class="fa-solid fa-wrench nav-link-icon" aria-hidden="true"></i><%= t('common:nav.maintenance') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath.startsWith('/training') ? ' active' : '' %>" href="/training"><i class="fa-solid fa-graduation-cap nav-link-icon" aria-hidden="true"></i><%= t('common:nav.training') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/about' ? ' active' : '' %>" href="/about"><i class="fa-solid fa-circle-info nav-link-icon" aria-hidden="true"></i><%= t('common:nav.about') %></a></li>
+                <li class="nav-item"><a class="nav-link nav-link-animated<%= currentPath === '/contact' ? ' active' : '' %>" href="/contact"><i class="fa-solid fa-envelope nav-link-icon" aria-hidden="true"></i><%= t('common:nav.contact') %></a></li>
             </ul>
             <div class="nav-main-actions">
                 <div class="position-relative d-none d-md-block search-wrapper">
@@ -91,8 +91,12 @@
                     <span class="cart-badge" id="cartIndicatorCount"><%= cartCount %></span>
                 </a>
             </div>
-            <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-label="<%= t('common:nav.toggleMenu') %>">
-                <i class="fa-solid fa-bars fs-5" id="mobileMenuIcon"></i>
+            <button class="navbar-toggler border-0" type="button" id="mobileMenuToggle" aria-expanded="false" aria-label="<%= t('common:nav.toggleMenu') %>">
+                <span class="hamburger" id="mobileMenuIcon" aria-hidden="true">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </span>
             </button>
         </div>
     </div>
