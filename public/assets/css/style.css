@@ -635,7 +635,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     color: rgba(226, 232, 240, 0.82) !important;
     font-weight: var(--weight-medium);
     font-size: var(--font-sm);
-    transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, text-shadow 0.3s ease;
     position: relative;
     padding: 0.5rem 0.6rem;
     margin: 0 0.15rem;
@@ -649,12 +649,11 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     color: var(--nav-accent) !important;
     background: var(--nav-accent-soft);
     text-shadow: 0 0 16px rgba(79, 140, 255, 0.35);
-    transform: translateY(-1px);
 }
 .navbar-custom .nav-link.active {
     color: var(--nav-accent) !important;
-    font-weight: var(--weight-semibold);
-    text-shadow: 0 0 18px rgba(79, 140, 255, 0.45);
+    background: transparent !important;
+    box-shadow: none;
 }
 .navbar-custom .nav-link:focus-visible {
     outline: 2px solid var(--primary);
