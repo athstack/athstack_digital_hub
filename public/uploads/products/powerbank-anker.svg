@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8FAFC"/>
+      <stop offset="100%" style="stop-color:#E6EDF6"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <ellipse cx="200" cy="325" rx="100" ry="12" fill="rgba(37,99,235,0.10)"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <rect x="130" y="128" width="140" height="152" rx="26" fill="#DBEAFE" stroke="#2563EB" stroke-width="3.5"/>
+    <rect x="148" y="146" width="104" height="44" rx="9" fill="#0F172A"/>
+    <line x1="162" y1="168" x2="238" y2="168" stroke="#38BDF8" stroke-width="8" stroke-linecap="round"/>
+    <line x1="162" y1="196" x2="202" y2="196" stroke="#64748B" stroke-width="5" stroke-linecap="round"/>
+    <rect x="148" y="226" width="104" height="34" rx="9" fill="#E2E8F0" stroke="#64748B" stroke-width="2.5"/>
+    <line x1="158" y1="243" x2="242" y2="243" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+    <line x1="162" y1="118" x2="238" y2="118" stroke="#2563EB" stroke-width="4"/>
+    <circle cx="130" cy="248" r="5" fill="#E11D48"/>
+    <circle cx="200" cy="272" r="5" fill="#22C55E"/>
+  </g>
+</svg>
