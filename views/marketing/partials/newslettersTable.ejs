@@ -22,7 +22,7 @@
             <h6 class="text-white fw-bold mb-3"><i class="fa-solid fa-user-plus me-2 text-primary"></i><%= t('marketing:newsletters.addSubscriber') %></h6>
             <form method="POST" action="/marketing/newsletters/subscribers" class="d-flex gap-2 newsletter-add-form" novalidate>
                 <input type="hidden" name="csrf_token" value="<%= csrfToken %>">
-                <input type="email" name="email" class="form-control" required placeholder="<%= t('marketing:newsletters.emailPlaceholder') %>">
+                <input type="email" name="email" class="form-control" required placeholder="athstack@gmail.com">
                 <button type="submit" class="btn btn-premium-primary rounded-pill flex-shrink-0"><i class="fa-solid fa-plus"></i></button>
             </form>
 
