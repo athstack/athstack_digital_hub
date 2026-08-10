@@ -14,7 +14,19 @@
     "paginationAria": "Product pagination",
     "emptyTitle": "No Products Found",
     "emptyMessage": "No products match your current filters. Try adjusting your search criteria.",
-    "viewAllProducts": "View All Products"
+    "viewAllProducts": "View All Products",
+    "products_one": "Product",
+    "products_other": "Products",
+    "sortBy": "Sort By",
+    "sort": {
+      "newest": "Newest",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "nameAsc": "Name: A to Z",
+      "nameDesc": "Name: Z to A",
+      "topRated": "Top Rated",
+      "bestSelling": "Best Selling"
+    }
   },
   "notFound": {
     "signalLost": "Signal Lost",

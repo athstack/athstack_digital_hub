@@ -14,7 +14,19 @@
     "paginationAria": "ترقيم صفحات المنتجات",
     "emptyTitle": "لا توجد منتجات",
     "emptyMessage": "لا توجد منتجات تطابق الفلاتر الحالية. حاول تعديل معايير البحث.",
-    "viewAllProducts": "عرض جميع المنتجات"
+    "viewAllProducts": "عرض جميع المنتجات",
+    "products_one": "منتج",
+    "products_other": "منتجات",
+    "sortBy": "ترتيب حسب",
+    "sort": {
+      "newest": "الأحدث",
+      "priceAsc": "السعر: من الأقل إلى الأعلى",
+      "priceDesc": "السعر: من الأعلى إلى الأقل",
+      "nameAsc": "الاسم: أ إلى ي",
+      "nameDesc": "الاسم: ي إلى أ",
+      "topRated": "الأعلى تقييماً",
+      "bestSelling": "الأكثر مبيعاً"
+    }
   },
   "notFound": {
     "signalLost": "فُقدت الإشارة",

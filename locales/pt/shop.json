@@ -14,7 +14,19 @@
     "paginationAria": "Paginação de produtos",
     "emptyTitle": "Nenhum Produto Encontrado",
     "emptyMessage": "Nenhum produto corresponde aos seus filtros atuais. Tente ajustar os seus critérios de pesquisa.",
-    "viewAllProducts": "Ver Todos os Produtos"
+    "viewAllProducts": "Ver Todos os Produtos",
+    "products_one": "Produto",
+    "products_other": "Produtos",
+    "sortBy": "Ordenar por",
+    "sort": {
+      "newest": "Mais recentes",
+      "priceAsc": "Preço: crescente",
+      "priceDesc": "Preço: decrescente",
+      "nameAsc": "Nome: A–Z",
+      "nameDesc": "Nome: Z–A",
+      "topRated": "Mais bem avaliados",
+      "bestSelling": "Mais vendidos"
+    }
   },
   "notFound": {
     "signalLost": "Sinal Perdido",

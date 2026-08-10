@@ -14,7 +14,19 @@
     "paginationAria": "产品分页",
     "emptyTitle": "未找到产品",
     "emptyMessage": "没有符合当前筛选条件的产品。请尝试调整您的搜索条件。",
-    "viewAllProducts": "查看全部产品"
+    "viewAllProducts": "查看全部产品",
+    "products_one": "商品",
+    "products_other": "件商品",
+    "sortBy": "排序方式",
+    "sort": {
+      "newest": "最新",
+      "priceAsc": "价格：从低到高",
+      "priceDesc": "价格：从高到低",
+      "nameAsc": "名称：A-Z",
+      "nameDesc": "名称：Z-A",
+      "topRated": "评分最高",
+      "bestSelling": "销量最高"
+    }
   },
   "notFound": {
     "signalLost": "信号丢失",

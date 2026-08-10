@@ -14,7 +14,19 @@
     "paginationAria": "प्रोडक्ट पेजिनेशन",
     "emptyTitle": "कोई प्रोडक्ट नहीं मिला",
     "emptyMessage": "कोई भी प्रोडक्ट आपके वर्तमान फ़िल्टर से मेल नहीं खाता। अपने खोज मानदंड समायोजित करने का प्रयास करें।",
-    "viewAllProducts": "सभी प्रोडक्ट देखें"
+    "viewAllProducts": "सभी प्रोडक्ट देखें",
+    "products_one": "उत्पाद",
+    "products_other": "उत्पाद",
+    "sortBy": "क्रमबद्ध करें",
+    "sort": {
+      "newest": "नवीनतम",
+      "priceAsc": "मूल्य: कम से अधिक",
+      "priceDesc": "मूल्य: अधिक से कम",
+      "nameAsc": "नाम: A से Z",
+      "nameDesc": "नाम: Z से A",
+      "topRated": "सर्वोच्च रेटेड",
+      "bestSelling": "सबसे अधिक बिकने वाला"
+    }
   },
   "notFound": {
     "signalLost": "सिग्नल खो गया",

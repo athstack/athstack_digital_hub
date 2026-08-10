@@ -14,7 +14,19 @@
     "paginationAria": "Kuweka kurasa kwa bidhaa",
     "emptyTitle": "Hakuna Bidhaa Zilizopatikana",
     "emptyMessage": "Hakuna bidhaa zinazolingana na vichujio vyako vya sasa. Jaribu kurekebisha vigezo vyako vya utafutaji.",
-    "viewAllProducts": "Tazama Bidhaa Zote"
+    "viewAllProducts": "Tazama Bidhaa Zote",
+    "products_one": "Bidhaa",
+    "products_other": "Bidhaa",
+    "sortBy": "Panga Kwa",
+    "sort": {
+      "newest": "Mpya Zaidi",
+      "priceAsc": "Bei: Chini hadi Juu",
+      "priceDesc": "Bei: Juu hadi Chini",
+      "nameAsc": "Jina: A hadi Z",
+      "nameDesc": "Jina: Z hadi A",
+      "topRated": "Zinazopendwa Zaidi",
+      "bestSelling": "Zinazouza Zaidi"
+    }
   },
   "notFound": {
     "signalLost": "Ishara Imepotea",
