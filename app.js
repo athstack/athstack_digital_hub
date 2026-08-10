@@ -189,7 +189,19 @@ app.use((req, res, next) => {
   res.locals.getStatusBadgeClass = require('./utils/helpers').getStatusBadgeClass;
   res.locals.imageUrl = function(path, folder) {
     if (!path) return `/uploads/${folder}/product-placeholder.svg`;
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      // Cloudinary: optimize format/quality/size (never upscaled). The light
+      // image tile in CSS keeps dark product photos visible.
+      if (path.match(/^https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/v\d+\//)) {
+        const idx = path.indexOf('/image/upload/');
+        return (
+          path.slice(0, idx) +
+          '/image/upload/f_auto,q_auto,w_1600/' +
+          path.slice(idx + '/image/upload/'.length)
+        );
+      }
+      return path;
+    }
     if (path.startsWith('/')) return path;
     return `/uploads/${folder}/${path}`;
   };

@@ -29,6 +29,9 @@
     --border-hover: #2563EB;
     --input-border: rgba(255, 255, 255, 0.10);
 
+    /* Light studio tile behind product images (dark photos stay visible) */
+    --img-tile: linear-gradient(180deg, #F8FAFC 0%, #E6EDF6 100%);
+
     /* ===== Text ===== */
     --text-main: #F8FAFC;
     --text-secondary: #94A3B8;
@@ -1515,7 +1518,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
 
 .product-img-wrapper {
     position: relative;
-    background: var(--bg-dark);
+    background: var(--img-tile);
 }
 .product-img-wrapper img {
     display: block;
@@ -1592,7 +1595,7 @@ small, .small { font-size: var(--font-xs); color: var(--text-muted); line-height
     width: 100%;
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-dark) 100%);
+    background: var(--img-tile);
 }
 
 /* Image: contain so the full product is always visible (never cropped/zoomed) */
@@ -2724,7 +2727,7 @@ input[type="date"]:not(:focus):placeholder-shown {
     justify-content: center;
     cursor: crosshair;
     overflow: hidden;
-    background: var(--bg-dark);
+    background: var(--img-tile);
 }
 
 .gallery-main-image {
@@ -2839,7 +2842,7 @@ input[type="date"]:not(:focus):placeholder-shown {
     border-radius: var(--radius-sm);
     overflow: hidden;
     border: 2px solid transparent;
-    background: var(--bg-dark);
+    background: var(--img-tile);
     cursor: pointer;
     padding: 0;
     transition: all 0.2s ease;
