@@ -26,7 +26,10 @@
       "nameDesc": "الاسم: ي إلى أ",
       "topRated": "الأعلى تقييماً",
       "bestSelling": "الأكثر مبيعاً"
-    }
+    },
+    "availability": "التوفر",
+    "allAvailability": "الكل",
+    "inStockOnly": "متوفر"
   },
   "notFound": {
     "signalLost": "فُقدت الإشارة",

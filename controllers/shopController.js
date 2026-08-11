@@ -22,6 +22,8 @@ exports.getShop = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const validSorts = ['newest', 'price_asc', 'price_desc', 'name_asc', 'name_desc', 'rating', 'sales'];
     const sort = validSorts.includes(req.query.sort) ? req.query.sort : 'newest';
+    const availability = req.query.availability || '';
+    const in_stock = availability === 'in_stock';
 
     const result = await ProductModel.getFiltered({
       category,
@@ -30,7 +32,8 @@ exports.getShop = async (req, res, next) => {
       maxPrice: maxPrice !== 999999 ? maxPrice : undefined,
       sort,
       page,
-      limit: 12
+      limit: 12,
+      in_stock
     });
 
     const categories = await CategoryModel.getAll();
@@ -42,6 +45,7 @@ exports.getShop = async (req, res, next) => {
       categories,
       activeCategory: category,
       activeSort: sort,
+      activeAvailability: availability,
       searchQuery: search,
       pagination: { page: result.page, totalPages, total: result.total, hasNext: result.page < totalPages, hasPrev: result.page > 1 },
       minPrice: req.query.min_price || '',

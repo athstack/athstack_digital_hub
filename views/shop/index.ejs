@@ -2,23 +2,21 @@
 
 <section class="shop-section" data-aos="fade-up">
     <div class="container">
-        <div class="text-center mb-4">
+        <div class="shop-header">
             <span class="section-badge"><i class="fa-solid fa-microchip me-2"></i><%= t('shop:index.badge') %></span>
-            <h1 class="display-4 text-white fw-bold mt-3"><%= t('shop:index.heading') %></h1>
-            <p class="text-white-50 fs-5"><%= t('shop:index.subtitle') %></p>
+            <h1 class="shop-header-title"><%= t('shop:index.heading') %></h1>
+            <p class="shop-header-subtitle"><%= t('shop:index.subtitle') %></p>
         </div>
 
         <div class="row g-4">
             <div class="col-12">
                 <form method="GET" action="/shop" class="filter-toolbar-wrap">
-                    <div class="glass-card no-lift filter-toolbar p-3 p-md-4 mb-2">
-                        <div class="filter-toolbar-head">
-                            <div class="filter-toolbar-title">
-                                <i class="fa-solid fa-sliders me-2 text-primary"></i>
-                                <h6 class="text-white fw-bold mb-0"><%= t('shop:index.filters') %></h6>
+                    <div class="glass-card no-lift filter-toolbar p-3 p-md-4">
+                        <div class="filter-toolbar-form filter-toolbar-form-compact">
+                            <div class="shop-result-count" aria-live="polite">
+                                <span class="shop-result-count-num"><%= pagination.total %></span>
+                                <span class="shop-result-count-label"><%= pagination.total === 1 ? t('shop:index.products_one') : t('shop:index.products_other') %></span>
                             </div>
-                        </div>
-                        <div class="filter-toolbar-form">
                             <div class="filter-toolbar-control">
                                 <label class="form-label text-white-50 small text-uppercase" for="shopCategory"><%= t('common:words.category') %></label>
                                 <select id="shopCategory" name="category" class="form-select filter-toolbar-input">
@@ -28,36 +26,37 @@
                                     <% }) } %>
                                 </select>
                             </div>
-                            <div class="filter-toolbar-control">
-                                <label class="form-label text-white-50 small text-uppercase" for="shopMinPrice"><%= t('shop:index.minPrice') %></label>
-                                <input id="shopMinPrice" type="number" name="min_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(0) %>" value="<%= minPrice || '' %>">
+                            <div class="filter-toolbar-price">
+                                <label class="form-label text-white-50 small text-uppercase" for="shopMinPrice"><%= t('shop:index.priceRange') %></label>
+                                <div class="filter-toolbar-price-inputs">
+                                    <input id="shopMinPrice" type="number" name="min_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(0) %>" value="<%= minPrice || '' %>" aria-label="<%= t('shop:index.minPrice') %>">
+                                    <span class="filter-toolbar-price-sep" aria-hidden="true">-</span>
+                                    <input id="shopMaxPrice" type="number" name="max_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(9999) %>" value="<%= maxPrice || '' %>" aria-label="<%= t('shop:index.maxPrice') %>">
+                                </div>
                             </div>
                             <div class="filter-toolbar-control">
-                                <label class="form-label text-white-50 small text-uppercase" for="shopMaxPrice"><%= t('shop:index.maxPrice') %></label>
-                                <input id="shopMaxPrice" type="number" name="max_price" class="form-control filter-toolbar-input" placeholder="<%= formatCurrency(9999) %>" value="<%= maxPrice || '' %>">
+                                <label class="form-label text-white-50 small text-uppercase" for="shopAvailability"><%= t('shop:index.availability') %></label>
+                                <select id="shopAvailability" name="availability" class="form-select filter-toolbar-input">
+                                    <option value=""><%= t('shop:index.allAvailability') %></option>
+                                    <option value="in_stock" <%= activeAvailability === 'in_stock' ? 'selected' : '' %>><%= t('shop:index.inStockOnly') %></option>
+                                </select>
                             </div>
                             <div class="filter-toolbar-actions">
                                 <button type="submit" class="btn btn-premium-primary filter-toolbar-btn rounded-pill"><i class="fa-solid fa-filter me-2"></i><%= t('shop:index.applyFilters') %></button>
-                                <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline filter-toolbar-btn rounded-pill"><%= t('shop:index.clearAll') %></a><% } %>
+                                <% var hasFilters = searchQuery || activeCategory || minPrice || maxPrice || activeAvailability; if (hasFilters) { %><a href="/shop" class="btn btn-premium-outline filter-toolbar-btn rounded-pill"><%= t('shop:index.clearAll') %></a><% } %>
                             </div>
-                        </div>
-                    </div>
-                    <div class="shop-toolbar-row">
-                        <div class="shop-result-count" aria-live="polite">
-                            <span class="shop-result-count-num"><%= pagination.total %></span>
-                            <span class="shop-result-count-label"><%= pagination.total === 1 ? t('shop:index.products_one') : t('shop:index.products_other') %></span>
-                        </div>
-                        <div class="shop-sort-control">
-                            <label class="shop-sort-label" for="shopSort"><%= t('shop:index.sortBy') %></label>
-                            <select id="shopSort" name="sort" class="form-select filter-toolbar-input shop-sort-select" onchange="this.form.submit()">
-                                <option value="newest" <%= activeSort === 'newest' ? 'selected' : '' %>><%= t('shop:index.sort.newest') %></option>
-                                <option value="price_asc" <%= activeSort === 'price_asc' ? 'selected' : '' %>><%= t('shop:index.sort.priceAsc') %></option>
-                                <option value="price_desc" <%= activeSort === 'price_desc' ? 'selected' : '' %>><%= t('shop:index.sort.priceDesc') %></option>
-                                <option value="name_asc" <%= activeSort === 'name_asc' ? 'selected' : '' %>><%= t('shop:index.sort.nameAsc') %></option>
-                                <option value="name_desc" <%= activeSort === 'name_desc' ? 'selected' : '' %>><%= t('shop:index.sort.nameDesc') %></option>
-                                <option value="rating" <%= activeSort === 'rating' ? 'selected' : '' %>><%= t('shop:index.sort.topRated') %></option>
-                                <option value="sales" <%= activeSort === 'sales' ? 'selected' : '' %>><%= t('shop:index.sort.bestSelling') %></option>
-                            </select>
+                            <div class="shop-sort-control">
+                                <label class="shop-sort-label" for="shopSort"><%= t('shop:index.sortBy') %></label>
+                                <select id="shopSort" name="sort" class="form-select filter-toolbar-input shop-sort-select" onchange="this.form.submit()">
+                                    <option value="newest" <%= activeSort === 'newest' ? 'selected' : '' %>><%= t('shop:index.sort.newest') %></option>
+                                    <option value="price_asc" <%= activeSort === 'price_asc' ? 'selected' : '' %>><%= t('shop:index.sort.priceAsc') %></option>
+                                    <option value="price_desc" <%= activeSort === 'price_desc' ? 'selected' : '' %>><%= t('shop:index.sort.priceDesc') %></option>
+                                    <option value="name_asc" <%= activeSort === 'name_asc' ? 'selected' : '' %>><%= t('shop:index.sort.nameAsc') %></option>
+                                    <option value="name_desc" <%= activeSort === 'name_desc' ? 'selected' : '' %>><%= t('shop:index.sort.nameDesc') %></option>
+                                    <option value="rating" <%= activeSort === 'rating' ? 'selected' : '' %>><%= t('shop:index.sort.topRated') %></option>
+                                    <option value="sales" <%= activeSort === 'sales' ? 'selected' : '' %>><%= t('shop:index.sort.bestSelling') %></option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -92,6 +91,7 @@
                   if (activeSort && activeSort !== 'newest') qsParts.push('sort=' + encodeURIComponent(activeSort));
                   if (minPrice) qsParts.push('min_price=' + encodeURIComponent(minPrice));
                   if (maxPrice) qsParts.push('max_price=' + encodeURIComponent(maxPrice));
+                  if (activeAvailability) qsParts.push('availability=' + encodeURIComponent(activeAvailability));
                   var qs = qsParts.length ? '&' + qsParts.join('&') : '';
                 %>
                 <nav class="mt-5" aria-label="<%= t('shop:index.paginationAria') %>">

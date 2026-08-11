@@ -1,7 +1,7 @@
 const { query, queryOne } = require('../config/db');
 
 class ProductModel {
-  async getFiltered({ category, search, minPrice, maxPrice, sort, page = 1, limit = 20, technician_id, status, featured, allStatuses } = {}) {
+  async getFiltered({ category, search, minPrice, maxPrice, sort, page = 1, limit = 20, technician_id, status, featured, allStatuses, in_stock } = {}) {
     const conditions = [];
     const params = [];
 
@@ -34,6 +34,9 @@ class ProductModel {
     }
     if (featured) {
       conditions.push('p.featured = 1');
+    }
+    if (in_stock) {
+      conditions.push('p.stock_quantity > 0');
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';

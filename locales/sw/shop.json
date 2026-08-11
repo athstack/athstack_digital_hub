@@ -26,7 +26,10 @@
       "nameDesc": "Jina: Z hadi A",
       "topRated": "Zinazopendwa Zaidi",
       "bestSelling": "Zinazouza Zaidi"
-    }
+    },
+    "availability": "Upatikanaji",
+    "allAvailability": "Zote",
+    "inStockOnly": "Katika Hisa"
   },
   "notFound": {
     "signalLost": "Ishara Imepotea",

@@ -26,7 +26,10 @@
       "nameDesc": "Nombre: Z–A",
       "topRated": "Mejor valorados",
       "bestSelling": "Más vendidos"
-    }
+    },
+    "availability": "Disponibilidad",
+    "allAvailability": "Todos",
+    "inStockOnly": "En Stock"
   },
   "notFound": {
     "signalLost": "Señal Perdida",

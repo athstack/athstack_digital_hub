@@ -26,7 +26,10 @@
       "nameDesc": "名称：Z-A",
       "topRated": "评分最高",
       "bestSelling": "销量最高"
-    }
+    },
+    "availability": "库存",
+    "allAvailability": "全部",
+    "inStockOnly": "有货"
   },
   "notFound": {
     "signalLost": "信号丢失",
