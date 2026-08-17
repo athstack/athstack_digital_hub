@@ -52,19 +52,41 @@ function initReviewModal() {
     btn.addEventListener('blur', () => { hoveredRating = -1; renderStars(); });
   });
 
+  const errorBox = document.getElementById('reviewFormError');
+  const errorText = document.getElementById('reviewFormErrorText');
+  const errorFooter = document.getElementById('reviewFormErrorFooter');
+  const errorFooterText = document.getElementById('reviewFormErrorFooterText');
+
+  function showReviewError(msg) {
+    if (errorText) errorText.textContent = msg;
+    if (errorBox) errorBox.classList.remove('d-none');
+    if (errorFooterText) errorFooterText.textContent = msg;
+    if (errorFooter) errorFooter.classList.remove('d-none');
+  }
+  function hideReviewError() {
+    if (errorBox) errorBox.classList.add('d-none');
+    if (errorFooter) errorFooter.classList.add('d-none');
+    if (commentInput) commentInput.classList.remove('is-invalid');
+  }
+
   modal.addEventListener('show.bs.modal', () => {
     selectedRating = 5;
     hoveredRating = -1;
     pendingFiles = [];
     renderStars();
     renderPreviews();
-    if (commentInput) commentInput.value = '';
+    if (commentInput) { commentInput.value = ''; commentInput.classList.remove('is-invalid'); }
     updateCharCount();
     if (fileInput) fileInput.value = '';
+    hideReviewError();
   });
 
   if (commentInput && charCount) {
-    commentInput.addEventListener('input', updateCharCount);
+    commentInput.addEventListener('input', () => {
+      commentInput.classList.remove('is-invalid');
+      hideReviewError();
+      updateCharCount();
+    });
   }
 
   function updateCharCount() {
@@ -133,18 +155,23 @@ function initReviewModal() {
   }
 
   form.addEventListener('submit', (e) => {
+    hideReviewError();
     if (selectedRating < 1 || selectedRating > 5) {
       e.preventDefault();
+      showReviewError(getString('reviewRatingHint', 'Please select a rating between 1 and 5.'));
       if (hint) hint.textContent = getString('reviewRatingHint', 'Please select a rating between 1 and 5.');
       return;
     }
     const len = commentInput ? commentInput.value.trim().length : 0;
     if (len < 20) {
       e.preventDefault();
+      if (commentInput) commentInput.classList.add('is-invalid');
+      showReviewError(getString('reviewMinLength', 'Please write at least 20 characters.'));
       if (hint) hint.textContent = getString('reviewMinLength', 'Please write at least 20 characters.');
       return;
     }
     if (hint) hint.textContent = '';
+    hideReviewError();
 
     // Rebuild FileList onto the form
     if (pendingFiles.length) {

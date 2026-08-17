@@ -48,10 +48,18 @@
               <div class="review-upload-previews" id="reviewUploadPreviews"></div>
             </div>
           </div>
+          <div class="review-form-error d-none" id="reviewFormError">
+            <i class="fa-solid fa-exclamation-circle me-2"></i><span id="reviewFormErrorText"></span>
+          </div>
         </div>
-        <div class="modal-footer border-secondary">
-          <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
-          <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i><%= t('shop:modal.submitReview') %></button>
+        <div class="modal-footer border-secondary flex-column gap-2">
+          <div class="review-form-error review-form-error-footer d-none" id="reviewFormErrorFooter">
+            <i class="fa-solid fa-exclamation-circle me-2"></i><span id="reviewFormErrorFooterText"></span>
+          </div>
+          <div class="d-flex gap-2 w-100 justify-content-end">
+            <button type="button" class="btn btn-premium-outline rounded-pill" data-bs-dismiss="modal"><%= t('common:words.cancel') %></button>
+            <button type="submit" class="btn btn-premium-primary rounded-pill"><i class="fa-solid fa-paper-plane me-2"></i><%= t('shop:modal.submitReview') %></button>
+          </div>
         </div>
       </form>
     </div>

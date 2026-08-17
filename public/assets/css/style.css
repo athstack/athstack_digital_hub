@@ -4354,6 +4354,30 @@ input[type="date"]:not(:focus):placeholder-shown {
     background: var(--bg-card);
     border: 1px solid var(--border-glass);
 }
+.review-form-error {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.85rem;
+    margin-top: 0.75rem;
+    border-radius: var(--radius-sm);
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+.review-form-error.d-none {
+    display: none;
+}
+.review-form-error-footer {
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+.review-textarea.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+}
 .review-upload-widget {
     display: flex;
     flex-direction: column;
