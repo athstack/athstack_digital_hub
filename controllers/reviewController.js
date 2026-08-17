@@ -7,9 +7,12 @@ const { MAX_REVIEW_IMAGES, COMMENT_MIN, COMMENT_MAX, TITLE_MAX } = ReviewModel;
 
 function validateReviewFields({ rating, title, comment }, t) {
   const errors = [];
+  let r;
   if (rating !== undefined && rating !== null) {
-    const r = parseInt(rating, 10);
+    r = parseInt(rating, 10);
     if (isNaN(r) || r < 1 || r > 5) errors.push(t('shop:reviewValidation.ratingRange'));
+  } else {
+    errors.push(t('shop:reviewValidation.ratingRange'));
   }
   const text = String(comment === undefined || comment === null ? '' : comment).trim();
   if (text.length < COMMENT_MIN) errors.push(t('shop:reviewValidation.minChars', { min: COMMENT_MIN }));
@@ -69,6 +72,7 @@ exports.submitProductReview = async (req, res, next) => {
     req.flash('success', req.t('shop:flash.submitted'));
     res.redirect(`/shop/${product.slug}#reviews`);
   } catch (err) {
+    console.error('[Review POST Error]', err.message, err.stack);
     next(err);
   }
 };

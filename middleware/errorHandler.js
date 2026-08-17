@@ -56,8 +56,19 @@ function sendErrorDev(err, res) {
  * Send error response in production
  * @param {Object} err
  * @param {Object} res
+ * @param {Object} req
  */
-function sendErrorProd(err, res) {
+function sendErrorProd(err, res, req) {
+  const isApi = req && (req.xhr || (req.headers && req.headers.accept && req.headers.accept.includes('application/json')));
+  const isFormPost = req && req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data');
+
+  if (!isApi || isFormPost) {
+    const msg = err.isOperational ? err.message : 'Something went wrong. Please try again.';
+    if (req) { try { req.flash('error', msg); } catch (e) {} }
+    const back = (req && req.get('Referrer')) || '/';
+    return res.redirect(back);
+  }
+
   if (err.isOperational) {
     res.status(err.statusCode).json({
       success: false,
@@ -97,6 +108,13 @@ function errorHandler(err, req, res, next) {
     err = handleValidationError(err);
   }
 
+  const isFormPost = req && req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data');
+  if (isFormPost) {
+    console.error('[Form POST Error]', err);
+    try { req.flash('error', err.message || 'Something went wrong.'); } catch (e) {}
+    return res.redirect(req.get('Referrer') || '/');
+  }
+
   if (isDev) {
     return sendErrorDev(err, res);
   }
@@ -104,7 +122,7 @@ function errorHandler(err, req, res, next) {
   // Production: handle specific error types
   let error = { ...err, message: err.message };
 
-  sendErrorProd(error, res);
+  sendErrorProd(error, res, req);
 }
 
 module.exports = { AppError, errorHandler };
