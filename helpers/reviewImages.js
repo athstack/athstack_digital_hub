@@ -49,13 +49,18 @@ async function processReviewImage(file) {
     return { full, thumb: full };
   }
 
-  ensureDir(UPLOAD_DIR);
-  const base = `review-${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-  fs.writeFileSync(path.join(UPLOAD_DIR, `${base}.jpg`), fullBuffer);
-  if (thumbBuffer) {
-    fs.writeFileSync(path.join(UPLOAD_DIR, `${base}-thumb.jpg`), thumbBuffer);
+  try {
+    ensureDir(UPLOAD_DIR);
+    const base = `review-${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    fs.writeFileSync(path.join(UPLOAD_DIR, `${base}.jpg`), fullBuffer);
+    if (thumbBuffer) {
+      fs.writeFileSync(path.join(UPLOAD_DIR, `${base}-thumb.jpg`), thumbBuffer);
+    }
+    return { full: `/uploads/reviews/${base}.jpg`, thumb: `/uploads/reviews/${base}-thumb.jpg` };
+  } catch (fsErr) {
+    console.error('Local file write failed (Vercel?):', fsErr.message);
+    return null;
   }
-  return { full: `/uploads/reviews/${base}.jpg`, thumb: `/uploads/reviews/${base}-thumb.jpg` };
 }
 
 /**

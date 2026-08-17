@@ -39,36 +39,45 @@ function handleValidationError(err) {
 }
 
 /**
- * Send error response in development
- * @param {Object} err
- * @param {Object} res
+ * Determine whether the request comes from a browser expecting HTML,
+ * or from an API/AJAX caller expecting JSON.
  */
-function sendErrorDev(err, res) {
-  res.status(err.statusCode || 500).json({
-    success: false,
-    error: err.message,
-    stack: err.stack,
-    statusCode: err.statusCode || 500
-  });
+function wantsJson(req) {
+  if (!req) return false;
+  if (req.xhr) return true;
+  if (req.path.startsWith('/api')) return true;
+  const accept = req.headers && req.headers.accept;
+  if (accept && accept.includes('application/json')) return true;
+  return false;
 }
 
 /**
- * Send error response in production
- * @param {Object} err
- * @param {Object} res
- * @param {Object} req
+ * Global error handling middleware
  */
-function sendErrorProd(err, res, req) {
-  const isApi = req && (req.xhr || (req.headers && req.headers.accept && req.headers.accept.includes('application/json')));
-  const isFormPost = req && req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data');
+function errorHandler(err, req, res, next) {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
 
-  if (!isApi || isFormPost) {
-    const msg = err.isOperational ? err.message : 'Something went wrong. Please try again.';
-    if (req) { try { req.flash('error', msg); } catch (e) {} }
-    const back = (req && req.get('Referrer')) || '/';
-    return res.redirect(back);
+  console.error('[Error]', err.statusCode, req.method, req.originalUrl, err.message);
+
+  // MySQL duplicate entry
+  if (err.code === 'ER_DUP_ENTRY') {
+    err = handleDuplicateKey(err);
   }
 
+  // MySQL validation error
+  if (err.code === 'ER_WRONG_VALUE' || err.name === 'ValidationError') {
+    err = handleValidationError(err);
+  }
+
+  // Browser form submissions: redirect back with flash error, never return JSON
+  if (!wantsJson(req)) {
+    const msg = err.isOperational ? err.message : 'Something went wrong. Please try again.';
+    try { req.flash('error', msg); } catch (e) {}
+    return res.redirect(req.get('Referrer') || '/');
+  }
+
+  // API / AJAX callers: return JSON
   if (err.isOperational) {
     res.status(err.statusCode).json({
       success: false,
@@ -83,46 +92,6 @@ function sendErrorProd(err, res, req) {
       statusCode: 500
     });
   }
-}
-
-/**
- * Global error handling middleware
- * @param {Object} err
- * @param {Object} req
- * @param {Object} res
- * @param {Function} next
- */
-function errorHandler(err, req, res, next) {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  const isDev = process.env.NODE_ENV !== 'production';
-
-  // MySQL duplicate entry
-  if (err.code === 'ER_DUP_ENTRY') {
-    err = handleDuplicateKey(err);
-  }
-
-  // MySQL validation error
-  if (err.code === 'ER_WRONG_VALUE' || err.name === 'ValidationError') {
-    err = handleValidationError(err);
-  }
-
-  const isFormPost = req && req.method === 'POST' && req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data');
-  if (isFormPost) {
-    console.error('[Form POST Error]', err);
-    try { req.flash('error', err.message || 'Something went wrong.'); } catch (e) {}
-    return res.redirect(req.get('Referrer') || '/');
-  }
-
-  if (isDev) {
-    return sendErrorDev(err, res);
-  }
-
-  // Production: handle specific error types
-  let error = { ...err, message: err.message };
-
-  sendErrorProd(error, res, req);
 }
 
 module.exports = { AppError, errorHandler };
