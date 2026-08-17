@@ -207,7 +207,7 @@
     "minLength": "कृपया कम से कम 20 अक्षर लिखें।",
     "invalidImageType": "केवल JPG, PNG, WebP या GIF छवियों की अनुमति है।",
     "photoTooLarge": "प्रत्येक फोटो 5MB या उससे छोटी होनी चाहिए।",
-    "maxPhotos": "आप अधिकतम 5 फोटो अपलोड कर सकते हैं।",
+    "maxPhotos": "आप अधिकतम 3 फोटो अपलोड कर सकते हैं।",
     "removePhoto": "फोटो {{count}} हटाएं",
     "reported": "रिपोर्ट किया गया",
     "selectReason": "कृपया एक कारण चुनें।",
@@ -231,7 +231,7 @@
     "charcount": "{{current}} / {{max}} (न्यूनतम {{min}})",
     "addPhotos": "फोटो जोड़ें",
     "uploadTap": "फोटो लेने या अपलोड करने के लिए टैप करें",
-    "uploadFormats": "JPG, PNG या WebP · अधिकतम 5MB प्रत्येक · अधिकतम 5 फोटो",
+    "uploadFormats": "JPG, PNG या WebP · अधिकतम 5MB प्रत्येक · अधिकतम 3 फोटो",
     "submitReview": "समीक्षा जमा करें"
   },
   "reviewValidation": {

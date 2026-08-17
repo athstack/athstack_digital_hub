@@ -7,6 +7,7 @@ const NotificationModel = require('../models/NotificationModel');
 const { isAuthenticated, isActive } = require('../middleware/auth');
 const { requirePermission } = require('../middleware/rbac');
 const { validateCsrf } = require('../middleware/csrf');
+const { uploadProductImages, withUpload } = require('../middleware/upload');
 
 // Public endpoints (no auth required)
 router.get('/search', shopController.searchSuggestions);
@@ -14,6 +15,7 @@ router.get('/repair/status/:ref', repairController.checkRepairStatus);
 router.get('/reviews/product/:id', reviewController.getProductReviewsApi);
 
 // Authenticated customer actions
+router.post('/reviews', isAuthenticated, requirePermission('manage_reviews'), withUpload(uploadProductImages.array('images', 3)), reviewController.submitProductReviewApi);
 router.post('/reviews/:id/helpful', isAuthenticated, requirePermission('manage_reviews'), validateCsrf, reviewController.toggleHelpful);
 router.post('/reviews/:id/report', isAuthenticated, requirePermission('manage_reviews'), validateCsrf, reviewController.reportReview);
 

@@ -207,7 +207,7 @@
     "minLength": "يرجى كتابة 20 حرفًا على الأقل.",
     "invalidImageType": "يُسمح فقط بصور JPG أو PNG أو WebP أو GIF.",
     "photoTooLarge": "يجب ألا يتجاوز حجم كل صورة 5 ميجابايت.",
-    "maxPhotos": "يمكنك رفع حتى 5 صور.",
+    "maxPhotos": "يمكنك رفع حتى 3 صور.",
     "removePhoto": "إزالة الصورة {{count}}",
     "reported": "تم الإبلاغ",
     "selectReason": "يرجى اختيار سبب.",
@@ -231,7 +231,7 @@
     "charcount": "{{current}} / {{max}} (الحد الأدنى {{min}})",
     "addPhotos": "إضافة صور",
     "uploadTap": "اضغط لالتقاط صورة أو رفع صور",
-    "uploadFormats": "JPG أو PNG أو WebP · بحد أقصى 5 ميجابايت لكل صورة · حتى 5 صور",
+    "uploadFormats": "JPG أو PNG أو WebP · بحد أقصى 5 ميجابايت لكل صورة · حتى 3 صور",
     "submitReview": "إرسال المراجعة"
   },
   "reviewValidation": {

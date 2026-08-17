@@ -1,6 +1,6 @@
 const { query, queryOne, pool } = require('../config/db');
 
-const MAX_REVIEW_IMAGES = 5;
+const MAX_REVIEW_IMAGES = 3;
 const COMMENT_MIN = 20;
 const COMMENT_MAX = 1500;
 const TITLE_MAX = 120;

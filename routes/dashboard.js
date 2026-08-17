@@ -28,7 +28,7 @@ router.get('/reviews', requirePermission('manage_reviews'), customerController.g
 router.get('/reviews/:id/edit', requirePermission('manage_reviews'), customerController.getEditReview);
 router.post('/reviews/:id/edit',
   requirePermission('manage_reviews'),
-  withUpload(uploadProductImages.array('images', 5)),
+  withUpload(uploadProductImages.array('images', 3)),
   validateCsrf,
   customerController.updateReview
 );

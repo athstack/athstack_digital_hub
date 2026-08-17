@@ -207,7 +207,7 @@
     "minLength": "Tafadhali andika angalau herufi 20.",
     "invalidImageType": "Picha za JPG, PNG, WebP au GIF pekee zinaruhusiwa.",
     "photoTooLarge": "Kila picha lazima iwe 5MB au ndogo zaidi.",
-    "maxPhotos": "Unaweza kupakia hadi picha 5.",
+    "maxPhotos": "Unaweza kupakia hadi picha 3.",
     "removePhoto": "Ondoa picha {{count}}",
     "reported": "Imeripotiwa",
     "selectReason": "Tafadhali chagua sababu.",
@@ -231,7 +231,7 @@
     "charcount": "{{current}} / {{max}} (chini {{min}})",
     "addPhotos": "Ongeza Picha",
     "uploadTap": "Bonyeza kupiga picha au kupakia picha",
-    "uploadFormats": "JPG, PNG au WebP · Max 5MB kila moja · Hadi picha 5",
+    "uploadFormats": "JPG, PNG au WebP · Max 5MB kila moja · Hadi picha 3",
     "submitReview": "Wasilisha Maoni"
   },
   "reviewValidation": {

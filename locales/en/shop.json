@@ -207,7 +207,7 @@
     "minLength": "Please write at least 20 characters.",
     "invalidImageType": "Only JPG, PNG, WebP or GIF images are allowed.",
     "photoTooLarge": "Each photo must be 5MB or smaller.",
-    "maxPhotos": "You can upload up to 5 photos.",
+    "maxPhotos": "You can upload up to 3 photos.",
     "removePhoto": "Remove photo {{count}}",
     "reported": "Reported",
     "selectReason": "Please select a reason.",
@@ -231,7 +231,7 @@
     "charcount": "{{current}} / {{max}} (min {{min}})",
     "addPhotos": "Add Photos",
     "uploadTap": "Tap to take a photo or upload photos",
-    "uploadFormats": "JPG, PNG or WebP · Max 5MB each · Up to 5 photos",
+    "uploadFormats": "JPG, PNG or WebP · Max 5MB each · Up to 3 photos",
     "submitReview": "Submit Review"
   },
   "reviewValidation": {

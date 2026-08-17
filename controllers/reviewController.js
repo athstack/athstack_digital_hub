@@ -77,6 +77,60 @@ exports.submitProductReview = async (req, res, next) => {
   }
 };
 
+exports.submitProductReviewApi = async (req, res, next) => {
+  try {
+    const productId = parseInt(req.params.productId);
+    const userId = req.session.userId;
+    if (!userId) return res.status(401).json({ success: false, error: 'Login required' });
+
+    const { rating, title, comment } = req.body;
+
+    const { errors } = validateReviewFields({ rating, title, comment }, req.t);
+    if (errors.length) {
+      return res.status(422).json({ success: false, error: errors[0] });
+    }
+
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' });
+    }
+
+    const eligibility = await ReviewModel.getEligibilityForProduct(userId, productId);
+    if (!eligibility.hasPurchased) {
+      return res.status(403).json({ success: false, error: 'Purchase verification required' });
+    }
+    if (eligibility.hasReviewed) {
+      return res.status(409).json({ success: false, error: 'Already reviewed', reviewId: eligibility.review.id });
+    }
+
+    const images = await processReviewImages(req.files || []);
+
+    const review = await ReviewModel.create({
+      user_id: userId,
+      product_id: productId,
+      order_id: eligibility.order ? eligibility.order.id : null,
+      rating: parseInt(rating, 10),
+      title: (title || '').trim() || null,
+      comment: (comment || '').trim(),
+      images,
+      type: 'product',
+      status: 'pending',
+      is_verified: true
+    });
+
+    await NotificationModel.notifyAdmins({
+      title: 'New Review Pending Approval',
+      message: `${product.name} received a new review (${rating} stars).`,
+      type: 'review',
+      link: '/admin/reviews?status=pending'
+    });
+
+    res.json({ success: true, review: { id: review.id, rating: review.rating, status: review.status } });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.editProductReview = async (req, res, next) => {
   try {
     const productId = parseInt(req.params.productId);

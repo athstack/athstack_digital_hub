@@ -7,14 +7,14 @@ const { requirePermission } = require('../middleware/rbac');
 const { uploadProductImages, withUpload } = require('../middleware/upload');
 
 router.post('/product/:productId',
-  withUpload(uploadProductImages.array('images', 5)),
+  withUpload(uploadProductImages.array('images', 3)),
   validateCsrf,
   isCustomer,
   requirePermission('manage_reviews'),
   reviewController.submitProductReview
 );
 router.post('/product/:productId/edit/:reviewId',
-  withUpload(uploadProductImages.array('images', 5)),
+  withUpload(uploadProductImages.array('images', 3)),
   validateCsrf,
   isCustomer,
   requirePermission('manage_reviews'),

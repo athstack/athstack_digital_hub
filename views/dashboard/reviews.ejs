@@ -49,7 +49,13 @@
                 <% reviews.forEach(review => { %>
                 <div class="glass-card p-4 mb-3">
                     <div class="d-flex align-items-start justify-content-between gap-3">
-                        <div class="min-width-0">
+                        <div class="min-width-0 d-flex gap-3">
+                            <% if (review.product_image) { %>
+                            <div class="flex-shrink-0 rounded overflow-hidden" style="width:56px;height:56px;background:var(--img-tile);">
+                                <%- include('../partials/productImage', { src: imageUrl(review.product_image, 'products'), alt: review.product_name || '', style: 'width:56px;height:56px;object-fit:cover;' }) %>
+                            </div>
+                            <% } %>
+                            <div class="min-width-0">
                             <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
                                 <div class="text-warning">
                                     <% for (let i = 1; i <= 5; i++) { %>
@@ -103,6 +109,7 @@
                             <small class="text-white-50 d-inline-flex align-items-center mt-2">
                                 <i class="fa-solid fa-thumbs-up me-1"></i> <%= t('dashboard:reviews.helpfulCount', { count: review.helpful_count || 0 }) %>
                             </small>
+                            </div>
                         </div>
                         <div class="d-flex flex-column gap-2 flex-shrink-0">
                             <a href="/dashboard/reviews/<%= review.id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill"><i class="fa-solid fa-pen me-1"></i><%= t('words.edit') %></a>

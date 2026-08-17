@@ -30,7 +30,7 @@ function initReviewModal() {
   const charCount = document.getElementById('reviewCommentCount');
   const fileInput = document.getElementById('reviewImagesInput');
   const previewsBox = document.getElementById('reviewUploadPreviews');
-  const MAX_IMAGES = 5;
+  const MAX_IMAGES = 3;
   const MAX_SIZE = 5 * 1024 * 1024;
   const ALLOWED = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
   let pendingFiles = [];
@@ -90,7 +90,7 @@ function initReviewModal() {
           return;
         }
         if (pendingFiles.length >= MAX_IMAGES) {
-          errors.push(getString('reviewMaxPhotos', 'You can upload up to 5 photos.'));
+          errors.push(getString('reviewMaxPhotos', 'You can upload up to 3 photos.'));
           return;
         }
         pendingFiles.push(file);
@@ -169,7 +169,7 @@ function initReviewEditForm() {
   const charCount = document.getElementById('reviewEditCommentCount');
   const fileInput = document.getElementById('reviewEditImagesInput');
   const previewsBox = document.getElementById('reviewEditUploadPreviews');
-  const MAX_IMAGES = 5;
+  const MAX_IMAGES = 3;
   const MAX_SIZE = 5 * 1024 * 1024;
   const ALLOWED = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
   let selectedRating = parseInt(starsContainer.getAttribute('data-review-stars') || '5', 10);
@@ -246,7 +246,7 @@ function initReviewEditForm() {
           return;
         }
         if (pendingFiles.length >= MAX_IMAGES) {
-          if (hint) hint.textContent = getString('reviewMaxPhotos', 'You can upload up to 5 photos.');
+          if (hint) hint.textContent = getString('reviewMaxPhotos', 'You can upload up to 3 photos.');
           return;
         }
         pendingFiles.push(file);

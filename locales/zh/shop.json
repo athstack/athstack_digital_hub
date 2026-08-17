@@ -207,7 +207,7 @@
     "minLength": "请至少输入 20 个字符。",
     "invalidImageType": "仅允许上传 JPG、PNG、WebP 或 GIF 图片。",
     "photoTooLarge": "每张照片必须为 5MB 或更小。",
-    "maxPhotos": "您最多可上传 5 张照片。",
+    "maxPhotos": "您最多可上传 3 张照片。",
     "removePhoto": "移除照片 {{count}}",
     "reported": "已举报",
     "selectReason": "请选择原因。",
@@ -231,7 +231,7 @@
     "charcount": "{{current}} / {{max}}（最少 {{min}}）",
     "addPhotos": "添加照片",
     "uploadTap": "点击拍照或上传照片",
-    "uploadFormats": "JPG、PNG 或 WebP · 每张最大 5MB · 最多 5 张",
+    "uploadFormats": "JPG、PNG 或 WebP · 每张最大 5MB · 最多 3 张",
     "submitReview": "提交评价"
   },
   "reviewValidation": {

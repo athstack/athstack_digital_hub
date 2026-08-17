@@ -64,7 +64,7 @@ async function processReviewImage(file) {
 async function processReviewImages(files) {
   if (!files || files.length === 0) return [];
   const urls = [];
-  for (const file of files.slice(0, 5)) {
+  for (const file of files.slice(0, 3)) {
     const result = await processReviewImage(file);
     if (result) urls.push(result.full);
   }
