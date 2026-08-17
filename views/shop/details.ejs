@@ -342,28 +342,21 @@
 
         <!-- Write Review -->
         <% if (user) { %>
-          <% if (reviewEligibility && reviewEligibility.hasPurchased) { %>
-            <% if (reviewEligibility.hasReviewed) { %>
-            <div class="review-login-card review-written-card">
-              <div>
-                <p class="mb-0 text-white"><i class="fa-solid fa-circle-check me-2 text-success"></i><%= t('shop:reviews.youReviewed') %></p>
-                <small class="text-white-50"><%= t('shop:reviews.statusLabel', { status: t('shop:reviews.reviewStatus.' + (reviewEligibility.review.status === 'approved' ? 'approved' : reviewEligibility.review.status === 'rejected' ? 'rejected' : 'pending')) }) %></small>
-              </div>
-              <a href="/dashboard/reviews/<%= reviewEligibility.review.id %>/edit" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i><%= t('shop:words.editReview') %></a>
+          <% if (reviewEligibility && reviewEligibility.hasReviewed) { %>
+          <div class="review-login-card review-written-card">
+            <div>
+              <p class="mb-0 text-white"><i class="fa-solid fa-circle-check me-2 text-success"></i><%= t('shop:reviews.youReviewed') %></p>
+              <small class="text-white-50"><%= t('shop:reviews.statusLabel', { status: t('shop:reviews.reviewStatus.' + (reviewEligibility.review.status === 'approved' ? 'approved' : reviewEligibility.review.status === 'rejected' ? 'rejected' : 'pending')) }) %></small>
             </div>
-            <% } else { %>
-            <div class="review-write-card">
-              <div class="d-flex align-items-center gap-3">
-                <h3 class="review-write-title mb-0"><i class="fa-solid fa-pen me-2 text-primary"></i><%= t('shop:reviews.writeTitle') %></h3>
-                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> <%= t('shop:words.verifiedPurchase') %></span>
-              </div>
-              <p class="text-white-50 mt-2"><%= t('shop:reviews.writePrompt') %></p>
-              <button type="button" class="btn-action btn-submit-review" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fa-solid fa-paper-plane me-2"></i><%= t('shop:reviews.writeYourReview') %></button>
-            </div>
-            <% } %>
+            <a href="/dashboard/reviews/<%= reviewEligibility.review.id %>/edit" class="btn btn-premium-outline btn-sm rounded-pill flex-shrink-0"><i class="fa-solid fa-pen me-1"></i><%= t('shop:words.editReview') %></a>
+          </div>
           <% } else { %>
-          <div class="review-login-card">
-            <p class="mb-0"><i class="fa-solid fa-lock me-2 text-warning"></i><%= t('shop:reviews.onlyVerified') %> <a href="/shop" class="text-primary fw-bold text-link"><%= t('shop:words.shopNow') %></a><%= t('shop:reviews.getInvite') %></p>
+          <div class="review-write-card">
+            <div class="d-flex align-items-center gap-3">
+              <h3 class="review-write-title mb-0"><i class="fa-solid fa-pen me-2 text-primary"></i><%= t('shop:reviews.writeTitle') %></h3>
+            </div>
+            <p class="text-white-50 mt-2"><%= t('shop:reviews.writePrompt') %></p>
+            <button type="button" class="btn-action btn-submit-review" data-bs-toggle="modal" data-bs-target="#reviewModal"><i class="fa-solid fa-paper-plane me-2"></i><%= t('shop:reviews.writeYourReview') %></button>
           </div>
           <% } %>
         <% } else { %>

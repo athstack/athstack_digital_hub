@@ -39,10 +39,6 @@ exports.submitProductReview = async (req, res, next) => {
     }
 
     const eligibility = await ReviewModel.getEligibilityForProduct(userId, productId);
-    if (!eligibility.hasPurchased) {
-      req.flash('error', req.t('shop:flash.notPurchased'));
-      return res.redirect(`/shop/${product.slug}#reviews`);
-    }
     if (eligibility.hasReviewed) {
       req.flash('info', req.t('shop:flash.alreadyReviewed'));
       return res.redirect(`/dashboard/reviews/${eligibility.review.id}/edit`);
@@ -60,7 +56,7 @@ exports.submitProductReview = async (req, res, next) => {
       images,
       type: 'product',
       status: 'pending',
-      is_verified: true
+      is_verified: eligibility.hasPurchased
     });
 
     await NotificationModel.notifyAdmins({
@@ -96,9 +92,6 @@ exports.submitProductReviewApi = async (req, res, next) => {
     }
 
     const eligibility = await ReviewModel.getEligibilityForProduct(userId, productId);
-    if (!eligibility.hasPurchased) {
-      return res.status(403).json({ success: false, error: 'Purchase verification required' });
-    }
     if (eligibility.hasReviewed) {
       return res.status(409).json({ success: false, error: 'Already reviewed', reviewId: eligibility.review.id });
     }
@@ -115,7 +108,7 @@ exports.submitProductReviewApi = async (req, res, next) => {
       images,
       type: 'product',
       status: 'pending',
-      is_verified: true
+      is_verified: eligibility.hasPurchased
     });
 
     await NotificationModel.notifyAdmins({
