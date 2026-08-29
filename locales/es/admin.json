@@ -477,7 +477,9 @@
     "noReviewsMatch": "No hay reseñas que coincidan con su búsqueda.",
     "updateFailed": "No se pudo actualizar la reseña.",
     "deleteFailed": "No se pudo eliminar la reseña.",
-    "networkError": "Error de red. Inténtelo de nuevo."
+    "networkError": "Error de red. Inténtelo de nuevo.",
+    "readMore": "Leer más",
+    "readLess": "Leer menos"
   },
   "reviewForm": {
     "heading": "Editar Reseña",

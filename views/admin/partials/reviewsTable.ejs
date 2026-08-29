@@ -40,15 +40,21 @@
                         <div class="text-white"><%= formatDisplayName(review.first_name, review.last_name) %></div>
                         <small class="text-white-50"><%= review.email %></small>
                     </td>
-                    <td>
+                    <td class="review-content-cell">
                         <% if (review.product_name) { %>
                         <div class="text-white mb-1"><%= review.product_name %></div>
                         <% } %>
                         <% if (review.title) { %>
-                        <div class="text-white-50 small fw-semibold"><%= review.title %></div>
+                        <h6 class="review-title text-white mb-1"><%= review.title %></h6>
                         <% } %>
                         <% if (review.comment) { %>
-                        <p class="text-white-50 mb-0 small" style="max-width:280px;"><%= review.comment %></p>
+                        <div class="review-message" data-review-id="<%= review.id %>">
+                            <p class="text-white-50 mb-0"><%= review.comment %></p>
+                            <button type="button" class="read-more-btn" data-review-id="<%= review.id %>" aria-expanded="false">
+                                <span class="read-more-text"><%= t('admin:reviews.readMore') %></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
                         <% } else { %>
                         <span class="text-white-50 small fst-italic"><%= t('admin:reviews.noComment') %></span>
                         <% } %>

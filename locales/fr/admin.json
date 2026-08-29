@@ -477,7 +477,9 @@
     "noReviewsMatch": "Aucun avis ne correspond à votre recherche.",
     "updateFailed": "Échec de la mise à jour de l'avis.",
     "deleteFailed": "Échec de la suppression de l'avis.",
-    "networkError": "Erreur réseau. Veuillez réessayer."
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "readMore": "Lire la suite",
+    "readLess": "Lire moins"
   },
   "reviewForm": {
     "heading": "Modifier l'avis",

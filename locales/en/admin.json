@@ -486,7 +486,9 @@
     "last": "Last",
     "updateFailed": "Update failed.",
     "deleteFailed": "Delete failed.",
-    "networkError": "Network error."
+    "networkError": "Network error.",
+    "readMore": "Read more",
+    "readLess": "Read less"
   },
   "reviewForm": {
     "heading": "Edit Review",

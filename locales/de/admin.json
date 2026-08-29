@@ -477,7 +477,9 @@
     "noReviewsMatch": "Keine Rezensionen entsprechen Ihrer Suche.",
     "updateFailed": "Rezension konnte nicht aktualisiert werden.",
     "deleteFailed": "Rezension konnte nicht gelöscht werden.",
-    "networkError": "Netzwerkfehler. Bitte erneut versuchen."
+    "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+    "readMore": "Mehr lesen",
+    "readLess": "Weniger anzeigen"
   },
   "reviewForm": {
     "heading": "Bewertung bearbeiten",

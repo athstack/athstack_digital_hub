@@ -477,7 +477,9 @@
     "noReviewsMatch": "没有与您的搜索匹配的评价。",
     "updateFailed": "更新评价失败。",
     "deleteFailed": "删除评价失败。",
-    "networkError": "网络错误。请重试。"
+    "networkError": "网络错误。请重试。",
+    "readMore": "阅读更多",
+    "readLess": "收起"
   },
   "reviewForm": {
     "heading": "编辑评价",

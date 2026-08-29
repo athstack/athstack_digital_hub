@@ -477,7 +477,9 @@
     "noReviewsMatch": "Hakuna maoni yanayolingana na utafutaji wako.",
     "updateFailed": "Imeshindwa kusasisha maoni.",
     "deleteFailed": "Imeshindwa kufuta maoni.",
-    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena."
+    "networkError": "Hitilafu ya mtandao. Tafadhali jaribu tena.",
+    "readMore": "Soma Zaidi",
+    "readLess": "Soma Kidiria"
   },
   "reviewForm": {
     "heading": "Hariri Maoni",

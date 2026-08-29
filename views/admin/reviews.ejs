@@ -187,7 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateFailed: '<%= t('admin:reviews.updateFailed') %>',
         networkError: '<%= t('admin:reviews.networkError') %>',
         cancel: '<%= t('common:words.cancel') %>',
-        delete: '<%= t('common:words.delete') %>'
+        delete: '<%= t('common:words.delete') %>',
+        readMore: '<%= t('admin:reviews.readMore') %>',
+        readLess: '<%= t('admin:reviews.readLess') %>'
     };
 
     function esc(v) {
@@ -311,6 +313,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (replyBtn) {
             e.preventDefault();
             openReply(replyBtn.getAttribute('data-id'), replyBtn.getAttribute('data-name'));
+            return;
+        }
+
+        var readMoreBtn = e.target.closest('.read-more-btn');
+        if (readMoreBtn) {
+            e.preventDefault();
+            var reviewId = readMoreBtn.getAttribute('data-review-id');
+            var messageCell = tableWrap.querySelector('.review-message[data-review-id="' + reviewId + '"]');
+            var isExpanded = messageCell.classList.toggle('expanded');
+            readMoreBtn.setAttribute('aria-expanded', isExpanded);
+            var textSpan = readMoreBtn.querySelector('.read-more-text');
+            var icon = readMoreBtn.querySelector('i');
+            if (isExpanded) {
+                if (textSpan) textSpan.textContent = i18n.readLess;
+                if (icon) icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                if (textSpan) textSpan.textContent = i18n.readMore;
+                if (icon) icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
             return;
         }
 
