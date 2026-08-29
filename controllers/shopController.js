@@ -124,3 +124,46 @@ exports.searchSuggestions = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.debugReviews = async (req, res, next) => {
+  try {
+    const productId = parseInt(req.query.product_id);
+    if (!productId) {
+      return res.status(400).json({ error: 'product_id required' });
+    }
+
+    const { query, queryOne } = require('../config/db');
+
+    const stats = await queryOne(
+      `SELECT
+         COALESCE(AVG(rating), 0) AS average_rating,
+         COUNT(*) AS total_reviews,
+         SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) AS r5,
+         SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) AS r4,
+         SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) AS r3,
+         SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) AS r2,
+         SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) AS r1,
+         SUM(is_verified) AS verified_count,
+         SUM(CASE WHEN images IS NOT NULL AND JSON_LENGTH(images) > 0 THEN 1 ELSE 0 END) AS photo_count
+       FROM reviews
+       WHERE product_id = ? AND status = 'approved' AND is_hidden = 0`,
+      [productId]
+    );
+
+    const reviews = await query(
+      `SELECT id, product_id, technician_id, type, status, is_hidden, is_verified, rating, title, comment, images, created_at
+       FROM reviews
+       WHERE product_id = ?`,
+      [productId]
+    );
+
+    res.json({
+      productId,
+      stats: stats || {},
+      reviews: reviews || [],
+      count: reviews?.length || 0
+    });
+  } catch (err) {
+    next(err);
+  }
+};
