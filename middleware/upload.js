@@ -1,14 +1,16 @@
 const multer = require('multer');
+const path = require('path');
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 function imageFilter(req, file, cb) {
-  if (ALLOWED_TYPES.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
+  const ext = (path.extname(file.originalname) || '').toLowerCase();
+  if (!ALLOWED_TYPES.includes(file.mimetype) || (ext && !ALLOWED_EXTENSIONS.includes(ext))) {
     cb(new Error('Only image files are allowed (jpg, jpeg, png, webp, gif)'), false);
+  } else {
+    cb(null, true);
   }
 }
 

@@ -8,7 +8,7 @@ const OrderModel = require('../models/OrderModel');
 const ServiceModel = require('../models/ServiceModel');
 const NotificationModel = require('../models/NotificationModel');
 const ProductImageModel = require('../models/ProductImageModel');
-const { generateSlug, generateSku, formatDate } = require('../utils/helpers');
+const { generateSlug, generateSku, formatDate, escapeHtml } = require('../utils/helpers');
 const { formatCurrency } = require('../utils/currency');
 const { pool } = require('../config/db');
 const { processUploadedFile, processUploadedFiles } = require('../helpers/upload');
@@ -1686,7 +1686,7 @@ exports.replyToMessage = async (req, res, next) => {
         <h2 style="color:#fff;margin:0;font-size:20px;">TechBridge</h2>
       </div>
       <div style="background:#1e293b;padding:32px;color:#e2e8f0;font-size:15px;line-height:1.7;">
-        ${replyText.replace(/\n/g, '<br>')}
+        ${escapeHtml(replyText).replace(/\n/g, '<br>')}
       </div>
       <div style="background:#0f172a;padding:16px 32px;border-radius:0 0 12px 12px;text-align:center;">
         <p style="color:#64748b;font-size:12px;margin:0;">TechBridge &mdash; Premium Tech Marketplace</p>

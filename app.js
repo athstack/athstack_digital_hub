@@ -232,7 +232,20 @@ app.use((req, res, next) => {
     }
 
     if (target === 'back') {
-      target = req.get('Referrer') || '/';
+      const referrer = req.get('Referrer') || '';
+      target = '/';
+      if (referrer) {
+        try {
+          const parsed = new URL(referrer);
+          if (parsed.host === req.get('host')) {
+            target = parsed.pathname + parsed.search + parsed.hash;
+          }
+        } catch (e) {
+          if (referrer.startsWith('/') && !referrer.startsWith('//')) {
+            target = referrer;
+          }
+        }
+      }
     }
 
     if (status === undefined) {

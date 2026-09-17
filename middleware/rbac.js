@@ -95,6 +95,37 @@ function denyAccess(req, res) {
 }
 
 /**
+ * Returns true when the current request is a state-changing request performed
+ * by an account that is no longer active. Centralizes the read-only rule so
+ * deactivated accounts cannot retain write access on routes that forgot to add
+ * the per-route isActive middleware.
+ * @param {Object} req
+ * @returns {boolean}
+ */
+function isInactiveWrite(req) {
+  const isWrite = req.method !== 'GET' && req.method !== 'HEAD';
+  if (!isWrite) return false;
+  const status = (req.user && req.user.status) || (req.session && req.session.userStatus) || 'active';
+  return status !== 'active';
+}
+
+/**
+ * Deny helper for inactive accounts attempting a write.
+ */
+function denyInactive(req, res) {
+  const wantsJson =
+    req.xhr ||
+    (req.headers.accept && req.headers.accept.includes('application/json')) ||
+    req.path.startsWith('/api');
+
+  if (wantsJson) {
+    return res.status(403).json({ success: false, message: 'Your account is inactive. Please contact an administrator.' });
+  }
+  req.flash('error', 'Your account is inactive. Please contact an administrator to activate your account before performing this action.');
+  return res.redirect('/');
+}
+
+/**
  * Requires the authenticated user to hold at least one of the given permissions.
  * @param {...string} permissions
  */
@@ -114,6 +145,10 @@ function requirePermission(...permissions) {
       return res.redirect('/auth/login');
     }
 
+    if (isInactiveWrite(req)) {
+      return denyInactive(req, res);
+    }
+
     const allowed = permissions.some((p) => req.can && req.can(p));
     if (allowed) return next();
     return denyAccess(req, res);
@@ -128,6 +163,9 @@ function requireAllPermissions(...permissions) {
   return (req, res, next) => {
     if (!req.user) {
       return requirePermission()(req, res, next);
+    }
+    if (isInactiveWrite(req)) {
+      return denyInactive(req, res);
     }
     const allowed = permissions.every((p) => req.can && req.can(p));
     if (allowed) return next();

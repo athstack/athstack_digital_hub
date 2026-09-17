@@ -54,6 +54,7 @@ exports.postLogin = async (req, res, next) => {
     if (user.status === 'inactive') {
       const msg = req.t('auth:messages.inactive');
       if (isAjax) return respond(403, { success: false, message: msg });
+      return res.render('auth/login', { title: req.t('auth:title.login'), error: msg });
     }
 
     const returnTo = req.session.returnTo;
@@ -205,7 +206,9 @@ exports.postForgot = async (req, res, next) => {
       const user = await UserModel.findByEmail(email);
       if (user) {
         const { token } = await PasswordResetModel.create(user.id);
-        console.log(`[PASSWORD RESET] ${user.email}: /auth/reset/${token}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[PASSWORD RESET] ${user.email}: /auth/reset/${token}`);
+        }
         await NotificationModel.create(user.id, {
           title: req.t('auth:forgot.notificationTitle'),
           message: req.t('auth:forgot.notificationMessage'),

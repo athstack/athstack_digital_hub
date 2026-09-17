@@ -150,6 +150,20 @@ function paginate(array, page = 1, limit = 10) {
   };
 }
 
+/**
+ * Escape a value for safe interpolation into HTML.
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 module.exports = {
   generateSlug,
   generateSku,
@@ -157,5 +171,6 @@ module.exports = {
   truncateText,
   calculateDiscount,
   getStatusBadgeClass,
-  paginate
+  paginate,
+  escapeHtml
 };

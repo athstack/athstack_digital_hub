@@ -1,10 +1,15 @@
 const { query, queryOne } = require('../config/db');
 const crypto = require('crypto');
 
+function hashToken(token) {
+  return crypto.createHash('sha256').update(String(token)).digest('hex');
+}
+
 class PasswordResetModel {
   async create(userId) {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const tokenHash = hashToken(token);
 
     await query(
       'UPDATE password_reset_tokens SET used = 1 WHERE user_id = ? AND used = 0',
@@ -13,7 +18,7 @@ class PasswordResetModel {
 
     const result = await query(
       'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-      [userId, token, expiresAt]
+      [userId, tokenHash, expiresAt]
     );
 
     return { token, expiresAt };
@@ -25,12 +30,12 @@ class PasswordResetModel {
        FROM password_reset_tokens prt
        JOIN users u ON prt.user_id = u.id
        WHERE prt.token = ? AND prt.used = 0 AND prt.expires_at > NOW()`,
-      [token]
+      [hashToken(token)]
     );
   }
 
   async markUsed(token) {
-    await query('UPDATE password_reset_tokens SET used = 1 WHERE token = ?', [token]);
+    await query('UPDATE password_reset_tokens SET used = 1 WHERE token = ?', [hashToken(token)]);
     return true;
   }
 }

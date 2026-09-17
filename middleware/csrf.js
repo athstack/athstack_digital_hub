@@ -37,6 +37,13 @@ function generateToken(req, res, next) {
   next();
 }
 
+function safeEqual(a, b) {
+  const bufferA = Buffer.from(String(a));
+  const bufferB = Buffer.from(String(b));
+  if (bufferA.length !== bufferB.length) return false;
+  return crypto.timingSafeEqual(bufferA, bufferB);
+}
+
 /**
  * Validate CSRF token on state-changing requests
  * @param {Object} req
@@ -46,7 +53,7 @@ function generateToken(req, res, next) {
 function validateCsrf(req, res, next) {
   const token = req.body.csrf_token || req.query.csrf_token || req.headers['x-csrf-token'];
 
-  if (!token || !req.session.csrfToken || token !== req.session.csrfToken) {
+  if (!token || !req.session.csrfToken || !safeEqual(token, req.session.csrfToken)) {
     // Return JSON for API-style requests, otherwise flash and redirect
     if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
       return res.status(403).json({ success: false, message: 'CSRF token validation failed.' });
