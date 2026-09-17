@@ -70,28 +70,56 @@ function errorHandler(err, req, res, next) {
     err = handleValidationError(err);
   }
 
-  // Browser form submissions: redirect back with flash error, never return JSON
-  if (!wantsJson(req)) {
-    const msg = err.isOperational ? err.message : 'Something went wrong. Please try again.';
-    try { req.flash('error', msg); } catch (e) {}
-    return res.redirect(req.get('Referrer') || '/');
-  }
+  // If the response has already started we cannot render or redirect.
+  if (res.headersSent) return next(err);
 
   // API / AJAX callers: return JSON
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-      statusCode: err.statusCode
-    });
-  } else {
+  if (wantsJson(req)) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        success: false,
+        message: err.message,
+        statusCode: err.statusCode
+      });
+    }
     console.error('Unexpected error:', err);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Something went wrong.',
       statusCode: 500
     });
   }
+
+  const msg = err.isOperational ? err.message : 'Something went wrong. Please try again.';
+
+  // Browser GET/HEAD navigation. A page can fail for the very reason it was
+  // requested, so redirecting "back" (which resolves to the current URL when
+  // there is no Referer) creates an infinite redirect loop. That is what took
+  // the site down when the database was unreachable, so render an error page
+  // for navigations instead of redirecting.
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    return res.status(err.statusCode).render('error', {
+      title: 'Something went wrong',
+      statusCode: err.statusCode,
+      message: msg
+    });
+  }
+
+  // State-changing browser submissions: redirect back with a flash error, but
+  // only to a different URL than the one that just failed.
+  try { req.flash('error', msg); } catch (e) {}
+
+  let target = '/';
+  const referrer = req.get('Referrer');
+  if (referrer) {
+    try {
+      const ref = new URL(referrer, `${req.protocol}://${req.get('host')}`);
+      if (ref.pathname + ref.search !== req.originalUrl) {
+        target = ref.pathname + ref.search;
+      }
+    } catch (e) { /* ignore malformed referrer */ }
+  }
+  return res.redirect(target);
 }
 
 module.exports = { AppError, errorHandler };
