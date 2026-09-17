@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
     /* ===== Brand ===== */
@@ -5824,3 +5824,235 @@ input[type="date"]:not(:focus):placeholder-shown {
     z-index: 6;
 }
 @keyframes crudSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   ENTERPRISE DESIGN SYSTEM — 2026 OVERHAUL
+   Cohesive slate surfaces, display typography, accessible
+   contrast (WCAG AA), refined forms, buttons and nav.
+   Appended last so it refines the legacy component styles.
+   ============================================================ */
+
+:root {
+    /* Typography */
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --leading-heading: 1.2;
+    --leading-body: 1.6;
+    --tracking-tight: -0.02em;
+
+    /* Slate surface scale */
+    --bg-deep: #0b0f19;
+    --bg-dark: #0f172a;
+    --bg-elevated: #0f172a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2233;
+    --bg-input: #0f172a;
+    --bg-nav: rgba(11, 15, 25, 0.92);
+
+    /* Borders */
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --input-border: rgba(255, 255, 255, 0.12);
+
+    /* Text */
+    --text-main: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-dim: #94a3b8;
+
+    /* Accents */
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-light: #60a5fa;
+    --accent: #22b8f2;
+    --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.4);
+
+    --transition: all 0.2s ease-in-out;
+    --transition-bounce: all 0.2s ease-in-out;
+}
+
+/* ---- Base typography -------------------------------------- */
+body {
+    font-family: var(--font-stack);
+    line-height: var(--leading-body);
+    color: var(--text-main);
+    letter-spacing: -0.005em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, h4, h5, h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+    font-family: var(--font-display);
+    line-height: var(--leading-heading);
+}
+h1, .display-1, .display-2, .display-3, .display-4 { letter-spacing: -0.02em; }
+h2, .display-5 { letter-spacing: -0.015em; }
+h3, h4, h5, h6, .display-6 { letter-spacing: -0.01em; }
+p, li, .lead { line-height: var(--leading-body); }
+
+/* Non-Latin scripts keep their script-optimised families */
+html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3,
+html[lang="ar"] h4, html[lang="ar"] h5, html[lang="ar"] h6,
+html[lang="ar"] .display-1, html[lang="ar"] .display-2,
+html[lang="ar"] .display-3, html[lang="ar"] .display-4,
+html[lang="ar"] .display-5, html[lang="ar"] .display-6 {
+    font-family: 'Noto Sans Arabic', 'Noto Naskh Arabic', 'Inter', Tahoma, sans-serif;
+}
+html[lang="zh"] h1, html[lang="zh"] h2, html[lang="zh"] h3,
+html[lang="zh"] h4, html[lang="zh"] h5, html[lang="zh"] h6,
+html[lang="zh"] .display-1, html[lang="zh"] .display-2,
+html[lang="zh"] .display-3, html[lang="zh"] .display-4,
+html[lang="zh"] .display-5, html[lang="zh"] .display-6 {
+    font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+}
+html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3,
+html[lang="hi"] h4, html[lang="hi"] h5, html[lang="hi"] h6,
+html[lang="hi"] .display-1, html[lang="hi"] .display-2,
+html[lang="hi"] .display-3, html[lang="hi"] .display-4,
+html[lang="hi"] .display-5, html[lang="hi"] .display-6 {
+    font-family: 'Inter', 'Noto Sans Devanagari', 'Mukta', sans-serif;
+}
+
+/* ---- Contrast corrections ---------------------------------- */
+.text-white-50 { color: #cbd5e1 !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+
+/* ---- Forms -------------------------------------------------- */
+.form-label {
+    color: var(--text-secondary) !important;
+    font-weight: var(--weight-medium, 500);
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+}
+.form-control, .form-select {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--input-border) !important;
+    color: var(--text-main) !important;
+    border-radius: 10px !important;
+    padding: 0.7rem 1rem !important;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+.form-control::placeholder { color: #8b9bb4 !important; opacity: 1; }
+.form-select {
+    padding-right: 2.5rem !important;
+    background-position: right 0.85rem center;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: var(--focus-ring) !important;
+    background-color: var(--bg-input) !important;
+    outline: none;
+}
+.form-control:hover:not(:focus):not(:disabled),
+.form-select:hover:not(:focus):not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.22) !important;
+}
+.form-control:disabled, .form-select:disabled { opacity: 0.6; }
+.form-text { color: var(--text-muted) !important; }
+textarea.form-control { min-height: 120px; }
+
+.input-group-text {
+    background-color: #1e293b !important;
+    border: 1px solid var(--input-border) !important;
+    color: var(--text-secondary) !important;
+}
+.input-group > .form-control,
+.input-group > .form-select { border-radius: 0 !important; }
+.input-group > :first-child {
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+}
+.input-group > :last-child {
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+}
+.phone-input-group { flex-wrap: nowrap; }
+.phone-input-group .form-select { flex: 0 0 auto; width: auto; max-width: 190px; }
+
+/* ---- Buttons & interactive transitions ---------------------- */
+.btn, .btn-premium-primary, .btn-premium-outline,
+.nav-link, .utility-link, a, button {
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+                border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+                transform 0.2s ease-in-out;
+}
+.btn:focus-visible {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+}
+
+/* ---- Header / navigation ------------------------------------ */
+.navbar-custom {
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.nav-main { background: transparent; }
+.nav-utility {
+    background: rgba(8, 11, 17, 0.9);
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.nav-utility-inner {
+    height: auto;
+    min-height: 40px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.utility-link { color: #cbd5e1; font-size: 0.78rem; }
+.utility-link:hover, .utility-link:focus { color: var(--primary-light); }
+.navbar-custom .nav-link { color: #cbd5e1 !important; }
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link:focus,
+.navbar-custom .nav-link.active { color: var(--primary-light) !important; }
+
+/* ---- Surfaces ----------------------------------------------- */
+.glass-card { border-color: var(--border-glass); }
+.glass-card:hover { border-color: rgba(37, 99, 235, 0.35); }
+
+/* ---- Section badge (refined eyebrow) ------------------------ */
+.section-badge {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    padding: 0.4rem 1rem;
+    color: #93c5fd;
+    background: rgba(37, 99, 235, 0.14);
+    border-color: rgba(37, 99, 235, 0.32);
+}
+
+/* ---- Floating actions: consistent 24px inset --------------- */
+.whatsapp-float { bottom: 24px; right: 24px; }
+.back-to-top { bottom: 96px; right: 24px; }
+@media (max-width: 767.98px) {
+    .whatsapp-float { bottom: 24px; right: 24px; }
+    .back-to-top { bottom: 88px; right: 24px; }
+}
+@supports (padding: max(0px)) {
+    .whatsapp-float {
+        bottom: max(24px, env(safe-area-inset-bottom));
+        right: max(24px, env(safe-area-inset-right));
+    }
+    .back-to-top {
+        bottom: max(96px, calc(env(safe-area-inset-bottom) + 72px));
+        right: max(24px, env(safe-area-inset-right));
+    }
+}
+
+/* ---- Dropdowns & tables contrast ---------------------------- */
+.dropdown-menu {
+    background: #111827;
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+.dropdown-item { color: var(--text-secondary); }
+.dropdown-item:hover,
+.dropdown-item:focus { background: rgba(255, 255, 255, 0.05); color: #fff; }
+
+/* ---- Focus & selection -------------------------------------- */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+::selection { background: rgba(37, 99, 235, 0.35); color: #fff; }

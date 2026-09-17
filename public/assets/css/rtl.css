@@ -52,21 +52,21 @@ html[lang="ar"] * {
 /* --- Floating elements that are physically anchored --------- */
 [dir="rtl"] .whatsapp-float {
     right: auto;
-    left: 30px;
+    left: 24px;
 }
 
 [dir="rtl"] .back-to-top {
     right: auto;
-    left: 30px;
+    left: 24px;
 }
 
 @supports (padding: max(0px)) {
     [dir="rtl"] .whatsapp-float {
-        left: max(30px, env(safe-area-inset-left));
+        left: max(24px, env(safe-area-inset-left));
         right: auto;
     }
     [dir="rtl"] .back-to-top {
-        left: max(30px, env(safe-area-inset-left));
+        left: max(24px, env(safe-area-inset-left));
         right: auto;
     }
 }

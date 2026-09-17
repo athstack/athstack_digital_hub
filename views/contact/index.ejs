@@ -3,8 +3,7 @@
 <section class="py-5" data-aos="fade-up">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-badge"><i class="fa-solid fa-envelope me-2"></i><%= t('contact:index.badge') %></span>
-            <h1 class="display-4 text-white fw-bold mt-3"><%= t('contact:index.heading') %></h1>
+            <h1 class="display-4 text-white fw-bold"><%= t('contact:index.heading') %></h1>
             <p class="text-white-50 fs-5"><%= t('contact:index.intro') %></p>
         </div>
 
@@ -46,28 +45,27 @@
                                 <input type="email" name="email" class="form-control" required placeholder="athstack@gmail.com" value="<%= user ? user.email : '' %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('contact:index.form.countryCode') %></label>
-                                <select name="country_code" class="form-select" <%= user ? 'style="opacity:0.7;"' : '' %>>
-                                    <option value="+255" <%= userPhoneCode === '+255' ? 'selected' : '' %>><%= t('contact:index.form.countries.TZ') %></option>
-                                    <option value="+254" <%= userPhoneCode === '+254' ? 'selected' : '' %>><%= t('contact:index.form.countries.KE') %></option>
-                                    <option value="+256" <%= userPhoneCode === '+256' ? 'selected' : '' %>><%= t('contact:index.form.countries.UG') %></option>
-                                    <option value="+250" <%= userPhoneCode === '+250' ? 'selected' : '' %>><%= t('contact:index.form.countries.RW') %></option>
-                                    <option value="+257" <%= userPhoneCode === '+257' ? 'selected' : '' %>><%= t('contact:index.form.countries.BI') %></option>
-                                    <option value="+27" <%= userPhoneCode === '+27' ? 'selected' : '' %>><%= t('contact:index.form.countries.ZA') %></option>
-                                    <option value="+1" <%= userPhoneCode === '+1' ? 'selected' : '' %>><%= t('contact:index.form.countries.US') %></option>
-                                    <option value="+44" <%= userPhoneCode === '+44' ? 'selected' : '' %>><%= t('contact:index.form.countries.GB') %></option>
-                                    <option value="+49" <%= userPhoneCode === '+49' ? 'selected' : '' %>><%= t('contact:index.form.countries.DE') %></option>
-                                    <option value="+33" <%= userPhoneCode === '+33' ? 'selected' : '' %>><%= t('contact:index.form.countries.FR') %></option>
-                                    <option value="+61" <%= userPhoneCode === '+61' ? 'selected' : '' %>><%= t('contact:index.form.countries.AU') %></option>
-                                    <option value="+86" <%= userPhoneCode === '+86' ? 'selected' : '' %>><%= t('contact:index.form.countries.CN') %></option>
-                                    <option value="+91" <%= userPhoneCode === '+91' ? 'selected' : '' %>><%= t('contact:index.form.countries.IN') %></option>
-                                    <option value="+971" <%= userPhoneCode === '+971' ? 'selected' : '' %>><%= t('contact:index.form.countries.AE') %></option>
-                                    <option value="+234" <%= userPhoneCode === '+234' ? 'selected' : '' %>><%= t('contact:index.form.countries.NG') %></option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('contact:index.form.phoneNumber') %></label>
-                                <input type="tel" name="phone" class="form-control" placeholder="<%= t('contact:index.form.phonePlaceholder') %>" value="<%= userPhoneNumber %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
+                                <label class="form-label text-white-50 small text-uppercase tracking-widest" for="contactPhone"><%= t('contact:index.form.phoneNumber') %></label>
+                                <div class="input-group phone-input-group">
+                                    <select name="country_code" class="form-select" aria-label="<%= t('contact:index.form.countryCode') %>" <%= user ? 'style="opacity:0.7;"' : '' %>>
+                                        <option value="+255" <%= userPhoneCode === '+255' ? 'selected' : '' %>><%= t('contact:index.form.countries.TZ') %></option>
+                                        <option value="+254" <%= userPhoneCode === '+254' ? 'selected' : '' %>><%= t('contact:index.form.countries.KE') %></option>
+                                        <option value="+256" <%= userPhoneCode === '+256' ? 'selected' : '' %>><%= t('contact:index.form.countries.UG') %></option>
+                                        <option value="+250" <%= userPhoneCode === '+250' ? 'selected' : '' %>><%= t('contact:index.form.countries.RW') %></option>
+                                        <option value="+257" <%= userPhoneCode === '+257' ? 'selected' : '' %>><%= t('contact:index.form.countries.BI') %></option>
+                                        <option value="+27" <%= userPhoneCode === '+27' ? 'selected' : '' %>><%= t('contact:index.form.countries.ZA') %></option>
+                                        <option value="+1" <%= userPhoneCode === '+1' ? 'selected' : '' %>><%= t('contact:index.form.countries.US') %></option>
+                                        <option value="+44" <%= userPhoneCode === '+44' ? 'selected' : '' %>><%= t('contact:index.form.countries.GB') %></option>
+                                        <option value="+49" <%= userPhoneCode === '+49' ? 'selected' : '' %>><%= t('contact:index.form.countries.DE') %></option>
+                                        <option value="+33" <%= userPhoneCode === '+33' ? 'selected' : '' %>><%= t('contact:index.form.countries.FR') %></option>
+                                        <option value="+61" <%= userPhoneCode === '+61' ? 'selected' : '' %>><%= t('contact:index.form.countries.AU') %></option>
+                                        <option value="+86" <%= userPhoneCode === '+86' ? 'selected' : '' %>><%= t('contact:index.form.countries.CN') %></option>
+                                        <option value="+91" <%= userPhoneCode === '+91' ? 'selected' : '' %>><%= t('contact:index.form.countries.IN') %></option>
+                                        <option value="+971" <%= userPhoneCode === '+971' ? 'selected' : '' %>><%= t('contact:index.form.countries.AE') %></option>
+                                        <option value="+234" <%= userPhoneCode === '+234' ? 'selected' : '' %>><%= t('contact:index.form.countries.NG') %></option>
+                                    </select>
+                                    <input type="tel" id="contactPhone" name="phone" class="form-control" placeholder="<%= t('contact:index.form.phonePlaceholder') %>" value="<%= userPhoneNumber %>" <%= user ? 'readonly style="opacity:0.7;"' : '' %>>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-white-50 small text-uppercase tracking-widest"><%= t('contact:index.form.subject') %> <span class="text-primary">*</span></label>
